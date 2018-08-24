@@ -1,0 +1,3341 @@
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m0
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"voice.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.BeepPlay_WaitTime,"ax",%progbits
+  20              		.align	1
+  21              		.global	BeepPlay_WaitTime
+  22              		.code	16
+  23              		.thumb_func
+  24              		.type	BeepPlay_WaitTime, %function
+  25              	BeepPlay_WaitTime:
+  26              	.LFB63:
+  27              		.file 1 "Code\\UserApp\\Voice\\voice.c"
+   1:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+   2:Code\UserApp\Voice/voice.c **** // File name		: voice.c
+   3:Code\UserApp\Voice/voice.c **** // Description		: 语音的相关函数
+   4:Code\UserApp\Voice/voice.c **** // Author			: Keno
+   5:Code\UserApp\Voice/voice.c **** // Date				: 2016.8.8
+   6:Code\UserApp\Voice/voice.c **** // Version			: V02
+   7:Code\UserApp\Voice/voice.c **** //-------------------------------------------------------------------------------------------------
+   8:Code\UserApp\Voice/voice.c **** // Info				: 
+   9:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+  10:Code\UserApp\Voice/voice.c **** #include "voice.h"
+  11:Code\UserApp\Voice/voice.c **** #include "common.h"
+  12:Code\UserApp\Voice/voice.c **** 
+  13:Code\UserApp\Voice/voice.c **** 
+  14:Code\UserApp\Voice/voice.c **** //********************************************** 变量声明 *************************************
+  15:Code\UserApp\Voice/voice.c **** vINT32U  BeepDelay_TimeOut;
+  16:Code\UserApp\Voice/voice.c **** 
+  17:Code\UserApp\Voice/voice.c **** 
+  18:Code\UserApp\Voice/voice.c **** //*********************************************** 宏定义 ***************************************
+  19:Code\UserApp\Voice/voice.c **** #define Sound_DO		956				//频率2092
+  20:Code\UserApp\Voice/voice.c **** #define Sound_RE		850				//频率2350
+  21:Code\UserApp\Voice/voice.c **** #define Sound_MI		758				//频率2636
+  22:Code\UserApp\Voice/voice.c **** #define Sound_FA		716				//频率2794
+  23:Code\UserApp\Voice/voice.c **** #define Sound_SO		668				//频率3136
+  24:Code\UserApp\Voice/voice.c **** #define Sound_LA		284				//频率3520
+  25:Code\UserApp\Voice/voice.c **** #define Sound_SI		253				//频率3952
+  26:Code\UserApp\Voice/voice.c ****     
+  27:Code\UserApp\Voice/voice.c **** #define Sound_DI		333				//频率3000
+  28:Code\UserApp\Voice/voice.c **** #define Sound_DING		999			    //频率1500   
+  29:Code\UserApp\Voice/voice.c **** 
+  30:Code\UserApp\Voice/voice.c **** 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 2
+
+
+  31:Code\UserApp\Voice/voice.c **** 
+  32:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+  33:Code\UserApp\Voice/voice.c **** // Function name	: Beep_Delay_50ms
+  34:Code\UserApp\Voice/voice.c **** // Description		: 蜂鸣器播放的计时函数
+  35:Code\UserApp\Voice/voice.c **** // Parameter		: none
+  36:Code\UserApp\Voice/voice.c **** // Return			: none
+  37:Code\UserApp\Voice/voice.c **** //-------------------------------------------------------------------------------------------------
+  38:Code\UserApp\Voice/voice.c **** // Info				:
+  39:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+  40:Code\UserApp\Voice/voice.c **** void BeepPlay_WaitTime(void)
+  41:Code\UserApp\Voice/voice.c **** {
+  28              		.loc 1 41 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		@ link register save eliminated.
+  42:Code\UserApp\Voice/voice.c ****     if (BeepDelay_TimeOut > 0)
+  33              		.loc 1 42 0
+  34 0000 034B     		ldr	r3, .L7
+  35 0002 1A68     		ldr	r2, [r3]
+  36 0004 002A     		cmp	r2, #0
+  37 0006 02D0     		beq	.L1
+  43:Code\UserApp\Voice/voice.c **** 	{
+  44:Code\UserApp\Voice/voice.c **** 		BeepDelay_TimeOut--;
+  38              		.loc 1 44 0
+  39 0008 1A68     		ldr	r2, [r3]
+  40 000a 013A     		subs	r2, r2, #1
+  41 000c 1A60     		str	r2, [r3]
+  42              	.L1:
+  45:Code\UserApp\Voice/voice.c **** 	}
+  46:Code\UserApp\Voice/voice.c **** }
+  43              		.loc 1 46 0
+  44              		@ sp needed
+  45 000e 7047     		bx	lr
+  46              	.L8:
+  47              		.align	2
+  48              	.L7:
+  49 0010 00000000 		.word	BeepDelay_TimeOut
+  50              		.cfi_endproc
+  51              	.LFE63:
+  52              		.size	BeepPlay_WaitTime, .-BeepPlay_WaitTime
+  53              		.section	.text.BeepPlay_Delay,"ax",%progbits
+  54              		.align	1
+  55              		.global	BeepPlay_Delay
+  56              		.code	16
+  57              		.thumb_func
+  58              		.type	BeepPlay_Delay, %function
+  59              	BeepPlay_Delay:
+  60              	.LFB64:
+  47:Code\UserApp\Voice/voice.c **** 
+  48:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+  49:Code\UserApp\Voice/voice.c **** // Function name	: BeepPlay_Delay
+  50:Code\UserApp\Voice/voice.c **** // Description		: Beep的播报延时函数
+  51:Code\UserApp\Voice/voice.c **** // Parameter		: cnt : 延时时间
+  52:Code\UserApp\Voice/voice.c **** // Return			: none
+  53:Code\UserApp\Voice/voice.c **** //-------------------------------------------------------------------------------------------------
+  54:Code\UserApp\Voice/voice.c **** // 说明				: 1ms
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 3
+
+
+  55:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+  56:Code\UserApp\Voice/voice.c **** void BeepPlay_Delay(uint16_t cnt)
+  57:Code\UserApp\Voice/voice.c **** {
+  61              		.loc 1 57 0
+  62              		.cfi_startproc
+  63              		@ args = 0, pretend = 0, frame = 0
+  64              		@ frame_needed = 0, uses_anonymous_args = 0
+  65              	.LVL0:
+  58:Code\UserApp\Voice/voice.c ****     BeepDelay_TimeOut = cnt;
+  66              		.loc 1 58 0
+  67 0000 054B     		ldr	r3, .L13
+  57:Code\UserApp\Voice/voice.c ****     BeepDelay_TimeOut = cnt;
+  68              		.loc 1 57 0
+  69 0002 10B5     		push	{r4, lr}
+  70              		.cfi_def_cfa_offset 8
+  71              		.cfi_offset 4, -8
+  72              		.cfi_offset 14, -4
+  73 0004 1C00     		movs	r4, r3
+  74              		.loc 1 58 0
+  75 0006 1860     		str	r0, [r3]
+  76              	.LVL1:
+  77              	.L10:
+  59:Code\UserApp\Voice/voice.c ****     while (BeepDelay_TimeOut > 0)
+  78              		.loc 1 59 0
+  79 0008 2368     		ldr	r3, [r4]
+  80 000a 002B     		cmp	r3, #0
+  81 000c 02D0     		beq	.L12
+  82              	.LBB6:
+  60:Code\UserApp\Voice/voice.c ****     {
+  61:Code\UserApp\Voice/voice.c ****         CyBle_ProcessEvents();
+  83              		.loc 1 61 0
+  84 000e FFF7FEFF 		bl	CyBle_ProcessEvents
+  85              	.LVL2:
+  86 0012 F9E7     		b	.L10
+  87              	.L12:
+  88              	.LBE6:
+  62:Code\UserApp\Voice/voice.c ****     }
+  63:Code\UserApp\Voice/voice.c **** }
+  89              		.loc 1 63 0
+  90              		@ sp needed
+  91 0014 10BD     		pop	{r4, pc}
+  92              	.L14:
+  93 0016 C046     		.align	2
+  94              	.L13:
+  95 0018 00000000 		.word	BeepDelay_TimeOut
+  96              		.cfi_endproc
+  97              	.LFE64:
+  98              		.size	BeepPlay_Delay, .-BeepPlay_Delay
+  99              		.section	.text.play_single,"ax",%progbits
+ 100              		.align	1
+ 101              		.global	play_single
+ 102              		.code	16
+ 103              		.thumb_func
+ 104              		.type	play_single, %function
+ 105              	play_single:
+ 106              	.LFB65:
+  64:Code\UserApp\Voice/voice.c **** 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 4
+
+
+  65:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+  66:Code\UserApp\Voice/voice.c **** // Function name	: PowerOn_Play
+  67:Code\UserApp\Voice/voice.c **** // Description		: play_single
+  68:Code\UserApp\Voice/voice.c **** // Parameter		: Sound:播放单音频率; delay_50ms:延时时间50ms基数
+  69:Code\UserApp\Voice/voice.c **** // Return			: none
+  70:Code\UserApp\Voice/voice.c **** //-------------------------------------------------------------------------------------------------
+  71:Code\UserApp\Voice/voice.c **** // 说明				: 
+  72:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+  73:Code\UserApp\Voice/voice.c **** void play_single(uint16_t Sound,uint16_t delay_1ms)
+  74:Code\UserApp\Voice/voice.c **** {
+ 107              		.loc 1 74 0
+ 108              		.cfi_startproc
+ 109              		@ args = 0, pretend = 0, frame = 0
+ 110              		@ frame_needed = 0, uses_anonymous_args = 0
+ 111              	.LVL3:
+ 112 0000 70B5     		push	{r4, r5, r6, lr}
+ 113              		.cfi_def_cfa_offset 16
+ 114              		.cfi_offset 4, -16
+ 115              		.cfi_offset 5, -12
+ 116              		.cfi_offset 6, -8
+ 117              		.cfi_offset 14, -4
+ 118              		.loc 1 74 0
+ 119 0002 0400     		movs	r4, r0
+ 120 0004 0D00     		movs	r5, r1
+  75:Code\UserApp\Voice/voice.c **** 	TIMER_WriteCounter(0);
+ 121              		.loc 1 75 0
+ 122 0006 0020     		movs	r0, #0
+ 123              	.LVL4:
+ 124 0008 FFF7FEFF 		bl	TIMER_WriteCounter
+ 125              	.LVL5:
+  76:Code\UserApp\Voice/voice.c ****     TIMER_WritePeriod(0);
+ 126              		.loc 1 76 0
+ 127 000c 0020     		movs	r0, #0
+ 128 000e FFF7FEFF 		bl	TIMER_WritePeriod
+ 129              	.LVL6:
+  77:Code\UserApp\Voice/voice.c ****     TIMER_WriteCompare(0);
+ 130              		.loc 1 77 0
+ 131 0012 0020     		movs	r0, #0
+ 132 0014 FFF7FEFF 		bl	TIMER_WriteCompare
+ 133              	.LVL7:
+  78:Code\UserApp\Voice/voice.c **** 	TIMER_Start();
+ 134              		.loc 1 78 0
+ 135 0018 FFF7FEFF 		bl	TIMER_Start
+ 136              	.LVL8:
+  79:Code\UserApp\Voice/voice.c **** 	BeepPlay_Delay(3);
+ 137              		.loc 1 79 0
+ 138 001c 0320     		movs	r0, #3
+ 139 001e FFF7FEFF 		bl	BeepPlay_Delay
+ 140              	.LVL9:
+  80:Code\UserApp\Voice/voice.c **** 	TIMER_Stop();
+ 141              		.loc 1 80 0
+ 142 0022 FFF7FEFF 		bl	TIMER_Stop
+ 143              	.LVL10:
+  81:Code\UserApp\Voice/voice.c **** 	
+  82:Code\UserApp\Voice/voice.c ****     TIMER_WriteCounter(0);
+ 144              		.loc 1 82 0
+ 145 0026 0020     		movs	r0, #0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 5
+
+
+ 146 0028 FFF7FEFF 		bl	TIMER_WriteCounter
+ 147              	.LVL11:
+  83:Code\UserApp\Voice/voice.c ****     TIMER_WritePeriod(Sound - 1);
+ 148              		.loc 1 83 0
+ 149 002c 601E     		subs	r0, r4, #1
+ 150 002e FFF7FEFF 		bl	TIMER_WritePeriod
+ 151              	.LVL12:
+  84:Code\UserApp\Voice/voice.c ****     TIMER_WriteCompare(Sound/2 -1);
+ 152              		.loc 1 84 0
+ 153 0032 6008     		lsrs	r0, r4, #1
+ 154 0034 0138     		subs	r0, r0, #1
+ 155 0036 FFF7FEFF 		bl	TIMER_WriteCompare
+ 156              	.LVL13:
+  85:Code\UserApp\Voice/voice.c ****     TIMER_Start();
+ 157              		.loc 1 85 0
+ 158 003a FFF7FEFF 		bl	TIMER_Start
+ 159              	.LVL14:
+  86:Code\UserApp\Voice/voice.c ****     BeepPlay_Delay(delay_1ms);
+ 160              		.loc 1 86 0
+ 161 003e 2800     		movs	r0, r5
+ 162 0040 FFF7FEFF 		bl	BeepPlay_Delay
+ 163              	.LVL15:
+  87:Code\UserApp\Voice/voice.c ****     TIMER_Stop();
+  88:Code\UserApp\Voice/voice.c **** }
+ 164              		.loc 1 88 0
+ 165              		@ sp needed
+  87:Code\UserApp\Voice/voice.c ****     TIMER_Stop();
+ 166              		.loc 1 87 0
+ 167 0044 FFF7FEFF 		bl	TIMER_Stop
+ 168              	.LVL16:
+ 169              		.loc 1 88 0
+ 170 0048 70BD     		pop	{r4, r5, r6, pc}
+ 171              		.cfi_endproc
+ 172              	.LFE65:
+ 173              		.size	play_single, .-play_single
+ 174              		.section	.text.System_ShortDI_Play,"ax",%progbits
+ 175              		.align	1
+ 176              		.global	System_ShortDI_Play
+ 177              		.code	16
+ 178              		.thumb_func
+ 179              		.type	System_ShortDI_Play, %function
+ 180              	System_ShortDI_Play:
+ 181              	.LFB66:
+  89:Code\UserApp\Voice/voice.c **** 
+  90:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+  91:Code\UserApp\Voice/voice.c **** // Function name	: System_ShortDI_Play
+  92:Code\UserApp\Voice/voice.c **** // Description		: 短音
+  93:Code\UserApp\Voice/voice.c **** // Parameter		: none
+  94:Code\UserApp\Voice/voice.c **** // Return			: none
+  95:Code\UserApp\Voice/voice.c **** //-------------------------------------------------------------------------------------------------
+  96:Code\UserApp\Voice/voice.c **** // 说明				: 
+  97:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+  98:Code\UserApp\Voice/voice.c **** void System_ShortDI_Play(void)
+  99:Code\UserApp\Voice/voice.c **** {
+ 182              		.loc 1 99 0
+ 183              		.cfi_startproc
+ 184              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 6
+
+
+ 185              		@ frame_needed = 0, uses_anonymous_args = 0
+ 100:Code\UserApp\Voice/voice.c **** 	play_single(Sound_DI,200);
+ 186              		.loc 1 100 0
+ 187 0000 4E20     		movs	r0, #78
+  99:Code\UserApp\Voice/voice.c **** 	play_single(Sound_DI,200);
+ 188              		.loc 1 99 0
+ 189 0002 10B5     		push	{r4, lr}
+ 190              		.cfi_def_cfa_offset 8
+ 191              		.cfi_offset 4, -8
+ 192              		.cfi_offset 14, -4
+ 193              		.loc 1 100 0
+ 194 0004 C821     		movs	r1, #200
+ 195 0006 FF30     		adds	r0, r0, #255
+ 196 0008 FFF7FEFF 		bl	play_single
+ 197              	.LVL17:
+ 101:Code\UserApp\Voice/voice.c **** }
+ 198              		.loc 1 101 0
+ 199              		@ sp needed
+ 200 000c 10BD     		pop	{r4, pc}
+ 201              		.cfi_endproc
+ 202              	.LFE66:
+ 203              		.size	System_ShortDI_Play, .-System_ShortDI_Play
+ 204              		.section	.text.Defendalarm_Play,"ax",%progbits
+ 205              		.align	1
+ 206              		.global	Defendalarm_Play
+ 207              		.code	16
+ 208              		.thumb_func
+ 209              		.type	Defendalarm_Play, %function
+ 210              	Defendalarm_Play:
+ 211              	.LFB67:
+ 102:Code\UserApp\Voice/voice.c **** 
+ 103:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 104:Code\UserApp\Voice/voice.c **** // Function name	: System_ShortDI_Play
+ 105:Code\UserApp\Voice/voice.c **** // Description		: 短音
+ 106:Code\UserApp\Voice/voice.c **** // Parameter		: none
+ 107:Code\UserApp\Voice/voice.c **** // Return			: none
+ 108:Code\UserApp\Voice/voice.c **** //-------------------------------------------------------------------------------------------------
+ 109:Code\UserApp\Voice/voice.c **** // 说明				: 
+ 110:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 111:Code\UserApp\Voice/voice.c **** void Defendalarm_Play(void)
+ 112:Code\UserApp\Voice/voice.c **** {
+ 212              		.loc 1 112 0
+ 213              		.cfi_startproc
+ 214              		@ args = 0, pretend = 0, frame = 0
+ 215              		@ frame_needed = 0, uses_anonymous_args = 0
+ 216 0000 10B5     		push	{r4, lr}
+ 217              		.cfi_def_cfa_offset 8
+ 218              		.cfi_offset 4, -8
+ 219              		.cfi_offset 14, -4
+ 113:Code\UserApp\Voice/voice.c **** 	play_single(Sound_DI,200);
+ 220              		.loc 1 113 0
+ 221 0002 4E24     		movs	r4, #78
+ 222 0004 FF34     		adds	r4, r4, #255
+ 223 0006 C821     		movs	r1, #200
+ 224 0008 2000     		movs	r0, r4
+ 225 000a FFF7FEFF 		bl	play_single
+ 226              	.LVL18:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 7
+
+
+ 114:Code\UserApp\Voice/voice.c **** 	BeepPlay_Delay(40);
+ 227              		.loc 1 114 0
+ 228 000e 2820     		movs	r0, #40
+ 229 0010 FFF7FEFF 		bl	BeepPlay_Delay
+ 230              	.LVL19:
+ 115:Code\UserApp\Voice/voice.c **** 	play_single(Sound_DI,200);
+ 231              		.loc 1 115 0
+ 232 0014 C821     		movs	r1, #200
+ 233 0016 2000     		movs	r0, r4
+ 234 0018 FFF7FEFF 		bl	play_single
+ 235              	.LVL20:
+ 116:Code\UserApp\Voice/voice.c **** 	BeepPlay_Delay(40);
+ 236              		.loc 1 116 0
+ 237 001c 2820     		movs	r0, #40
+ 238 001e FFF7FEFF 		bl	BeepPlay_Delay
+ 239              	.LVL21:
+ 117:Code\UserApp\Voice/voice.c **** 	play_single(Sound_DI,200);
+ 240              		.loc 1 117 0
+ 241 0022 C821     		movs	r1, #200
+ 242 0024 2000     		movs	r0, r4
+ 243 0026 FFF7FEFF 		bl	play_single
+ 244              	.LVL22:
+ 118:Code\UserApp\Voice/voice.c **** }
+ 245              		.loc 1 118 0
+ 246              		@ sp needed
+ 247 002a 10BD     		pop	{r4, pc}
+ 248              		.cfi_endproc
+ 249              	.LFE67:
+ 250              		.size	Defendalarm_Play, .-Defendalarm_Play
+ 251              		.section	.text.System_LongDI_Play,"ax",%progbits
+ 252              		.align	1
+ 253              		.global	System_LongDI_Play
+ 254              		.code	16
+ 255              		.thumb_func
+ 256              		.type	System_LongDI_Play, %function
+ 257              	System_LongDI_Play:
+ 258              	.LFB68:
+ 119:Code\UserApp\Voice/voice.c **** 
+ 120:Code\UserApp\Voice/voice.c **** 
+ 121:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 122:Code\UserApp\Voice/voice.c **** // Function name	: System_LongDI_Play
+ 123:Code\UserApp\Voice/voice.c **** // Description		: 长音
+ 124:Code\UserApp\Voice/voice.c **** // Parameter		: none
+ 125:Code\UserApp\Voice/voice.c **** // Return			: none
+ 126:Code\UserApp\Voice/voice.c **** //-------------------------------------------------------------------------------------------------
+ 127:Code\UserApp\Voice/voice.c **** // 说明				: 
+ 128:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 129:Code\UserApp\Voice/voice.c **** void System_LongDI_Play(void)
+ 130:Code\UserApp\Voice/voice.c **** {
+ 259              		.loc 1 130 0
+ 260              		.cfi_startproc
+ 261              		@ args = 0, pretend = 0, frame = 0
+ 262              		@ frame_needed = 0, uses_anonymous_args = 0
+ 131:Code\UserApp\Voice/voice.c **** 	play_single(Sound_DI,500);
+ 263              		.loc 1 131 0
+ 264 0000 FA21     		movs	r1, #250
+ 265 0002 4E20     		movs	r0, #78
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 8
+
+
+ 130:Code\UserApp\Voice/voice.c **** 	play_single(Sound_DI,500);
+ 266              		.loc 1 130 0
+ 267 0004 10B5     		push	{r4, lr}
+ 268              		.cfi_def_cfa_offset 8
+ 269              		.cfi_offset 4, -8
+ 270              		.cfi_offset 14, -4
+ 271              		.loc 1 131 0
+ 272 0006 4900     		lsls	r1, r1, #1
+ 273 0008 FF30     		adds	r0, r0, #255
+ 274 000a FFF7FEFF 		bl	play_single
+ 275              	.LVL23:
+ 132:Code\UserApp\Voice/voice.c **** }
+ 276              		.loc 1 132 0
+ 277              		@ sp needed
+ 278 000e 10BD     		pop	{r4, pc}
+ 279              		.cfi_endproc
+ 280              	.LFE68:
+ 281              		.size	System_LongDI_Play, .-System_LongDI_Play
+ 282              		.section	.text.System_PowerOn_Play,"ax",%progbits
+ 283              		.align	1
+ 284              		.global	System_PowerOn_Play
+ 285              		.code	16
+ 286              		.thumb_func
+ 287              		.type	System_PowerOn_Play, %function
+ 288              	System_PowerOn_Play:
+ 289              	.LFB69:
+ 133:Code\UserApp\Voice/voice.c **** 
+ 134:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 135:Code\UserApp\Voice/voice.c **** // Function name	: System_PowerOn_Play
+ 136:Code\UserApp\Voice/voice.c **** // Description		: 上电播报音3-1
+ 137:Code\UserApp\Voice/voice.c **** // Parameter		: none
+ 138:Code\UserApp\Voice/voice.c **** // Return			: none
+ 139:Code\UserApp\Voice/voice.c **** //-------------------------------------------------------------------------------------------------
+ 140:Code\UserApp\Voice/voice.c **** // 说明				: 
+ 141:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 142:Code\UserApp\Voice/voice.c **** void System_PowerOn_Play(void)
+ 143:Code\UserApp\Voice/voice.c **** {
+ 290              		.loc 1 143 0
+ 291              		.cfi_startproc
+ 292              		@ args = 0, pretend = 0, frame = 0
+ 293              		@ frame_needed = 0, uses_anonymous_args = 0
+ 294 0000 70B5     		push	{r4, r5, r6, lr}
+ 295              		.cfi_def_cfa_offset 16
+ 296              		.cfi_offset 4, -16
+ 297              		.cfi_offset 5, -12
+ 298              		.cfi_offset 6, -8
+ 299              		.cfi_offset 14, -4
+ 144:Code\UserApp\Voice/voice.c ****     play_single(Sound_DO,200);
+ 300              		.loc 1 144 0
+ 301 0002 EF24     		movs	r4, #239
+ 302 0004 A400     		lsls	r4, r4, #2
+ 145:Code\UserApp\Voice/voice.c **** 	BeepPlay_Delay(50);
+ 146:Code\UserApp\Voice/voice.c **** 	play_single(Sound_RE,200);
+ 303              		.loc 1 146 0
+ 304 0006 154D     		ldr	r5, .L20
+ 144:Code\UserApp\Voice/voice.c ****     play_single(Sound_DO,200);
+ 305              		.loc 1 144 0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 9
+
+
+ 306 0008 C821     		movs	r1, #200
+ 307 000a 2000     		movs	r0, r4
+ 308 000c FFF7FEFF 		bl	play_single
+ 309              	.LVL24:
+ 145:Code\UserApp\Voice/voice.c **** 	BeepPlay_Delay(50);
+ 310              		.loc 1 145 0
+ 311 0010 3220     		movs	r0, #50
+ 312 0012 FFF7FEFF 		bl	BeepPlay_Delay
+ 313              	.LVL25:
+ 147:Code\UserApp\Voice/voice.c **** 	BeepPlay_Delay(50);
+ 148:Code\UserApp\Voice/voice.c ****     play_single(Sound_MI,200);
+ 314              		.loc 1 148 0
+ 315 0016 124E     		ldr	r6, .L20+4
+ 146:Code\UserApp\Voice/voice.c **** 	BeepPlay_Delay(50);
+ 316              		.loc 1 146 0
+ 317 0018 2800     		movs	r0, r5
+ 318 001a C821     		movs	r1, #200
+ 319 001c FFF7FEFF 		bl	play_single
+ 320              	.LVL26:
+ 147:Code\UserApp\Voice/voice.c **** 	BeepPlay_Delay(50);
+ 321              		.loc 1 147 0
+ 322 0020 3220     		movs	r0, #50
+ 323 0022 FFF7FEFF 		bl	BeepPlay_Delay
+ 324              	.LVL27:
+ 325              		.loc 1 148 0
+ 326 0026 3000     		movs	r0, r6
+ 327 0028 C821     		movs	r1, #200
+ 328 002a FFF7FEFF 		bl	play_single
+ 329              	.LVL28:
+ 149:Code\UserApp\Voice/voice.c **** 	BeepPlay_Delay(50);
+ 330              		.loc 1 149 0
+ 331 002e 3220     		movs	r0, #50
+ 332 0030 FFF7FEFF 		bl	BeepPlay_Delay
+ 333              	.LVL29:
+ 150:Code\UserApp\Voice/voice.c **** 	play_single(Sound_MI,200);
+ 334              		.loc 1 150 0
+ 335 0034 3000     		movs	r0, r6
+ 336 0036 C821     		movs	r1, #200
+ 337 0038 FFF7FEFF 		bl	play_single
+ 338              	.LVL30:
+ 151:Code\UserApp\Voice/voice.c **** 	BeepPlay_Delay(50);
+ 339              		.loc 1 151 0
+ 340 003c 3220     		movs	r0, #50
+ 341 003e FFF7FEFF 		bl	BeepPlay_Delay
+ 342              	.LVL31:
+ 152:Code\UserApp\Voice/voice.c **** 	play_single(Sound_RE,200);
+ 343              		.loc 1 152 0
+ 344 0042 2800     		movs	r0, r5
+ 345 0044 C821     		movs	r1, #200
+ 346 0046 FFF7FEFF 		bl	play_single
+ 347              	.LVL32:
+ 153:Code\UserApp\Voice/voice.c **** 	BeepPlay_Delay(50);
+ 348              		.loc 1 153 0
+ 349 004a 3220     		movs	r0, #50
+ 350 004c FFF7FEFF 		bl	BeepPlay_Delay
+ 351              	.LVL33:
+ 154:Code\UserApp\Voice/voice.c ****     play_single(Sound_DO,200);
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 10
+
+
+ 352              		.loc 1 154 0
+ 353 0050 C821     		movs	r1, #200
+ 354 0052 2000     		movs	r0, r4
+ 355 0054 FFF7FEFF 		bl	play_single
+ 356              	.LVL34:
+ 155:Code\UserApp\Voice/voice.c **** }
+ 357              		.loc 1 155 0
+ 358              		@ sp needed
+ 359 0058 70BD     		pop	{r4, r5, r6, pc}
+ 360              	.L21:
+ 361 005a C046     		.align	2
+ 362              	.L20:
+ 363 005c 52030000 		.word	850
+ 364 0060 F6020000 		.word	758
+ 365              		.cfi_endproc
+ 366              	.LFE69:
+ 367              		.size	System_PowerOn_Play, .-System_PowerOn_Play
+ 368              		.section	.text.System_PowerOn_Play_TestSer,"ax",%progbits
+ 369              		.align	1
+ 370              		.global	System_PowerOn_Play_TestSer
+ 371              		.code	16
+ 372              		.thumb_func
+ 373              		.type	System_PowerOn_Play_TestSer, %function
+ 374              	System_PowerOn_Play_TestSer:
+ 375              	.LFB70:
+ 156:Code\UserApp\Voice/voice.c **** 
+ 157:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 158:Code\UserApp\Voice/voice.c **** // Function name	: System_PowerOn_Play
+ 159:Code\UserApp\Voice/voice.c **** // Description		: 上电播报音3-1
+ 160:Code\UserApp\Voice/voice.c **** // Parameter		: none
+ 161:Code\UserApp\Voice/voice.c **** // Return			: none
+ 162:Code\UserApp\Voice/voice.c **** //-------------------------------------------------------------------------------------------------
+ 163:Code\UserApp\Voice/voice.c **** // 说明				: 
+ 164:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 165:Code\UserApp\Voice/voice.c **** void System_PowerOn_Play_TestSer(void)
+ 166:Code\UserApp\Voice/voice.c **** {
+ 376              		.loc 1 166 0
+ 377              		.cfi_startproc
+ 378              		@ args = 0, pretend = 0, frame = 0
+ 379              		@ frame_needed = 0, uses_anonymous_args = 0
+ 380 0000 10B5     		push	{r4, lr}
+ 381              		.cfi_def_cfa_offset 8
+ 382              		.cfi_offset 4, -8
+ 383              		.cfi_offset 14, -4
+ 167:Code\UserApp\Voice/voice.c ****     play_single(Sound_MI,200);
+ 384              		.loc 1 167 0
+ 385 0002 0B4C     		ldr	r4, .L23
+ 386 0004 C821     		movs	r1, #200
+ 387 0006 2000     		movs	r0, r4
+ 388 0008 FFF7FEFF 		bl	play_single
+ 389              	.LVL35:
+ 168:Code\UserApp\Voice/voice.c **** 	BeepPlay_Delay(50);
+ 390              		.loc 1 168 0
+ 391 000c 3220     		movs	r0, #50
+ 392 000e FFF7FEFF 		bl	BeepPlay_Delay
+ 393              	.LVL36:
+ 169:Code\UserApp\Voice/voice.c **** 	#if 1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 11
+
+
+ 170:Code\UserApp\Voice/voice.c **** 	play_single(Sound_MI,200);
+ 394              		.loc 1 170 0
+ 395 0012 C821     		movs	r1, #200
+ 396 0014 2000     		movs	r0, r4
+ 397 0016 FFF7FEFF 		bl	play_single
+ 398              	.LVL37:
+ 171:Code\UserApp\Voice/voice.c **** 	BeepPlay_Delay(50);
+ 399              		.loc 1 171 0
+ 400 001a 3220     		movs	r0, #50
+ 401 001c FFF7FEFF 		bl	BeepPlay_Delay
+ 402              	.LVL38:
+ 172:Code\UserApp\Voice/voice.c ****     play_single(Sound_MI,200);
+ 403              		.loc 1 172 0
+ 404 0020 C821     		movs	r1, #200
+ 405 0022 2000     		movs	r0, r4
+ 406 0024 FFF7FEFF 		bl	play_single
+ 407              	.LVL39:
+ 173:Code\UserApp\Voice/voice.c **** 	BeepPlay_Delay(50);
+ 408              		.loc 1 173 0
+ 409 0028 3220     		movs	r0, #50
+ 410 002a FFF7FEFF 		bl	BeepPlay_Delay
+ 411              	.LVL40:
+ 174:Code\UserApp\Voice/voice.c **** 	#endif
+ 175:Code\UserApp\Voice/voice.c **** }
+ 412              		.loc 1 175 0
+ 413              		@ sp needed
+ 414 002e 10BD     		pop	{r4, pc}
+ 415              	.L24:
+ 416              		.align	2
+ 417              	.L23:
+ 418 0030 F6020000 		.word	758
+ 419              		.cfi_endproc
+ 420              	.LFE70:
+ 421              		.size	System_PowerOn_Play_TestSer, .-System_PowerOn_Play_TestSer
+ 422              		.section	.text.Comm_Succes_play,"ax",%progbits
+ 423              		.align	1
+ 424              		.global	Comm_Succes_play
+ 425              		.code	16
+ 426              		.thumb_func
+ 427              		.type	Comm_Succes_play, %function
+ 428              	Comm_Succes_play:
+ 429              	.LFB71:
+ 176:Code\UserApp\Voice/voice.c **** 
+ 177:Code\UserApp\Voice/voice.c **** 
+ 178:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 179:Code\UserApp\Voice/voice.c **** // Function name	: Comm_Succes_play
+ 180:Code\UserApp\Voice/voice.c **** // Description		: 常用成功音
+ 181:Code\UserApp\Voice/voice.c **** // Parameter		: none
+ 182:Code\UserApp\Voice/voice.c **** // Return			: none
+ 183:Code\UserApp\Voice/voice.c **** //-------------------------------------------------------------------------------------------------
+ 184:Code\UserApp\Voice/voice.c **** // 说明				: 用于录取指纹成功
+ 185:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 186:Code\UserApp\Voice/voice.c **** void Comm_Succes_play(void)
+ 187:Code\UserApp\Voice/voice.c **** {
+ 430              		.loc 1 187 0
+ 431              		.cfi_startproc
+ 432              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 12
+
+
+ 433              		@ frame_needed = 0, uses_anonymous_args = 0
+ 188:Code\UserApp\Voice/voice.c **** 	play_single(Sound_DI,600);
+ 434              		.loc 1 188 0
+ 435 0000 9621     		movs	r1, #150
+ 436 0002 4E20     		movs	r0, #78
+ 187:Code\UserApp\Voice/voice.c **** 	play_single(Sound_DI,600);
+ 437              		.loc 1 187 0
+ 438 0004 10B5     		push	{r4, lr}
+ 439              		.cfi_def_cfa_offset 8
+ 440              		.cfi_offset 4, -8
+ 441              		.cfi_offset 14, -4
+ 442              		.loc 1 188 0
+ 443 0006 8900     		lsls	r1, r1, #2
+ 444 0008 FF30     		adds	r0, r0, #255
+ 445 000a FFF7FEFF 		bl	play_single
+ 446              	.LVL41:
+ 189:Code\UserApp\Voice/voice.c **** }
+ 447              		.loc 1 189 0
+ 448              		@ sp needed
+ 449 000e 10BD     		pop	{r4, pc}
+ 450              		.cfi_endproc
+ 451              	.LFE71:
+ 452              		.size	Comm_Succes_play, .-Comm_Succes_play
+ 453              		.section	.text.Timeout_play,"ax",%progbits
+ 454              		.align	1
+ 455              		.global	Timeout_play
+ 456              		.code	16
+ 457              		.thumb_func
+ 458              		.type	Timeout_play, %function
+ 459              	Timeout_play:
+ 460              	.LFB72:
+ 190:Code\UserApp\Voice/voice.c **** 
+ 191:Code\UserApp\Voice/voice.c **** 
+ 192:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 193:Code\UserApp\Voice/voice.c **** // Function name	: Timeout_play
+ 194:Code\UserApp\Voice/voice.c **** // Description		: 常用超时音
+ 195:Code\UserApp\Voice/voice.c **** // Parameter		: none
+ 196:Code\UserApp\Voice/voice.c **** // Return			: none
+ 197:Code\UserApp\Voice/voice.c **** //-------------------------------------------------------------------------------------------------
+ 198:Code\UserApp\Voice/voice.c **** // 说明				: 用于录入卡超时
+ 199:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 200:Code\UserApp\Voice/voice.c **** void Timeout_play(void)
+ 201:Code\UserApp\Voice/voice.c **** {
+ 461              		.loc 1 201 0
+ 462              		.cfi_startproc
+ 463              		@ args = 0, pretend = 0, frame = 0
+ 464              		@ frame_needed = 0, uses_anonymous_args = 0
+ 465 0000 10B5     		push	{r4, lr}
+ 466              		.cfi_def_cfa_offset 8
+ 467              		.cfi_offset 4, -8
+ 468              		.cfi_offset 14, -4
+ 202:Code\UserApp\Voice/voice.c **** 	play_single(Sound_DI,50);
+ 469              		.loc 1 202 0
+ 470 0002 4E24     		movs	r4, #78
+ 471 0004 FF34     		adds	r4, r4, #255
+ 472 0006 3221     		movs	r1, #50
+ 473 0008 2000     		movs	r0, r4
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 13
+
+
+ 474 000a FFF7FEFF 		bl	play_single
+ 475              	.LVL42:
+ 203:Code\UserApp\Voice/voice.c **** 	BeepPlay_Delay(50);
+ 476              		.loc 1 203 0
+ 477 000e 3220     		movs	r0, #50
+ 478 0010 FFF7FEFF 		bl	BeepPlay_Delay
+ 479              	.LVL43:
+ 204:Code\UserApp\Voice/voice.c ****     play_single(Sound_DI,50);						// 按要求 50-50-50ms
+ 480              		.loc 1 204 0
+ 481 0014 3221     		movs	r1, #50
+ 482 0016 2000     		movs	r0, r4
+ 483 0018 FFF7FEFF 		bl	play_single
+ 484              	.LVL44:
+ 205:Code\UserApp\Voice/voice.c **** 	BeepPlay_Delay(50);
+ 485              		.loc 1 205 0
+ 486 001c 3220     		movs	r0, #50
+ 487 001e FFF7FEFF 		bl	BeepPlay_Delay
+ 488              	.LVL45:
+ 206:Code\UserApp\Voice/voice.c ****     play_single(Sound_DI,50);
+ 489              		.loc 1 206 0
+ 490 0022 3221     		movs	r1, #50
+ 491 0024 2000     		movs	r0, r4
+ 492 0026 FFF7FEFF 		bl	play_single
+ 493              	.LVL46:
+ 207:Code\UserApp\Voice/voice.c **** 	BeepPlay_Delay(50);
+ 494              		.loc 1 207 0
+ 495 002a 3220     		movs	r0, #50
+ 496 002c FFF7FEFF 		bl	BeepPlay_Delay
+ 497              	.LVL47:
+ 208:Code\UserApp\Voice/voice.c ****     play_single(Sound_DI,50);
+ 498              		.loc 1 208 0
+ 499 0030 3221     		movs	r1, #50
+ 500 0032 2000     		movs	r0, r4
+ 501 0034 FFF7FEFF 		bl	play_single
+ 502              	.LVL48:
+ 209:Code\UserApp\Voice/voice.c **** }
+ 503              		.loc 1 209 0
+ 504              		@ sp needed
+ 505 0038 10BD     		pop	{r4, pc}
+ 506              		.cfi_endproc
+ 507              	.LFE72:
+ 508              		.size	Timeout_play, .-Timeout_play
+ 509              		.section	.text.Comm_Failure_play,"ax",%progbits
+ 510              		.align	1
+ 511              		.global	Comm_Failure_play
+ 512              		.code	16
+ 513              		.thumb_func
+ 514              		.type	Comm_Failure_play, %function
+ 515              	Comm_Failure_play:
+ 516              	.LFB73:
+ 210:Code\UserApp\Voice/voice.c **** 
+ 211:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 212:Code\UserApp\Voice/voice.c **** // Function name	: Comm_Failure_play
+ 213:Code\UserApp\Voice/voice.c **** // Description		: 常用失败音
+ 214:Code\UserApp\Voice/voice.c **** // Parameter		: none
+ 215:Code\UserApp\Voice/voice.c **** // Return			: none
+ 216:Code\UserApp\Voice/voice.c **** //-------------------------------------------------------------------------------------------------
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 14
+
+
+ 217:Code\UserApp\Voice/voice.c **** // 说明				: 用于录取指纹成功
+ 218:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 219:Code\UserApp\Voice/voice.c **** void Comm_Failure_play(void)
+ 220:Code\UserApp\Voice/voice.c **** {
+ 517              		.loc 1 220 0
+ 518              		.cfi_startproc
+ 519              		@ args = 0, pretend = 0, frame = 0
+ 520              		@ frame_needed = 0, uses_anonymous_args = 0
+ 521              		@ link register save eliminated.
+ 221:Code\UserApp\Voice/voice.c **** 	#if 0
+ 222:Code\UserApp\Voice/voice.c ****     play_single(Sound_DI,300);
+ 223:Code\UserApp\Voice/voice.c **** 	BeepPlay_Delay(200);
+ 224:Code\UserApp\Voice/voice.c ****     play_single(Sound_DI,300);
+ 225:Code\UserApp\Voice/voice.c **** 	BeepPlay_Delay(200);
+ 226:Code\UserApp\Voice/voice.c ****     play_single(Sound_DI,300);						// 非法ID 不出声
+ 227:Code\UserApp\Voice/voice.c **** 	#endif
+ 228:Code\UserApp\Voice/voice.c **** }
+ 522              		.loc 1 228 0
+ 523              		@ sp needed
+ 524 0000 7047     		bx	lr
+ 525              		.cfi_endproc
+ 526              	.LFE73:
+ 527              		.size	Comm_Failure_play, .-Comm_Failure_play
+ 528              		.section	.text.System_PutCard_play,"ax",%progbits
+ 529              		.align	1
+ 530              		.global	System_PutCard_play
+ 531              		.code	16
+ 532              		.thumb_func
+ 533              		.type	System_PutCard_play, %function
+ 534              	System_PutCard_play:
+ 535              	.LFB75:
+ 229:Code\UserApp\Voice/voice.c **** 
+ 230:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 231:Code\UserApp\Voice/voice.c **** // Function name	: OpenDoor
+ 232:Code\UserApp\Voice/voice.c **** // Description		: 开门音
+ 233:Code\UserApp\Voice/voice.c **** // Parameter		: none
+ 234:Code\UserApp\Voice/voice.c **** // Return			: none
+ 235:Code\UserApp\Voice/voice.c **** //-------------------------------------------------------------------------------------------------
+ 236:Code\UserApp\Voice/voice.c **** // 说明				: 
+ 237:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 238:Code\UserApp\Voice/voice.c **** void OpenDoor(void)
+ 239:Code\UserApp\Voice/voice.c **** {
+ 240:Code\UserApp\Voice/voice.c **** 	play_single(Sound_DI,50);
+ 241:Code\UserApp\Voice/voice.c **** 	BeepPlay_Delay(50);
+ 242:Code\UserApp\Voice/voice.c ****     play_single(Sound_DI,50);						// 按要求 50-50-50ms
+ 243:Code\UserApp\Voice/voice.c **** 	
+ 244:Code\UserApp\Voice/voice.c **** 	#if 0
+ 245:Code\UserApp\Voice/voice.c **** 	play_single(Sound_DO,250);
+ 246:Code\UserApp\Voice/voice.c **** 	play_single(Sound_RE,250);
+ 247:Code\UserApp\Voice/voice.c ****     play_single(Sound_MI,250);
+ 248:Code\UserApp\Voice/voice.c **** 	#endif
+ 249:Code\UserApp\Voice/voice.c **** }
+ 250:Code\UserApp\Voice/voice.c **** 
+ 251:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 252:Code\UserApp\Voice/voice.c **** // Function name	: System_PutCard_play
+ 253:Code\UserApp\Voice/voice.c **** // Description		: 请刷身份证
+ 254:Code\UserApp\Voice/voice.c **** // Parameter		: none
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 15
+
+
+ 255:Code\UserApp\Voice/voice.c **** // Return			: none
+ 256:Code\UserApp\Voice/voice.c **** //-------------------------------------------------------------------------------------------------
+ 257:Code\UserApp\Voice/voice.c **** // 说明				: 
+ 258:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 259:Code\UserApp\Voice/voice.c **** void System_PutCard_play(void)
+ 260:Code\UserApp\Voice/voice.c **** {
+ 536              		.loc 1 260 0
+ 537              		.cfi_startproc
+ 538              		@ args = 0, pretend = 0, frame = 0
+ 539              		@ frame_needed = 0, uses_anonymous_args = 0
+ 261:Code\UserApp\Voice/voice.c **** 	play_single(Sound_DI,150);					// 按要求单音 150ms
+ 540              		.loc 1 261 0
+ 541 0000 4E20     		movs	r0, #78
+ 260:Code\UserApp\Voice/voice.c **** 	play_single(Sound_DI,150);					// 按要求单音 150ms
+ 542              		.loc 1 260 0
+ 543 0002 10B5     		push	{r4, lr}
+ 544              		.cfi_def_cfa_offset 8
+ 545              		.cfi_offset 4, -8
+ 546              		.cfi_offset 14, -4
+ 547              		.loc 1 261 0
+ 548 0004 9621     		movs	r1, #150
+ 549 0006 FF30     		adds	r0, r0, #255
+ 550 0008 FFF7FEFF 		bl	play_single
+ 551              	.LVL49:
+ 262:Code\UserApp\Voice/voice.c **** }
+ 552              		.loc 1 262 0
+ 553              		@ sp needed
+ 554 000c 10BD     		pop	{r4, pc}
+ 555              		.cfi_endproc
+ 556              	.LFE75:
+ 557              		.size	System_PutCard_play, .-System_PutCard_play
+ 558              		.section	.text.System_ReadCard_play,"ax",%progbits
+ 559              		.align	1
+ 560              		.global	System_ReadCard_play
+ 561              		.code	16
+ 562              		.thumb_func
+ 563              		.type	System_ReadCard_play, %function
+ 564              	System_ReadCard_play:
+ 565              	.LFB76:
+ 263:Code\UserApp\Voice/voice.c **** 
+ 264:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 265:Code\UserApp\Voice/voice.c **** // Function name	: System_ReadCard_play
+ 266:Code\UserApp\Voice/voice.c **** // Description		: 成功读取身份证
+ 267:Code\UserApp\Voice/voice.c **** // Parameter		: none
+ 268:Code\UserApp\Voice/voice.c **** // Return			: none
+ 269:Code\UserApp\Voice/voice.c **** //-------------------------------------------------------------------------------------------------
+ 270:Code\UserApp\Voice/voice.c **** // 说明				: 
+ 271:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 272:Code\UserApp\Voice/voice.c **** void System_ReadCard_play(void)
+ 273:Code\UserApp\Voice/voice.c **** {
+ 566              		.loc 1 273 0
+ 567              		.cfi_startproc
+ 568              		@ args = 0, pretend = 0, frame = 0
+ 569              		@ frame_needed = 0, uses_anonymous_args = 0
+ 570 0000 10B5     		push	{r4, lr}
+ 571              		.cfi_def_cfa_offset 8
+ 572              		.cfi_offset 4, -8
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 16
+
+
+ 573              		.cfi_offset 14, -4
+ 274:Code\UserApp\Voice/voice.c **** 	play_single(Sound_DI,50);
+ 574              		.loc 1 274 0
+ 575 0002 4E24     		movs	r4, #78
+ 576 0004 FF34     		adds	r4, r4, #255
+ 577 0006 3221     		movs	r1, #50
+ 578 0008 2000     		movs	r0, r4
+ 579 000a FFF7FEFF 		bl	play_single
+ 580              	.LVL50:
+ 275:Code\UserApp\Voice/voice.c **** 	BeepPlay_Delay(50);
+ 581              		.loc 1 275 0
+ 582 000e 3220     		movs	r0, #50
+ 583 0010 FFF7FEFF 		bl	BeepPlay_Delay
+ 584              	.LVL51:
+ 276:Code\UserApp\Voice/voice.c ****     play_single(Sound_DI,50);						// 按要求 50-50-50ms
+ 585              		.loc 1 276 0
+ 586 0014 3221     		movs	r1, #50
+ 587 0016 2000     		movs	r0, r4
+ 588 0018 FFF7FEFF 		bl	play_single
+ 589              	.LVL52:
+ 277:Code\UserApp\Voice/voice.c **** }
+ 590              		.loc 1 277 0
+ 591              		@ sp needed
+ 592 001c 10BD     		pop	{r4, pc}
+ 593              		.cfi_endproc
+ 594              	.LFE76:
+ 595              		.size	System_ReadCard_play, .-System_ReadCard_play
+ 596              		.section	.text.OpenDoor,"ax",%progbits
+ 597              		.align	1
+ 598              		.global	OpenDoor
+ 599              		.code	16
+ 600              		.thumb_func
+ 601              		.type	OpenDoor, %function
+ 602              	OpenDoor:
+ 603              	.LFB81:
+ 604              		.cfi_startproc
+ 605              		@ args = 0, pretend = 0, frame = 0
+ 606              		@ frame_needed = 0, uses_anonymous_args = 0
+ 607 0000 10B5     		push	{r4, lr}
+ 608              		.cfi_def_cfa_offset 8
+ 609              		.cfi_offset 4, -8
+ 610              		.cfi_offset 14, -4
+ 611 0002 FFF7FEFF 		bl	System_ReadCard_play
+ 612              		@ sp needed
+ 613 0006 10BD     		pop	{r4, pc}
+ 614              		.cfi_endproc
+ 615              	.LFE81:
+ 616              		.size	OpenDoor, .-OpenDoor
+ 617              		.section	.text.Beep_Play,"ax",%progbits
+ 618              		.align	1
+ 619              		.global	Beep_Play
+ 620              		.code	16
+ 621              		.thumb_func
+ 622              		.type	Beep_Play, %function
+ 623              	Beep_Play:
+ 624              	.LFB77:
+ 278:Code\UserApp\Voice/voice.c **** 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 17
+
+
+ 279:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 280:Code\UserApp\Voice/voice.c **** // Function name	: Beep_Play
+ 281:Code\UserApp\Voice/voice.c **** // Description		: 所有蜂鸣器播放函数
+ 282:Code\UserApp\Voice/voice.c **** // Parameter		: none
+ 283:Code\UserApp\Voice/voice.c **** // Return			: none
+ 284:Code\UserApp\Voice/voice.c **** //-------------------------------------------------------------------------------------------------
+ 285:Code\UserApp\Voice/voice.c **** // 说明				: --用于替换语音播报函数 VoicePlay_WithJudge和VoicePlay
+ 286:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 287:Code\UserApp\Voice/voice.c **** void Beep_Play(uint8_t sound_define)
+ 288:Code\UserApp\Voice/voice.c **** {
+ 625              		.loc 1 288 0
+ 626              		.cfi_startproc
+ 627              		@ args = 0, pretend = 0, frame = 0
+ 628              		@ frame_needed = 0, uses_anonymous_args = 0
+ 629              	.LVL53:
+ 630              		.loc 1 288 0
+ 631 0000 10B5     		push	{r4, lr}
+ 632              		.cfi_def_cfa_offset 8
+ 633              		.cfi_offset 4, -8
+ 634              		.cfi_offset 14, -4
+ 289:Code\UserApp\Voice/voice.c ****     if (sound_define == Sound_SYSTEM_POWER_ON)
+ 635              		.loc 1 289 0
+ 636 0002 0C28     		cmp	r0, #12
+ 637 0004 02D1     		bne	.L32
+ 290:Code\UserApp\Voice/voice.c ****     {
+ 291:Code\UserApp\Voice/voice.c ****         System_PowerOn_Play();
+ 638              		.loc 1 291 0
+ 639 0006 FFF7FEFF 		bl	System_PowerOn_Play
+ 640              	.LVL54:
+ 641 000a 33E0     		b	.L31
+ 642              	.LVL55:
+ 643              	.L32:
+ 292:Code\UserApp\Voice/voice.c ****     }
+ 293:Code\UserApp\Voice/voice.c **** 	else if(Sound_SYSTEM_POWER_ON_TEST == sound_define)
+ 644              		.loc 1 293 0
+ 645 000c 1128     		cmp	r0, #17
+ 646 000e 02D1     		bne	.L34
+ 294:Code\UserApp\Voice/voice.c **** 	{
+ 295:Code\UserApp\Voice/voice.c **** 		System_PowerOn_Play_TestSer();
+ 647              		.loc 1 295 0
+ 648 0010 FFF7FEFF 		bl	System_PowerOn_Play_TestSer
+ 649              	.LVL56:
+ 650 0014 2EE0     		b	.L31
+ 651              	.LVL57:
+ 652              	.L34:
+ 296:Code\UserApp\Voice/voice.c **** 	}
+ 297:Code\UserApp\Voice/voice.c **** 	else if (sound_define == Sound_VERIFY_SUCCESS)
+ 653              		.loc 1 297 0
+ 654 0016 0A28     		cmp	r0, #10
+ 655 0018 02D1     		bne	.L35
+ 656              	.L40:
+ 298:Code\UserApp\Voice/voice.c ****     {
+ 299:Code\UserApp\Voice/voice.c ****         OpenDoor();
+ 657              		.loc 1 299 0
+ 658 001a FFF7FEFF 		bl	System_ReadCard_play
+ 659              	.LVL58:
+ 660 001e 29E0     		b	.L31
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 18
+
+
+ 661              	.LVL59:
+ 662              	.L35:
+ 300:Code\UserApp\Voice/voice.c ****     }
+ 301:Code\UserApp\Voice/voice.c ****     else if (sound_define == Sound_VERIFY_FAILURE)
+ 663              		.loc 1 301 0
+ 664 0020 0B28     		cmp	r0, #11
+ 665 0022 27D0     		beq	.L31
+ 302:Code\UserApp\Voice/voice.c ****     {
+ 303:Code\UserApp\Voice/voice.c ****         Comm_Failure_play();
+ 304:Code\UserApp\Voice/voice.c ****     }
+ 305:Code\UserApp\Voice/voice.c **** 	else if (sound_define == Sound_TIMEOUT)
+ 666              		.loc 1 305 0
+ 667 0024 1228     		cmp	r0, #18
+ 668 0026 02D1     		bne	.L36
+ 306:Code\UserApp\Voice/voice.c ****     {
+ 307:Code\UserApp\Voice/voice.c ****         Timeout_play();
+ 669              		.loc 1 307 0
+ 670 0028 FFF7FEFF 		bl	Timeout_play
+ 671              	.LVL60:
+ 672 002c 22E0     		b	.L31
+ 673              	.LVL61:
+ 674              	.L36:
+ 308:Code\UserApp\Voice/voice.c ****     }
+ 309:Code\UserApp\Voice/voice.c **** 	
+ 310:Code\UserApp\Voice/voice.c ****     else if ((sound_define == Sound_REG_FAILURE) 	||
+ 675              		.loc 1 310 0
+ 676 002e 0223     		movs	r3, #2
+ 677 0030 0200     		movs	r2, r0
+ 678 0032 9A43     		bics	r2, r3
+ 679 0034 052A     		cmp	r2, #5
+ 680 0036 1DD0     		beq	.L31
+ 311:Code\UserApp\Voice/voice.c **** 			 (sound_define == Sound_DELETE_FAILURE) ||
+ 681              		.loc 1 311 0
+ 682 0038 0928     		cmp	r0, #9
+ 683 003a 1BD0     		beq	.L31
+ 312:Code\UserApp\Voice/voice.c **** 			 (sound_define == Sound_EMPTY_FAILURE))
+ 313:Code\UserApp\Voice/voice.c ****     {
+ 314:Code\UserApp\Voice/voice.c ****         Comm_Failure_play();
+ 315:Code\UserApp\Voice/voice.c ****     }
+ 316:Code\UserApp\Voice/voice.c ****     else if ((sound_define == Sound_REG_SUCCESS) 	||
+ 684              		.loc 1 316 0
+ 685 003c 042A     		cmp	r2, #4
+ 686 003e 01D0     		beq	.L37
+ 317:Code\UserApp\Voice/voice.c **** 			 (sound_define == Sound_DELETE_SUCCESS) || 
+ 687              		.loc 1 317 0
+ 688 0040 0828     		cmp	r0, #8
+ 689 0042 02D1     		bne	.L38
+ 690              	.L37:
+ 318:Code\UserApp\Voice/voice.c **** 			 (sound_define == Sound_EMPTY_SUCCESS))
+ 319:Code\UserApp\Voice/voice.c ****     {
+ 320:Code\UserApp\Voice/voice.c ****         Comm_Succes_play();
+ 691              		.loc 1 320 0
+ 692 0044 FFF7FEFF 		bl	Comm_Succes_play
+ 693              	.LVL62:
+ 694 0048 14E0     		b	.L31
+ 695              	.LVL63:
+ 696              	.L38:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 19
+
+
+ 321:Code\UserApp\Voice/voice.c ****     }
+ 322:Code\UserApp\Voice/voice.c **** 	else if (sound_define == Sound_PleasePutCard)
+ 697              		.loc 1 322 0
+ 698 004a 0D28     		cmp	r0, #13
+ 699 004c 02D1     		bne	.L39
+ 323:Code\UserApp\Voice/voice.c ****     {
+ 324:Code\UserApp\Voice/voice.c ****     	System_PutCard_play();
+ 700              		.loc 1 324 0
+ 701 004e FFF7FEFF 		bl	System_PutCard_play
+ 702              	.LVL64:
+ 703 0052 0FE0     		b	.L31
+ 704              	.LVL65:
+ 705              	.L39:
+ 325:Code\UserApp\Voice/voice.c ****     }
+ 326:Code\UserApp\Voice/voice.c **** 	else if (sound_define == Sound_ReadCardSuccess)
+ 706              		.loc 1 326 0
+ 707 0054 0E28     		cmp	r0, #14
+ 708 0056 E0D0     		beq	.L40
+ 709              	.LVL66:
+ 710              	.LBB9:
+ 711              	.LBB10:
+ 327:Code\UserApp\Voice/voice.c ****     {
+ 328:Code\UserApp\Voice/voice.c ****     	System_ReadCard_play();
+ 329:Code\UserApp\Voice/voice.c ****     }
+ 330:Code\UserApp\Voice/voice.c **** 	else if (sound_define == Sound_ShortDI)
+ 712              		.loc 1 330 0
+ 713 0058 0F28     		cmp	r0, #15
+ 714 005a 02D1     		bne	.L41
+ 331:Code\UserApp\Voice/voice.c ****     {
+ 332:Code\UserApp\Voice/voice.c ****     	System_ShortDI_Play();
+ 715              		.loc 1 332 0
+ 716 005c FFF7FEFF 		bl	System_ShortDI_Play
+ 717              	.LVL67:
+ 718 0060 08E0     		b	.L31
+ 719              	.LVL68:
+ 720              	.L41:
+ 333:Code\UserApp\Voice/voice.c ****     }
+ 334:Code\UserApp\Voice/voice.c **** 	else if (sound_define == Sound_LongDI)
+ 721              		.loc 1 334 0
+ 722 0062 1028     		cmp	r0, #16
+ 723 0064 02D1     		bne	.L42
+ 335:Code\UserApp\Voice/voice.c ****     {
+ 336:Code\UserApp\Voice/voice.c ****     	System_LongDI_Play();
+ 724              		.loc 1 336 0
+ 725 0066 FFF7FEFF 		bl	System_LongDI_Play
+ 726              	.LVL69:
+ 727 006a 03E0     		b	.L31
+ 728              	.LVL70:
+ 729              	.L42:
+ 337:Code\UserApp\Voice/voice.c ****     }
+ 338:Code\UserApp\Voice/voice.c **** 	else if(sound_define == Sound_DEFENDALRM)
+ 730              		.loc 1 338 0
+ 731 006c 1328     		cmp	r0, #19
+ 732 006e 01D1     		bne	.L31
+ 339:Code\UserApp\Voice/voice.c **** 	{
+ 340:Code\UserApp\Voice/voice.c **** 		Defendalarm_Play();
+ 733              		.loc 1 340 0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 20
+
+
+ 734 0070 FFF7FEFF 		bl	Defendalarm_Play
+ 735              	.LVL71:
+ 736              	.L31:
+ 737              	.LBE10:
+ 738              	.LBE9:
+ 341:Code\UserApp\Voice/voice.c **** 	}
+ 342:Code\UserApp\Voice/voice.c **** }
+ 739              		.loc 1 342 0
+ 740              		@ sp needed
+ 741 0074 10BD     		pop	{r4, pc}
+ 742              		.cfi_endproc
+ 743              	.LFE77:
+ 744              		.size	Beep_Play, .-Beep_Play
+ 745              		.section	.text.VoicePlay,"ax",%progbits
+ 746              		.align	1
+ 747              		.global	VoicePlay
+ 748              		.code	16
+ 749              		.thumb_func
+ 750              		.type	VoicePlay, %function
+ 751              	VoicePlay:
+ 752              	.LFB78:
+ 343:Code\UserApp\Voice/voice.c **** 
+ 344:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 345:Code\UserApp\Voice/voice.c **** // Function name	: VoicePlay
+ 346:Code\UserApp\Voice/voice.c **** // Description		: 语音播报
+ 347:Code\UserApp\Voice/voice.c **** // Parameter		: addr
+ 348:Code\UserApp\Voice/voice.c **** // Return			: none
+ 349:Code\UserApp\Voice/voice.c **** //-------------------------------------------------------------------------------------------------
+ 350:Code\UserApp\Voice/voice.c **** // Info				: 
+ 351:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 352:Code\UserApp\Voice/voice.c **** void VoicePlay(INT8U addr)
+ 353:Code\UserApp\Voice/voice.c **** {
+ 753              		.loc 1 353 0
+ 754              		.cfi_startproc
+ 755              		@ args = 0, pretend = 0, frame = 0
+ 756              		@ frame_needed = 0, uses_anonymous_args = 0
+ 757              	.LVL72:
+ 758 0000 10B5     		push	{r4, lr}
+ 759              		.cfi_def_cfa_offset 8
+ 760              		.cfi_offset 4, -8
+ 761              		.cfi_offset 14, -4
+ 354:Code\UserApp\Voice/voice.c ****     Beep_Play(addr);  
+ 762              		.loc 1 354 0
+ 763 0002 FFF7FEFF 		bl	Beep_Play
+ 764              	.LVL73:
+ 355:Code\UserApp\Voice/voice.c **** }
+ 765              		.loc 1 355 0
+ 766              		@ sp needed
+ 767 0006 10BD     		pop	{r4, pc}
+ 768              		.cfi_endproc
+ 769              	.LFE78:
+ 770              		.size	VoicePlay, .-VoicePlay
+ 771              		.comm	BeepDelay_TimeOut,4,4
+ 772              		.text
+ 773              	.Letext0:
+ 774              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.1\\psoc creator\\import\\gnu\\arm\\5.4.
+ 775              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.1\\psoc creator\\import\\gnu\\arm\\5.4.
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 21
+
+
+ 776              		.file 4 "Generated_Source\\PSoC4/cytypes.h"
+ 777              		.file 5 ".\\Code\\Common/config.h"
+ 778              		.file 6 "Generated_Source\\PSoC4/RTC.h"
+ 779              		.file 7 "Generated_Source\\PSoC4/TIMER.h"
+ 780              		.section	.debug_info,"",%progbits
+ 781              	.Ldebug_info0:
+ 782 0000 9C070000 		.4byte	0x79c
+ 783 0004 0400     		.2byte	0x4
+ 784 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 785 000a 04       		.byte	0x4
+ 786 000b 01       		.uleb128 0x1
+ 787 000c EA020000 		.4byte	.LASF46
+ 788 0010 0C       		.byte	0xc
+ 789 0011 BC010000 		.4byte	.LASF47
+ 790 0015 44010000 		.4byte	.LASF48
+ 791 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 792 001d 00000000 		.4byte	0
+ 793 0021 00000000 		.4byte	.Ldebug_line0
+ 794 0025 02       		.uleb128 0x2
+ 795 0026 01       		.byte	0x1
+ 796 0027 06       		.byte	0x6
+ 797 0028 74000000 		.4byte	.LASF0
+ 798 002c 03       		.uleb128 0x3
+ 799 002d 1B000000 		.4byte	.LASF3
+ 800 0031 02       		.byte	0x2
+ 801 0032 1D       		.byte	0x1d
+ 802 0033 37000000 		.4byte	0x37
+ 803 0037 02       		.uleb128 0x2
+ 804 0038 01       		.byte	0x1
+ 805 0039 08       		.byte	0x8
+ 806 003a 88000000 		.4byte	.LASF1
+ 807 003e 02       		.uleb128 0x2
+ 808 003f 02       		.byte	0x2
+ 809 0040 05       		.byte	0x5
+ 810 0041 41020000 		.4byte	.LASF2
+ 811 0045 03       		.uleb128 0x3
+ 812 0046 F7000000 		.4byte	.LASF4
+ 813 004a 02       		.byte	0x2
+ 814 004b 2B       		.byte	0x2b
+ 815 004c 50000000 		.4byte	0x50
+ 816 0050 02       		.uleb128 0x2
+ 817 0051 02       		.byte	0x2
+ 818 0052 07       		.byte	0x7
+ 819 0053 D7020000 		.4byte	.LASF5
+ 820 0057 02       		.uleb128 0x2
+ 821 0058 04       		.byte	0x4
+ 822 0059 05       		.byte	0x5
+ 823 005a 82020000 		.4byte	.LASF6
+ 824 005e 02       		.uleb128 0x2
+ 825 005f 04       		.byte	0x4
+ 826 0060 07       		.byte	0x7
+ 827 0061 BC000000 		.4byte	.LASF7
+ 828 0065 02       		.uleb128 0x2
+ 829 0066 08       		.byte	0x8
+ 830 0067 05       		.byte	0x5
+ 831 0068 00000000 		.4byte	.LASF8
+ 832 006c 02       		.uleb128 0x2
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 22
+
+
+ 833 006d 08       		.byte	0x8
+ 834 006e 07       		.byte	0x7
+ 835 006f 9D010000 		.4byte	.LASF9
+ 836 0073 04       		.uleb128 0x4
+ 837 0074 04       		.byte	0x4
+ 838 0075 05       		.byte	0x5
+ 839 0076 696E7400 		.ascii	"int\000"
+ 840 007a 02       		.uleb128 0x2
+ 841 007b 04       		.byte	0x4
+ 842 007c 07       		.byte	0x7
+ 843 007d 37010000 		.4byte	.LASF10
+ 844 0081 03       		.uleb128 0x3
+ 845 0082 B4010000 		.4byte	.LASF11
+ 846 0086 03       		.byte	0x3
+ 847 0087 18       		.byte	0x18
+ 848 0088 2C000000 		.4byte	0x2c
+ 849 008c 03       		.uleb128 0x3
+ 850 008d 67020000 		.4byte	.LASF12
+ 851 0091 03       		.byte	0x3
+ 852 0092 24       		.byte	0x24
+ 853 0093 45000000 		.4byte	0x45
+ 854 0097 05       		.uleb128 0x5
+ 855 0098 09010000 		.4byte	.LASF13
+ 856 009c 04       		.byte	0x4
+ 857 009d D301     		.2byte	0x1d3
+ 858 009f 50000000 		.4byte	0x50
+ 859 00a3 02       		.uleb128 0x2
+ 860 00a4 04       		.byte	0x4
+ 861 00a5 04       		.byte	0x4
+ 862 00a6 6E000000 		.4byte	.LASF14
+ 863 00aa 02       		.uleb128 0x2
+ 864 00ab 08       		.byte	0x8
+ 865 00ac 04       		.byte	0x4
+ 866 00ad 02010000 		.4byte	.LASF15
+ 867 00b1 02       		.uleb128 0x2
+ 868 00b2 01       		.byte	0x1
+ 869 00b3 08       		.byte	0x8
+ 870 00b4 19020000 		.4byte	.LASF16
+ 871 00b8 02       		.uleb128 0x2
+ 872 00b9 08       		.byte	0x8
+ 873 00ba 04       		.byte	0x4
+ 874 00bb AA020000 		.4byte	.LASF17
+ 875 00bf 02       		.uleb128 0x2
+ 876 00c0 04       		.byte	0x4
+ 877 00c1 07       		.byte	0x7
+ 878 00c2 10020000 		.4byte	.LASF18
+ 879 00c6 03       		.uleb128 0x3
+ 880 00c7 97010000 		.4byte	.LASF19
+ 881 00cb 05       		.byte	0x5
+ 882 00cc 13       		.byte	0x13
+ 883 00cd 37000000 		.4byte	0x37
+ 884 00d1 03       		.uleb128 0x3
+ 885 00d2 60020000 		.4byte	.LASF20
+ 886 00d6 05       		.byte	0x5
+ 887 00d7 17       		.byte	0x17
+ 888 00d8 5E000000 		.4byte	0x5e
+ 889 00dc 03       		.uleb128 0x3
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 23
+
+
+ 890 00dd 80000000 		.4byte	.LASF21
+ 891 00e1 05       		.byte	0x5
+ 892 00e2 23       		.byte	0x23
+ 893 00e3 E7000000 		.4byte	0xe7
+ 894 00e7 06       		.uleb128 0x6
+ 895 00e8 D1000000 		.4byte	0xd1
+ 896 00ec 07       		.uleb128 0x7
+ 897 00ed D7010000 		.4byte	.LASF49
+ 898 00f1 01       		.byte	0x1
+ 899 00f2 DB       		.byte	0xdb
+ 900 00f3 01       		.byte	0x1
+ 901 00f4 08       		.uleb128 0x8
+ 902 00f5 96000000 		.4byte	.LASF22
+ 903 00f9 01       		.byte	0x1
+ 904 00fa 1F01     		.2byte	0x11f
+ 905 00fc 01       		.byte	0x1
+ 906 00fd 0E010000 		.4byte	0x10e
+ 907 0101 09       		.uleb128 0x9
+ 908 0102 8C030000 		.4byte	.LASF50
+ 909 0106 01       		.byte	0x1
+ 910 0107 1F01     		.2byte	0x11f
+ 911 0109 81000000 		.4byte	0x81
+ 912 010d 00       		.byte	0
+ 913 010e 0A       		.uleb128 0xa
+ 914 010f D3000000 		.4byte	.LASF51
+ 915 0113 01       		.byte	0x1
+ 916 0114 28       		.byte	0x28
+ 917 0115 00000000 		.4byte	.LFB63
+ 918 0119 14000000 		.4byte	.LFE63-.LFB63
+ 919 011d 01       		.uleb128 0x1
+ 920 011e 9C       		.byte	0x9c
+ 921 011f 0B       		.uleb128 0xb
+ 922 0120 1E020000 		.4byte	.LASF24
+ 923 0124 01       		.byte	0x1
+ 924 0125 38       		.byte	0x38
+ 925 0126 00000000 		.4byte	.LFB64
+ 926 012a 1C000000 		.4byte	.LFE64-.LFB64
+ 927 012e 01       		.uleb128 0x1
+ 928 012f 9C       		.byte	0x9c
+ 929 0130 68010000 		.4byte	0x168
+ 930 0134 0C       		.uleb128 0xc
+ 931 0135 636E7400 		.ascii	"cnt\000"
+ 932 0139 01       		.byte	0x1
+ 933 013a 38       		.byte	0x38
+ 934 013b 8C000000 		.4byte	0x8c
+ 935 013f 00000000 		.4byte	.LLST0
+ 936 0143 0D       		.uleb128 0xd
+ 937 0144 0E000000 		.4byte	.LBB6
+ 938 0148 06000000 		.4byte	.LBE6-.LBB6
+ 939 014c 0E       		.uleb128 0xe
+ 940 014d 78030000 		.4byte	.LASF23
+ 941 0151 01       		.byte	0x1
+ 942 0152 3D       		.byte	0x3d
+ 943 0153 73000000 		.4byte	0x73
+ 944 0157 5D010000 		.4byte	0x15d
+ 945 015b 0F       		.uleb128 0xf
+ 946 015c 00       		.byte	0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 24
+
+
+ 947 015d 10       		.uleb128 0x10
+ 948 015e 12000000 		.4byte	.LVL2
+ 949 0162 58070000 		.4byte	0x758
+ 950 0166 00       		.byte	0
+ 951 0167 00       		.byte	0
+ 952 0168 0B       		.uleb128 0xb
+ 953 0169 F3010000 		.4byte	.LASF25
+ 954 016d 01       		.byte	0x1
+ 955 016e 49       		.byte	0x49
+ 956 016f 00000000 		.4byte	.LFB65
+ 957 0173 4A000000 		.4byte	.LFE65-.LFB65
+ 958 0177 01       		.uleb128 0x1
+ 959 0178 9C       		.byte	0x9c
+ 960 0179 5F020000 		.4byte	0x25f
+ 961 017d 11       		.uleb128 0x11
+ 962 017e 25000000 		.4byte	.LASF26
+ 963 0182 01       		.byte	0x1
+ 964 0183 49       		.byte	0x49
+ 965 0184 8C000000 		.4byte	0x8c
+ 966 0188 21000000 		.4byte	.LLST1
+ 967 018c 11       		.uleb128 0x11
+ 968 018d E9010000 		.4byte	.LASF27
+ 969 0191 01       		.byte	0x1
+ 970 0192 49       		.byte	0x49
+ 971 0193 8C000000 		.4byte	0x8c
+ 972 0197 42000000 		.4byte	.LLST2
+ 973 019b 12       		.uleb128 0x12
+ 974 019c 0C000000 		.4byte	.LVL5
+ 975 01a0 63070000 		.4byte	0x763
+ 976 01a4 AE010000 		.4byte	0x1ae
+ 977 01a8 13       		.uleb128 0x13
+ 978 01a9 01       		.uleb128 0x1
+ 979 01aa 50       		.byte	0x50
+ 980 01ab 01       		.uleb128 0x1
+ 981 01ac 30       		.byte	0x30
+ 982 01ad 00       		.byte	0
+ 983 01ae 12       		.uleb128 0x12
+ 984 01af 12000000 		.4byte	.LVL6
+ 985 01b3 6F070000 		.4byte	0x76f
+ 986 01b7 C1010000 		.4byte	0x1c1
+ 987 01bb 13       		.uleb128 0x13
+ 988 01bc 01       		.uleb128 0x1
+ 989 01bd 50       		.byte	0x50
+ 990 01be 01       		.uleb128 0x1
+ 991 01bf 30       		.byte	0x30
+ 992 01c0 00       		.byte	0
+ 993 01c1 12       		.uleb128 0x12
+ 994 01c2 18000000 		.4byte	.LVL7
+ 995 01c6 7B070000 		.4byte	0x77b
+ 996 01ca D4010000 		.4byte	0x1d4
+ 997 01ce 13       		.uleb128 0x13
+ 998 01cf 01       		.uleb128 0x1
+ 999 01d0 50       		.byte	0x50
+ 1000 01d1 01       		.uleb128 0x1
+ 1001 01d2 30       		.byte	0x30
+ 1002 01d3 00       		.byte	0
+ 1003 01d4 10       		.uleb128 0x10
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 25
+
+
+ 1004 01d5 1C000000 		.4byte	.LVL8
+ 1005 01d9 87070000 		.4byte	0x787
+ 1006 01dd 12       		.uleb128 0x12
+ 1007 01de 22000000 		.4byte	.LVL9
+ 1008 01e2 1F010000 		.4byte	0x11f
+ 1009 01e6 F0010000 		.4byte	0x1f0
+ 1010 01ea 13       		.uleb128 0x13
+ 1011 01eb 01       		.uleb128 0x1
+ 1012 01ec 50       		.byte	0x50
+ 1013 01ed 01       		.uleb128 0x1
+ 1014 01ee 33       		.byte	0x33
+ 1015 01ef 00       		.byte	0
+ 1016 01f0 10       		.uleb128 0x10
+ 1017 01f1 26000000 		.4byte	.LVL10
+ 1018 01f5 93070000 		.4byte	0x793
+ 1019 01f9 12       		.uleb128 0x12
+ 1020 01fa 2C000000 		.4byte	.LVL11
+ 1021 01fe 63070000 		.4byte	0x763
+ 1022 0202 0C020000 		.4byte	0x20c
+ 1023 0206 13       		.uleb128 0x13
+ 1024 0207 01       		.uleb128 0x1
+ 1025 0208 50       		.byte	0x50
+ 1026 0209 01       		.uleb128 0x1
+ 1027 020a 30       		.byte	0x30
+ 1028 020b 00       		.byte	0
+ 1029 020c 12       		.uleb128 0x12
+ 1030 020d 32000000 		.4byte	.LVL12
+ 1031 0211 6F070000 		.4byte	0x76f
+ 1032 0215 20020000 		.4byte	0x220
+ 1033 0219 13       		.uleb128 0x13
+ 1034 021a 01       		.uleb128 0x1
+ 1035 021b 50       		.byte	0x50
+ 1036 021c 02       		.uleb128 0x2
+ 1037 021d 74       		.byte	0x74
+ 1038 021e 7F       		.sleb128 -1
+ 1039 021f 00       		.byte	0
+ 1040 0220 12       		.uleb128 0x12
+ 1041 0221 3A000000 		.4byte	.LVL13
+ 1042 0225 7B070000 		.4byte	0x77b
+ 1043 0229 38020000 		.4byte	0x238
+ 1044 022d 13       		.uleb128 0x13
+ 1045 022e 01       		.uleb128 0x1
+ 1046 022f 50       		.byte	0x50
+ 1047 0230 06       		.uleb128 0x6
+ 1048 0231 74       		.byte	0x74
+ 1049 0232 00       		.sleb128 0
+ 1050 0233 31       		.byte	0x31
+ 1051 0234 25       		.byte	0x25
+ 1052 0235 31       		.byte	0x31
+ 1053 0236 1C       		.byte	0x1c
+ 1054 0237 00       		.byte	0
+ 1055 0238 10       		.uleb128 0x10
+ 1056 0239 3E000000 		.4byte	.LVL14
+ 1057 023d 87070000 		.4byte	0x787
+ 1058 0241 12       		.uleb128 0x12
+ 1059 0242 44000000 		.4byte	.LVL15
+ 1060 0246 1F010000 		.4byte	0x11f
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 26
+
+
+ 1061 024a 55020000 		.4byte	0x255
+ 1062 024e 13       		.uleb128 0x13
+ 1063 024f 01       		.uleb128 0x1
+ 1064 0250 50       		.byte	0x50
+ 1065 0251 02       		.uleb128 0x2
+ 1066 0252 75       		.byte	0x75
+ 1067 0253 00       		.sleb128 0
+ 1068 0254 00       		.byte	0
+ 1069 0255 10       		.uleb128 0x10
+ 1070 0256 48000000 		.4byte	.LVL16
+ 1071 025a 93070000 		.4byte	0x793
+ 1072 025e 00       		.byte	0
+ 1073 025f 0B       		.uleb128 0xb
+ 1074 0260 10010000 		.4byte	.LASF28
+ 1075 0264 01       		.byte	0x1
+ 1076 0265 62       		.byte	0x62
+ 1077 0266 00000000 		.4byte	.LFB66
+ 1078 026a 0E000000 		.4byte	.LFE66-.LFB66
+ 1079 026e 01       		.uleb128 0x1
+ 1080 026f 9C       		.byte	0x9c
+ 1081 0270 8C020000 		.4byte	0x28c
+ 1082 0274 14       		.uleb128 0x14
+ 1083 0275 0C000000 		.4byte	.LVL17
+ 1084 0279 68010000 		.4byte	0x168
+ 1085 027d 13       		.uleb128 0x13
+ 1086 027e 01       		.uleb128 0x1
+ 1087 027f 50       		.byte	0x50
+ 1088 0280 03       		.uleb128 0x3
+ 1089 0281 0A       		.byte	0xa
+ 1090 0282 4D01     		.2byte	0x14d
+ 1091 0284 13       		.uleb128 0x13
+ 1092 0285 01       		.uleb128 0x1
+ 1093 0286 51       		.byte	0x51
+ 1094 0287 02       		.uleb128 0x2
+ 1095 0288 08       		.byte	0x8
+ 1096 0289 C8       		.byte	0xc8
+ 1097 028a 00       		.byte	0
+ 1098 028b 00       		.byte	0
+ 1099 028c 0B       		.uleb128 0xb
+ 1100 028d FF010000 		.4byte	.LASF29
+ 1101 0291 01       		.byte	0x1
+ 1102 0292 6F       		.byte	0x6f
+ 1103 0293 00000000 		.4byte	.LFB67
+ 1104 0297 2C000000 		.4byte	.LFE67-.LFB67
+ 1105 029b 01       		.uleb128 0x1
+ 1106 029c 9C       		.byte	0x9c
+ 1107 029d 14030000 		.4byte	0x314
+ 1108 02a1 12       		.uleb128 0x12
+ 1109 02a2 0E000000 		.4byte	.LVL18
+ 1110 02a6 68010000 		.4byte	0x168
+ 1111 02aa BB020000 		.4byte	0x2bb
+ 1112 02ae 13       		.uleb128 0x13
+ 1113 02af 01       		.uleb128 0x1
+ 1114 02b0 50       		.byte	0x50
+ 1115 02b1 02       		.uleb128 0x2
+ 1116 02b2 74       		.byte	0x74
+ 1117 02b3 00       		.sleb128 0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 27
+
+
+ 1118 02b4 13       		.uleb128 0x13
+ 1119 02b5 01       		.uleb128 0x1
+ 1120 02b6 51       		.byte	0x51
+ 1121 02b7 02       		.uleb128 0x2
+ 1122 02b8 08       		.byte	0x8
+ 1123 02b9 C8       		.byte	0xc8
+ 1124 02ba 00       		.byte	0
+ 1125 02bb 12       		.uleb128 0x12
+ 1126 02bc 14000000 		.4byte	.LVL19
+ 1127 02c0 1F010000 		.4byte	0x11f
+ 1128 02c4 CF020000 		.4byte	0x2cf
+ 1129 02c8 13       		.uleb128 0x13
+ 1130 02c9 01       		.uleb128 0x1
+ 1131 02ca 50       		.byte	0x50
+ 1132 02cb 02       		.uleb128 0x2
+ 1133 02cc 08       		.byte	0x8
+ 1134 02cd 28       		.byte	0x28
+ 1135 02ce 00       		.byte	0
+ 1136 02cf 12       		.uleb128 0x12
+ 1137 02d0 1C000000 		.4byte	.LVL20
+ 1138 02d4 68010000 		.4byte	0x168
+ 1139 02d8 E9020000 		.4byte	0x2e9
+ 1140 02dc 13       		.uleb128 0x13
+ 1141 02dd 01       		.uleb128 0x1
+ 1142 02de 50       		.byte	0x50
+ 1143 02df 02       		.uleb128 0x2
+ 1144 02e0 74       		.byte	0x74
+ 1145 02e1 00       		.sleb128 0
+ 1146 02e2 13       		.uleb128 0x13
+ 1147 02e3 01       		.uleb128 0x1
+ 1148 02e4 51       		.byte	0x51
+ 1149 02e5 02       		.uleb128 0x2
+ 1150 02e6 08       		.byte	0x8
+ 1151 02e7 C8       		.byte	0xc8
+ 1152 02e8 00       		.byte	0
+ 1153 02e9 12       		.uleb128 0x12
+ 1154 02ea 22000000 		.4byte	.LVL21
+ 1155 02ee 1F010000 		.4byte	0x11f
+ 1156 02f2 FD020000 		.4byte	0x2fd
+ 1157 02f6 13       		.uleb128 0x13
+ 1158 02f7 01       		.uleb128 0x1
+ 1159 02f8 50       		.byte	0x50
+ 1160 02f9 02       		.uleb128 0x2
+ 1161 02fa 08       		.byte	0x8
+ 1162 02fb 28       		.byte	0x28
+ 1163 02fc 00       		.byte	0
+ 1164 02fd 14       		.uleb128 0x14
+ 1165 02fe 2A000000 		.4byte	.LVL22
+ 1166 0302 68010000 		.4byte	0x168
+ 1167 0306 13       		.uleb128 0x13
+ 1168 0307 01       		.uleb128 0x1
+ 1169 0308 50       		.byte	0x50
+ 1170 0309 02       		.uleb128 0x2
+ 1171 030a 74       		.byte	0x74
+ 1172 030b 00       		.sleb128 0
+ 1173 030c 13       		.uleb128 0x13
+ 1174 030d 01       		.uleb128 0x1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 28
+
+
+ 1175 030e 51       		.byte	0x51
+ 1176 030f 02       		.uleb128 0x2
+ 1177 0310 08       		.byte	0x8
+ 1178 0311 C8       		.byte	0xc8
+ 1179 0312 00       		.byte	0
+ 1180 0313 00       		.byte	0
+ 1181 0314 0B       		.uleb128 0xb
+ 1182 0315 4A000000 		.4byte	.LASF30
+ 1183 0319 01       		.byte	0x1
+ 1184 031a 81       		.byte	0x81
+ 1185 031b 00000000 		.4byte	.LFB68
+ 1186 031f 10000000 		.4byte	.LFE68-.LFB68
+ 1187 0323 01       		.uleb128 0x1
+ 1188 0324 9C       		.byte	0x9c
+ 1189 0325 42030000 		.4byte	0x342
+ 1190 0329 14       		.uleb128 0x14
+ 1191 032a 0E000000 		.4byte	.LVL23
+ 1192 032e 68010000 		.4byte	0x168
+ 1193 0332 13       		.uleb128 0x13
+ 1194 0333 01       		.uleb128 0x1
+ 1195 0334 50       		.byte	0x50
+ 1196 0335 03       		.uleb128 0x3
+ 1197 0336 0A       		.byte	0xa
+ 1198 0337 4D01     		.2byte	0x14d
+ 1199 0339 13       		.uleb128 0x13
+ 1200 033a 01       		.uleb128 0x1
+ 1201 033b 51       		.byte	0x51
+ 1202 033c 03       		.uleb128 0x3
+ 1203 033d 0A       		.byte	0xa
+ 1204 033e F401     		.2byte	0x1f4
+ 1205 0340 00       		.byte	0
+ 1206 0341 00       		.byte	0
+ 1207 0342 0B       		.uleb128 0xb
+ 1208 0343 2D020000 		.4byte	.LASF31
+ 1209 0347 01       		.byte	0x1
+ 1210 0348 8E       		.byte	0x8e
+ 1211 0349 00000000 		.4byte	.LFB69
+ 1212 034d 64000000 		.4byte	.LFE69-.LFB69
+ 1213 0351 01       		.uleb128 0x1
+ 1214 0352 9C       		.byte	0x9c
+ 1215 0353 54040000 		.4byte	0x454
+ 1216 0357 12       		.uleb128 0x12
+ 1217 0358 10000000 		.4byte	.LVL24
+ 1218 035c 68010000 		.4byte	0x168
+ 1219 0360 71030000 		.4byte	0x371
+ 1220 0364 13       		.uleb128 0x13
+ 1221 0365 01       		.uleb128 0x1
+ 1222 0366 50       		.byte	0x50
+ 1223 0367 02       		.uleb128 0x2
+ 1224 0368 74       		.byte	0x74
+ 1225 0369 00       		.sleb128 0
+ 1226 036a 13       		.uleb128 0x13
+ 1227 036b 01       		.uleb128 0x1
+ 1228 036c 51       		.byte	0x51
+ 1229 036d 02       		.uleb128 0x2
+ 1230 036e 08       		.byte	0x8
+ 1231 036f C8       		.byte	0xc8
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 29
+
+
+ 1232 0370 00       		.byte	0
+ 1233 0371 12       		.uleb128 0x12
+ 1234 0372 16000000 		.4byte	.LVL25
+ 1235 0376 1F010000 		.4byte	0x11f
+ 1236 037a 85030000 		.4byte	0x385
+ 1237 037e 13       		.uleb128 0x13
+ 1238 037f 01       		.uleb128 0x1
+ 1239 0380 50       		.byte	0x50
+ 1240 0381 02       		.uleb128 0x2
+ 1241 0382 08       		.byte	0x8
+ 1242 0383 32       		.byte	0x32
+ 1243 0384 00       		.byte	0
+ 1244 0385 12       		.uleb128 0x12
+ 1245 0386 20000000 		.4byte	.LVL26
+ 1246 038a 68010000 		.4byte	0x168
+ 1247 038e 9F030000 		.4byte	0x39f
+ 1248 0392 13       		.uleb128 0x13
+ 1249 0393 01       		.uleb128 0x1
+ 1250 0394 50       		.byte	0x50
+ 1251 0395 02       		.uleb128 0x2
+ 1252 0396 75       		.byte	0x75
+ 1253 0397 00       		.sleb128 0
+ 1254 0398 13       		.uleb128 0x13
+ 1255 0399 01       		.uleb128 0x1
+ 1256 039a 51       		.byte	0x51
+ 1257 039b 02       		.uleb128 0x2
+ 1258 039c 08       		.byte	0x8
+ 1259 039d C8       		.byte	0xc8
+ 1260 039e 00       		.byte	0
+ 1261 039f 12       		.uleb128 0x12
+ 1262 03a0 26000000 		.4byte	.LVL27
+ 1263 03a4 1F010000 		.4byte	0x11f
+ 1264 03a8 B3030000 		.4byte	0x3b3
+ 1265 03ac 13       		.uleb128 0x13
+ 1266 03ad 01       		.uleb128 0x1
+ 1267 03ae 50       		.byte	0x50
+ 1268 03af 02       		.uleb128 0x2
+ 1269 03b0 08       		.byte	0x8
+ 1270 03b1 32       		.byte	0x32
+ 1271 03b2 00       		.byte	0
+ 1272 03b3 12       		.uleb128 0x12
+ 1273 03b4 2E000000 		.4byte	.LVL28
+ 1274 03b8 68010000 		.4byte	0x168
+ 1275 03bc CD030000 		.4byte	0x3cd
+ 1276 03c0 13       		.uleb128 0x13
+ 1277 03c1 01       		.uleb128 0x1
+ 1278 03c2 50       		.byte	0x50
+ 1279 03c3 02       		.uleb128 0x2
+ 1280 03c4 76       		.byte	0x76
+ 1281 03c5 00       		.sleb128 0
+ 1282 03c6 13       		.uleb128 0x13
+ 1283 03c7 01       		.uleb128 0x1
+ 1284 03c8 51       		.byte	0x51
+ 1285 03c9 02       		.uleb128 0x2
+ 1286 03ca 08       		.byte	0x8
+ 1287 03cb C8       		.byte	0xc8
+ 1288 03cc 00       		.byte	0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 30
+
+
+ 1289 03cd 12       		.uleb128 0x12
+ 1290 03ce 34000000 		.4byte	.LVL29
+ 1291 03d2 1F010000 		.4byte	0x11f
+ 1292 03d6 E1030000 		.4byte	0x3e1
+ 1293 03da 13       		.uleb128 0x13
+ 1294 03db 01       		.uleb128 0x1
+ 1295 03dc 50       		.byte	0x50
+ 1296 03dd 02       		.uleb128 0x2
+ 1297 03de 08       		.byte	0x8
+ 1298 03df 32       		.byte	0x32
+ 1299 03e0 00       		.byte	0
+ 1300 03e1 12       		.uleb128 0x12
+ 1301 03e2 3C000000 		.4byte	.LVL30
+ 1302 03e6 68010000 		.4byte	0x168
+ 1303 03ea FB030000 		.4byte	0x3fb
+ 1304 03ee 13       		.uleb128 0x13
+ 1305 03ef 01       		.uleb128 0x1
+ 1306 03f0 50       		.byte	0x50
+ 1307 03f1 02       		.uleb128 0x2
+ 1308 03f2 76       		.byte	0x76
+ 1309 03f3 00       		.sleb128 0
+ 1310 03f4 13       		.uleb128 0x13
+ 1311 03f5 01       		.uleb128 0x1
+ 1312 03f6 51       		.byte	0x51
+ 1313 03f7 02       		.uleb128 0x2
+ 1314 03f8 08       		.byte	0x8
+ 1315 03f9 C8       		.byte	0xc8
+ 1316 03fa 00       		.byte	0
+ 1317 03fb 12       		.uleb128 0x12
+ 1318 03fc 42000000 		.4byte	.LVL31
+ 1319 0400 1F010000 		.4byte	0x11f
+ 1320 0404 0F040000 		.4byte	0x40f
+ 1321 0408 13       		.uleb128 0x13
+ 1322 0409 01       		.uleb128 0x1
+ 1323 040a 50       		.byte	0x50
+ 1324 040b 02       		.uleb128 0x2
+ 1325 040c 08       		.byte	0x8
+ 1326 040d 32       		.byte	0x32
+ 1327 040e 00       		.byte	0
+ 1328 040f 12       		.uleb128 0x12
+ 1329 0410 4A000000 		.4byte	.LVL32
+ 1330 0414 68010000 		.4byte	0x168
+ 1331 0418 29040000 		.4byte	0x429
+ 1332 041c 13       		.uleb128 0x13
+ 1333 041d 01       		.uleb128 0x1
+ 1334 041e 50       		.byte	0x50
+ 1335 041f 02       		.uleb128 0x2
+ 1336 0420 75       		.byte	0x75
+ 1337 0421 00       		.sleb128 0
+ 1338 0422 13       		.uleb128 0x13
+ 1339 0423 01       		.uleb128 0x1
+ 1340 0424 51       		.byte	0x51
+ 1341 0425 02       		.uleb128 0x2
+ 1342 0426 08       		.byte	0x8
+ 1343 0427 C8       		.byte	0xc8
+ 1344 0428 00       		.byte	0
+ 1345 0429 12       		.uleb128 0x12
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 31
+
+
+ 1346 042a 50000000 		.4byte	.LVL33
+ 1347 042e 1F010000 		.4byte	0x11f
+ 1348 0432 3D040000 		.4byte	0x43d
+ 1349 0436 13       		.uleb128 0x13
+ 1350 0437 01       		.uleb128 0x1
+ 1351 0438 50       		.byte	0x50
+ 1352 0439 02       		.uleb128 0x2
+ 1353 043a 08       		.byte	0x8
+ 1354 043b 32       		.byte	0x32
+ 1355 043c 00       		.byte	0
+ 1356 043d 14       		.uleb128 0x14
+ 1357 043e 58000000 		.4byte	.LVL34
+ 1358 0442 68010000 		.4byte	0x168
+ 1359 0446 13       		.uleb128 0x13
+ 1360 0447 01       		.uleb128 0x1
+ 1361 0448 50       		.byte	0x50
+ 1362 0449 02       		.uleb128 0x2
+ 1363 044a 74       		.byte	0x74
+ 1364 044b 00       		.sleb128 0
+ 1365 044c 13       		.uleb128 0x13
+ 1366 044d 01       		.uleb128 0x1
+ 1367 044e 51       		.byte	0x51
+ 1368 044f 02       		.uleb128 0x2
+ 1369 0450 08       		.byte	0x8
+ 1370 0451 C8       		.byte	0xc8
+ 1371 0452 00       		.byte	0
+ 1372 0453 00       		.byte	0
+ 1373 0454 0B       		.uleb128 0xb
+ 1374 0455 A0000000 		.4byte	.LASF32
+ 1375 0459 01       		.byte	0x1
+ 1376 045a A5       		.byte	0xa5
+ 1377 045b 00000000 		.4byte	.LFB70
+ 1378 045f 34000000 		.4byte	.LFE70-.LFB70
+ 1379 0463 01       		.uleb128 0x1
+ 1380 0464 9C       		.byte	0x9c
+ 1381 0465 F0040000 		.4byte	0x4f0
+ 1382 0469 12       		.uleb128 0x12
+ 1383 046a 0C000000 		.4byte	.LVL35
+ 1384 046e 68010000 		.4byte	0x168
+ 1385 0472 83040000 		.4byte	0x483
+ 1386 0476 13       		.uleb128 0x13
+ 1387 0477 01       		.uleb128 0x1
+ 1388 0478 50       		.byte	0x50
+ 1389 0479 02       		.uleb128 0x2
+ 1390 047a 74       		.byte	0x74
+ 1391 047b 00       		.sleb128 0
+ 1392 047c 13       		.uleb128 0x13
+ 1393 047d 01       		.uleb128 0x1
+ 1394 047e 51       		.byte	0x51
+ 1395 047f 02       		.uleb128 0x2
+ 1396 0480 08       		.byte	0x8
+ 1397 0481 C8       		.byte	0xc8
+ 1398 0482 00       		.byte	0
+ 1399 0483 12       		.uleb128 0x12
+ 1400 0484 12000000 		.4byte	.LVL36
+ 1401 0488 1F010000 		.4byte	0x11f
+ 1402 048c 97040000 		.4byte	0x497
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 32
+
+
+ 1403 0490 13       		.uleb128 0x13
+ 1404 0491 01       		.uleb128 0x1
+ 1405 0492 50       		.byte	0x50
+ 1406 0493 02       		.uleb128 0x2
+ 1407 0494 08       		.byte	0x8
+ 1408 0495 32       		.byte	0x32
+ 1409 0496 00       		.byte	0
+ 1410 0497 12       		.uleb128 0x12
+ 1411 0498 1A000000 		.4byte	.LVL37
+ 1412 049c 68010000 		.4byte	0x168
+ 1413 04a0 B1040000 		.4byte	0x4b1
+ 1414 04a4 13       		.uleb128 0x13
+ 1415 04a5 01       		.uleb128 0x1
+ 1416 04a6 50       		.byte	0x50
+ 1417 04a7 02       		.uleb128 0x2
+ 1418 04a8 74       		.byte	0x74
+ 1419 04a9 00       		.sleb128 0
+ 1420 04aa 13       		.uleb128 0x13
+ 1421 04ab 01       		.uleb128 0x1
+ 1422 04ac 51       		.byte	0x51
+ 1423 04ad 02       		.uleb128 0x2
+ 1424 04ae 08       		.byte	0x8
+ 1425 04af C8       		.byte	0xc8
+ 1426 04b0 00       		.byte	0
+ 1427 04b1 12       		.uleb128 0x12
+ 1428 04b2 20000000 		.4byte	.LVL38
+ 1429 04b6 1F010000 		.4byte	0x11f
+ 1430 04ba C5040000 		.4byte	0x4c5
+ 1431 04be 13       		.uleb128 0x13
+ 1432 04bf 01       		.uleb128 0x1
+ 1433 04c0 50       		.byte	0x50
+ 1434 04c1 02       		.uleb128 0x2
+ 1435 04c2 08       		.byte	0x8
+ 1436 04c3 32       		.byte	0x32
+ 1437 04c4 00       		.byte	0
+ 1438 04c5 12       		.uleb128 0x12
+ 1439 04c6 28000000 		.4byte	.LVL39
+ 1440 04ca 68010000 		.4byte	0x168
+ 1441 04ce DF040000 		.4byte	0x4df
+ 1442 04d2 13       		.uleb128 0x13
+ 1443 04d3 01       		.uleb128 0x1
+ 1444 04d4 50       		.byte	0x50
+ 1445 04d5 02       		.uleb128 0x2
+ 1446 04d6 74       		.byte	0x74
+ 1447 04d7 00       		.sleb128 0
+ 1448 04d8 13       		.uleb128 0x13
+ 1449 04d9 01       		.uleb128 0x1
+ 1450 04da 51       		.byte	0x51
+ 1451 04db 02       		.uleb128 0x2
+ 1452 04dc 08       		.byte	0x8
+ 1453 04dd C8       		.byte	0xc8
+ 1454 04de 00       		.byte	0
+ 1455 04df 14       		.uleb128 0x14
+ 1456 04e0 2E000000 		.4byte	.LVL40
+ 1457 04e4 1F010000 		.4byte	0x11f
+ 1458 04e8 13       		.uleb128 0x13
+ 1459 04e9 01       		.uleb128 0x1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 33
+
+
+ 1460 04ea 50       		.byte	0x50
+ 1461 04eb 02       		.uleb128 0x2
+ 1462 04ec 08       		.byte	0x8
+ 1463 04ed 32       		.byte	0x32
+ 1464 04ee 00       		.byte	0
+ 1465 04ef 00       		.byte	0
+ 1466 04f0 0B       		.uleb128 0xb
+ 1467 04f1 5D000000 		.4byte	.LASF33
+ 1468 04f5 01       		.byte	0x1
+ 1469 04f6 BA       		.byte	0xba
+ 1470 04f7 00000000 		.4byte	.LFB71
+ 1471 04fb 10000000 		.4byte	.LFE71-.LFB71
+ 1472 04ff 01       		.uleb128 0x1
+ 1473 0500 9C       		.byte	0x9c
+ 1474 0501 1E050000 		.4byte	0x51e
+ 1475 0505 14       		.uleb128 0x14
+ 1476 0506 0E000000 		.4byte	.LVL41
+ 1477 050a 68010000 		.4byte	0x168
+ 1478 050e 13       		.uleb128 0x13
+ 1479 050f 01       		.uleb128 0x1
+ 1480 0510 50       		.byte	0x50
+ 1481 0511 03       		.uleb128 0x3
+ 1482 0512 0A       		.byte	0xa
+ 1483 0513 4D01     		.2byte	0x14d
+ 1484 0515 13       		.uleb128 0x13
+ 1485 0516 01       		.uleb128 0x1
+ 1486 0517 51       		.byte	0x51
+ 1487 0518 03       		.uleb128 0x3
+ 1488 0519 0A       		.byte	0xa
+ 1489 051a 5802     		.2byte	0x258
+ 1490 051c 00       		.byte	0
+ 1491 051d 00       		.byte	0
+ 1492 051e 0B       		.uleb128 0xb
+ 1493 051f 0E000000 		.4byte	.LASF34
+ 1494 0523 01       		.byte	0x1
+ 1495 0524 C8       		.byte	0xc8
+ 1496 0525 00000000 		.4byte	.LFB72
+ 1497 0529 3A000000 		.4byte	.LFE72-.LFB72
+ 1498 052d 01       		.uleb128 0x1
+ 1499 052e 9C       		.byte	0x9c
+ 1500 052f D4050000 		.4byte	0x5d4
+ 1501 0533 12       		.uleb128 0x12
+ 1502 0534 0E000000 		.4byte	.LVL42
+ 1503 0538 68010000 		.4byte	0x168
+ 1504 053c 4D050000 		.4byte	0x54d
+ 1505 0540 13       		.uleb128 0x13
+ 1506 0541 01       		.uleb128 0x1
+ 1507 0542 50       		.byte	0x50
+ 1508 0543 02       		.uleb128 0x2
+ 1509 0544 74       		.byte	0x74
+ 1510 0545 00       		.sleb128 0
+ 1511 0546 13       		.uleb128 0x13
+ 1512 0547 01       		.uleb128 0x1
+ 1513 0548 51       		.byte	0x51
+ 1514 0549 02       		.uleb128 0x2
+ 1515 054a 08       		.byte	0x8
+ 1516 054b 32       		.byte	0x32
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 34
+
+
+ 1517 054c 00       		.byte	0
+ 1518 054d 12       		.uleb128 0x12
+ 1519 054e 14000000 		.4byte	.LVL43
+ 1520 0552 1F010000 		.4byte	0x11f
+ 1521 0556 61050000 		.4byte	0x561
+ 1522 055a 13       		.uleb128 0x13
+ 1523 055b 01       		.uleb128 0x1
+ 1524 055c 50       		.byte	0x50
+ 1525 055d 02       		.uleb128 0x2
+ 1526 055e 08       		.byte	0x8
+ 1527 055f 32       		.byte	0x32
+ 1528 0560 00       		.byte	0
+ 1529 0561 12       		.uleb128 0x12
+ 1530 0562 1C000000 		.4byte	.LVL44
+ 1531 0566 68010000 		.4byte	0x168
+ 1532 056a 7B050000 		.4byte	0x57b
+ 1533 056e 13       		.uleb128 0x13
+ 1534 056f 01       		.uleb128 0x1
+ 1535 0570 50       		.byte	0x50
+ 1536 0571 02       		.uleb128 0x2
+ 1537 0572 74       		.byte	0x74
+ 1538 0573 00       		.sleb128 0
+ 1539 0574 13       		.uleb128 0x13
+ 1540 0575 01       		.uleb128 0x1
+ 1541 0576 51       		.byte	0x51
+ 1542 0577 02       		.uleb128 0x2
+ 1543 0578 08       		.byte	0x8
+ 1544 0579 32       		.byte	0x32
+ 1545 057a 00       		.byte	0
+ 1546 057b 12       		.uleb128 0x12
+ 1547 057c 22000000 		.4byte	.LVL45
+ 1548 0580 1F010000 		.4byte	0x11f
+ 1549 0584 8F050000 		.4byte	0x58f
+ 1550 0588 13       		.uleb128 0x13
+ 1551 0589 01       		.uleb128 0x1
+ 1552 058a 50       		.byte	0x50
+ 1553 058b 02       		.uleb128 0x2
+ 1554 058c 08       		.byte	0x8
+ 1555 058d 32       		.byte	0x32
+ 1556 058e 00       		.byte	0
+ 1557 058f 12       		.uleb128 0x12
+ 1558 0590 2A000000 		.4byte	.LVL46
+ 1559 0594 68010000 		.4byte	0x168
+ 1560 0598 A9050000 		.4byte	0x5a9
+ 1561 059c 13       		.uleb128 0x13
+ 1562 059d 01       		.uleb128 0x1
+ 1563 059e 50       		.byte	0x50
+ 1564 059f 02       		.uleb128 0x2
+ 1565 05a0 74       		.byte	0x74
+ 1566 05a1 00       		.sleb128 0
+ 1567 05a2 13       		.uleb128 0x13
+ 1568 05a3 01       		.uleb128 0x1
+ 1569 05a4 51       		.byte	0x51
+ 1570 05a5 02       		.uleb128 0x2
+ 1571 05a6 08       		.byte	0x8
+ 1572 05a7 32       		.byte	0x32
+ 1573 05a8 00       		.byte	0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 35
+
+
+ 1574 05a9 12       		.uleb128 0x12
+ 1575 05aa 30000000 		.4byte	.LVL47
+ 1576 05ae 1F010000 		.4byte	0x11f
+ 1577 05b2 BD050000 		.4byte	0x5bd
+ 1578 05b6 13       		.uleb128 0x13
+ 1579 05b7 01       		.uleb128 0x1
+ 1580 05b8 50       		.byte	0x50
+ 1581 05b9 02       		.uleb128 0x2
+ 1582 05ba 08       		.byte	0x8
+ 1583 05bb 32       		.byte	0x32
+ 1584 05bc 00       		.byte	0
+ 1585 05bd 14       		.uleb128 0x14
+ 1586 05be 38000000 		.4byte	.LVL48
+ 1587 05c2 68010000 		.4byte	0x168
+ 1588 05c6 13       		.uleb128 0x13
+ 1589 05c7 01       		.uleb128 0x1
+ 1590 05c8 50       		.byte	0x50
+ 1591 05c9 02       		.uleb128 0x2
+ 1592 05ca 74       		.byte	0x74
+ 1593 05cb 00       		.sleb128 0
+ 1594 05cc 13       		.uleb128 0x13
+ 1595 05cd 01       		.uleb128 0x1
+ 1596 05ce 51       		.byte	0x51
+ 1597 05cf 02       		.uleb128 0x2
+ 1598 05d0 08       		.byte	0x8
+ 1599 05d1 32       		.byte	0x32
+ 1600 05d2 00       		.byte	0
+ 1601 05d3 00       		.byte	0
+ 1602 05d4 15       		.uleb128 0x15
+ 1603 05d5 EC000000 		.4byte	0xec
+ 1604 05d9 00000000 		.4byte	.LFB73
+ 1605 05dd 02000000 		.4byte	.LFE73-.LFB73
+ 1606 05e1 01       		.uleb128 0x1
+ 1607 05e2 9C       		.byte	0x9c
+ 1608 05e3 16       		.uleb128 0x16
+ 1609 05e4 36000000 		.4byte	.LASF35
+ 1610 05e8 01       		.byte	0x1
+ 1611 05e9 0301     		.2byte	0x103
+ 1612 05eb 00000000 		.4byte	.LFB75
+ 1613 05ef 0E000000 		.4byte	.LFE75-.LFB75
+ 1614 05f3 01       		.uleb128 0x1
+ 1615 05f4 9C       		.byte	0x9c
+ 1616 05f5 11060000 		.4byte	0x611
+ 1617 05f9 14       		.uleb128 0x14
+ 1618 05fa 0C000000 		.4byte	.LVL49
+ 1619 05fe 68010000 		.4byte	0x168
+ 1620 0602 13       		.uleb128 0x13
+ 1621 0603 01       		.uleb128 0x1
+ 1622 0604 50       		.byte	0x50
+ 1623 0605 03       		.uleb128 0x3
+ 1624 0606 0A       		.byte	0xa
+ 1625 0607 4D01     		.2byte	0x14d
+ 1626 0609 13       		.uleb128 0x13
+ 1627 060a 01       		.uleb128 0x1
+ 1628 060b 51       		.byte	0x51
+ 1629 060c 02       		.uleb128 0x2
+ 1630 060d 08       		.byte	0x8
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 36
+
+
+ 1631 060e 96       		.byte	0x96
+ 1632 060f 00       		.byte	0
+ 1633 0610 00       		.byte	0
+ 1634 0611 16       		.uleb128 0x16
+ 1635 0612 4B020000 		.4byte	.LASF36
+ 1636 0616 01       		.byte	0x1
+ 1637 0617 1001     		.2byte	0x110
+ 1638 0619 00000000 		.4byte	.LFB76
+ 1639 061d 1E000000 		.4byte	.LFE76-.LFB76
+ 1640 0621 01       		.uleb128 0x1
+ 1641 0622 9C       		.byte	0x9c
+ 1642 0623 6C060000 		.4byte	0x66c
+ 1643 0627 12       		.uleb128 0x12
+ 1644 0628 0E000000 		.4byte	.LVL50
+ 1645 062c 68010000 		.4byte	0x168
+ 1646 0630 41060000 		.4byte	0x641
+ 1647 0634 13       		.uleb128 0x13
+ 1648 0635 01       		.uleb128 0x1
+ 1649 0636 50       		.byte	0x50
+ 1650 0637 02       		.uleb128 0x2
+ 1651 0638 74       		.byte	0x74
+ 1652 0639 00       		.sleb128 0
+ 1653 063a 13       		.uleb128 0x13
+ 1654 063b 01       		.uleb128 0x1
+ 1655 063c 51       		.byte	0x51
+ 1656 063d 02       		.uleb128 0x2
+ 1657 063e 08       		.byte	0x8
+ 1658 063f 32       		.byte	0x32
+ 1659 0640 00       		.byte	0
+ 1660 0641 12       		.uleb128 0x12
+ 1661 0642 14000000 		.4byte	.LVL51
+ 1662 0646 1F010000 		.4byte	0x11f
+ 1663 064a 55060000 		.4byte	0x655
+ 1664 064e 13       		.uleb128 0x13
+ 1665 064f 01       		.uleb128 0x1
+ 1666 0650 50       		.byte	0x50
+ 1667 0651 02       		.uleb128 0x2
+ 1668 0652 08       		.byte	0x8
+ 1669 0653 32       		.byte	0x32
+ 1670 0654 00       		.byte	0
+ 1671 0655 14       		.uleb128 0x14
+ 1672 0656 1C000000 		.4byte	.LVL52
+ 1673 065a 68010000 		.4byte	0x168
+ 1674 065e 13       		.uleb128 0x13
+ 1675 065f 01       		.uleb128 0x1
+ 1676 0660 50       		.byte	0x50
+ 1677 0661 02       		.uleb128 0x2
+ 1678 0662 74       		.byte	0x74
+ 1679 0663 00       		.sleb128 0
+ 1680 0664 13       		.uleb128 0x13
+ 1681 0665 01       		.uleb128 0x1
+ 1682 0666 51       		.byte	0x51
+ 1683 0667 02       		.uleb128 0x2
+ 1684 0668 08       		.byte	0x8
+ 1685 0669 32       		.byte	0x32
+ 1686 066a 00       		.byte	0
+ 1687 066b 00       		.byte	0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 37
+
+
+ 1688 066c 17       		.uleb128 0x17
+ 1689 066d F4000000 		.4byte	0xf4
+ 1690 0671 00000000 		.4byte	.LFB77
+ 1691 0675 76000000 		.4byte	.LFE77-.LFB77
+ 1692 0679 01       		.uleb128 0x1
+ 1693 067a 9C       		.byte	0x9c
+ 1694 067b F1060000 		.4byte	0x6f1
+ 1695 067f 18       		.uleb128 0x18
+ 1696 0680 01010000 		.4byte	0x101
+ 1697 0684 63000000 		.4byte	.LLST3
+ 1698 0688 19       		.uleb128 0x19
+ 1699 0689 58000000 		.4byte	.LBB9
+ 1700 068d 1C000000 		.4byte	.LBE9-.LBB9
+ 1701 0691 BA060000 		.4byte	0x6ba
+ 1702 0695 18       		.uleb128 0x18
+ 1703 0696 01010000 		.4byte	0x101
+ 1704 069a 4C010000 		.4byte	.LLST4
+ 1705 069e 10       		.uleb128 0x10
+ 1706 069f 60000000 		.4byte	.LVL67
+ 1707 06a3 5F020000 		.4byte	0x25f
+ 1708 06a7 10       		.uleb128 0x10
+ 1709 06a8 6A000000 		.4byte	.LVL69
+ 1710 06ac 14030000 		.4byte	0x314
+ 1711 06b0 10       		.uleb128 0x10
+ 1712 06b1 74000000 		.4byte	.LVL71
+ 1713 06b5 8C020000 		.4byte	0x28c
+ 1714 06b9 00       		.byte	0
+ 1715 06ba 10       		.uleb128 0x10
+ 1716 06bb 0A000000 		.4byte	.LVL54
+ 1717 06bf 42030000 		.4byte	0x342
+ 1718 06c3 10       		.uleb128 0x10
+ 1719 06c4 14000000 		.4byte	.LVL56
+ 1720 06c8 54040000 		.4byte	0x454
+ 1721 06cc 10       		.uleb128 0x10
+ 1722 06cd 1E000000 		.4byte	.LVL58
+ 1723 06d1 11060000 		.4byte	0x611
+ 1724 06d5 10       		.uleb128 0x10
+ 1725 06d6 2C000000 		.4byte	.LVL60
+ 1726 06da 1E050000 		.4byte	0x51e
+ 1727 06de 10       		.uleb128 0x10
+ 1728 06df 48000000 		.4byte	.LVL62
+ 1729 06e3 F0040000 		.4byte	0x4f0
+ 1730 06e7 10       		.uleb128 0x10
+ 1731 06e8 52000000 		.4byte	.LVL64
+ 1732 06ec E3050000 		.4byte	0x5e3
+ 1733 06f0 00       		.byte	0
+ 1734 06f1 16       		.uleb128 0x16
+ 1735 06f2 CD020000 		.4byte	.LASF37
+ 1736 06f6 01       		.byte	0x1
+ 1737 06f7 6001     		.2byte	0x160
+ 1738 06f9 00000000 		.4byte	.LFB78
+ 1739 06fd 08000000 		.4byte	.LFE78-.LFB78
+ 1740 0701 01       		.uleb128 0x1
+ 1741 0702 9C       		.byte	0x9c
+ 1742 0703 21070000 		.4byte	0x721
+ 1743 0707 1A       		.uleb128 0x1a
+ 1744 0708 CE000000 		.4byte	.LASF38
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 38
+
+
+ 1745 070c 01       		.byte	0x1
+ 1746 070d 6001     		.2byte	0x160
+ 1747 070f C6000000 		.4byte	0xc6
+ 1748 0713 9F010000 		.4byte	.LLST5
+ 1749 0717 10       		.uleb128 0x10
+ 1750 0718 06000000 		.4byte	.LVL73
+ 1751 071c F4000000 		.4byte	0xf4
+ 1752 0720 00       		.byte	0
+ 1753 0721 1B       		.uleb128 0x1b
+ 1754 0722 31070000 		.4byte	0x731
+ 1755 0726 31070000 		.4byte	0x731
+ 1756 072a 1C       		.uleb128 0x1c
+ 1757 072b BF000000 		.4byte	0xbf
+ 1758 072f 0B       		.byte	0xb
+ 1759 0730 00       		.byte	0
+ 1760 0731 1D       		.uleb128 0x1d
+ 1761 0732 97000000 		.4byte	0x97
+ 1762 0736 1E       		.uleb128 0x1e
+ 1763 0737 B6020000 		.4byte	.LASF39
+ 1764 073b 06       		.byte	0x6
+ 1765 073c E001     		.2byte	0x1e0
+ 1766 073e 42070000 		.4byte	0x742
+ 1767 0742 1D       		.uleb128 0x1d
+ 1768 0743 21070000 		.4byte	0x721
+ 1769 0747 1F       		.uleb128 0x1f
+ 1770 0748 E5000000 		.4byte	.LASF40
+ 1771 074c 01       		.byte	0x1
+ 1772 074d 0F       		.byte	0xf
+ 1773 074e DC000000 		.4byte	0xdc
+ 1774 0752 05       		.uleb128 0x5
+ 1775 0753 03       		.byte	0x3
+ 1776 0754 00000000 		.4byte	BeepDelay_TimeOut
+ 1777 0758 20       		.uleb128 0x20
+ 1778 0759 78030000 		.4byte	.LASF23
+ 1779 075d 78030000 		.4byte	.LASF23
+ 1780 0761 01       		.byte	0x1
+ 1781 0762 3D       		.byte	0x3d
+ 1782 0763 21       		.uleb128 0x21
+ 1783 0764 8B020000 		.4byte	.LASF41
+ 1784 0768 8B020000 		.4byte	.LASF41
+ 1785 076c 07       		.byte	0x7
+ 1786 076d 4A01     		.2byte	0x14a
+ 1787 076f 21       		.uleb128 0x21
+ 1788 0770 70020000 		.4byte	.LASF42
+ 1789 0774 70020000 		.4byte	.LASF42
+ 1790 0778 07       		.byte	0x7
+ 1791 0779 5001     		.2byte	0x150
+ 1792 077b 21       		.uleb128 0x21
+ 1793 077c 24010000 		.4byte	.LASF43
+ 1794 0780 24010000 		.4byte	.LASF43
+ 1795 0784 07       		.byte	0x7
+ 1796 0785 5501     		.2byte	0x155
+ 1797 0787 21       		.uleb128 0x21
+ 1798 0788 9E020000 		.4byte	.LASF44
+ 1799 078c 9E020000 		.4byte	.LASF44
+ 1800 0790 07       		.byte	0x7
+ 1801 0791 3201     		.2byte	0x132
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 39
+
+
+ 1802 0793 21       		.uleb128 0x21
+ 1803 0794 2B000000 		.4byte	.LASF45
+ 1804 0798 2B000000 		.4byte	.LASF45
+ 1805 079c 07       		.byte	0x7
+ 1806 079d 3301     		.2byte	0x133
+ 1807 079f 00       		.byte	0
+ 1808              		.section	.debug_abbrev,"",%progbits
+ 1809              	.Ldebug_abbrev0:
+ 1810 0000 01       		.uleb128 0x1
+ 1811 0001 11       		.uleb128 0x11
+ 1812 0002 01       		.byte	0x1
+ 1813 0003 25       		.uleb128 0x25
+ 1814 0004 0E       		.uleb128 0xe
+ 1815 0005 13       		.uleb128 0x13
+ 1816 0006 0B       		.uleb128 0xb
+ 1817 0007 03       		.uleb128 0x3
+ 1818 0008 0E       		.uleb128 0xe
+ 1819 0009 1B       		.uleb128 0x1b
+ 1820 000a 0E       		.uleb128 0xe
+ 1821 000b 55       		.uleb128 0x55
+ 1822 000c 17       		.uleb128 0x17
+ 1823 000d 11       		.uleb128 0x11
+ 1824 000e 01       		.uleb128 0x1
+ 1825 000f 10       		.uleb128 0x10
+ 1826 0010 17       		.uleb128 0x17
+ 1827 0011 00       		.byte	0
+ 1828 0012 00       		.byte	0
+ 1829 0013 02       		.uleb128 0x2
+ 1830 0014 24       		.uleb128 0x24
+ 1831 0015 00       		.byte	0
+ 1832 0016 0B       		.uleb128 0xb
+ 1833 0017 0B       		.uleb128 0xb
+ 1834 0018 3E       		.uleb128 0x3e
+ 1835 0019 0B       		.uleb128 0xb
+ 1836 001a 03       		.uleb128 0x3
+ 1837 001b 0E       		.uleb128 0xe
+ 1838 001c 00       		.byte	0
+ 1839 001d 00       		.byte	0
+ 1840 001e 03       		.uleb128 0x3
+ 1841 001f 16       		.uleb128 0x16
+ 1842 0020 00       		.byte	0
+ 1843 0021 03       		.uleb128 0x3
+ 1844 0022 0E       		.uleb128 0xe
+ 1845 0023 3A       		.uleb128 0x3a
+ 1846 0024 0B       		.uleb128 0xb
+ 1847 0025 3B       		.uleb128 0x3b
+ 1848 0026 0B       		.uleb128 0xb
+ 1849 0027 49       		.uleb128 0x49
+ 1850 0028 13       		.uleb128 0x13
+ 1851 0029 00       		.byte	0
+ 1852 002a 00       		.byte	0
+ 1853 002b 04       		.uleb128 0x4
+ 1854 002c 24       		.uleb128 0x24
+ 1855 002d 00       		.byte	0
+ 1856 002e 0B       		.uleb128 0xb
+ 1857 002f 0B       		.uleb128 0xb
+ 1858 0030 3E       		.uleb128 0x3e
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 40
+
+
+ 1859 0031 0B       		.uleb128 0xb
+ 1860 0032 03       		.uleb128 0x3
+ 1861 0033 08       		.uleb128 0x8
+ 1862 0034 00       		.byte	0
+ 1863 0035 00       		.byte	0
+ 1864 0036 05       		.uleb128 0x5
+ 1865 0037 16       		.uleb128 0x16
+ 1866 0038 00       		.byte	0
+ 1867 0039 03       		.uleb128 0x3
+ 1868 003a 0E       		.uleb128 0xe
+ 1869 003b 3A       		.uleb128 0x3a
+ 1870 003c 0B       		.uleb128 0xb
+ 1871 003d 3B       		.uleb128 0x3b
+ 1872 003e 05       		.uleb128 0x5
+ 1873 003f 49       		.uleb128 0x49
+ 1874 0040 13       		.uleb128 0x13
+ 1875 0041 00       		.byte	0
+ 1876 0042 00       		.byte	0
+ 1877 0043 06       		.uleb128 0x6
+ 1878 0044 35       		.uleb128 0x35
+ 1879 0045 00       		.byte	0
+ 1880 0046 49       		.uleb128 0x49
+ 1881 0047 13       		.uleb128 0x13
+ 1882 0048 00       		.byte	0
+ 1883 0049 00       		.byte	0
+ 1884 004a 07       		.uleb128 0x7
+ 1885 004b 2E       		.uleb128 0x2e
+ 1886 004c 00       		.byte	0
+ 1887 004d 3F       		.uleb128 0x3f
+ 1888 004e 19       		.uleb128 0x19
+ 1889 004f 03       		.uleb128 0x3
+ 1890 0050 0E       		.uleb128 0xe
+ 1891 0051 3A       		.uleb128 0x3a
+ 1892 0052 0B       		.uleb128 0xb
+ 1893 0053 3B       		.uleb128 0x3b
+ 1894 0054 0B       		.uleb128 0xb
+ 1895 0055 27       		.uleb128 0x27
+ 1896 0056 19       		.uleb128 0x19
+ 1897 0057 20       		.uleb128 0x20
+ 1898 0058 0B       		.uleb128 0xb
+ 1899 0059 00       		.byte	0
+ 1900 005a 00       		.byte	0
+ 1901 005b 08       		.uleb128 0x8
+ 1902 005c 2E       		.uleb128 0x2e
+ 1903 005d 01       		.byte	0x1
+ 1904 005e 3F       		.uleb128 0x3f
+ 1905 005f 19       		.uleb128 0x19
+ 1906 0060 03       		.uleb128 0x3
+ 1907 0061 0E       		.uleb128 0xe
+ 1908 0062 3A       		.uleb128 0x3a
+ 1909 0063 0B       		.uleb128 0xb
+ 1910 0064 3B       		.uleb128 0x3b
+ 1911 0065 05       		.uleb128 0x5
+ 1912 0066 27       		.uleb128 0x27
+ 1913 0067 19       		.uleb128 0x19
+ 1914 0068 20       		.uleb128 0x20
+ 1915 0069 0B       		.uleb128 0xb
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 41
+
+
+ 1916 006a 01       		.uleb128 0x1
+ 1917 006b 13       		.uleb128 0x13
+ 1918 006c 00       		.byte	0
+ 1919 006d 00       		.byte	0
+ 1920 006e 09       		.uleb128 0x9
+ 1921 006f 05       		.uleb128 0x5
+ 1922 0070 00       		.byte	0
+ 1923 0071 03       		.uleb128 0x3
+ 1924 0072 0E       		.uleb128 0xe
+ 1925 0073 3A       		.uleb128 0x3a
+ 1926 0074 0B       		.uleb128 0xb
+ 1927 0075 3B       		.uleb128 0x3b
+ 1928 0076 05       		.uleb128 0x5
+ 1929 0077 49       		.uleb128 0x49
+ 1930 0078 13       		.uleb128 0x13
+ 1931 0079 00       		.byte	0
+ 1932 007a 00       		.byte	0
+ 1933 007b 0A       		.uleb128 0xa
+ 1934 007c 2E       		.uleb128 0x2e
+ 1935 007d 00       		.byte	0
+ 1936 007e 3F       		.uleb128 0x3f
+ 1937 007f 19       		.uleb128 0x19
+ 1938 0080 03       		.uleb128 0x3
+ 1939 0081 0E       		.uleb128 0xe
+ 1940 0082 3A       		.uleb128 0x3a
+ 1941 0083 0B       		.uleb128 0xb
+ 1942 0084 3B       		.uleb128 0x3b
+ 1943 0085 0B       		.uleb128 0xb
+ 1944 0086 27       		.uleb128 0x27
+ 1945 0087 19       		.uleb128 0x19
+ 1946 0088 11       		.uleb128 0x11
+ 1947 0089 01       		.uleb128 0x1
+ 1948 008a 12       		.uleb128 0x12
+ 1949 008b 06       		.uleb128 0x6
+ 1950 008c 40       		.uleb128 0x40
+ 1951 008d 18       		.uleb128 0x18
+ 1952 008e 9742     		.uleb128 0x2117
+ 1953 0090 19       		.uleb128 0x19
+ 1954 0091 00       		.byte	0
+ 1955 0092 00       		.byte	0
+ 1956 0093 0B       		.uleb128 0xb
+ 1957 0094 2E       		.uleb128 0x2e
+ 1958 0095 01       		.byte	0x1
+ 1959 0096 3F       		.uleb128 0x3f
+ 1960 0097 19       		.uleb128 0x19
+ 1961 0098 03       		.uleb128 0x3
+ 1962 0099 0E       		.uleb128 0xe
+ 1963 009a 3A       		.uleb128 0x3a
+ 1964 009b 0B       		.uleb128 0xb
+ 1965 009c 3B       		.uleb128 0x3b
+ 1966 009d 0B       		.uleb128 0xb
+ 1967 009e 27       		.uleb128 0x27
+ 1968 009f 19       		.uleb128 0x19
+ 1969 00a0 11       		.uleb128 0x11
+ 1970 00a1 01       		.uleb128 0x1
+ 1971 00a2 12       		.uleb128 0x12
+ 1972 00a3 06       		.uleb128 0x6
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 42
+
+
+ 1973 00a4 40       		.uleb128 0x40
+ 1974 00a5 18       		.uleb128 0x18
+ 1975 00a6 9742     		.uleb128 0x2117
+ 1976 00a8 19       		.uleb128 0x19
+ 1977 00a9 01       		.uleb128 0x1
+ 1978 00aa 13       		.uleb128 0x13
+ 1979 00ab 00       		.byte	0
+ 1980 00ac 00       		.byte	0
+ 1981 00ad 0C       		.uleb128 0xc
+ 1982 00ae 05       		.uleb128 0x5
+ 1983 00af 00       		.byte	0
+ 1984 00b0 03       		.uleb128 0x3
+ 1985 00b1 08       		.uleb128 0x8
+ 1986 00b2 3A       		.uleb128 0x3a
+ 1987 00b3 0B       		.uleb128 0xb
+ 1988 00b4 3B       		.uleb128 0x3b
+ 1989 00b5 0B       		.uleb128 0xb
+ 1990 00b6 49       		.uleb128 0x49
+ 1991 00b7 13       		.uleb128 0x13
+ 1992 00b8 02       		.uleb128 0x2
+ 1993 00b9 17       		.uleb128 0x17
+ 1994 00ba 00       		.byte	0
+ 1995 00bb 00       		.byte	0
+ 1996 00bc 0D       		.uleb128 0xd
+ 1997 00bd 0B       		.uleb128 0xb
+ 1998 00be 01       		.byte	0x1
+ 1999 00bf 11       		.uleb128 0x11
+ 2000 00c0 01       		.uleb128 0x1
+ 2001 00c1 12       		.uleb128 0x12
+ 2002 00c2 06       		.uleb128 0x6
+ 2003 00c3 00       		.byte	0
+ 2004 00c4 00       		.byte	0
+ 2005 00c5 0E       		.uleb128 0xe
+ 2006 00c6 2E       		.uleb128 0x2e
+ 2007 00c7 01       		.byte	0x1
+ 2008 00c8 3F       		.uleb128 0x3f
+ 2009 00c9 19       		.uleb128 0x19
+ 2010 00ca 03       		.uleb128 0x3
+ 2011 00cb 0E       		.uleb128 0xe
+ 2012 00cc 3A       		.uleb128 0x3a
+ 2013 00cd 0B       		.uleb128 0xb
+ 2014 00ce 3B       		.uleb128 0x3b
+ 2015 00cf 0B       		.uleb128 0xb
+ 2016 00d0 49       		.uleb128 0x49
+ 2017 00d1 13       		.uleb128 0x13
+ 2018 00d2 3C       		.uleb128 0x3c
+ 2019 00d3 19       		.uleb128 0x19
+ 2020 00d4 01       		.uleb128 0x1
+ 2021 00d5 13       		.uleb128 0x13
+ 2022 00d6 00       		.byte	0
+ 2023 00d7 00       		.byte	0
+ 2024 00d8 0F       		.uleb128 0xf
+ 2025 00d9 18       		.uleb128 0x18
+ 2026 00da 00       		.byte	0
+ 2027 00db 00       		.byte	0
+ 2028 00dc 00       		.byte	0
+ 2029 00dd 10       		.uleb128 0x10
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 43
+
+
+ 2030 00de 898201   		.uleb128 0x4109
+ 2031 00e1 00       		.byte	0
+ 2032 00e2 11       		.uleb128 0x11
+ 2033 00e3 01       		.uleb128 0x1
+ 2034 00e4 31       		.uleb128 0x31
+ 2035 00e5 13       		.uleb128 0x13
+ 2036 00e6 00       		.byte	0
+ 2037 00e7 00       		.byte	0
+ 2038 00e8 11       		.uleb128 0x11
+ 2039 00e9 05       		.uleb128 0x5
+ 2040 00ea 00       		.byte	0
+ 2041 00eb 03       		.uleb128 0x3
+ 2042 00ec 0E       		.uleb128 0xe
+ 2043 00ed 3A       		.uleb128 0x3a
+ 2044 00ee 0B       		.uleb128 0xb
+ 2045 00ef 3B       		.uleb128 0x3b
+ 2046 00f0 0B       		.uleb128 0xb
+ 2047 00f1 49       		.uleb128 0x49
+ 2048 00f2 13       		.uleb128 0x13
+ 2049 00f3 02       		.uleb128 0x2
+ 2050 00f4 17       		.uleb128 0x17
+ 2051 00f5 00       		.byte	0
+ 2052 00f6 00       		.byte	0
+ 2053 00f7 12       		.uleb128 0x12
+ 2054 00f8 898201   		.uleb128 0x4109
+ 2055 00fb 01       		.byte	0x1
+ 2056 00fc 11       		.uleb128 0x11
+ 2057 00fd 01       		.uleb128 0x1
+ 2058 00fe 31       		.uleb128 0x31
+ 2059 00ff 13       		.uleb128 0x13
+ 2060 0100 01       		.uleb128 0x1
+ 2061 0101 13       		.uleb128 0x13
+ 2062 0102 00       		.byte	0
+ 2063 0103 00       		.byte	0
+ 2064 0104 13       		.uleb128 0x13
+ 2065 0105 8A8201   		.uleb128 0x410a
+ 2066 0108 00       		.byte	0
+ 2067 0109 02       		.uleb128 0x2
+ 2068 010a 18       		.uleb128 0x18
+ 2069 010b 9142     		.uleb128 0x2111
+ 2070 010d 18       		.uleb128 0x18
+ 2071 010e 00       		.byte	0
+ 2072 010f 00       		.byte	0
+ 2073 0110 14       		.uleb128 0x14
+ 2074 0111 898201   		.uleb128 0x4109
+ 2075 0114 01       		.byte	0x1
+ 2076 0115 11       		.uleb128 0x11
+ 2077 0116 01       		.uleb128 0x1
+ 2078 0117 31       		.uleb128 0x31
+ 2079 0118 13       		.uleb128 0x13
+ 2080 0119 00       		.byte	0
+ 2081 011a 00       		.byte	0
+ 2082 011b 15       		.uleb128 0x15
+ 2083 011c 2E       		.uleb128 0x2e
+ 2084 011d 00       		.byte	0
+ 2085 011e 31       		.uleb128 0x31
+ 2086 011f 13       		.uleb128 0x13
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 44
+
+
+ 2087 0120 11       		.uleb128 0x11
+ 2088 0121 01       		.uleb128 0x1
+ 2089 0122 12       		.uleb128 0x12
+ 2090 0123 06       		.uleb128 0x6
+ 2091 0124 40       		.uleb128 0x40
+ 2092 0125 18       		.uleb128 0x18
+ 2093 0126 9742     		.uleb128 0x2117
+ 2094 0128 19       		.uleb128 0x19
+ 2095 0129 00       		.byte	0
+ 2096 012a 00       		.byte	0
+ 2097 012b 16       		.uleb128 0x16
+ 2098 012c 2E       		.uleb128 0x2e
+ 2099 012d 01       		.byte	0x1
+ 2100 012e 3F       		.uleb128 0x3f
+ 2101 012f 19       		.uleb128 0x19
+ 2102 0130 03       		.uleb128 0x3
+ 2103 0131 0E       		.uleb128 0xe
+ 2104 0132 3A       		.uleb128 0x3a
+ 2105 0133 0B       		.uleb128 0xb
+ 2106 0134 3B       		.uleb128 0x3b
+ 2107 0135 05       		.uleb128 0x5
+ 2108 0136 27       		.uleb128 0x27
+ 2109 0137 19       		.uleb128 0x19
+ 2110 0138 11       		.uleb128 0x11
+ 2111 0139 01       		.uleb128 0x1
+ 2112 013a 12       		.uleb128 0x12
+ 2113 013b 06       		.uleb128 0x6
+ 2114 013c 40       		.uleb128 0x40
+ 2115 013d 18       		.uleb128 0x18
+ 2116 013e 9742     		.uleb128 0x2117
+ 2117 0140 19       		.uleb128 0x19
+ 2118 0141 01       		.uleb128 0x1
+ 2119 0142 13       		.uleb128 0x13
+ 2120 0143 00       		.byte	0
+ 2121 0144 00       		.byte	0
+ 2122 0145 17       		.uleb128 0x17
+ 2123 0146 2E       		.uleb128 0x2e
+ 2124 0147 01       		.byte	0x1
+ 2125 0148 31       		.uleb128 0x31
+ 2126 0149 13       		.uleb128 0x13
+ 2127 014a 11       		.uleb128 0x11
+ 2128 014b 01       		.uleb128 0x1
+ 2129 014c 12       		.uleb128 0x12
+ 2130 014d 06       		.uleb128 0x6
+ 2131 014e 40       		.uleb128 0x40
+ 2132 014f 18       		.uleb128 0x18
+ 2133 0150 9742     		.uleb128 0x2117
+ 2134 0152 19       		.uleb128 0x19
+ 2135 0153 01       		.uleb128 0x1
+ 2136 0154 13       		.uleb128 0x13
+ 2137 0155 00       		.byte	0
+ 2138 0156 00       		.byte	0
+ 2139 0157 18       		.uleb128 0x18
+ 2140 0158 05       		.uleb128 0x5
+ 2141 0159 00       		.byte	0
+ 2142 015a 31       		.uleb128 0x31
+ 2143 015b 13       		.uleb128 0x13
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 45
+
+
+ 2144 015c 02       		.uleb128 0x2
+ 2145 015d 17       		.uleb128 0x17
+ 2146 015e 00       		.byte	0
+ 2147 015f 00       		.byte	0
+ 2148 0160 19       		.uleb128 0x19
+ 2149 0161 0B       		.uleb128 0xb
+ 2150 0162 01       		.byte	0x1
+ 2151 0163 11       		.uleb128 0x11
+ 2152 0164 01       		.uleb128 0x1
+ 2153 0165 12       		.uleb128 0x12
+ 2154 0166 06       		.uleb128 0x6
+ 2155 0167 01       		.uleb128 0x1
+ 2156 0168 13       		.uleb128 0x13
+ 2157 0169 00       		.byte	0
+ 2158 016a 00       		.byte	0
+ 2159 016b 1A       		.uleb128 0x1a
+ 2160 016c 05       		.uleb128 0x5
+ 2161 016d 00       		.byte	0
+ 2162 016e 03       		.uleb128 0x3
+ 2163 016f 0E       		.uleb128 0xe
+ 2164 0170 3A       		.uleb128 0x3a
+ 2165 0171 0B       		.uleb128 0xb
+ 2166 0172 3B       		.uleb128 0x3b
+ 2167 0173 05       		.uleb128 0x5
+ 2168 0174 49       		.uleb128 0x49
+ 2169 0175 13       		.uleb128 0x13
+ 2170 0176 02       		.uleb128 0x2
+ 2171 0177 17       		.uleb128 0x17
+ 2172 0178 00       		.byte	0
+ 2173 0179 00       		.byte	0
+ 2174 017a 1B       		.uleb128 0x1b
+ 2175 017b 01       		.uleb128 0x1
+ 2176 017c 01       		.byte	0x1
+ 2177 017d 49       		.uleb128 0x49
+ 2178 017e 13       		.uleb128 0x13
+ 2179 017f 01       		.uleb128 0x1
+ 2180 0180 13       		.uleb128 0x13
+ 2181 0181 00       		.byte	0
+ 2182 0182 00       		.byte	0
+ 2183 0183 1C       		.uleb128 0x1c
+ 2184 0184 21       		.uleb128 0x21
+ 2185 0185 00       		.byte	0
+ 2186 0186 49       		.uleb128 0x49
+ 2187 0187 13       		.uleb128 0x13
+ 2188 0188 2F       		.uleb128 0x2f
+ 2189 0189 0B       		.uleb128 0xb
+ 2190 018a 00       		.byte	0
+ 2191 018b 00       		.byte	0
+ 2192 018c 1D       		.uleb128 0x1d
+ 2193 018d 26       		.uleb128 0x26
+ 2194 018e 00       		.byte	0
+ 2195 018f 49       		.uleb128 0x49
+ 2196 0190 13       		.uleb128 0x13
+ 2197 0191 00       		.byte	0
+ 2198 0192 00       		.byte	0
+ 2199 0193 1E       		.uleb128 0x1e
+ 2200 0194 34       		.uleb128 0x34
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 46
+
+
+ 2201 0195 00       		.byte	0
+ 2202 0196 03       		.uleb128 0x3
+ 2203 0197 0E       		.uleb128 0xe
+ 2204 0198 3A       		.uleb128 0x3a
+ 2205 0199 0B       		.uleb128 0xb
+ 2206 019a 3B       		.uleb128 0x3b
+ 2207 019b 05       		.uleb128 0x5
+ 2208 019c 49       		.uleb128 0x49
+ 2209 019d 13       		.uleb128 0x13
+ 2210 019e 3F       		.uleb128 0x3f
+ 2211 019f 19       		.uleb128 0x19
+ 2212 01a0 3C       		.uleb128 0x3c
+ 2213 01a1 19       		.uleb128 0x19
+ 2214 01a2 00       		.byte	0
+ 2215 01a3 00       		.byte	0
+ 2216 01a4 1F       		.uleb128 0x1f
+ 2217 01a5 34       		.uleb128 0x34
+ 2218 01a6 00       		.byte	0
+ 2219 01a7 03       		.uleb128 0x3
+ 2220 01a8 0E       		.uleb128 0xe
+ 2221 01a9 3A       		.uleb128 0x3a
+ 2222 01aa 0B       		.uleb128 0xb
+ 2223 01ab 3B       		.uleb128 0x3b
+ 2224 01ac 0B       		.uleb128 0xb
+ 2225 01ad 49       		.uleb128 0x49
+ 2226 01ae 13       		.uleb128 0x13
+ 2227 01af 3F       		.uleb128 0x3f
+ 2228 01b0 19       		.uleb128 0x19
+ 2229 01b1 02       		.uleb128 0x2
+ 2230 01b2 18       		.uleb128 0x18
+ 2231 01b3 00       		.byte	0
+ 2232 01b4 00       		.byte	0
+ 2233 01b5 20       		.uleb128 0x20
+ 2234 01b6 2E       		.uleb128 0x2e
+ 2235 01b7 00       		.byte	0
+ 2236 01b8 3F       		.uleb128 0x3f
+ 2237 01b9 19       		.uleb128 0x19
+ 2238 01ba 3C       		.uleb128 0x3c
+ 2239 01bb 19       		.uleb128 0x19
+ 2240 01bc 6E       		.uleb128 0x6e
+ 2241 01bd 0E       		.uleb128 0xe
+ 2242 01be 03       		.uleb128 0x3
+ 2243 01bf 0E       		.uleb128 0xe
+ 2244 01c0 3A       		.uleb128 0x3a
+ 2245 01c1 0B       		.uleb128 0xb
+ 2246 01c2 3B       		.uleb128 0x3b
+ 2247 01c3 0B       		.uleb128 0xb
+ 2248 01c4 00       		.byte	0
+ 2249 01c5 00       		.byte	0
+ 2250 01c6 21       		.uleb128 0x21
+ 2251 01c7 2E       		.uleb128 0x2e
+ 2252 01c8 00       		.byte	0
+ 2253 01c9 3F       		.uleb128 0x3f
+ 2254 01ca 19       		.uleb128 0x19
+ 2255 01cb 3C       		.uleb128 0x3c
+ 2256 01cc 19       		.uleb128 0x19
+ 2257 01cd 6E       		.uleb128 0x6e
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 47
+
+
+ 2258 01ce 0E       		.uleb128 0xe
+ 2259 01cf 03       		.uleb128 0x3
+ 2260 01d0 0E       		.uleb128 0xe
+ 2261 01d1 3A       		.uleb128 0x3a
+ 2262 01d2 0B       		.uleb128 0xb
+ 2263 01d3 3B       		.uleb128 0x3b
+ 2264 01d4 05       		.uleb128 0x5
+ 2265 01d5 00       		.byte	0
+ 2266 01d6 00       		.byte	0
+ 2267 01d7 00       		.byte	0
+ 2268              		.section	.debug_loc,"",%progbits
+ 2269              	.Ldebug_loc0:
+ 2270              	.LLST0:
+ 2271 0000 00000000 		.4byte	.LVL0
+ 2272 0004 08000000 		.4byte	.LVL1
+ 2273 0008 0100     		.2byte	0x1
+ 2274 000a 50       		.byte	0x50
+ 2275 000b 08000000 		.4byte	.LVL1
+ 2276 000f 1C000000 		.4byte	.LFE64
+ 2277 0013 0400     		.2byte	0x4
+ 2278 0015 F3       		.byte	0xf3
+ 2279 0016 01       		.uleb128 0x1
+ 2280 0017 50       		.byte	0x50
+ 2281 0018 9F       		.byte	0x9f
+ 2282 0019 00000000 		.4byte	0
+ 2283 001d 00000000 		.4byte	0
+ 2284              	.LLST1:
+ 2285 0021 00000000 		.4byte	.LVL3
+ 2286 0025 08000000 		.4byte	.LVL4
+ 2287 0029 0100     		.2byte	0x1
+ 2288 002b 50       		.byte	0x50
+ 2289 002c 08000000 		.4byte	.LVL4
+ 2290 0030 4A000000 		.4byte	.LFE65
+ 2291 0034 0400     		.2byte	0x4
+ 2292 0036 F3       		.byte	0xf3
+ 2293 0037 01       		.uleb128 0x1
+ 2294 0038 50       		.byte	0x50
+ 2295 0039 9F       		.byte	0x9f
+ 2296 003a 00000000 		.4byte	0
+ 2297 003e 00000000 		.4byte	0
+ 2298              	.LLST2:
+ 2299 0042 00000000 		.4byte	.LVL3
+ 2300 0046 0B000000 		.4byte	.LVL5-1
+ 2301 004a 0100     		.2byte	0x1
+ 2302 004c 51       		.byte	0x51
+ 2303 004d 0B000000 		.4byte	.LVL5-1
+ 2304 0051 4A000000 		.4byte	.LFE65
+ 2305 0055 0400     		.2byte	0x4
+ 2306 0057 F3       		.byte	0xf3
+ 2307 0058 01       		.uleb128 0x1
+ 2308 0059 51       		.byte	0x51
+ 2309 005a 9F       		.byte	0x9f
+ 2310 005b 00000000 		.4byte	0
+ 2311 005f 00000000 		.4byte	0
+ 2312              	.LLST3:
+ 2313 0063 00000000 		.4byte	.LVL53
+ 2314 0067 09000000 		.4byte	.LVL54-1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 48
+
+
+ 2315 006b 0100     		.2byte	0x1
+ 2316 006d 50       		.byte	0x50
+ 2317 006e 09000000 		.4byte	.LVL54-1
+ 2318 0072 0C000000 		.4byte	.LVL55
+ 2319 0076 0400     		.2byte	0x4
+ 2320 0078 F3       		.byte	0xf3
+ 2321 0079 01       		.uleb128 0x1
+ 2322 007a 50       		.byte	0x50
+ 2323 007b 9F       		.byte	0x9f
+ 2324 007c 0C000000 		.4byte	.LVL55
+ 2325 0080 13000000 		.4byte	.LVL56-1
+ 2326 0084 0100     		.2byte	0x1
+ 2327 0086 50       		.byte	0x50
+ 2328 0087 13000000 		.4byte	.LVL56-1
+ 2329 008b 16000000 		.4byte	.LVL57
+ 2330 008f 0400     		.2byte	0x4
+ 2331 0091 F3       		.byte	0xf3
+ 2332 0092 01       		.uleb128 0x1
+ 2333 0093 50       		.byte	0x50
+ 2334 0094 9F       		.byte	0x9f
+ 2335 0095 16000000 		.4byte	.LVL57
+ 2336 0099 1D000000 		.4byte	.LVL58-1
+ 2337 009d 0100     		.2byte	0x1
+ 2338 009f 50       		.byte	0x50
+ 2339 00a0 1D000000 		.4byte	.LVL58-1
+ 2340 00a4 20000000 		.4byte	.LVL59
+ 2341 00a8 0400     		.2byte	0x4
+ 2342 00aa F3       		.byte	0xf3
+ 2343 00ab 01       		.uleb128 0x1
+ 2344 00ac 50       		.byte	0x50
+ 2345 00ad 9F       		.byte	0x9f
+ 2346 00ae 20000000 		.4byte	.LVL59
+ 2347 00b2 2B000000 		.4byte	.LVL60-1
+ 2348 00b6 0100     		.2byte	0x1
+ 2349 00b8 50       		.byte	0x50
+ 2350 00b9 2B000000 		.4byte	.LVL60-1
+ 2351 00bd 2E000000 		.4byte	.LVL61
+ 2352 00c1 0400     		.2byte	0x4
+ 2353 00c3 F3       		.byte	0xf3
+ 2354 00c4 01       		.uleb128 0x1
+ 2355 00c5 50       		.byte	0x50
+ 2356 00c6 9F       		.byte	0x9f
+ 2357 00c7 2E000000 		.4byte	.LVL61
+ 2358 00cb 47000000 		.4byte	.LVL62-1
+ 2359 00cf 0100     		.2byte	0x1
+ 2360 00d1 50       		.byte	0x50
+ 2361 00d2 47000000 		.4byte	.LVL62-1
+ 2362 00d6 4A000000 		.4byte	.LVL63
+ 2363 00da 0400     		.2byte	0x4
+ 2364 00dc F3       		.byte	0xf3
+ 2365 00dd 01       		.uleb128 0x1
+ 2366 00de 50       		.byte	0x50
+ 2367 00df 9F       		.byte	0x9f
+ 2368 00e0 4A000000 		.4byte	.LVL63
+ 2369 00e4 51000000 		.4byte	.LVL64-1
+ 2370 00e8 0100     		.2byte	0x1
+ 2371 00ea 50       		.byte	0x50
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 49
+
+
+ 2372 00eb 51000000 		.4byte	.LVL64-1
+ 2373 00ef 54000000 		.4byte	.LVL65
+ 2374 00f3 0400     		.2byte	0x4
+ 2375 00f5 F3       		.byte	0xf3
+ 2376 00f6 01       		.uleb128 0x1
+ 2377 00f7 50       		.byte	0x50
+ 2378 00f8 9F       		.byte	0x9f
+ 2379 00f9 54000000 		.4byte	.LVL65
+ 2380 00fd 5F000000 		.4byte	.LVL67-1
+ 2381 0101 0100     		.2byte	0x1
+ 2382 0103 50       		.byte	0x50
+ 2383 0104 5F000000 		.4byte	.LVL67-1
+ 2384 0108 62000000 		.4byte	.LVL68
+ 2385 010c 0400     		.2byte	0x4
+ 2386 010e F3       		.byte	0xf3
+ 2387 010f 01       		.uleb128 0x1
+ 2388 0110 50       		.byte	0x50
+ 2389 0111 9F       		.byte	0x9f
+ 2390 0112 62000000 		.4byte	.LVL68
+ 2391 0116 69000000 		.4byte	.LVL69-1
+ 2392 011a 0100     		.2byte	0x1
+ 2393 011c 50       		.byte	0x50
+ 2394 011d 69000000 		.4byte	.LVL69-1
+ 2395 0121 6C000000 		.4byte	.LVL70
+ 2396 0125 0400     		.2byte	0x4
+ 2397 0127 F3       		.byte	0xf3
+ 2398 0128 01       		.uleb128 0x1
+ 2399 0129 50       		.byte	0x50
+ 2400 012a 9F       		.byte	0x9f
+ 2401 012b 6C000000 		.4byte	.LVL70
+ 2402 012f 73000000 		.4byte	.LVL71-1
+ 2403 0133 0100     		.2byte	0x1
+ 2404 0135 50       		.byte	0x50
+ 2405 0136 73000000 		.4byte	.LVL71-1
+ 2406 013a 76000000 		.4byte	.LFE77
+ 2407 013e 0400     		.2byte	0x4
+ 2408 0140 F3       		.byte	0xf3
+ 2409 0141 01       		.uleb128 0x1
+ 2410 0142 50       		.byte	0x50
+ 2411 0143 9F       		.byte	0x9f
+ 2412 0144 00000000 		.4byte	0
+ 2413 0148 00000000 		.4byte	0
+ 2414              	.LLST4:
+ 2415 014c 58000000 		.4byte	.LVL66
+ 2416 0150 5F000000 		.4byte	.LVL67-1
+ 2417 0154 0100     		.2byte	0x1
+ 2418 0156 50       		.byte	0x50
+ 2419 0157 5F000000 		.4byte	.LVL67-1
+ 2420 015b 62000000 		.4byte	.LVL68
+ 2421 015f 0400     		.2byte	0x4
+ 2422 0161 F3       		.byte	0xf3
+ 2423 0162 01       		.uleb128 0x1
+ 2424 0163 50       		.byte	0x50
+ 2425 0164 9F       		.byte	0x9f
+ 2426 0165 62000000 		.4byte	.LVL68
+ 2427 0169 69000000 		.4byte	.LVL69-1
+ 2428 016d 0100     		.2byte	0x1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 50
+
+
+ 2429 016f 50       		.byte	0x50
+ 2430 0170 69000000 		.4byte	.LVL69-1
+ 2431 0174 6C000000 		.4byte	.LVL70
+ 2432 0178 0400     		.2byte	0x4
+ 2433 017a F3       		.byte	0xf3
+ 2434 017b 01       		.uleb128 0x1
+ 2435 017c 50       		.byte	0x50
+ 2436 017d 9F       		.byte	0x9f
+ 2437 017e 6C000000 		.4byte	.LVL70
+ 2438 0182 73000000 		.4byte	.LVL71-1
+ 2439 0186 0100     		.2byte	0x1
+ 2440 0188 50       		.byte	0x50
+ 2441 0189 73000000 		.4byte	.LVL71-1
+ 2442 018d 74000000 		.4byte	.LVL71
+ 2443 0191 0400     		.2byte	0x4
+ 2444 0193 F3       		.byte	0xf3
+ 2445 0194 01       		.uleb128 0x1
+ 2446 0195 50       		.byte	0x50
+ 2447 0196 9F       		.byte	0x9f
+ 2448 0197 00000000 		.4byte	0
+ 2449 019b 00000000 		.4byte	0
+ 2450              	.LLST5:
+ 2451 019f 00000000 		.4byte	.LVL72
+ 2452 01a3 05000000 		.4byte	.LVL73-1
+ 2453 01a7 0100     		.2byte	0x1
+ 2454 01a9 50       		.byte	0x50
+ 2455 01aa 05000000 		.4byte	.LVL73-1
+ 2456 01ae 08000000 		.4byte	.LFE78
+ 2457 01b2 0400     		.2byte	0x4
+ 2458 01b4 F3       		.byte	0xf3
+ 2459 01b5 01       		.uleb128 0x1
+ 2460 01b6 50       		.byte	0x50
+ 2461 01b7 9F       		.byte	0x9f
+ 2462 01b8 00000000 		.4byte	0
+ 2463 01bc 00000000 		.4byte	0
+ 2464              		.section	.debug_aranges,"",%progbits
+ 2465 0000 8C000000 		.4byte	0x8c
+ 2466 0004 0200     		.2byte	0x2
+ 2467 0006 00000000 		.4byte	.Ldebug_info0
+ 2468 000a 04       		.byte	0x4
+ 2469 000b 00       		.byte	0
+ 2470 000c 0000     		.2byte	0
+ 2471 000e 0000     		.2byte	0
+ 2472 0010 00000000 		.4byte	.LFB63
+ 2473 0014 14000000 		.4byte	.LFE63-.LFB63
+ 2474 0018 00000000 		.4byte	.LFB64
+ 2475 001c 1C000000 		.4byte	.LFE64-.LFB64
+ 2476 0020 00000000 		.4byte	.LFB65
+ 2477 0024 4A000000 		.4byte	.LFE65-.LFB65
+ 2478 0028 00000000 		.4byte	.LFB66
+ 2479 002c 0E000000 		.4byte	.LFE66-.LFB66
+ 2480 0030 00000000 		.4byte	.LFB67
+ 2481 0034 2C000000 		.4byte	.LFE67-.LFB67
+ 2482 0038 00000000 		.4byte	.LFB68
+ 2483 003c 10000000 		.4byte	.LFE68-.LFB68
+ 2484 0040 00000000 		.4byte	.LFB69
+ 2485 0044 64000000 		.4byte	.LFE69-.LFB69
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 51
+
+
+ 2486 0048 00000000 		.4byte	.LFB70
+ 2487 004c 34000000 		.4byte	.LFE70-.LFB70
+ 2488 0050 00000000 		.4byte	.LFB71
+ 2489 0054 10000000 		.4byte	.LFE71-.LFB71
+ 2490 0058 00000000 		.4byte	.LFB72
+ 2491 005c 3A000000 		.4byte	.LFE72-.LFB72
+ 2492 0060 00000000 		.4byte	.LFB73
+ 2493 0064 02000000 		.4byte	.LFE73-.LFB73
+ 2494 0068 00000000 		.4byte	.LFB75
+ 2495 006c 0E000000 		.4byte	.LFE75-.LFB75
+ 2496 0070 00000000 		.4byte	.LFB76
+ 2497 0074 1E000000 		.4byte	.LFE76-.LFB76
+ 2498 0078 00000000 		.4byte	.LFB77
+ 2499 007c 76000000 		.4byte	.LFE77-.LFB77
+ 2500 0080 00000000 		.4byte	.LFB78
+ 2501 0084 08000000 		.4byte	.LFE78-.LFB78
+ 2502 0088 00000000 		.4byte	0
+ 2503 008c 00000000 		.4byte	0
+ 2504              		.section	.debug_ranges,"",%progbits
+ 2505              	.Ldebug_ranges0:
+ 2506 0000 00000000 		.4byte	.LFB63
+ 2507 0004 14000000 		.4byte	.LFE63
+ 2508 0008 00000000 		.4byte	.LFB64
+ 2509 000c 1C000000 		.4byte	.LFE64
+ 2510 0010 00000000 		.4byte	.LFB65
+ 2511 0014 4A000000 		.4byte	.LFE65
+ 2512 0018 00000000 		.4byte	.LFB66
+ 2513 001c 0E000000 		.4byte	.LFE66
+ 2514 0020 00000000 		.4byte	.LFB67
+ 2515 0024 2C000000 		.4byte	.LFE67
+ 2516 0028 00000000 		.4byte	.LFB68
+ 2517 002c 10000000 		.4byte	.LFE68
+ 2518 0030 00000000 		.4byte	.LFB69
+ 2519 0034 64000000 		.4byte	.LFE69
+ 2520 0038 00000000 		.4byte	.LFB70
+ 2521 003c 34000000 		.4byte	.LFE70
+ 2522 0040 00000000 		.4byte	.LFB71
+ 2523 0044 10000000 		.4byte	.LFE71
+ 2524 0048 00000000 		.4byte	.LFB72
+ 2525 004c 3A000000 		.4byte	.LFE72
+ 2526 0050 00000000 		.4byte	.LFB73
+ 2527 0054 02000000 		.4byte	.LFE73
+ 2528 0058 00000000 		.4byte	.LFB75
+ 2529 005c 0E000000 		.4byte	.LFE75
+ 2530 0060 00000000 		.4byte	.LFB76
+ 2531 0064 1E000000 		.4byte	.LFE76
+ 2532 0068 00000000 		.4byte	.LFB77
+ 2533 006c 76000000 		.4byte	.LFE77
+ 2534 0070 00000000 		.4byte	.LFB78
+ 2535 0074 08000000 		.4byte	.LFE78
+ 2536 0078 00000000 		.4byte	0
+ 2537 007c 00000000 		.4byte	0
+ 2538              		.section	.debug_line,"",%progbits
+ 2539              	.Ldebug_line0:
+ 2540 0000 E0020000 		.section	.debug_str,"MS",%progbits,1
+ 2540      02008001 
+ 2540      00000201 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 52
+
+
+ 2540      FB0E0D00 
+ 2540      01010101 
+ 2541              	.LASF8:
+ 2542 0000 6C6F6E67 		.ascii	"long long int\000"
+ 2542      206C6F6E 
+ 2542      6720696E 
+ 2542      7400
+ 2543              	.LASF34:
+ 2544 000e 54696D65 		.ascii	"Timeout_play\000"
+ 2544      6F75745F 
+ 2544      706C6179 
+ 2544      00
+ 2545              	.LASF3:
+ 2546 001b 5F5F7569 		.ascii	"__uint8_t\000"
+ 2546      6E74385F 
+ 2546      7400
+ 2547              	.LASF26:
+ 2548 0025 536F756E 		.ascii	"Sound\000"
+ 2548      6400
+ 2549              	.LASF45:
+ 2550 002b 54494D45 		.ascii	"TIMER_Stop\000"
+ 2550      525F5374 
+ 2550      6F7000
+ 2551              	.LASF35:
+ 2552 0036 53797374 		.ascii	"System_PutCard_play\000"
+ 2552      656D5F50 
+ 2552      75744361 
+ 2552      72645F70 
+ 2552      6C617900 
+ 2553              	.LASF30:
+ 2554 004a 53797374 		.ascii	"System_LongDI_Play\000"
+ 2554      656D5F4C 
+ 2554      6F6E6744 
+ 2554      495F506C 
+ 2554      617900
+ 2555              	.LASF33:
+ 2556 005d 436F6D6D 		.ascii	"Comm_Succes_play\000"
+ 2556      5F537563 
+ 2556      6365735F 
+ 2556      706C6179 
+ 2556      00
+ 2557              	.LASF14:
+ 2558 006e 666C6F61 		.ascii	"float\000"
+ 2558      7400
+ 2559              	.LASF0:
+ 2560 0074 7369676E 		.ascii	"signed char\000"
+ 2560      65642063 
+ 2560      68617200 
+ 2561              	.LASF21:
+ 2562 0080 76494E54 		.ascii	"vINT32U\000"
+ 2562      33325500 
+ 2563              	.LASF1:
+ 2564 0088 756E7369 		.ascii	"unsigned char\000"
+ 2564      676E6564 
+ 2564      20636861 
+ 2564      7200
+ 2565              	.LASF22:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 53
+
+
+ 2566 0096 42656570 		.ascii	"Beep_Play\000"
+ 2566      5F506C61 
+ 2566      7900
+ 2567              	.LASF32:
+ 2568 00a0 53797374 		.ascii	"System_PowerOn_Play_TestSer\000"
+ 2568      656D5F50 
+ 2568      6F776572 
+ 2568      4F6E5F50 
+ 2568      6C61795F 
+ 2569              	.LASF7:
+ 2570 00bc 6C6F6E67 		.ascii	"long unsigned int\000"
+ 2570      20756E73 
+ 2570      69676E65 
+ 2570      6420696E 
+ 2570      7400
+ 2571              	.LASF38:
+ 2572 00ce 61646472 		.ascii	"addr\000"
+ 2572      00
+ 2573              	.LASF51:
+ 2574 00d3 42656570 		.ascii	"BeepPlay_WaitTime\000"
+ 2574      506C6179 
+ 2574      5F576169 
+ 2574      7454696D 
+ 2574      6500
+ 2575              	.LASF40:
+ 2576 00e5 42656570 		.ascii	"BeepDelay_TimeOut\000"
+ 2576      44656C61 
+ 2576      795F5469 
+ 2576      6D654F75 
+ 2576      7400
+ 2577              	.LASF4:
+ 2578 00f7 5F5F7569 		.ascii	"__uint16_t\000"
+ 2578      6E743136 
+ 2578      5F7400
+ 2579              	.LASF15:
+ 2580 0102 646F7562 		.ascii	"double\000"
+ 2580      6C6500
+ 2581              	.LASF13:
+ 2582 0109 75696E74 		.ascii	"uint16\000"
+ 2582      313600
+ 2583              	.LASF28:
+ 2584 0110 53797374 		.ascii	"System_ShortDI_Play\000"
+ 2584      656D5F53 
+ 2584      686F7274 
+ 2584      44495F50 
+ 2584      6C617900 
+ 2585              	.LASF43:
+ 2586 0124 54494D45 		.ascii	"TIMER_WriteCompare\000"
+ 2586      525F5772 
+ 2586      69746543 
+ 2586      6F6D7061 
+ 2586      726500
+ 2587              	.LASF10:
+ 2588 0137 756E7369 		.ascii	"unsigned int\000"
+ 2588      676E6564 
+ 2588      20696E74 
+ 2588      00
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 54
+
+
+ 2589              	.LASF48:
+ 2590 0144 473A5C50 		.ascii	"G:\\Psoc4_prj\\7.rental_house\\18-05-03\\EntranceGu"
+ 2590      736F6334 
+ 2590      5F70726A 
+ 2590      5C372E72 
+ 2590      656E7461 
+ 2591 0173 6172645F 		.ascii	"ard_180512-1624\\EntranceGuard.cydsn\000"
+ 2591      31383035 
+ 2591      31322D31 
+ 2591      3632345C 
+ 2591      456E7472 
+ 2592              	.LASF19:
+ 2593 0197 494E5438 		.ascii	"INT8U\000"
+ 2593      5500
+ 2594              	.LASF9:
+ 2595 019d 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 2595      206C6F6E 
+ 2595      6720756E 
+ 2595      7369676E 
+ 2595      65642069 
+ 2596              	.LASF11:
+ 2597 01b4 75696E74 		.ascii	"uint8_t\000"
+ 2597      385F7400 
+ 2598              	.LASF47:
+ 2599 01bc 436F6465 		.ascii	"Code\\UserApp\\Voice\\voice.c\000"
+ 2599      5C557365 
+ 2599      72417070 
+ 2599      5C566F69 
+ 2599      63655C76 
+ 2600              	.LASF49:
+ 2601 01d7 436F6D6D 		.ascii	"Comm_Failure_play\000"
+ 2601      5F466169 
+ 2601      6C757265 
+ 2601      5F706C61 
+ 2601      7900
+ 2602              	.LASF27:
+ 2603 01e9 64656C61 		.ascii	"delay_1ms\000"
+ 2603      795F316D 
+ 2603      7300
+ 2604              	.LASF25:
+ 2605 01f3 706C6179 		.ascii	"play_single\000"
+ 2605      5F73696E 
+ 2605      676C6500 
+ 2606              	.LASF29:
+ 2607 01ff 44656665 		.ascii	"Defendalarm_Play\000"
+ 2607      6E64616C 
+ 2607      61726D5F 
+ 2607      506C6179 
+ 2607      00
+ 2608              	.LASF18:
+ 2609 0210 73697A65 		.ascii	"sizetype\000"
+ 2609      74797065 
+ 2609      00
+ 2610              	.LASF16:
+ 2611 0219 63686172 		.ascii	"char\000"
+ 2611      00
+ 2612              	.LASF24:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 55
+
+
+ 2613 021e 42656570 		.ascii	"BeepPlay_Delay\000"
+ 2613      506C6179 
+ 2613      5F44656C 
+ 2613      617900
+ 2614              	.LASF31:
+ 2615 022d 53797374 		.ascii	"System_PowerOn_Play\000"
+ 2615      656D5F50 
+ 2615      6F776572 
+ 2615      4F6E5F50 
+ 2615      6C617900 
+ 2616              	.LASF2:
+ 2617 0241 73686F72 		.ascii	"short int\000"
+ 2617      7420696E 
+ 2617      7400
+ 2618              	.LASF36:
+ 2619 024b 53797374 		.ascii	"System_ReadCard_play\000"
+ 2619      656D5F52 
+ 2619      65616443 
+ 2619      6172645F 
+ 2619      706C6179 
+ 2620              	.LASF20:
+ 2621 0260 494E5433 		.ascii	"INT32U\000"
+ 2621      325500
+ 2622              	.LASF12:
+ 2623 0267 75696E74 		.ascii	"uint16_t\000"
+ 2623      31365F74 
+ 2623      00
+ 2624              	.LASF42:
+ 2625 0270 54494D45 		.ascii	"TIMER_WritePeriod\000"
+ 2625      525F5772 
+ 2625      69746550 
+ 2625      6572696F 
+ 2625      6400
+ 2626              	.LASF6:
+ 2627 0282 6C6F6E67 		.ascii	"long int\000"
+ 2627      20696E74 
+ 2627      00
+ 2628              	.LASF41:
+ 2629 028b 54494D45 		.ascii	"TIMER_WriteCounter\000"
+ 2629      525F5772 
+ 2629      69746543 
+ 2629      6F756E74 
+ 2629      657200
+ 2630              	.LASF44:
+ 2631 029e 54494D45 		.ascii	"TIMER_Start\000"
+ 2631      525F5374 
+ 2631      61727400 
+ 2632              	.LASF17:
+ 2633 02aa 6C6F6E67 		.ascii	"long double\000"
+ 2633      20646F75 
+ 2633      626C6500 
+ 2634              	.LASF39:
+ 2635 02b6 5254435F 		.ascii	"RTC_daysBeforeMonthTbl\000"
+ 2635      64617973 
+ 2635      4265666F 
+ 2635      72654D6F 
+ 2635      6E746854 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccNGZ1OQ.s 			page 56
+
+
+ 2636              	.LASF37:
+ 2637 02cd 566F6963 		.ascii	"VoicePlay\000"
+ 2637      65506C61 
+ 2637      7900
+ 2638              	.LASF5:
+ 2639 02d7 73686F72 		.ascii	"short unsigned int\000"
+ 2639      7420756E 
+ 2639      7369676E 
+ 2639      65642069 
+ 2639      6E7400
+ 2640              	.LASF46:
+ 2641 02ea 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 2641      43313120 
+ 2641      352E342E 
+ 2641      31203230 
+ 2641      31363036 
+ 2642 031d 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m0 -mthumb -g -O"
+ 2642      20726576 
+ 2642      6973696F 
+ 2642      6E203233 
+ 2642      37373135 
+ 2643 0350 73202D66 		.ascii	"s -ffunction-sections -ffat-lto-objects\000"
+ 2643      66756E63 
+ 2643      74696F6E 
+ 2643      2D736563 
+ 2643      74696F6E 
+ 2644              	.LASF23:
+ 2645 0378 4379426C 		.ascii	"CyBle_ProcessEvents\000"
+ 2645      655F5072 
+ 2645      6F636573 
+ 2645      73457665 
+ 2645      6E747300 
+ 2646              	.LASF50:
+ 2647 038c 736F756E 		.ascii	"sound_define\000"
+ 2647      645F6465 
+ 2647      66696E65 
+ 2647      00
+ 2648              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

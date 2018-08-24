@@ -1,0 +1,2301 @@
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccibIqHp.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m0
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"NTAG.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.NtagBlockread,"ax",%progbits
+  20              		.align	1
+  21              		.global	NtagBlockread
+  22              		.code	16
+  23              		.thumb_func
+  24              		.type	NtagBlockread, %function
+  25              	NtagBlockread:
+  26              	.LFB63:
+  27              		.file 1 "Code\\Device\\FM175XX\\IOS14443\\NTAG.c"
+   1:Code\Device\FM175XX\IOS14443/NTAG.c **** /****************************************Copyright (c)*********************************************
+   2:Code\Device\FM175XX\IOS14443/NTAG.c **** **                            Guangzhou ZLGMCU Technology Co., LTD
+   3:Code\Device\FM175XX\IOS14443/NTAG.c **** **
+   4:Code\Device\FM175XX\IOS14443/NTAG.c **** **                                 http://www.zlgmcu.com
+   5:Code\Device\FM175XX\IOS14443/NTAG.c **** **
+   6:Code\Device\FM175XX\IOS14443/NTAG.c **** **      ¹ãÖÝÖÜÁ¢¹¦µ¥Æ¬»ú¿Æ¼¼ÓÐÏÞ¹«Ë¾ËùÌá¹©µÄËùÓÐ·þÎñÄÚÈÝÖ¼ÔÚÐ­Öú¿Í»§¼ÓËÙ²úÆ·µÄÑÐ·¢½ø¶È£¬ÔÚ·þÎñ¹ý³ÌÖ
+   7:Code\Device\FM175XX\IOS14443/NTAG.c **** **  µÄÈÎºÎ³ÌÐò¡¢ÎÄµµ¡¢²âÊÔ½á¹û¡¢·½°¸¡¢Ö§³ÖµÈ×ÊÁÏºÍÐÅÏ¢£¬¶¼½ö¹©²Î¿¼£¬¿Í»§ÓÐÈ¨²»Ê¹ÓÃ»ò×ÔÐÐ²Î¿¼ÐÞ¸Ä£¬±
+   8:Code\Device\FM175XX\IOS14443/NTAG.c **** **  Ìá¹©ÈÎºÎµÄÍêÕûÐÔ¡¢¿É¿¿ÐÔµÈ±£Ö¤£¬ÈôÔÚ¿Í»§Ê¹ÓÃ¹ý³ÌÖÐÒòÈÎºÎÔ­ÒòÔì³ÉµÄÌØ±ðµÄ¡¢Å¼È»µÄ»ò¼ä½ÓµÄËðÊ§£¬±
+   9:Code\Device\FM175XX\IOS14443/NTAG.c **** **  ³Ðµ£ÈÎºÎÔðÈÎ¡£
+  10:Code\Device\FM175XX\IOS14443/NTAG.c **** **                                                                        ¡ª¡ª¹ãÖÝÖÜÁ¢¹¦µ¥Æ¬»ú¿Æ¼¼Ó
+  11:Code\Device\FM175XX\IOS14443/NTAG.c **** **
+  12:Code\Device\FM175XX\IOS14443/NTAG.c **** **--------------File Info--------------------------------------------------------------------------
+  13:Code\Device\FM175XX\IOS14443/NTAG.c **** ** File name:           NTAG.c
+  14:Code\Device\FM175XX\IOS14443/NTAG.c **** ** Last modified Date:  2016-3-14
+  15:Code\Device\FM175XX\IOS14443/NTAG.c **** ** Last Version:        V1.00
+  16:Code\Device\FM175XX\IOS14443/NTAG.c **** ** Descriptions:        ISO/IEC144443A TAG¿¨Ïà¹Ø²Ù×÷
+  17:Code\Device\FM175XX\IOS14443/NTAG.c **** **
+  18:Code\Device\FM175XX\IOS14443/NTAG.c **** **-------------------------------------------------------------------------------------------------
+  19:Code\Device\FM175XX\IOS14443/NTAG.c **** */
+  20:Code\Device\FM175XX\IOS14443/NTAG.c **** #include "fm175xx.h"
+  21:Code\Device\FM175XX\IOS14443/NTAG.c **** #include "Utility.h"
+  22:Code\Device\FM175XX\IOS14443/NTAG.c **** #include <string.h>
+  23:Code\Device\FM175XX\IOS14443/NTAG.c **** 
+  24:Code\Device\FM175XX\IOS14443/NTAG.c **** /**************************************************************************************************
+  25:Code\Device\FM175XX\IOS14443/NTAG.c **** ** Function name:       NtagBlockread    
+  26:Code\Device\FM175XX\IOS14443/NTAG.c **** ** Descriptions:        Ntag¿¨Æ¬¶Á²Ù×÷    
+  27:Code\Device\FM175XX\IOS14443/NTAG.c **** ** input parameters:    block£¬¿éºÅ£¨0x00~0x3f
+  28:Code\Device\FM175XX\IOS14443/NTAG.c **** ** output parameters:   buff£º4×Ö½ÚÊý¾ÝÊä³öÖ¸Õë    
+  29:Code\Device\FM175XX\IOS14443/NTAG.c **** ** Returned value:      TRUE£º²Ù×÷³É¹¦ ERROR£º²Ù×÷Ê§°Ü    
+  30:Code\Device\FM175XX\IOS14443/NTAG.c **** ***************************************************************************************************
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccibIqHp.s 			page 2
+
+
+  31:Code\Device\FM175XX\IOS14443/NTAG.c **** uint8_t  NtagBlockread(uint8_t  block,uint8_t  *buff)
+  32:Code\Device\FM175XX\IOS14443/NTAG.c **** {    
+  28              		.loc 1 32 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 8
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              	.LVL0:
+  33 0000 7FB5     		push	{r0, r1, r2, r3, r4, r5, r6, lr}
+  34              		.cfi_def_cfa_offset 32
+  35              		.cfi_offset 0, -32
+  36              		.cfi_offset 1, -28
+  37              		.cfi_offset 2, -24
+  38              		.cfi_offset 3, -20
+  39              		.cfi_offset 4, -16
+  40              		.cfi_offset 5, -12
+  41              		.cfi_offset 6, -8
+  42              		.cfi_offset 14, -4
+  43              		.loc 1 32 0
+  44 0002 0600     		movs	r6, r0
+  33:Code\Device\FM175XX\IOS14443/NTAG.c ****     uint8_t   send_buff[2],result;
+  34:Code\Device\FM175XX\IOS14443/NTAG.c ****     uint32_t  rece_bitlen;
+  35:Code\Device\FM175XX\IOS14443/NTAG.c ****     Pcd_SetTimer(1);
+  45              		.loc 1 35 0
+  46 0004 0120     		movs	r0, #1
+  47              	.LVL1:
+  32:Code\Device\FM175XX\IOS14443/NTAG.c ****     uint8_t   send_buff[2],result;
+  48              		.loc 1 32 0
+  49 0006 0D00     		movs	r5, r1
+  50              		.loc 1 35 0
+  51 0008 FFF7FEFF 		bl	Pcd_SetTimer
+  52              	.LVL2:
+  36:Code\Device\FM175XX\IOS14443/NTAG.c ****     send_buff[0]=0x30;                                                  /* ¶Á¿éÃüÁî                
+  53              		.loc 1 36 0
+  54 000c 3023     		movs	r3, #48
+  55 000e 02AC     		add	r4, sp, #8
+  56 0010 2370     		strb	r3, [r4]
+  37:Code\Device\FM175XX\IOS14443/NTAG.c ****     send_buff[1]=block;                                                 /* ¶Á¿éµØÖ·                
+  57              		.loc 1 37 0
+  58 0012 6670     		strb	r6, [r4, #1]
+  38:Code\Device\FM175XX\IOS14443/NTAG.c ****     Clear_FIFO();
+  59              		.loc 1 38 0
+  60 0014 FFF7FEFF 		bl	Clear_FIFO
+  61              	.LVL3:
+  39:Code\Device\FM175XX\IOS14443/NTAG.c ****     result =Pcd_Comm(Transceive,send_buff,2,buff,&rece_bitlen);//
+  62              		.loc 1 39 0
+  63 0018 03AB     		add	r3, sp, #12
+  64 001a 0222     		movs	r2, #2
+  65 001c 0093     		str	r3, [sp]
+  66 001e 2100     		movs	r1, r4
+  67 0020 2B00     		movs	r3, r5
+  68 0022 0C20     		movs	r0, #12
+  69 0024 FFF7FEFF 		bl	Pcd_Comm
+  70              	.LVL4:
+  71 0028 0300     		movs	r3, r0
+  72              	.LVL5:
+  40:Code\Device\FM175XX\IOS14443/NTAG.c ****     if ((result!=TRUE )|(rece_bitlen!=16*8))                            /* ½ÓÊÕµ½µÄÊý¾Ý³¤¶ÈÎª16    
+  41:Code\Device\FM175XX\IOS14443/NTAG.c ****         return FALSE;
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccibIqHp.s 			page 3
+
+
+  73              		.loc 1 41 0
+  74 002a 0398     		ldr	r0, [sp, #12]
+  75 002c 013B     		subs	r3, r3, #1
+  76              	.LVL6:
+  77 002e 8038     		subs	r0, r0, #128
+  78 0030 5A1E     		subs	r2, r3, #1
+  79 0032 9341     		sbcs	r3, r3, r2
+  80 0034 421E     		subs	r2, r0, #1
+  81 0036 9041     		sbcs	r0, r0, r2
+  82 0038 1843     		orrs	r0, r3
+  83 003a 0123     		movs	r3, #1
+  84 003c 5840     		eors	r0, r3
+  42:Code\Device\FM175XX\IOS14443/NTAG.c ****     return TRUE;
+  43:Code\Device\FM175XX\IOS14443/NTAG.c **** }
+  85              		.loc 1 43 0
+  86 003e 04B0     		add	sp, sp, #16
+  87              		@ sp needed
+  88              	.LVL7:
+  89 0040 70BD     		pop	{r4, r5, r6, pc}
+  90              		.cfi_endproc
+  91              	.LFE63:
+  92              		.size	NtagBlockread, .-NtagBlockread
+  93              		.section	.text.NtagBlockwrite,"ax",%progbits
+  94              		.align	1
+  95              		.global	NtagBlockwrite
+  96              		.code	16
+  97              		.thumb_func
+  98              		.type	NtagBlockwrite, %function
+  99              	NtagBlockwrite:
+ 100              	.LFB64:
+  44:Code\Device\FM175XX\IOS14443/NTAG.c **** 
+  45:Code\Device\FM175XX\IOS14443/NTAG.c **** 
+  46:Code\Device\FM175XX\IOS14443/NTAG.c **** /**************************************************************************************************
+  47:Code\Device\FM175XX\IOS14443/NTAG.c **** ** Function name:       NtagBlockwrite    
+  48:Code\Device\FM175XX\IOS14443/NTAG.c **** ** Descriptions:        Ntag¿¨Æ¬Ð´¿é²Ù×÷    
+  49:Code\Device\FM175XX\IOS14443/NTAG.c **** ** input parameters:    block£¬¿éºÅ£¨0x00~0x3f
+  50:Code\Device\FM175XX\IOS14443/NTAG.c **** **                      buff£¬4×Ö½ÚÐ´¿éÊý¾ÝÊý×é    
+  51:Code\Device\FM175XX\IOS14443/NTAG.c **** ** output parameters:   buff£º¼ÆÊýÖµÊä³öÖ¸Õë    
+  52:Code\Device\FM175XX\IOS14443/NTAG.c **** ** Returned value:      TRUE£º²Ù×÷³É¹¦ ERROR£º²Ù×÷Ê§°Ü    
+  53:Code\Device\FM175XX\IOS14443/NTAG.c **** ***************************************************************************************************
+  54:Code\Device\FM175XX\IOS14443/NTAG.c **** uint8_t  NtagBlockwrite(uint8_t  block,uint8_t  *buff)
+  55:Code\Device\FM175XX\IOS14443/NTAG.c **** {    
+ 101              		.loc 1 55 0
+ 102              		.cfi_startproc
+ 103              		@ args = 0, pretend = 0, frame = 24
+ 104              		@ frame_needed = 0, uses_anonymous_args = 0
+ 105              	.LVL8:
+ 106 0000 70B5     		push	{r4, r5, r6, lr}
+ 107              		.cfi_def_cfa_offset 16
+ 108              		.cfi_offset 4, -16
+ 109              		.cfi_offset 5, -12
+ 110              		.cfi_offset 6, -8
+ 111              		.cfi_offset 14, -4
+ 112 0002 0600     		movs	r6, r0
+ 113 0004 88B0     		sub	sp, sp, #32
+ 114              		.cfi_def_cfa_offset 48
+  56:Code\Device\FM175XX\IOS14443/NTAG.c ****     uint8_t   result,send_buff[16],rece_buff[1];
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccibIqHp.s 			page 4
+
+
+  57:Code\Device\FM175XX\IOS14443/NTAG.c ****     uint32_t  rece_bitlen;
+  58:Code\Device\FM175XX\IOS14443/NTAG.c ****     Pcd_SetTimer(1);
+ 115              		.loc 1 58 0
+ 116 0006 0120     		movs	r0, #1
+ 117              	.LVL9:
+  55:Code\Device\FM175XX\IOS14443/NTAG.c ****     uint8_t   result,send_buff[16],rece_buff[1];
+ 118              		.loc 1 55 0
+ 119 0008 0D00     		movs	r5, r1
+ 120              		.loc 1 58 0
+ 121 000a FFF7FEFF 		bl	Pcd_SetTimer
+ 122              	.LVL10:
+  59:Code\Device\FM175XX\IOS14443/NTAG.c ****     send_buff[0]=0xa2;                                                  /* 0xa2 Ð´¿éÃüÁî           
+ 123              		.loc 1 59 0
+ 124 000e A223     		movs	r3, #162
+ 125 0010 04AC     		add	r4, sp, #16
+ 126 0012 2370     		strb	r3, [r4]
+  60:Code\Device\FM175XX\IOS14443/NTAG.c ****     send_buff[1]=block;                                                 /* ¿éµØÖ·                  
+  61:Code\Device\FM175XX\IOS14443/NTAG.c ****     send_buff[2]=buff[0];                                               /* Ð´¿éÊý¾Ý                
+ 127              		.loc 1 61 0
+ 128 0014 2B78     		ldrb	r3, [r5]
+  60:Code\Device\FM175XX\IOS14443/NTAG.c ****     send_buff[1]=block;                                                 /* ¿éµØÖ·                  
+ 129              		.loc 1 60 0
+ 130 0016 6670     		strb	r6, [r4, #1]
+ 131              		.loc 1 61 0
+ 132 0018 A370     		strb	r3, [r4, #2]
+  62:Code\Device\FM175XX\IOS14443/NTAG.c ****     send_buff[3]=buff[1];
+ 133              		.loc 1 62 0
+ 134 001a 6B78     		ldrb	r3, [r5, #1]
+ 135 001c E370     		strb	r3, [r4, #3]
+  63:Code\Device\FM175XX\IOS14443/NTAG.c ****     send_buff[4]=buff[2];
+ 136              		.loc 1 63 0
+ 137 001e AB78     		ldrb	r3, [r5, #2]
+ 138 0020 2371     		strb	r3, [r4, #4]
+  64:Code\Device\FM175XX\IOS14443/NTAG.c ****     send_buff[5]=buff[3];
+ 139              		.loc 1 64 0
+ 140 0022 EB78     		ldrb	r3, [r5, #3]
+  65:Code\Device\FM175XX\IOS14443/NTAG.c ****     Clear_FIFO();
+  66:Code\Device\FM175XX\IOS14443/NTAG.c ****     result =Pcd_Comm(Transceive,send_buff,6,rece_buff,&rece_bitlen);//
+ 141              		.loc 1 66 0
+ 142 0024 02AD     		add	r5, sp, #8
+ 143              	.LVL11:
+  64:Code\Device\FM175XX\IOS14443/NTAG.c ****     send_buff[5]=buff[3];
+ 144              		.loc 1 64 0
+ 145 0026 6371     		strb	r3, [r4, #5]
+  65:Code\Device\FM175XX\IOS14443/NTAG.c ****     Clear_FIFO();
+ 146              		.loc 1 65 0
+ 147 0028 FFF7FEFF 		bl	Clear_FIFO
+ 148              	.LVL12:
+ 149              		.loc 1 66 0
+ 150 002c 03AB     		add	r3, sp, #12
+ 151 002e 0093     		str	r3, [sp]
+ 152 0030 0622     		movs	r2, #6
+ 153 0032 2B00     		movs	r3, r5
+ 154 0034 2100     		movs	r1, r4
+ 155 0036 0C20     		movs	r0, #12
+ 156 0038 FFF7FEFF 		bl	Pcd_Comm
+ 157              	.LVL13:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccibIqHp.s 			page 5
+
+
+  67:Code\Device\FM175XX\IOS14443/NTAG.c ****     if ((result!=TRUE )|((rece_buff[0]&0x0F)!=0x0A))                    /* Èç¹ûÎ´½ÓÊÕµ½0x0A£¬±íÊ¾ÎÞ
+  68:Code\Device\FM175XX\IOS14443/NTAG.c ****         return(FALSE);
+ 158              		.loc 1 68 0
+ 159 003c 0F22     		movs	r2, #15
+  66:Code\Device\FM175XX\IOS14443/NTAG.c ****     if ((result!=TRUE )|((rece_buff[0]&0x0F)!=0x0A))                    /* Èç¹ûÎ´½ÓÊÕµ½0x0A£¬±íÊ¾ÎÞ
+ 160              		.loc 1 66 0
+ 161 003e 0300     		movs	r3, r0
+ 162              	.LVL14:
+ 163              		.loc 1 68 0
+ 164 0040 2878     		ldrb	r0, [r5]
+ 165 0042 013B     		subs	r3, r3, #1
+ 166              	.LVL15:
+ 167 0044 1040     		ands	r0, r2
+ 168 0046 0A38     		subs	r0, r0, #10
+ 169 0048 5A1E     		subs	r2, r3, #1
+ 170 004a 9341     		sbcs	r3, r3, r2
+ 171 004c 421E     		subs	r2, r0, #1
+ 172 004e 9041     		sbcs	r0, r0, r2
+ 173 0050 1843     		orrs	r0, r3
+ 174 0052 0123     		movs	r3, #1
+ 175 0054 5840     		eors	r0, r3
+  69:Code\Device\FM175XX\IOS14443/NTAG.c ****     return(TRUE);
+  70:Code\Device\FM175XX\IOS14443/NTAG.c **** }
+ 176              		.loc 1 70 0
+ 177 0056 08B0     		add	sp, sp, #32
+ 178              		@ sp needed
+ 179 0058 70BD     		pop	{r4, r5, r6, pc}
+ 180              		.cfi_endproc
+ 181              	.LFE64:
+ 182              		.size	NtagBlockwrite, .-NtagBlockwrite
+ 183              		.section	.text.NtagBlockwriteCompatibility,"ax",%progbits
+ 184              		.align	1
+ 185              		.global	NtagBlockwriteCompatibility
+ 186              		.code	16
+ 187              		.thumb_func
+ 188              		.type	NtagBlockwriteCompatibility, %function
+ 189              	NtagBlockwriteCompatibility:
+ 190              	.LFB65:
+  71:Code\Device\FM175XX\IOS14443/NTAG.c **** 
+  72:Code\Device\FM175XX\IOS14443/NTAG.c **** 
+  73:Code\Device\FM175XX\IOS14443/NTAG.c **** /**************************************************************************************************
+  74:Code\Device\FM175XX\IOS14443/NTAG.c **** ** Function name:       NtagBlockwriteCompatibility    
+  75:Code\Device\FM175XX\IOS14443/NTAG.c **** ** Descriptions:        Ntag¿¨Æ¬Ð´¿é²Ù×÷
+  76:Code\Device\FM175XX\IOS14443/NTAG.c **** ** input parameters:    block£¬¿éºÅ£¨0x00~0x3f
+  77:Code\Device\FM175XX\IOS14443/NTAG.c **** **                      buff£¬16×Ö½ÚÐ´¿éÊý¾ÝÊý×é    
+  78:Code\Device\FM175XX\IOS14443/NTAG.c **** ** output parameters:   buff£º¼ÆÊýÖµÊä³öÖ¸Õë    
+  79:Code\Device\FM175XX\IOS14443/NTAG.c **** ** Returned value:      TRUE£º²Ù×÷³É¹¦ ERROR£º²Ù×÷Ê§°Ü    
+  80:Code\Device\FM175XX\IOS14443/NTAG.c **** ***************************************************************************************************
+  81:Code\Device\FM175XX\IOS14443/NTAG.c **** uint8_t  NtagBlockwriteCompatibility(uint8_t  block,uint8_t  *buff)
+  82:Code\Device\FM175XX\IOS14443/NTAG.c **** {    
+ 191              		.loc 1 82 0
+ 192              		.cfi_startproc
+ 193              		@ args = 0, pretend = 0, frame = 24
+ 194              		@ frame_needed = 0, uses_anonymous_args = 0
+ 195              	.LVL16:
+ 196 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 197              		.cfi_def_cfa_offset 20
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccibIqHp.s 			page 6
+
+
+ 198              		.cfi_offset 4, -20
+ 199              		.cfi_offset 5, -16
+ 200              		.cfi_offset 6, -12
+ 201              		.cfi_offset 7, -8
+ 202              		.cfi_offset 14, -4
+ 203 0002 0500     		movs	r5, r0
+ 204 0004 89B0     		sub	sp, sp, #36
+ 205              		.cfi_def_cfa_offset 56
+  83:Code\Device\FM175XX\IOS14443/NTAG.c ****     uint8_t   result,send_buff[16],rece_buff[1];
+  84:Code\Device\FM175XX\IOS14443/NTAG.c ****     uint32_t  rece_bitlen;
+  85:Code\Device\FM175XX\IOS14443/NTAG.c ****     Pcd_SetTimer(1);
+ 206              		.loc 1 85 0
+ 207 0006 0120     		movs	r0, #1
+ 208              	.LVL17:
+  82:Code\Device\FM175XX\IOS14443/NTAG.c ****     uint8_t   result,send_buff[16],rece_buff[1];
+ 209              		.loc 1 82 0
+ 210 0008 0F00     		movs	r7, r1
+ 211              		.loc 1 85 0
+ 212 000a FFF7FEFF 		bl	Pcd_SetTimer
+ 213              	.LVL18:
+  86:Code\Device\FM175XX\IOS14443/NTAG.c ****     send_buff[0]=0xa0;
+ 214              		.loc 1 86 0
+ 215 000e A023     		movs	r3, #160
+ 216 0010 04AC     		add	r4, sp, #16
+ 217 0012 2370     		strb	r3, [r4]
+  87:Code\Device\FM175XX\IOS14443/NTAG.c ****     send_buff[1]=block;                                                 /* ¿éµØÖ·                  
+ 218              		.loc 1 87 0
+ 219 0014 6570     		strb	r5, [r4, #1]
+  88:Code\Device\FM175XX\IOS14443/NTAG.c **** 
+  89:Code\Device\FM175XX\IOS14443/NTAG.c ****     Clear_FIFO();
+ 220              		.loc 1 89 0
+ 221 0016 FFF7FEFF 		bl	Clear_FIFO
+ 222              	.LVL19:
+  90:Code\Device\FM175XX\IOS14443/NTAG.c ****     result =Pcd_Comm(Transceive,send_buff,2,rece_buff,&rece_bitlen);
+ 223              		.loc 1 90 0
+ 224 001a 2100     		movs	r1, r4
+  91:Code\Device\FM175XX\IOS14443/NTAG.c ****     if ((result!=TRUE )|((rece_buff[0]&0x0F)!=0x0A))                    /* Èç¹ûÎ´½ÓÊÕµ½0x0A£¬±íÊ¾ÎÞ
+ 225              		.loc 1 91 0
+ 226 001c 0F24     		movs	r4, #15
+  90:Code\Device\FM175XX\IOS14443/NTAG.c ****     result =Pcd_Comm(Transceive,send_buff,2,rece_buff,&rece_bitlen);
+ 227              		.loc 1 90 0
+ 228 001e 02AD     		add	r5, sp, #8
+ 229 0020 03AE     		add	r6, sp, #12
+ 230 0022 2B00     		movs	r3, r5
+ 231 0024 0096     		str	r6, [sp]
+ 232 0026 0222     		movs	r2, #2
+ 233 0028 0C20     		movs	r0, #12
+ 234 002a FFF7FEFF 		bl	Pcd_Comm
+ 235              	.LVL20:
+ 236              		.loc 1 91 0
+ 237 002e 2B78     		ldrb	r3, [r5]
+ 238 0030 2340     		ands	r3, r4
+ 239 0032 0A2B     		cmp	r3, #10
+ 240 0034 1AD1     		bne	.L5
+ 241 0036 0128     		cmp	r0, #1
+ 242 0038 18D1     		bne	.L5
+  92:Code\Device\FM175XX\IOS14443/NTAG.c ****     return(FALSE);
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccibIqHp.s 			page 7
+
+
+  93:Code\Device\FM175XX\IOS14443/NTAG.c **** 
+  94:Code\Device\FM175XX\IOS14443/NTAG.c ****     Pcd_SetTimer(5);
+ 243              		.loc 1 94 0
+ 244 003a 0430     		adds	r0, r0, #4
+ 245              	.LVL21:
+ 246 003c FFF7FEFF 		bl	Pcd_SetTimer
+ 247              	.LVL22:
+  95:Code\Device\FM175XX\IOS14443/NTAG.c ****     Clear_FIFO();
+ 248              		.loc 1 95 0
+ 249 0040 FFF7FEFF 		bl	Clear_FIFO
+ 250              	.LVL23:
+  96:Code\Device\FM175XX\IOS14443/NTAG.c ****     result =Pcd_Comm(Transceive,buff,16,rece_buff,&rece_bitlen);
+ 251              		.loc 1 96 0
+ 252 0044 2B00     		movs	r3, r5
+ 253 0046 1022     		movs	r2, #16
+ 254 0048 0096     		str	r6, [sp]
+ 255 004a 3900     		movs	r1, r7
+ 256 004c 0C20     		movs	r0, #12
+ 257 004e FFF7FEFF 		bl	Pcd_Comm
+ 258              	.LVL24:
+ 259 0052 0300     		movs	r3, r0
+ 260              	.LVL25:
+  92:Code\Device\FM175XX\IOS14443/NTAG.c ****     return(FALSE);
+ 261              		.loc 1 92 0
+ 262 0054 2878     		ldrb	r0, [r5]
+ 263 0056 013B     		subs	r3, r3, #1
+ 264              	.LVL26:
+ 265 0058 2040     		ands	r0, r4
+ 266 005a 0A38     		subs	r0, r0, #10
+ 267 005c 5A1E     		subs	r2, r3, #1
+ 268 005e 9341     		sbcs	r3, r3, r2
+ 269 0060 441E     		subs	r4, r0, #1
+ 270 0062 A041     		sbcs	r0, r0, r4
+ 271 0064 1843     		orrs	r0, r3
+ 272 0066 0123     		movs	r3, #1
+ 273 0068 5840     		eors	r0, r3
+ 274 006a 00E0     		b	.L4
+ 275              	.LVL27:
+ 276              	.L5:
+ 277 006c 0020     		movs	r0, #0
+ 278              	.LVL28:
+ 279              	.L4:
+  97:Code\Device\FM175XX\IOS14443/NTAG.c ****     if ((result!=TRUE )|((rece_buff[0]&0x0F)!=0x0A))                    /* Èç¹ûÎ´½ÓÊÕµ½0x0A£¬±íÊ¾ÎÞ
+  98:Code\Device\FM175XX\IOS14443/NTAG.c ****         return FALSE;
+  99:Code\Device\FM175XX\IOS14443/NTAG.c ****     return TRUE;
+ 100:Code\Device\FM175XX\IOS14443/NTAG.c **** }
+ 280              		.loc 1 100 0
+ 281 006e 09B0     		add	sp, sp, #36
+ 282              		@ sp needed
+ 283              	.LVL29:
+ 284 0070 F0BD     		pop	{r4, r5, r6, r7, pc}
+ 285              		.cfi_endproc
+ 286              	.LFE65:
+ 287              		.size	NtagBlockwriteCompatibility, .-NtagBlockwriteCompatibility
+ 288              		.section	.text.NtagCounterRead,"ax",%progbits
+ 289              		.align	1
+ 290              		.global	NtagCounterRead
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccibIqHp.s 			page 8
+
+
+ 291              		.code	16
+ 292              		.thumb_func
+ 293              		.type	NtagCounterRead, %function
+ 294              	NtagCounterRead:
+ 295              	.LFB66:
+ 101:Code\Device\FM175XX\IOS14443/NTAG.c **** 
+ 102:Code\Device\FM175XX\IOS14443/NTAG.c **** 
+ 103:Code\Device\FM175XX\IOS14443/NTAG.c **** /**************************************************************************************************
+ 104:Code\Device\FM175XX\IOS14443/NTAG.c **** ** Function name:       NtagCounterRead    
+ 105:Code\Device\FM175XX\IOS14443/NTAG.c **** ** Descriptions:        ¶ÁÈ¡¿¨Æ¬¼ÆÊýÖµ
+ 106:Code\Device\FM175XX\IOS14443/NTAG.c **** ** input parameters:    
+ 107:Code\Device\FM175XX\IOS14443/NTAG.c **** ** output parameters:   buff£º¼ÆÊýÖµÊä³öÖ¸Õë    
+ 108:Code\Device\FM175XX\IOS14443/NTAG.c **** ** Returned value:      TRUE£º²Ù×÷³É¹¦ ERROR£º²Ù×÷Ê§°Ü    
+ 109:Code\Device\FM175XX\IOS14443/NTAG.c **** ***************************************************************************************************
+ 110:Code\Device\FM175XX\IOS14443/NTAG.c **** uint8_t  NtagCounterRead(uint8_t  *buff)
+ 111:Code\Device\FM175XX\IOS14443/NTAG.c **** {    
+ 296              		.loc 1 111 0
+ 297              		.cfi_startproc
+ 298              		@ args = 0, pretend = 0, frame = 8
+ 299              		@ frame_needed = 0, uses_anonymous_args = 0
+ 300              	.LVL30:
+ 301 0000 7FB5     		push	{r0, r1, r2, r3, r4, r5, r6, lr}
+ 302              		.cfi_def_cfa_offset 32
+ 303              		.cfi_offset 0, -32
+ 304              		.cfi_offset 1, -28
+ 305              		.cfi_offset 2, -24
+ 306              		.cfi_offset 3, -20
+ 307              		.cfi_offset 4, -16
+ 308              		.cfi_offset 5, -12
+ 309              		.cfi_offset 6, -8
+ 310              		.cfi_offset 14, -4
+ 311              		.loc 1 111 0
+ 312 0002 0600     		movs	r6, r0
+ 112:Code\Device\FM175XX\IOS14443/NTAG.c ****     uint8_t   send_buff[2],result;
+ 113:Code\Device\FM175XX\IOS14443/NTAG.c ****     uint32_t  rece_bitlen;
+ 114:Code\Device\FM175XX\IOS14443/NTAG.c ****     Pcd_SetTimer(1);
+ 313              		.loc 1 114 0
+ 314 0004 0120     		movs	r0, #1
+ 315              	.LVL31:
+ 316 0006 FFF7FEFF 		bl	Pcd_SetTimer
+ 317              	.LVL32:
+ 115:Code\Device\FM175XX\IOS14443/NTAG.c ****     send_buff[0]=0x39;
+ 116:Code\Device\FM175XX\IOS14443/NTAG.c ****     send_buff[1]=0x02;
+ 318              		.loc 1 116 0
+ 319 000a 0225     		movs	r5, #2
+ 115:Code\Device\FM175XX\IOS14443/NTAG.c ****     send_buff[0]=0x39;
+ 320              		.loc 1 115 0
+ 321 000c 3923     		movs	r3, #57
+ 322 000e 02AC     		add	r4, sp, #8
+ 323 0010 2370     		strb	r3, [r4]
+ 324              		.loc 1 116 0
+ 325 0012 6570     		strb	r5, [r4, #1]
+ 117:Code\Device\FM175XX\IOS14443/NTAG.c ****     Clear_FIFO();
+ 326              		.loc 1 117 0
+ 327 0014 FFF7FEFF 		bl	Clear_FIFO
+ 328              	.LVL33:
+ 118:Code\Device\FM175XX\IOS14443/NTAG.c ****     result =Pcd_Comm(Transceive,send_buff,2,buff,&rece_bitlen);
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccibIqHp.s 			page 9
+
+
+ 329              		.loc 1 118 0
+ 330 0018 03AB     		add	r3, sp, #12
+ 331 001a 2A00     		movs	r2, r5
+ 332 001c 0093     		str	r3, [sp]
+ 333 001e 2100     		movs	r1, r4
+ 334 0020 3300     		movs	r3, r6
+ 335 0022 0C20     		movs	r0, #12
+ 336 0024 FFF7FEFF 		bl	Pcd_Comm
+ 337              	.LVL34:
+ 338 0028 0300     		movs	r3, r0
+ 339              	.LVL35:
+ 119:Code\Device\FM175XX\IOS14443/NTAG.c ****     if ((result!=TRUE )|(rece_bitlen!=3*8)) 
+ 120:Code\Device\FM175XX\IOS14443/NTAG.c ****         return FALSE;
+ 340              		.loc 1 120 0
+ 341 002a 0398     		ldr	r0, [sp, #12]
+ 342 002c 013B     		subs	r3, r3, #1
+ 343              	.LVL36:
+ 344 002e 1838     		subs	r0, r0, #24
+ 345 0030 5A1E     		subs	r2, r3, #1
+ 346 0032 9341     		sbcs	r3, r3, r2
+ 347 0034 421E     		subs	r2, r0, #1
+ 348 0036 9041     		sbcs	r0, r0, r2
+ 349 0038 1843     		orrs	r0, r3
+ 350 003a 0123     		movs	r3, #1
+ 351 003c 5840     		eors	r0, r3
+ 121:Code\Device\FM175XX\IOS14443/NTAG.c ****     return TRUE;
+ 122:Code\Device\FM175XX\IOS14443/NTAG.c **** }
+ 352              		.loc 1 122 0
+ 353 003e 04B0     		add	sp, sp, #16
+ 354              		@ sp needed
+ 355              	.LVL37:
+ 356 0040 70BD     		pop	{r4, r5, r6, pc}
+ 357              		.cfi_endproc
+ 358              	.LFE66:
+ 359              		.size	NtagCounterRead, .-NtagCounterRead
+ 360              		.section	.text.NtagPWD_AUTH,"ax",%progbits
+ 361              		.align	1
+ 362              		.global	NtagPWD_AUTH
+ 363              		.code	16
+ 364              		.thumb_func
+ 365              		.type	NtagPWD_AUTH, %function
+ 366              	NtagPWD_AUTH:
+ 367              	.LFB67:
+ 123:Code\Device\FM175XX\IOS14443/NTAG.c **** 
+ 124:Code\Device\FM175XX\IOS14443/NTAG.c **** /**************************************************************************************************
+ 125:Code\Device\FM175XX\IOS14443/NTAG.c **** ** Function name:       NtagPWD_AUTH    
+ 126:Code\Device\FM175XX\IOS14443/NTAG.c **** ** Descriptions:        NtagPWD_AUTH¿¨Æ¬ÃÜÂëÐ£Ñé
+ 127:Code\Device\FM175XX\IOS14443/NTAG.c **** ** input parameters:    password ÑéÖ¤ÃÜÂë
+ 128:Code\Device\FM175XX\IOS14443/NTAG.c **** **                      passwordACK ÑéÖ¤ÃÜÂë·µ»ØÖµ
+ 129:Code\Device\FM175XX\IOS14443/NTAG.c **** ** output parameters:   buff£ºÓ¦´ðÊý¾ÝµÄÖ¸Õë    
+ 130:Code\Device\FM175XX\IOS14443/NTAG.c **** ** Returned value:      TRUE£º²Ù×÷³É¹¦ ERROR£º²Ù×÷Ê§°Ü    
+ 131:Code\Device\FM175XX\IOS14443/NTAG.c **** ***************************************************************************************************
+ 132:Code\Device\FM175XX\IOS14443/NTAG.c **** uint8_t  NtagPWD_AUTH(uint8_t  *password,uint8_t  *passwordACK)
+ 133:Code\Device\FM175XX\IOS14443/NTAG.c **** {    
+ 368              		.loc 1 133 0
+ 369              		.cfi_startproc
+ 370              		@ args = 0, pretend = 0, frame = 16
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccibIqHp.s 			page 10
+
+
+ 371              		@ frame_needed = 0, uses_anonymous_args = 0
+ 372              	.LVL38:
+ 373 0000 70B5     		push	{r4, r5, r6, lr}
+ 374              		.cfi_def_cfa_offset 16
+ 375              		.cfi_offset 4, -16
+ 376              		.cfi_offset 5, -12
+ 377              		.cfi_offset 6, -8
+ 378              		.cfi_offset 14, -4
+ 379 0002 0500     		movs	r5, r0
+ 380 0004 86B0     		sub	sp, sp, #24
+ 381              		.cfi_def_cfa_offset 40
+ 134:Code\Device\FM175XX\IOS14443/NTAG.c ****     uint8_t   send_buff[6],result;
+ 135:Code\Device\FM175XX\IOS14443/NTAG.c ****     uint32_t  rece_bitlen;
+ 136:Code\Device\FM175XX\IOS14443/NTAG.c ****     Pcd_SetTimer(1);
+ 382              		.loc 1 136 0
+ 383 0006 0120     		movs	r0, #1
+ 384              	.LVL39:
+ 133:Code\Device\FM175XX\IOS14443/NTAG.c ****     uint8_t   send_buff[6],result;
+ 385              		.loc 1 133 0
+ 386 0008 0E00     		movs	r6, r1
+ 387              		.loc 1 136 0
+ 388 000a FFF7FEFF 		bl	Pcd_SetTimer
+ 389              	.LVL40:
+ 137:Code\Device\FM175XX\IOS14443/NTAG.c ****     send_buff[0]=0x1b;                                                    /* ÑéÖ¤ÃÜÂëÖ¸Áî          
+ 390              		.loc 1 137 0
+ 391 000e 1B23     		movs	r3, #27
+ 392 0010 04AC     		add	r4, sp, #16
+ 393 0012 2370     		strb	r3, [r4]
+ 138:Code\Device\FM175XX\IOS14443/NTAG.c ****     send_buff[1]=password[0];                                             /* ÑéÖ¤µÄÃÜÂë            
+ 394              		.loc 1 138 0
+ 395 0014 2B78     		ldrb	r3, [r5]
+ 396 0016 6370     		strb	r3, [r4, #1]
+ 139:Code\Device\FM175XX\IOS14443/NTAG.c ****     send_buff[2]=password[1];
+ 397              		.loc 1 139 0
+ 398 0018 6B78     		ldrb	r3, [r5, #1]
+ 399 001a A370     		strb	r3, [r4, #2]
+ 140:Code\Device\FM175XX\IOS14443/NTAG.c ****     send_buff[3]=password[2];
+ 400              		.loc 1 140 0
+ 401 001c AB78     		ldrb	r3, [r5, #2]
+ 402 001e E370     		strb	r3, [r4, #3]
+ 141:Code\Device\FM175XX\IOS14443/NTAG.c ****     send_buff[4]=password[3];
+ 403              		.loc 1 141 0
+ 404 0020 EB78     		ldrb	r3, [r5, #3]
+ 405 0022 2371     		strb	r3, [r4, #4]
+ 142:Code\Device\FM175XX\IOS14443/NTAG.c ****     Clear_FIFO();
+ 406              		.loc 1 142 0
+ 407 0024 FFF7FEFF 		bl	Clear_FIFO
+ 408              	.LVL41:
+ 143:Code\Device\FM175XX\IOS14443/NTAG.c ****     result =Pcd_Comm(Transceive,send_buff,5,passwordACK,&rece_bitlen);
+ 409              		.loc 1 143 0
+ 410 0028 03AB     		add	r3, sp, #12
+ 411 002a 0522     		movs	r2, #5
+ 412 002c 0093     		str	r3, [sp]
+ 413 002e 2100     		movs	r1, r4
+ 414 0030 3300     		movs	r3, r6
+ 415 0032 0C20     		movs	r0, #12
+ 416 0034 FFF7FEFF 		bl	Pcd_Comm
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccibIqHp.s 			page 11
+
+
+ 417              	.LVL42:
+ 418 0038 0300     		movs	r3, r0
+ 419              	.LVL43:
+ 144:Code\Device\FM175XX\IOS14443/NTAG.c ****     if ((result!=TRUE )|(rece_bitlen!=2*8))                               /* ½ÓÊÕµ½µÄÊý¾Ý³¤¶ÈÎª16  
+ 145:Code\Device\FM175XX\IOS14443/NTAG.c ****         return FALSE;
+ 420              		.loc 1 145 0
+ 421 003a 0398     		ldr	r0, [sp, #12]
+ 422 003c 013B     		subs	r3, r3, #1
+ 423              	.LVL44:
+ 424 003e 1038     		subs	r0, r0, #16
+ 425 0040 5A1E     		subs	r2, r3, #1
+ 426 0042 9341     		sbcs	r3, r3, r2
+ 427 0044 421E     		subs	r2, r0, #1
+ 428 0046 9041     		sbcs	r0, r0, r2
+ 429 0048 1843     		orrs	r0, r3
+ 430 004a 0123     		movs	r3, #1
+ 431 004c 5840     		eors	r0, r3
+ 146:Code\Device\FM175XX\IOS14443/NTAG.c ****     return TRUE;
+ 147:Code\Device\FM175XX\IOS14443/NTAG.c **** }
+ 432              		.loc 1 147 0
+ 433 004e 06B0     		add	sp, sp, #24
+ 434              		@ sp needed
+ 435              	.LVL45:
+ 436              	.LVL46:
+ 437 0050 70BD     		pop	{r4, r5, r6, pc}
+ 438              		.cfi_endproc
+ 439              	.LFE67:
+ 440              		.size	NtagPWD_AUTH, .-NtagPWD_AUTH
+ 441              		.section	.text.NtagReadSIG,"ax",%progbits
+ 442              		.align	1
+ 443              		.global	NtagReadSIG
+ 444              		.code	16
+ 445              		.thumb_func
+ 446              		.type	NtagReadSIG, %function
+ 447              	NtagReadSIG:
+ 448              	.LFB68:
+ 148:Code\Device\FM175XX\IOS14443/NTAG.c **** 
+ 149:Code\Device\FM175XX\IOS14443/NTAG.c **** /**************************************************************************************************
+ 150:Code\Device\FM175XX\IOS14443/NTAG.c **** ** Function name:       NtagReadSIG    
+ 151:Code\Device\FM175XX\IOS14443/NTAG.c **** ** Descriptions:        NtagReadSIG¿¨Æ¬ÐÅÏ¢
+ 152:Code\Device\FM175XX\IOS14443/NTAG.c **** ** input parameters:    N/A
+ 153:Code\Device\FM175XX\IOS14443/NTAG.c **** ** output parameters:   buff£ºÓ¦´ðÊý¾ÝµÄÖ¸Õë    
+ 154:Code\Device\FM175XX\IOS14443/NTAG.c **** ** Returned value:      TRUE£º²Ù×÷³É¹¦ ERROR£º²Ù×÷Ê§°Ü    
+ 155:Code\Device\FM175XX\IOS14443/NTAG.c **** ***************************************************************************************************
+ 156:Code\Device\FM175XX\IOS14443/NTAG.c **** uint8_t  NtagReadSIG(uint8_t  *buff)
+ 157:Code\Device\FM175XX\IOS14443/NTAG.c **** {    
+ 449              		.loc 1 157 0
+ 450              		.cfi_startproc
+ 451              		@ args = 0, pretend = 0, frame = 8
+ 452              		@ frame_needed = 0, uses_anonymous_args = 0
+ 453              	.LVL47:
+ 454 0000 30B5     		push	{r4, r5, lr}
+ 455              		.cfi_def_cfa_offset 12
+ 456              		.cfi_offset 4, -12
+ 457              		.cfi_offset 5, -8
+ 458              		.cfi_offset 14, -4
+ 459 0002 0500     		movs	r5, r0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccibIqHp.s 			page 12
+
+
+ 460 0004 85B0     		sub	sp, sp, #20
+ 461              		.cfi_def_cfa_offset 32
+ 158:Code\Device\FM175XX\IOS14443/NTAG.c ****     uint8_t   send_buff[2],result;
+ 159:Code\Device\FM175XX\IOS14443/NTAG.c ****     uint32_t  rece_bitlen;
+ 160:Code\Device\FM175XX\IOS14443/NTAG.c ****     Pcd_SetTimer(10);
+ 462              		.loc 1 160 0
+ 463 0006 0A20     		movs	r0, #10
+ 464              	.LVL48:
+ 465 0008 FFF7FEFF 		bl	Pcd_SetTimer
+ 466              	.LVL49:
+ 161:Code\Device\FM175XX\IOS14443/NTAG.c ****     send_buff[0]=0x3C;                                                  /* ¶ÁÈ¡ÐÅÏ¢ÖµÃüÁî          
+ 467              		.loc 1 161 0
+ 468 000c 3C23     		movs	r3, #60
+ 469 000e 02AC     		add	r4, sp, #8
+ 470 0010 2370     		strb	r3, [r4]
+ 162:Code\Device\FM175XX\IOS14443/NTAG.c ****     send_buff[1]=0x00;                                                
+ 471              		.loc 1 162 0
+ 472 0012 0023     		movs	r3, #0
+ 473 0014 6370     		strb	r3, [r4, #1]
+ 163:Code\Device\FM175XX\IOS14443/NTAG.c ****     Clear_FIFO();
+ 474              		.loc 1 163 0
+ 475 0016 FFF7FEFF 		bl	Clear_FIFO
+ 476              	.LVL50:
+ 164:Code\Device\FM175XX\IOS14443/NTAG.c ****     result =Pcd_Comm(Transceive,send_buff,2,buff,&rece_bitlen);
+ 477              		.loc 1 164 0
+ 478 001a 03AB     		add	r3, sp, #12
+ 479 001c 0093     		str	r3, [sp]
+ 480 001e 0222     		movs	r2, #2
+ 481 0020 2B00     		movs	r3, r5
+ 482 0022 2100     		movs	r1, r4
+ 483 0024 0C20     		movs	r0, #12
+ 484 0026 FFF7FEFF 		bl	Pcd_Comm
+ 485              	.LVL51:
+ 486 002a 0300     		movs	r3, r0
+ 487              	.LVL52:
+ 165:Code\Device\FM175XX\IOS14443/NTAG.c ****     if ((result!=TRUE )|(rece_bitlen!=32*8))                            /* ½ÓÊÕµ½µÄÊý¾Ý³¤¶ÈÎª32    
+ 166:Code\Device\FM175XX\IOS14443/NTAG.c ****         return FALSE;
+ 488              		.loc 1 166 0
+ 489 002c 039A     		ldr	r2, [sp, #12]
+ 490 002e 013B     		subs	r3, r3, #1
+ 491              	.LVL53:
+ 492 0030 501E     		subs	r0, r2, #1
+ 493 0032 FF38     		subs	r0, r0, #255
+ 494 0034 5A1E     		subs	r2, r3, #1
+ 495 0036 9341     		sbcs	r3, r3, r2
+ 496 0038 421E     		subs	r2, r0, #1
+ 497 003a 9041     		sbcs	r0, r0, r2
+ 498 003c 1843     		orrs	r0, r3
+ 499 003e 0123     		movs	r3, #1
+ 500 0040 5840     		eors	r0, r3
+ 167:Code\Device\FM175XX\IOS14443/NTAG.c ****     return TRUE;
+ 168:Code\Device\FM175XX\IOS14443/NTAG.c **** }
+ 501              		.loc 1 168 0
+ 502 0042 05B0     		add	sp, sp, #20
+ 503              		@ sp needed
+ 504              	.LVL54:
+ 505 0044 30BD     		pop	{r4, r5, pc}
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccibIqHp.s 			page 13
+
+
+ 506              		.cfi_endproc
+ 507              	.LFE68:
+ 508              		.size	NtagReadSIG, .-NtagReadSIG
+ 509              		.comm	ADCResultCenter,1,1
+ 510              		.text
+ 511              	.Letext0:
+ 512              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.1\\psoc creator\\import\\gnu\\arm\\5.4.
+ 513              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.1\\psoc creator\\import\\gnu\\arm\\5.4.
+ 514              		.file 4 "Generated_Source\\PSoC4/cytypes.h"
+ 515              		.file 5 "Generated_Source\\PSoC4/RTC.h"
+ 516              		.file 6 ".\\Code\\Device\\FM175XX\\LPCD/lpcd_api.h"
+ 517              		.file 7 ".\\Code\\Device\\FM175XX/fm175xx.h"
+ 518              		.section	.debug_info,"",%progbits
+ 519              	.Ldebug_info0:
+ 520 0000 81050000 		.4byte	0x581
+ 521 0004 0400     		.2byte	0x4
+ 522 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 523 000a 04       		.byte	0x4
+ 524 000b 01       		.uleb128 0x1
+ 525 000c 37020000 		.4byte	.LASF38
+ 526 0010 0C       		.byte	0xc
+ 527 0011 8B010000 		.4byte	.LASF39
+ 528 0015 EC000000 		.4byte	.LASF40
+ 529 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 530 001d 00000000 		.4byte	0
+ 531 0021 00000000 		.4byte	.Ldebug_line0
+ 532 0025 02       		.uleb128 0x2
+ 533 0026 01       		.byte	0x1
+ 534 0027 06       		.byte	0x6
+ 535 0028 4C000000 		.4byte	.LASF0
+ 536 002c 03       		.uleb128 0x3
+ 537 002d 00000000 		.4byte	.LASF5
+ 538 0031 02       		.byte	0x2
+ 539 0032 1D       		.byte	0x1d
+ 540 0033 37000000 		.4byte	0x37
+ 541 0037 02       		.uleb128 0x2
+ 542 0038 01       		.byte	0x1
+ 543 0039 08       		.byte	0x8
+ 544 003a 58000000 		.4byte	.LASF1
+ 545 003e 02       		.uleb128 0x2
+ 546 003f 02       		.byte	0x2
+ 547 0040 05       		.byte	0x5
+ 548 0041 DD010000 		.4byte	.LASF2
+ 549 0045 02       		.uleb128 0x2
+ 550 0046 02       		.byte	0x2
+ 551 0047 07       		.byte	0x7
+ 552 0048 78000000 		.4byte	.LASF3
+ 553 004c 02       		.uleb128 0x2
+ 554 004d 04       		.byte	0x4
+ 555 004e 05       		.byte	0x5
+ 556 004f F0010000 		.4byte	.LASF4
+ 557 0053 03       		.uleb128 0x3
+ 558 0054 A2000000 		.4byte	.LASF6
+ 559 0058 02       		.byte	0x2
+ 560 0059 41       		.byte	0x41
+ 561 005a 5E000000 		.4byte	0x5e
+ 562 005e 02       		.uleb128 0x2
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccibIqHp.s 			page 14
+
+
+ 563 005f 04       		.byte	0x4
+ 564 0060 07       		.byte	0x7
+ 565 0061 66000000 		.4byte	.LASF7
+ 566 0065 02       		.uleb128 0x2
+ 567 0066 08       		.byte	0x8
+ 568 0067 05       		.byte	0x5
+ 569 0068 C2010000 		.4byte	.LASF8
+ 570 006c 02       		.uleb128 0x2
+ 571 006d 08       		.byte	0x8
+ 572 006e 07       		.byte	0x7
+ 573 006f 5B010000 		.4byte	.LASF9
+ 574 0073 04       		.uleb128 0x4
+ 575 0074 04       		.byte	0x4
+ 576 0075 05       		.byte	0x5
+ 577 0076 696E7400 		.ascii	"int\000"
+ 578 007a 02       		.uleb128 0x2
+ 579 007b 04       		.byte	0x4
+ 580 007c 07       		.byte	0x7
+ 581 007d DF000000 		.4byte	.LASF10
+ 582 0081 03       		.uleb128 0x3
+ 583 0082 72010000 		.4byte	.LASF11
+ 584 0086 03       		.byte	0x3
+ 585 0087 18       		.byte	0x18
+ 586 0088 2C000000 		.4byte	0x2c
+ 587 008c 03       		.uleb128 0x3
+ 588 008d E7010000 		.4byte	.LASF12
+ 589 0091 03       		.byte	0x3
+ 590 0092 30       		.byte	0x30
+ 591 0093 53000000 		.4byte	0x53
+ 592 0097 05       		.uleb128 0x5
+ 593 0098 AD000000 		.4byte	.LASF13
+ 594 009c 04       		.byte	0x4
+ 595 009d D301     		.2byte	0x1d3
+ 596 009f 45000000 		.4byte	0x45
+ 597 00a3 02       		.uleb128 0x2
+ 598 00a4 04       		.byte	0x4
+ 599 00a5 04       		.byte	0x4
+ 600 00a6 40000000 		.4byte	.LASF14
+ 601 00aa 02       		.uleb128 0x2
+ 602 00ab 08       		.byte	0x8
+ 603 00ac 04       		.byte	0x4
+ 604 00ad 9B000000 		.4byte	.LASF15
+ 605 00b1 02       		.uleb128 0x2
+ 606 00b2 01       		.byte	0x1
+ 607 00b3 08       		.byte	0x8
+ 608 00b4 F9010000 		.4byte	.LASF16
+ 609 00b8 02       		.uleb128 0x2
+ 610 00b9 08       		.byte	0x8
+ 611 00ba 04       		.byte	0x4
+ 612 00bb 15020000 		.4byte	.LASF17
+ 613 00bf 02       		.uleb128 0x2
+ 614 00c0 04       		.byte	0x4
+ 615 00c1 07       		.byte	0x7
+ 616 00c2 B9010000 		.4byte	.LASF18
+ 617 00c6 06       		.uleb128 0x6
+ 618 00c7 32000000 		.4byte	.LASF24
+ 619 00cb 01       		.byte	0x1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccibIqHp.s 			page 15
+
+
+ 620 00cc 1F       		.byte	0x1f
+ 621 00cd 81000000 		.4byte	0x81
+ 622 00d1 00000000 		.4byte	.LFB63
+ 623 00d5 42000000 		.4byte	.LFE63-.LFB63
+ 624 00d9 01       		.uleb128 0x1
+ 625 00da 9C       		.byte	0x9c
+ 626 00db 6C010000 		.4byte	0x16c
+ 627 00df 07       		.uleb128 0x7
+ 628 00e0 46000000 		.4byte	.LASF19
+ 629 00e4 01       		.byte	0x1
+ 630 00e5 1F       		.byte	0x1f
+ 631 00e6 81000000 		.4byte	0x81
+ 632 00ea 00000000 		.4byte	.LLST0
+ 633 00ee 07       		.uleb128 0x7
+ 634 00ef 96000000 		.4byte	.LASF20
+ 635 00f3 01       		.byte	0x1
+ 636 00f4 1F       		.byte	0x1f
+ 637 00f5 6C010000 		.4byte	0x16c
+ 638 00f9 21000000 		.4byte	.LLST1
+ 639 00fd 08       		.uleb128 0x8
+ 640 00fe 81010000 		.4byte	.LASF21
+ 641 0102 01       		.byte	0x1
+ 642 0103 21       		.byte	0x21
+ 643 0104 72010000 		.4byte	0x172
+ 644 0108 02       		.uleb128 0x2
+ 645 0109 91       		.byte	0x91
+ 646 010a 68       		.sleb128 -24
+ 647 010b 09       		.uleb128 0x9
+ 648 010c 7A010000 		.4byte	.LASF22
+ 649 0110 01       		.byte	0x1
+ 650 0111 21       		.byte	0x21
+ 651 0112 81000000 		.4byte	0x81
+ 652 0116 4D000000 		.4byte	.LLST2
+ 653 011a 08       		.uleb128 0x8
+ 654 011b C3000000 		.4byte	.LASF23
+ 655 011f 01       		.byte	0x1
+ 656 0120 22       		.byte	0x22
+ 657 0121 8C000000 		.4byte	0x8c
+ 658 0125 02       		.uleb128 0x2
+ 659 0126 91       		.byte	0x91
+ 660 0127 6C       		.sleb128 -20
+ 661 0128 0A       		.uleb128 0xa
+ 662 0129 0C000000 		.4byte	.LVL2
+ 663 012d 63050000 		.4byte	0x563
+ 664 0131 3B010000 		.4byte	0x13b
+ 665 0135 0B       		.uleb128 0xb
+ 666 0136 01       		.uleb128 0x1
+ 667 0137 50       		.byte	0x50
+ 668 0138 01       		.uleb128 0x1
+ 669 0139 31       		.byte	0x31
+ 670 013a 00       		.byte	0
+ 671 013b 0C       		.uleb128 0xc
+ 672 013c 18000000 		.4byte	.LVL3
+ 673 0140 6E050000 		.4byte	0x56e
+ 674 0144 0D       		.uleb128 0xd
+ 675 0145 28000000 		.4byte	.LVL4
+ 676 0149 79050000 		.4byte	0x579
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccibIqHp.s 			page 16
+
+
+ 677 014d 0B       		.uleb128 0xb
+ 678 014e 01       		.uleb128 0x1
+ 679 014f 50       		.byte	0x50
+ 680 0150 01       		.uleb128 0x1
+ 681 0151 3C       		.byte	0x3c
+ 682 0152 0B       		.uleb128 0xb
+ 683 0153 01       		.uleb128 0x1
+ 684 0154 51       		.byte	0x51
+ 685 0155 02       		.uleb128 0x2
+ 686 0156 74       		.byte	0x74
+ 687 0157 00       		.sleb128 0
+ 688 0158 0B       		.uleb128 0xb
+ 689 0159 01       		.uleb128 0x1
+ 690 015a 52       		.byte	0x52
+ 691 015b 01       		.uleb128 0x1
+ 692 015c 32       		.byte	0x32
+ 693 015d 0B       		.uleb128 0xb
+ 694 015e 01       		.uleb128 0x1
+ 695 015f 53       		.byte	0x53
+ 696 0160 02       		.uleb128 0x2
+ 697 0161 75       		.byte	0x75
+ 698 0162 00       		.sleb128 0
+ 699 0163 0B       		.uleb128 0xb
+ 700 0164 02       		.uleb128 0x2
+ 701 0165 7D       		.byte	0x7d
+ 702 0166 00       		.sleb128 0
+ 703 0167 02       		.uleb128 0x2
+ 704 0168 91       		.byte	0x91
+ 705 0169 6C       		.sleb128 -20
+ 706 016a 00       		.byte	0
+ 707 016b 00       		.byte	0
+ 708 016c 0E       		.uleb128 0xe
+ 709 016d 04       		.byte	0x4
+ 710 016e 81000000 		.4byte	0x81
+ 711 0172 0F       		.uleb128 0xf
+ 712 0173 81000000 		.4byte	0x81
+ 713 0177 82010000 		.4byte	0x182
+ 714 017b 10       		.uleb128 0x10
+ 715 017c BF000000 		.4byte	0xbf
+ 716 0180 01       		.byte	0x1
+ 717 0181 00       		.byte	0
+ 718 0182 06       		.uleb128 0x6
+ 719 0183 B4000000 		.4byte	.LASF25
+ 720 0187 01       		.byte	0x1
+ 721 0188 36       		.byte	0x36
+ 722 0189 81000000 		.4byte	0x81
+ 723 018d 00000000 		.4byte	.LFB64
+ 724 0191 5A000000 		.4byte	.LFE64-.LFB64
+ 725 0195 01       		.uleb128 0x1
+ 726 0196 9C       		.byte	0x9c
+ 727 0197 36020000 		.4byte	0x236
+ 728 019b 07       		.uleb128 0x7
+ 729 019c 46000000 		.4byte	.LASF19
+ 730 01a0 01       		.byte	0x1
+ 731 01a1 36       		.byte	0x36
+ 732 01a2 81000000 		.4byte	0x81
+ 733 01a6 60000000 		.4byte	.LLST3
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccibIqHp.s 			page 17
+
+
+ 734 01aa 07       		.uleb128 0x7
+ 735 01ab 96000000 		.4byte	.LASF20
+ 736 01af 01       		.byte	0x1
+ 737 01b0 36       		.byte	0x36
+ 738 01b1 6C010000 		.4byte	0x16c
+ 739 01b5 81000000 		.4byte	.LLST4
+ 740 01b9 09       		.uleb128 0x9
+ 741 01ba 7A010000 		.4byte	.LASF22
+ 742 01be 01       		.byte	0x1
+ 743 01bf 38       		.byte	0x38
+ 744 01c0 81000000 		.4byte	0x81
+ 745 01c4 AD000000 		.4byte	.LLST5
+ 746 01c8 08       		.uleb128 0x8
+ 747 01c9 81010000 		.4byte	.LASF21
+ 748 01cd 01       		.byte	0x1
+ 749 01ce 38       		.byte	0x38
+ 750 01cf 36020000 		.4byte	0x236
+ 751 01d3 02       		.uleb128 0x2
+ 752 01d4 91       		.byte	0x91
+ 753 01d5 60       		.sleb128 -32
+ 754 01d6 08       		.uleb128 0x8
+ 755 01d7 AF010000 		.4byte	.LASF26
+ 756 01db 01       		.byte	0x1
+ 757 01dc 38       		.byte	0x38
+ 758 01dd 46020000 		.4byte	0x246
+ 759 01e1 02       		.uleb128 0x2
+ 760 01e2 91       		.byte	0x91
+ 761 01e3 58       		.sleb128 -40
+ 762 01e4 08       		.uleb128 0x8
+ 763 01e5 C3000000 		.4byte	.LASF23
+ 764 01e9 01       		.byte	0x1
+ 765 01ea 39       		.byte	0x39
+ 766 01eb 8C000000 		.4byte	0x8c
+ 767 01ef 02       		.uleb128 0x2
+ 768 01f0 91       		.byte	0x91
+ 769 01f1 5C       		.sleb128 -36
+ 770 01f2 0A       		.uleb128 0xa
+ 771 01f3 0E000000 		.4byte	.LVL10
+ 772 01f7 63050000 		.4byte	0x563
+ 773 01fb 05020000 		.4byte	0x205
+ 774 01ff 0B       		.uleb128 0xb
+ 775 0200 01       		.uleb128 0x1
+ 776 0201 50       		.byte	0x50
+ 777 0202 01       		.uleb128 0x1
+ 778 0203 31       		.byte	0x31
+ 779 0204 00       		.byte	0
+ 780 0205 0C       		.uleb128 0xc
+ 781 0206 2C000000 		.4byte	.LVL12
+ 782 020a 6E050000 		.4byte	0x56e
+ 783 020e 0D       		.uleb128 0xd
+ 784 020f 3C000000 		.4byte	.LVL13
+ 785 0213 79050000 		.4byte	0x579
+ 786 0217 0B       		.uleb128 0xb
+ 787 0218 01       		.uleb128 0x1
+ 788 0219 50       		.byte	0x50
+ 789 021a 01       		.uleb128 0x1
+ 790 021b 3C       		.byte	0x3c
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccibIqHp.s 			page 18
+
+
+ 791 021c 0B       		.uleb128 0xb
+ 792 021d 01       		.uleb128 0x1
+ 793 021e 51       		.byte	0x51
+ 794 021f 02       		.uleb128 0x2
+ 795 0220 74       		.byte	0x74
+ 796 0221 00       		.sleb128 0
+ 797 0222 0B       		.uleb128 0xb
+ 798 0223 01       		.uleb128 0x1
+ 799 0224 52       		.byte	0x52
+ 800 0225 01       		.uleb128 0x1
+ 801 0226 36       		.byte	0x36
+ 802 0227 0B       		.uleb128 0xb
+ 803 0228 01       		.uleb128 0x1
+ 804 0229 53       		.byte	0x53
+ 805 022a 02       		.uleb128 0x2
+ 806 022b 75       		.byte	0x75
+ 807 022c 00       		.sleb128 0
+ 808 022d 0B       		.uleb128 0xb
+ 809 022e 02       		.uleb128 0x2
+ 810 022f 7D       		.byte	0x7d
+ 811 0230 00       		.sleb128 0
+ 812 0231 02       		.uleb128 0x2
+ 813 0232 91       		.byte	0x91
+ 814 0233 5C       		.sleb128 -36
+ 815 0234 00       		.byte	0
+ 816 0235 00       		.byte	0
+ 817 0236 0F       		.uleb128 0xf
+ 818 0237 81000000 		.4byte	0x81
+ 819 023b 46020000 		.4byte	0x246
+ 820 023f 10       		.uleb128 0x10
+ 821 0240 BF000000 		.4byte	0xbf
+ 822 0244 0F       		.byte	0xf
+ 823 0245 00       		.byte	0
+ 824 0246 0F       		.uleb128 0xf
+ 825 0247 81000000 		.4byte	0x81
+ 826 024b 56020000 		.4byte	0x256
+ 827 024f 10       		.uleb128 0x10
+ 828 0250 BF000000 		.4byte	0xbf
+ 829 0254 00       		.byte	0
+ 830 0255 00       		.byte	0
+ 831 0256 06       		.uleb128 0x6
+ 832 0257 3F010000 		.4byte	.LASF27
+ 833 025b 01       		.byte	0x1
+ 834 025c 51       		.byte	0x51
+ 835 025d 81000000 		.4byte	0x81
+ 836 0261 00000000 		.4byte	.LFB65
+ 837 0265 72000000 		.4byte	.LFE65-.LFB65
+ 838 0269 01       		.uleb128 0x1
+ 839 026a 9C       		.byte	0x9c
+ 840 026b 47030000 		.4byte	0x347
+ 841 026f 07       		.uleb128 0x7
+ 842 0270 46000000 		.4byte	.LASF19
+ 843 0274 01       		.byte	0x1
+ 844 0275 51       		.byte	0x51
+ 845 0276 81000000 		.4byte	0x81
+ 846 027a C0000000 		.4byte	.LLST6
+ 847 027e 07       		.uleb128 0x7
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccibIqHp.s 			page 19
+
+
+ 848 027f 96000000 		.4byte	.LASF20
+ 849 0283 01       		.byte	0x1
+ 850 0284 51       		.byte	0x51
+ 851 0285 6C010000 		.4byte	0x16c
+ 852 0289 E1000000 		.4byte	.LLST7
+ 853 028d 09       		.uleb128 0x9
+ 854 028e 7A010000 		.4byte	.LASF22
+ 855 0292 01       		.byte	0x1
+ 856 0293 53       		.byte	0x53
+ 857 0294 81000000 		.4byte	0x81
+ 858 0298 0D010000 		.4byte	.LLST8
+ 859 029c 08       		.uleb128 0x8
+ 860 029d 81010000 		.4byte	.LASF21
+ 861 02a1 01       		.byte	0x1
+ 862 02a2 53       		.byte	0x53
+ 863 02a3 36020000 		.4byte	0x236
+ 864 02a7 02       		.uleb128 0x2
+ 865 02a8 91       		.byte	0x91
+ 866 02a9 58       		.sleb128 -40
+ 867 02aa 08       		.uleb128 0x8
+ 868 02ab AF010000 		.4byte	.LASF26
+ 869 02af 01       		.byte	0x1
+ 870 02b0 53       		.byte	0x53
+ 871 02b1 46020000 		.4byte	0x246
+ 872 02b5 02       		.uleb128 0x2
+ 873 02b6 91       		.byte	0x91
+ 874 02b7 50       		.sleb128 -48
+ 875 02b8 08       		.uleb128 0x8
+ 876 02b9 C3000000 		.4byte	.LASF23
+ 877 02bd 01       		.byte	0x1
+ 878 02be 54       		.byte	0x54
+ 879 02bf 8C000000 		.4byte	0x8c
+ 880 02c3 02       		.uleb128 0x2
+ 881 02c4 91       		.byte	0x91
+ 882 02c5 54       		.sleb128 -44
+ 883 02c6 0A       		.uleb128 0xa
+ 884 02c7 0E000000 		.4byte	.LVL18
+ 885 02cb 63050000 		.4byte	0x563
+ 886 02cf D9020000 		.4byte	0x2d9
+ 887 02d3 0B       		.uleb128 0xb
+ 888 02d4 01       		.uleb128 0x1
+ 889 02d5 50       		.byte	0x50
+ 890 02d6 01       		.uleb128 0x1
+ 891 02d7 31       		.byte	0x31
+ 892 02d8 00       		.byte	0
+ 893 02d9 0C       		.uleb128 0xc
+ 894 02da 1A000000 		.4byte	.LVL19
+ 895 02de 6E050000 		.4byte	0x56e
+ 896 02e2 0A       		.uleb128 0xa
+ 897 02e3 2E000000 		.4byte	.LVL20
+ 898 02e7 79050000 		.4byte	0x579
+ 899 02eb 0D030000 		.4byte	0x30d
+ 900 02ef 0B       		.uleb128 0xb
+ 901 02f0 01       		.uleb128 0x1
+ 902 02f1 50       		.byte	0x50
+ 903 02f2 01       		.uleb128 0x1
+ 904 02f3 3C       		.byte	0x3c
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccibIqHp.s 			page 20
+
+
+ 905 02f4 0B       		.uleb128 0xb
+ 906 02f5 01       		.uleb128 0x1
+ 907 02f6 51       		.byte	0x51
+ 908 02f7 02       		.uleb128 0x2
+ 909 02f8 91       		.byte	0x91
+ 910 02f9 58       		.sleb128 -40
+ 911 02fa 0B       		.uleb128 0xb
+ 912 02fb 01       		.uleb128 0x1
+ 913 02fc 52       		.byte	0x52
+ 914 02fd 01       		.uleb128 0x1
+ 915 02fe 32       		.byte	0x32
+ 916 02ff 0B       		.uleb128 0xb
+ 917 0300 01       		.uleb128 0x1
+ 918 0301 53       		.byte	0x53
+ 919 0302 02       		.uleb128 0x2
+ 920 0303 75       		.byte	0x75
+ 921 0304 00       		.sleb128 0
+ 922 0305 0B       		.uleb128 0xb
+ 923 0306 02       		.uleb128 0x2
+ 924 0307 7D       		.byte	0x7d
+ 925 0308 00       		.sleb128 0
+ 926 0309 02       		.uleb128 0x2
+ 927 030a 76       		.byte	0x76
+ 928 030b 00       		.sleb128 0
+ 929 030c 00       		.byte	0
+ 930 030d 0C       		.uleb128 0xc
+ 931 030e 40000000 		.4byte	.LVL22
+ 932 0312 63050000 		.4byte	0x563
+ 933 0316 0C       		.uleb128 0xc
+ 934 0317 44000000 		.4byte	.LVL23
+ 935 031b 6E050000 		.4byte	0x56e
+ 936 031f 0D       		.uleb128 0xd
+ 937 0320 52000000 		.4byte	.LVL24
+ 938 0324 79050000 		.4byte	0x579
+ 939 0328 0B       		.uleb128 0xb
+ 940 0329 01       		.uleb128 0x1
+ 941 032a 50       		.byte	0x50
+ 942 032b 01       		.uleb128 0x1
+ 943 032c 3C       		.byte	0x3c
+ 944 032d 0B       		.uleb128 0xb
+ 945 032e 01       		.uleb128 0x1
+ 946 032f 51       		.byte	0x51
+ 947 0330 02       		.uleb128 0x2
+ 948 0331 77       		.byte	0x77
+ 949 0332 00       		.sleb128 0
+ 950 0333 0B       		.uleb128 0xb
+ 951 0334 01       		.uleb128 0x1
+ 952 0335 52       		.byte	0x52
+ 953 0336 01       		.uleb128 0x1
+ 954 0337 40       		.byte	0x40
+ 955 0338 0B       		.uleb128 0xb
+ 956 0339 01       		.uleb128 0x1
+ 957 033a 53       		.byte	0x53
+ 958 033b 02       		.uleb128 0x2
+ 959 033c 75       		.byte	0x75
+ 960 033d 00       		.sleb128 0
+ 961 033e 0B       		.uleb128 0xb
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccibIqHp.s 			page 21
+
+
+ 962 033f 02       		.uleb128 0x2
+ 963 0340 7D       		.byte	0x7d
+ 964 0341 00       		.sleb128 0
+ 965 0342 02       		.uleb128 0x2
+ 966 0343 76       		.byte	0x76
+ 967 0344 00       		.sleb128 0
+ 968 0345 00       		.byte	0
+ 969 0346 00       		.byte	0
+ 970 0347 06       		.uleb128 0x6
+ 971 0348 16000000 		.4byte	.LASF28
+ 972 034c 01       		.byte	0x1
+ 973 034d 6E       		.byte	0x6e
+ 974 034e 81000000 		.4byte	0x81
+ 975 0352 00000000 		.4byte	.LFB66
+ 976 0356 42000000 		.4byte	.LFE66-.LFB66
+ 977 035a 01       		.uleb128 0x1
+ 978 035b 9C       		.byte	0x9c
+ 979 035c DF030000 		.4byte	0x3df
+ 980 0360 07       		.uleb128 0x7
+ 981 0361 96000000 		.4byte	.LASF20
+ 982 0365 01       		.byte	0x1
+ 983 0366 6E       		.byte	0x6e
+ 984 0367 6C010000 		.4byte	0x16c
+ 985 036b 36010000 		.4byte	.LLST9
+ 986 036f 08       		.uleb128 0x8
+ 987 0370 81010000 		.4byte	.LASF21
+ 988 0374 01       		.byte	0x1
+ 989 0375 70       		.byte	0x70
+ 990 0376 72010000 		.4byte	0x172
+ 991 037a 02       		.uleb128 0x2
+ 992 037b 91       		.byte	0x91
+ 993 037c 68       		.sleb128 -24
+ 994 037d 09       		.uleb128 0x9
+ 995 037e 7A010000 		.4byte	.LASF22
+ 996 0382 01       		.byte	0x1
+ 997 0383 70       		.byte	0x70
+ 998 0384 81000000 		.4byte	0x81
+ 999 0388 62010000 		.4byte	.LLST10
+ 1000 038c 08       		.uleb128 0x8
+ 1001 038d C3000000 		.4byte	.LASF23
+ 1002 0391 01       		.byte	0x1
+ 1003 0392 71       		.byte	0x71
+ 1004 0393 8C000000 		.4byte	0x8c
+ 1005 0397 02       		.uleb128 0x2
+ 1006 0398 91       		.byte	0x91
+ 1007 0399 6C       		.sleb128 -20
+ 1008 039a 0A       		.uleb128 0xa
+ 1009 039b 0A000000 		.4byte	.LVL32
+ 1010 039f 63050000 		.4byte	0x563
+ 1011 03a3 AD030000 		.4byte	0x3ad
+ 1012 03a7 0B       		.uleb128 0xb
+ 1013 03a8 01       		.uleb128 0x1
+ 1014 03a9 50       		.byte	0x50
+ 1015 03aa 01       		.uleb128 0x1
+ 1016 03ab 31       		.byte	0x31
+ 1017 03ac 00       		.byte	0
+ 1018 03ad 0C       		.uleb128 0xc
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccibIqHp.s 			page 22
+
+
+ 1019 03ae 18000000 		.4byte	.LVL33
+ 1020 03b2 6E050000 		.4byte	0x56e
+ 1021 03b6 0D       		.uleb128 0xd
+ 1022 03b7 28000000 		.4byte	.LVL34
+ 1023 03bb 79050000 		.4byte	0x579
+ 1024 03bf 0B       		.uleb128 0xb
+ 1025 03c0 01       		.uleb128 0x1
+ 1026 03c1 50       		.byte	0x50
+ 1027 03c2 01       		.uleb128 0x1
+ 1028 03c3 3C       		.byte	0x3c
+ 1029 03c4 0B       		.uleb128 0xb
+ 1030 03c5 01       		.uleb128 0x1
+ 1031 03c6 51       		.byte	0x51
+ 1032 03c7 02       		.uleb128 0x2
+ 1033 03c8 74       		.byte	0x74
+ 1034 03c9 00       		.sleb128 0
+ 1035 03ca 0B       		.uleb128 0xb
+ 1036 03cb 01       		.uleb128 0x1
+ 1037 03cc 52       		.byte	0x52
+ 1038 03cd 02       		.uleb128 0x2
+ 1039 03ce 75       		.byte	0x75
+ 1040 03cf 00       		.sleb128 0
+ 1041 03d0 0B       		.uleb128 0xb
+ 1042 03d1 01       		.uleb128 0x1
+ 1043 03d2 53       		.byte	0x53
+ 1044 03d3 02       		.uleb128 0x2
+ 1045 03d4 76       		.byte	0x76
+ 1046 03d5 00       		.sleb128 0
+ 1047 03d6 0B       		.uleb128 0xb
+ 1048 03d7 02       		.uleb128 0x2
+ 1049 03d8 7D       		.byte	0x7d
+ 1050 03d9 00       		.sleb128 0
+ 1051 03da 02       		.uleb128 0x2
+ 1052 03db 91       		.byte	0x91
+ 1053 03dc 6C       		.sleb128 -20
+ 1054 03dd 00       		.byte	0
+ 1055 03de 00       		.byte	0
+ 1056 03df 06       		.uleb128 0x6
+ 1057 03e0 21020000 		.4byte	.LASF29
+ 1058 03e4 01       		.byte	0x1
+ 1059 03e5 84       		.byte	0x84
+ 1060 03e6 81000000 		.4byte	0x81
+ 1061 03ea 00000000 		.4byte	.LFB67
+ 1062 03ee 52000000 		.4byte	.LFE67-.LFB67
+ 1063 03f2 01       		.uleb128 0x1
+ 1064 03f3 9C       		.byte	0x9c
+ 1065 03f4 85040000 		.4byte	0x485
+ 1066 03f8 07       		.uleb128 0x7
+ 1067 03f9 C5020000 		.4byte	.LASF30
+ 1068 03fd 01       		.byte	0x1
+ 1069 03fe 84       		.byte	0x84
+ 1070 03ff 6C010000 		.4byte	0x16c
+ 1071 0403 75010000 		.4byte	.LLST11
+ 1072 0407 07       		.uleb128 0x7
+ 1073 0408 0A000000 		.4byte	.LASF31
+ 1074 040c 01       		.byte	0x1
+ 1075 040d 84       		.byte	0x84
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccibIqHp.s 			page 23
+
+
+ 1076 040e 6C010000 		.4byte	0x16c
+ 1077 0412 A1010000 		.4byte	.LLST12
+ 1078 0416 08       		.uleb128 0x8
+ 1079 0417 81010000 		.4byte	.LASF21
+ 1080 041b 01       		.byte	0x1
+ 1081 041c 86       		.byte	0x86
+ 1082 041d 85040000 		.4byte	0x485
+ 1083 0421 02       		.uleb128 0x2
+ 1084 0422 91       		.byte	0x91
+ 1085 0423 68       		.sleb128 -24
+ 1086 0424 09       		.uleb128 0x9
+ 1087 0425 7A010000 		.4byte	.LASF22
+ 1088 0429 01       		.byte	0x1
+ 1089 042a 86       		.byte	0x86
+ 1090 042b 81000000 		.4byte	0x81
+ 1091 042f CD010000 		.4byte	.LLST13
+ 1092 0433 08       		.uleb128 0x8
+ 1093 0434 C3000000 		.4byte	.LASF23
+ 1094 0438 01       		.byte	0x1
+ 1095 0439 87       		.byte	0x87
+ 1096 043a 8C000000 		.4byte	0x8c
+ 1097 043e 02       		.uleb128 0x2
+ 1098 043f 91       		.byte	0x91
+ 1099 0440 64       		.sleb128 -28
+ 1100 0441 0A       		.uleb128 0xa
+ 1101 0442 0E000000 		.4byte	.LVL40
+ 1102 0446 63050000 		.4byte	0x563
+ 1103 044a 54040000 		.4byte	0x454
+ 1104 044e 0B       		.uleb128 0xb
+ 1105 044f 01       		.uleb128 0x1
+ 1106 0450 50       		.byte	0x50
+ 1107 0451 01       		.uleb128 0x1
+ 1108 0452 31       		.byte	0x31
+ 1109 0453 00       		.byte	0
+ 1110 0454 0C       		.uleb128 0xc
+ 1111 0455 28000000 		.4byte	.LVL41
+ 1112 0459 6E050000 		.4byte	0x56e
+ 1113 045d 0D       		.uleb128 0xd
+ 1114 045e 38000000 		.4byte	.LVL42
+ 1115 0462 79050000 		.4byte	0x579
+ 1116 0466 0B       		.uleb128 0xb
+ 1117 0467 01       		.uleb128 0x1
+ 1118 0468 50       		.byte	0x50
+ 1119 0469 01       		.uleb128 0x1
+ 1120 046a 3C       		.byte	0x3c
+ 1121 046b 0B       		.uleb128 0xb
+ 1122 046c 01       		.uleb128 0x1
+ 1123 046d 51       		.byte	0x51
+ 1124 046e 02       		.uleb128 0x2
+ 1125 046f 74       		.byte	0x74
+ 1126 0470 00       		.sleb128 0
+ 1127 0471 0B       		.uleb128 0xb
+ 1128 0472 01       		.uleb128 0x1
+ 1129 0473 52       		.byte	0x52
+ 1130 0474 01       		.uleb128 0x1
+ 1131 0475 35       		.byte	0x35
+ 1132 0476 0B       		.uleb128 0xb
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccibIqHp.s 			page 24
+
+
+ 1133 0477 01       		.uleb128 0x1
+ 1134 0478 53       		.byte	0x53
+ 1135 0479 02       		.uleb128 0x2
+ 1136 047a 76       		.byte	0x76
+ 1137 047b 00       		.sleb128 0
+ 1138 047c 0B       		.uleb128 0xb
+ 1139 047d 02       		.uleb128 0x2
+ 1140 047e 7D       		.byte	0x7d
+ 1141 047f 00       		.sleb128 0
+ 1142 0480 02       		.uleb128 0x2
+ 1143 0481 91       		.byte	0x91
+ 1144 0482 64       		.sleb128 -28
+ 1145 0483 00       		.byte	0
+ 1146 0484 00       		.byte	0
+ 1147 0485 0F       		.uleb128 0xf
+ 1148 0486 81000000 		.4byte	0x81
+ 1149 048a 95040000 		.4byte	0x495
+ 1150 048e 10       		.uleb128 0x10
+ 1151 048f BF000000 		.4byte	0xbf
+ 1152 0493 05       		.byte	0x5
+ 1153 0494 00       		.byte	0
+ 1154 0495 06       		.uleb128 0x6
+ 1155 0496 26000000 		.4byte	.LASF32
+ 1156 049a 01       		.byte	0x1
+ 1157 049b 9C       		.byte	0x9c
+ 1158 049c 81000000 		.4byte	0x81
+ 1159 04a0 00000000 		.4byte	.LFB68
+ 1160 04a4 46000000 		.4byte	.LFE68-.LFB68
+ 1161 04a8 01       		.uleb128 0x1
+ 1162 04a9 9C       		.byte	0x9c
+ 1163 04aa 2C050000 		.4byte	0x52c
+ 1164 04ae 07       		.uleb128 0x7
+ 1165 04af 96000000 		.4byte	.LASF20
+ 1166 04b3 01       		.byte	0x1
+ 1167 04b4 9C       		.byte	0x9c
+ 1168 04b5 6C010000 		.4byte	0x16c
+ 1169 04b9 E0010000 		.4byte	.LLST14
+ 1170 04bd 08       		.uleb128 0x8
+ 1171 04be 81010000 		.4byte	.LASF21
+ 1172 04c2 01       		.byte	0x1
+ 1173 04c3 9E       		.byte	0x9e
+ 1174 04c4 72010000 		.4byte	0x172
+ 1175 04c8 02       		.uleb128 0x2
+ 1176 04c9 91       		.byte	0x91
+ 1177 04ca 68       		.sleb128 -24
+ 1178 04cb 09       		.uleb128 0x9
+ 1179 04cc 7A010000 		.4byte	.LASF22
+ 1180 04d0 01       		.byte	0x1
+ 1181 04d1 9E       		.byte	0x9e
+ 1182 04d2 81000000 		.4byte	0x81
+ 1183 04d6 0C020000 		.4byte	.LLST15
+ 1184 04da 08       		.uleb128 0x8
+ 1185 04db C3000000 		.4byte	.LASF23
+ 1186 04df 01       		.byte	0x1
+ 1187 04e0 9F       		.byte	0x9f
+ 1188 04e1 8C000000 		.4byte	0x8c
+ 1189 04e5 02       		.uleb128 0x2
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccibIqHp.s 			page 25
+
+
+ 1190 04e6 91       		.byte	0x91
+ 1191 04e7 6C       		.sleb128 -20
+ 1192 04e8 0A       		.uleb128 0xa
+ 1193 04e9 0C000000 		.4byte	.LVL49
+ 1194 04ed 63050000 		.4byte	0x563
+ 1195 04f1 FB040000 		.4byte	0x4fb
+ 1196 04f5 0B       		.uleb128 0xb
+ 1197 04f6 01       		.uleb128 0x1
+ 1198 04f7 50       		.byte	0x50
+ 1199 04f8 01       		.uleb128 0x1
+ 1200 04f9 3A       		.byte	0x3a
+ 1201 04fa 00       		.byte	0
+ 1202 04fb 0C       		.uleb128 0xc
+ 1203 04fc 1A000000 		.4byte	.LVL50
+ 1204 0500 6E050000 		.4byte	0x56e
+ 1205 0504 0D       		.uleb128 0xd
+ 1206 0505 2A000000 		.4byte	.LVL51
+ 1207 0509 79050000 		.4byte	0x579
+ 1208 050d 0B       		.uleb128 0xb
+ 1209 050e 01       		.uleb128 0x1
+ 1210 050f 50       		.byte	0x50
+ 1211 0510 01       		.uleb128 0x1
+ 1212 0511 3C       		.byte	0x3c
+ 1213 0512 0B       		.uleb128 0xb
+ 1214 0513 01       		.uleb128 0x1
+ 1215 0514 51       		.byte	0x51
+ 1216 0515 02       		.uleb128 0x2
+ 1217 0516 74       		.byte	0x74
+ 1218 0517 00       		.sleb128 0
+ 1219 0518 0B       		.uleb128 0xb
+ 1220 0519 01       		.uleb128 0x1
+ 1221 051a 52       		.byte	0x52
+ 1222 051b 01       		.uleb128 0x1
+ 1223 051c 32       		.byte	0x32
+ 1224 051d 0B       		.uleb128 0xb
+ 1225 051e 01       		.uleb128 0x1
+ 1226 051f 53       		.byte	0x53
+ 1227 0520 02       		.uleb128 0x2
+ 1228 0521 75       		.byte	0x75
+ 1229 0522 00       		.sleb128 0
+ 1230 0523 0B       		.uleb128 0xb
+ 1231 0524 02       		.uleb128 0x2
+ 1232 0525 7D       		.byte	0x7d
+ 1233 0526 00       		.sleb128 0
+ 1234 0527 02       		.uleb128 0x2
+ 1235 0528 91       		.byte	0x91
+ 1236 0529 6C       		.sleb128 -20
+ 1237 052a 00       		.byte	0
+ 1238 052b 00       		.byte	0
+ 1239 052c 0F       		.uleb128 0xf
+ 1240 052d 3C050000 		.4byte	0x53c
+ 1241 0531 3C050000 		.4byte	0x53c
+ 1242 0535 10       		.uleb128 0x10
+ 1243 0536 BF000000 		.4byte	0xbf
+ 1244 053a 0B       		.byte	0xb
+ 1245 053b 00       		.byte	0
+ 1246 053c 11       		.uleb128 0x11
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccibIqHp.s 			page 26
+
+
+ 1247 053d 97000000 		.4byte	0x97
+ 1248 0541 12       		.uleb128 0x12
+ 1249 0542 FE010000 		.4byte	.LASF33
+ 1250 0546 05       		.byte	0x5
+ 1251 0547 E001     		.2byte	0x1e0
+ 1252 0549 4D050000 		.4byte	0x54d
+ 1253 054d 11       		.uleb128 0x11
+ 1254 054e 2C050000 		.4byte	0x52c
+ 1255 0552 13       		.uleb128 0x13
+ 1256 0553 CF000000 		.4byte	.LASF34
+ 1257 0557 06       		.byte	0x6
+ 1258 0558 0A       		.byte	0xa
+ 1259 0559 81000000 		.4byte	0x81
+ 1260 055d 05       		.uleb128 0x5
+ 1261 055e 03       		.byte	0x3
+ 1262 055f 00000000 		.4byte	ADCResultCenter
+ 1263 0563 14       		.uleb128 0x14
+ 1264 0564 D0010000 		.4byte	.LASF35
+ 1265 0568 D0010000 		.4byte	.LASF35
+ 1266 056c 07       		.byte	0x7
+ 1267 056d 69       		.byte	0x69
+ 1268 056e 14       		.uleb128 0x14
+ 1269 056f 8B000000 		.4byte	.LASF36
+ 1270 0573 8B000000 		.4byte	.LASF36
+ 1271 0577 07       		.byte	0x7
+ 1272 0578 61       		.byte	0x61
+ 1273 0579 14       		.uleb128 0x14
+ 1274 057a 2E020000 		.4byte	.LASF37
+ 1275 057e 2E020000 		.4byte	.LASF37
+ 1276 0582 07       		.byte	0x7
+ 1277 0583 5A       		.byte	0x5a
+ 1278 0584 00       		.byte	0
+ 1279              		.section	.debug_abbrev,"",%progbits
+ 1280              	.Ldebug_abbrev0:
+ 1281 0000 01       		.uleb128 0x1
+ 1282 0001 11       		.uleb128 0x11
+ 1283 0002 01       		.byte	0x1
+ 1284 0003 25       		.uleb128 0x25
+ 1285 0004 0E       		.uleb128 0xe
+ 1286 0005 13       		.uleb128 0x13
+ 1287 0006 0B       		.uleb128 0xb
+ 1288 0007 03       		.uleb128 0x3
+ 1289 0008 0E       		.uleb128 0xe
+ 1290 0009 1B       		.uleb128 0x1b
+ 1291 000a 0E       		.uleb128 0xe
+ 1292 000b 55       		.uleb128 0x55
+ 1293 000c 17       		.uleb128 0x17
+ 1294 000d 11       		.uleb128 0x11
+ 1295 000e 01       		.uleb128 0x1
+ 1296 000f 10       		.uleb128 0x10
+ 1297 0010 17       		.uleb128 0x17
+ 1298 0011 00       		.byte	0
+ 1299 0012 00       		.byte	0
+ 1300 0013 02       		.uleb128 0x2
+ 1301 0014 24       		.uleb128 0x24
+ 1302 0015 00       		.byte	0
+ 1303 0016 0B       		.uleb128 0xb
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccibIqHp.s 			page 27
+
+
+ 1304 0017 0B       		.uleb128 0xb
+ 1305 0018 3E       		.uleb128 0x3e
+ 1306 0019 0B       		.uleb128 0xb
+ 1307 001a 03       		.uleb128 0x3
+ 1308 001b 0E       		.uleb128 0xe
+ 1309 001c 00       		.byte	0
+ 1310 001d 00       		.byte	0
+ 1311 001e 03       		.uleb128 0x3
+ 1312 001f 16       		.uleb128 0x16
+ 1313 0020 00       		.byte	0
+ 1314 0021 03       		.uleb128 0x3
+ 1315 0022 0E       		.uleb128 0xe
+ 1316 0023 3A       		.uleb128 0x3a
+ 1317 0024 0B       		.uleb128 0xb
+ 1318 0025 3B       		.uleb128 0x3b
+ 1319 0026 0B       		.uleb128 0xb
+ 1320 0027 49       		.uleb128 0x49
+ 1321 0028 13       		.uleb128 0x13
+ 1322 0029 00       		.byte	0
+ 1323 002a 00       		.byte	0
+ 1324 002b 04       		.uleb128 0x4
+ 1325 002c 24       		.uleb128 0x24
+ 1326 002d 00       		.byte	0
+ 1327 002e 0B       		.uleb128 0xb
+ 1328 002f 0B       		.uleb128 0xb
+ 1329 0030 3E       		.uleb128 0x3e
+ 1330 0031 0B       		.uleb128 0xb
+ 1331 0032 03       		.uleb128 0x3
+ 1332 0033 08       		.uleb128 0x8
+ 1333 0034 00       		.byte	0
+ 1334 0035 00       		.byte	0
+ 1335 0036 05       		.uleb128 0x5
+ 1336 0037 16       		.uleb128 0x16
+ 1337 0038 00       		.byte	0
+ 1338 0039 03       		.uleb128 0x3
+ 1339 003a 0E       		.uleb128 0xe
+ 1340 003b 3A       		.uleb128 0x3a
+ 1341 003c 0B       		.uleb128 0xb
+ 1342 003d 3B       		.uleb128 0x3b
+ 1343 003e 05       		.uleb128 0x5
+ 1344 003f 49       		.uleb128 0x49
+ 1345 0040 13       		.uleb128 0x13
+ 1346 0041 00       		.byte	0
+ 1347 0042 00       		.byte	0
+ 1348 0043 06       		.uleb128 0x6
+ 1349 0044 2E       		.uleb128 0x2e
+ 1350 0045 01       		.byte	0x1
+ 1351 0046 3F       		.uleb128 0x3f
+ 1352 0047 19       		.uleb128 0x19
+ 1353 0048 03       		.uleb128 0x3
+ 1354 0049 0E       		.uleb128 0xe
+ 1355 004a 3A       		.uleb128 0x3a
+ 1356 004b 0B       		.uleb128 0xb
+ 1357 004c 3B       		.uleb128 0x3b
+ 1358 004d 0B       		.uleb128 0xb
+ 1359 004e 27       		.uleb128 0x27
+ 1360 004f 19       		.uleb128 0x19
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccibIqHp.s 			page 28
+
+
+ 1361 0050 49       		.uleb128 0x49
+ 1362 0051 13       		.uleb128 0x13
+ 1363 0052 11       		.uleb128 0x11
+ 1364 0053 01       		.uleb128 0x1
+ 1365 0054 12       		.uleb128 0x12
+ 1366 0055 06       		.uleb128 0x6
+ 1367 0056 40       		.uleb128 0x40
+ 1368 0057 18       		.uleb128 0x18
+ 1369 0058 9742     		.uleb128 0x2117
+ 1370 005a 19       		.uleb128 0x19
+ 1371 005b 01       		.uleb128 0x1
+ 1372 005c 13       		.uleb128 0x13
+ 1373 005d 00       		.byte	0
+ 1374 005e 00       		.byte	0
+ 1375 005f 07       		.uleb128 0x7
+ 1376 0060 05       		.uleb128 0x5
+ 1377 0061 00       		.byte	0
+ 1378 0062 03       		.uleb128 0x3
+ 1379 0063 0E       		.uleb128 0xe
+ 1380 0064 3A       		.uleb128 0x3a
+ 1381 0065 0B       		.uleb128 0xb
+ 1382 0066 3B       		.uleb128 0x3b
+ 1383 0067 0B       		.uleb128 0xb
+ 1384 0068 49       		.uleb128 0x49
+ 1385 0069 13       		.uleb128 0x13
+ 1386 006a 02       		.uleb128 0x2
+ 1387 006b 17       		.uleb128 0x17
+ 1388 006c 00       		.byte	0
+ 1389 006d 00       		.byte	0
+ 1390 006e 08       		.uleb128 0x8
+ 1391 006f 34       		.uleb128 0x34
+ 1392 0070 00       		.byte	0
+ 1393 0071 03       		.uleb128 0x3
+ 1394 0072 0E       		.uleb128 0xe
+ 1395 0073 3A       		.uleb128 0x3a
+ 1396 0074 0B       		.uleb128 0xb
+ 1397 0075 3B       		.uleb128 0x3b
+ 1398 0076 0B       		.uleb128 0xb
+ 1399 0077 49       		.uleb128 0x49
+ 1400 0078 13       		.uleb128 0x13
+ 1401 0079 02       		.uleb128 0x2
+ 1402 007a 18       		.uleb128 0x18
+ 1403 007b 00       		.byte	0
+ 1404 007c 00       		.byte	0
+ 1405 007d 09       		.uleb128 0x9
+ 1406 007e 34       		.uleb128 0x34
+ 1407 007f 00       		.byte	0
+ 1408 0080 03       		.uleb128 0x3
+ 1409 0081 0E       		.uleb128 0xe
+ 1410 0082 3A       		.uleb128 0x3a
+ 1411 0083 0B       		.uleb128 0xb
+ 1412 0084 3B       		.uleb128 0x3b
+ 1413 0085 0B       		.uleb128 0xb
+ 1414 0086 49       		.uleb128 0x49
+ 1415 0087 13       		.uleb128 0x13
+ 1416 0088 02       		.uleb128 0x2
+ 1417 0089 17       		.uleb128 0x17
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccibIqHp.s 			page 29
+
+
+ 1418 008a 00       		.byte	0
+ 1419 008b 00       		.byte	0
+ 1420 008c 0A       		.uleb128 0xa
+ 1421 008d 898201   		.uleb128 0x4109
+ 1422 0090 01       		.byte	0x1
+ 1423 0091 11       		.uleb128 0x11
+ 1424 0092 01       		.uleb128 0x1
+ 1425 0093 31       		.uleb128 0x31
+ 1426 0094 13       		.uleb128 0x13
+ 1427 0095 01       		.uleb128 0x1
+ 1428 0096 13       		.uleb128 0x13
+ 1429 0097 00       		.byte	0
+ 1430 0098 00       		.byte	0
+ 1431 0099 0B       		.uleb128 0xb
+ 1432 009a 8A8201   		.uleb128 0x410a
+ 1433 009d 00       		.byte	0
+ 1434 009e 02       		.uleb128 0x2
+ 1435 009f 18       		.uleb128 0x18
+ 1436 00a0 9142     		.uleb128 0x2111
+ 1437 00a2 18       		.uleb128 0x18
+ 1438 00a3 00       		.byte	0
+ 1439 00a4 00       		.byte	0
+ 1440 00a5 0C       		.uleb128 0xc
+ 1441 00a6 898201   		.uleb128 0x4109
+ 1442 00a9 00       		.byte	0
+ 1443 00aa 11       		.uleb128 0x11
+ 1444 00ab 01       		.uleb128 0x1
+ 1445 00ac 31       		.uleb128 0x31
+ 1446 00ad 13       		.uleb128 0x13
+ 1447 00ae 00       		.byte	0
+ 1448 00af 00       		.byte	0
+ 1449 00b0 0D       		.uleb128 0xd
+ 1450 00b1 898201   		.uleb128 0x4109
+ 1451 00b4 01       		.byte	0x1
+ 1452 00b5 11       		.uleb128 0x11
+ 1453 00b6 01       		.uleb128 0x1
+ 1454 00b7 31       		.uleb128 0x31
+ 1455 00b8 13       		.uleb128 0x13
+ 1456 00b9 00       		.byte	0
+ 1457 00ba 00       		.byte	0
+ 1458 00bb 0E       		.uleb128 0xe
+ 1459 00bc 0F       		.uleb128 0xf
+ 1460 00bd 00       		.byte	0
+ 1461 00be 0B       		.uleb128 0xb
+ 1462 00bf 0B       		.uleb128 0xb
+ 1463 00c0 49       		.uleb128 0x49
+ 1464 00c1 13       		.uleb128 0x13
+ 1465 00c2 00       		.byte	0
+ 1466 00c3 00       		.byte	0
+ 1467 00c4 0F       		.uleb128 0xf
+ 1468 00c5 01       		.uleb128 0x1
+ 1469 00c6 01       		.byte	0x1
+ 1470 00c7 49       		.uleb128 0x49
+ 1471 00c8 13       		.uleb128 0x13
+ 1472 00c9 01       		.uleb128 0x1
+ 1473 00ca 13       		.uleb128 0x13
+ 1474 00cb 00       		.byte	0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccibIqHp.s 			page 30
+
+
+ 1475 00cc 00       		.byte	0
+ 1476 00cd 10       		.uleb128 0x10
+ 1477 00ce 21       		.uleb128 0x21
+ 1478 00cf 00       		.byte	0
+ 1479 00d0 49       		.uleb128 0x49
+ 1480 00d1 13       		.uleb128 0x13
+ 1481 00d2 2F       		.uleb128 0x2f
+ 1482 00d3 0B       		.uleb128 0xb
+ 1483 00d4 00       		.byte	0
+ 1484 00d5 00       		.byte	0
+ 1485 00d6 11       		.uleb128 0x11
+ 1486 00d7 26       		.uleb128 0x26
+ 1487 00d8 00       		.byte	0
+ 1488 00d9 49       		.uleb128 0x49
+ 1489 00da 13       		.uleb128 0x13
+ 1490 00db 00       		.byte	0
+ 1491 00dc 00       		.byte	0
+ 1492 00dd 12       		.uleb128 0x12
+ 1493 00de 34       		.uleb128 0x34
+ 1494 00df 00       		.byte	0
+ 1495 00e0 03       		.uleb128 0x3
+ 1496 00e1 0E       		.uleb128 0xe
+ 1497 00e2 3A       		.uleb128 0x3a
+ 1498 00e3 0B       		.uleb128 0xb
+ 1499 00e4 3B       		.uleb128 0x3b
+ 1500 00e5 05       		.uleb128 0x5
+ 1501 00e6 49       		.uleb128 0x49
+ 1502 00e7 13       		.uleb128 0x13
+ 1503 00e8 3F       		.uleb128 0x3f
+ 1504 00e9 19       		.uleb128 0x19
+ 1505 00ea 3C       		.uleb128 0x3c
+ 1506 00eb 19       		.uleb128 0x19
+ 1507 00ec 00       		.byte	0
+ 1508 00ed 00       		.byte	0
+ 1509 00ee 13       		.uleb128 0x13
+ 1510 00ef 34       		.uleb128 0x34
+ 1511 00f0 00       		.byte	0
+ 1512 00f1 03       		.uleb128 0x3
+ 1513 00f2 0E       		.uleb128 0xe
+ 1514 00f3 3A       		.uleb128 0x3a
+ 1515 00f4 0B       		.uleb128 0xb
+ 1516 00f5 3B       		.uleb128 0x3b
+ 1517 00f6 0B       		.uleb128 0xb
+ 1518 00f7 49       		.uleb128 0x49
+ 1519 00f8 13       		.uleb128 0x13
+ 1520 00f9 3F       		.uleb128 0x3f
+ 1521 00fa 19       		.uleb128 0x19
+ 1522 00fb 02       		.uleb128 0x2
+ 1523 00fc 18       		.uleb128 0x18
+ 1524 00fd 00       		.byte	0
+ 1525 00fe 00       		.byte	0
+ 1526 00ff 14       		.uleb128 0x14
+ 1527 0100 2E       		.uleb128 0x2e
+ 1528 0101 00       		.byte	0
+ 1529 0102 3F       		.uleb128 0x3f
+ 1530 0103 19       		.uleb128 0x19
+ 1531 0104 3C       		.uleb128 0x3c
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccibIqHp.s 			page 31
+
+
+ 1532 0105 19       		.uleb128 0x19
+ 1533 0106 6E       		.uleb128 0x6e
+ 1534 0107 0E       		.uleb128 0xe
+ 1535 0108 03       		.uleb128 0x3
+ 1536 0109 0E       		.uleb128 0xe
+ 1537 010a 3A       		.uleb128 0x3a
+ 1538 010b 0B       		.uleb128 0xb
+ 1539 010c 3B       		.uleb128 0x3b
+ 1540 010d 0B       		.uleb128 0xb
+ 1541 010e 00       		.byte	0
+ 1542 010f 00       		.byte	0
+ 1543 0110 00       		.byte	0
+ 1544              		.section	.debug_loc,"",%progbits
+ 1545              	.Ldebug_loc0:
+ 1546              	.LLST0:
+ 1547 0000 00000000 		.4byte	.LVL0
+ 1548 0004 06000000 		.4byte	.LVL1
+ 1549 0008 0100     		.2byte	0x1
+ 1550 000a 50       		.byte	0x50
+ 1551 000b 06000000 		.4byte	.LVL1
+ 1552 000f 42000000 		.4byte	.LFE63
+ 1553 0013 0400     		.2byte	0x4
+ 1554 0015 F3       		.byte	0xf3
+ 1555 0016 01       		.uleb128 0x1
+ 1556 0017 50       		.byte	0x50
+ 1557 0018 9F       		.byte	0x9f
+ 1558 0019 00000000 		.4byte	0
+ 1559 001d 00000000 		.4byte	0
+ 1560              	.LLST1:
+ 1561 0021 00000000 		.4byte	.LVL0
+ 1562 0025 0B000000 		.4byte	.LVL2-1
+ 1563 0029 0100     		.2byte	0x1
+ 1564 002b 51       		.byte	0x51
+ 1565 002c 0B000000 		.4byte	.LVL2-1
+ 1566 0030 40000000 		.4byte	.LVL7
+ 1567 0034 0100     		.2byte	0x1
+ 1568 0036 55       		.byte	0x55
+ 1569 0037 40000000 		.4byte	.LVL7
+ 1570 003b 42000000 		.4byte	.LFE63
+ 1571 003f 0400     		.2byte	0x4
+ 1572 0041 F3       		.byte	0xf3
+ 1573 0042 01       		.uleb128 0x1
+ 1574 0043 51       		.byte	0x51
+ 1575 0044 9F       		.byte	0x9f
+ 1576 0045 00000000 		.4byte	0
+ 1577 0049 00000000 		.4byte	0
+ 1578              	.LLST2:
+ 1579 004d 2A000000 		.4byte	.LVL5
+ 1580 0051 2E000000 		.4byte	.LVL6
+ 1581 0055 0100     		.2byte	0x1
+ 1582 0057 53       		.byte	0x53
+ 1583 0058 00000000 		.4byte	0
+ 1584 005c 00000000 		.4byte	0
+ 1585              	.LLST3:
+ 1586 0060 00000000 		.4byte	.LVL8
+ 1587 0064 08000000 		.4byte	.LVL9
+ 1588 0068 0100     		.2byte	0x1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccibIqHp.s 			page 32
+
+
+ 1589 006a 50       		.byte	0x50
+ 1590 006b 08000000 		.4byte	.LVL9
+ 1591 006f 5A000000 		.4byte	.LFE64
+ 1592 0073 0400     		.2byte	0x4
+ 1593 0075 F3       		.byte	0xf3
+ 1594 0076 01       		.uleb128 0x1
+ 1595 0077 50       		.byte	0x50
+ 1596 0078 9F       		.byte	0x9f
+ 1597 0079 00000000 		.4byte	0
+ 1598 007d 00000000 		.4byte	0
+ 1599              	.LLST4:
+ 1600 0081 00000000 		.4byte	.LVL8
+ 1601 0085 0D000000 		.4byte	.LVL10-1
+ 1602 0089 0100     		.2byte	0x1
+ 1603 008b 51       		.byte	0x51
+ 1604 008c 0D000000 		.4byte	.LVL10-1
+ 1605 0090 26000000 		.4byte	.LVL11
+ 1606 0094 0100     		.2byte	0x1
+ 1607 0096 55       		.byte	0x55
+ 1608 0097 26000000 		.4byte	.LVL11
+ 1609 009b 5A000000 		.4byte	.LFE64
+ 1610 009f 0400     		.2byte	0x4
+ 1611 00a1 F3       		.byte	0xf3
+ 1612 00a2 01       		.uleb128 0x1
+ 1613 00a3 51       		.byte	0x51
+ 1614 00a4 9F       		.byte	0x9f
+ 1615 00a5 00000000 		.4byte	0
+ 1616 00a9 00000000 		.4byte	0
+ 1617              	.LLST5:
+ 1618 00ad 40000000 		.4byte	.LVL14
+ 1619 00b1 44000000 		.4byte	.LVL15
+ 1620 00b5 0100     		.2byte	0x1
+ 1621 00b7 53       		.byte	0x53
+ 1622 00b8 00000000 		.4byte	0
+ 1623 00bc 00000000 		.4byte	0
+ 1624              	.LLST6:
+ 1625 00c0 00000000 		.4byte	.LVL16
+ 1626 00c4 08000000 		.4byte	.LVL17
+ 1627 00c8 0100     		.2byte	0x1
+ 1628 00ca 50       		.byte	0x50
+ 1629 00cb 08000000 		.4byte	.LVL17
+ 1630 00cf 72000000 		.4byte	.LFE65
+ 1631 00d3 0400     		.2byte	0x4
+ 1632 00d5 F3       		.byte	0xf3
+ 1633 00d6 01       		.uleb128 0x1
+ 1634 00d7 50       		.byte	0x50
+ 1635 00d8 9F       		.byte	0x9f
+ 1636 00d9 00000000 		.4byte	0
+ 1637 00dd 00000000 		.4byte	0
+ 1638              	.LLST7:
+ 1639 00e1 00000000 		.4byte	.LVL16
+ 1640 00e5 0D000000 		.4byte	.LVL18-1
+ 1641 00e9 0100     		.2byte	0x1
+ 1642 00eb 51       		.byte	0x51
+ 1643 00ec 0D000000 		.4byte	.LVL18-1
+ 1644 00f0 70000000 		.4byte	.LVL29
+ 1645 00f4 0100     		.2byte	0x1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccibIqHp.s 			page 33
+
+
+ 1646 00f6 57       		.byte	0x57
+ 1647 00f7 70000000 		.4byte	.LVL29
+ 1648 00fb 72000000 		.4byte	.LFE65
+ 1649 00ff 0400     		.2byte	0x4
+ 1650 0101 F3       		.byte	0xf3
+ 1651 0102 01       		.uleb128 0x1
+ 1652 0103 51       		.byte	0x51
+ 1653 0104 9F       		.byte	0x9f
+ 1654 0105 00000000 		.4byte	0
+ 1655 0109 00000000 		.4byte	0
+ 1656              	.LLST8:
+ 1657 010d 2E000000 		.4byte	.LVL20
+ 1658 0111 3C000000 		.4byte	.LVL21
+ 1659 0115 0100     		.2byte	0x1
+ 1660 0117 50       		.byte	0x50
+ 1661 0118 54000000 		.4byte	.LVL25
+ 1662 011c 58000000 		.4byte	.LVL26
+ 1663 0120 0100     		.2byte	0x1
+ 1664 0122 53       		.byte	0x53
+ 1665 0123 6C000000 		.4byte	.LVL27
+ 1666 0127 6E000000 		.4byte	.LVL28
+ 1667 012b 0100     		.2byte	0x1
+ 1668 012d 50       		.byte	0x50
+ 1669 012e 00000000 		.4byte	0
+ 1670 0132 00000000 		.4byte	0
+ 1671              	.LLST9:
+ 1672 0136 00000000 		.4byte	.LVL30
+ 1673 013a 06000000 		.4byte	.LVL31
+ 1674 013e 0100     		.2byte	0x1
+ 1675 0140 50       		.byte	0x50
+ 1676 0141 06000000 		.4byte	.LVL31
+ 1677 0145 40000000 		.4byte	.LVL37
+ 1678 0149 0100     		.2byte	0x1
+ 1679 014b 56       		.byte	0x56
+ 1680 014c 40000000 		.4byte	.LVL37
+ 1681 0150 42000000 		.4byte	.LFE66
+ 1682 0154 0400     		.2byte	0x4
+ 1683 0156 F3       		.byte	0xf3
+ 1684 0157 01       		.uleb128 0x1
+ 1685 0158 50       		.byte	0x50
+ 1686 0159 9F       		.byte	0x9f
+ 1687 015a 00000000 		.4byte	0
+ 1688 015e 00000000 		.4byte	0
+ 1689              	.LLST10:
+ 1690 0162 2A000000 		.4byte	.LVL35
+ 1691 0166 2E000000 		.4byte	.LVL36
+ 1692 016a 0100     		.2byte	0x1
+ 1693 016c 53       		.byte	0x53
+ 1694 016d 00000000 		.4byte	0
+ 1695 0171 00000000 		.4byte	0
+ 1696              	.LLST11:
+ 1697 0175 00000000 		.4byte	.LVL38
+ 1698 0179 08000000 		.4byte	.LVL39
+ 1699 017d 0100     		.2byte	0x1
+ 1700 017f 50       		.byte	0x50
+ 1701 0180 08000000 		.4byte	.LVL39
+ 1702 0184 50000000 		.4byte	.LVL45
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccibIqHp.s 			page 34
+
+
+ 1703 0188 0100     		.2byte	0x1
+ 1704 018a 55       		.byte	0x55
+ 1705 018b 50000000 		.4byte	.LVL45
+ 1706 018f 52000000 		.4byte	.LFE67
+ 1707 0193 0400     		.2byte	0x4
+ 1708 0195 F3       		.byte	0xf3
+ 1709 0196 01       		.uleb128 0x1
+ 1710 0197 50       		.byte	0x50
+ 1711 0198 9F       		.byte	0x9f
+ 1712 0199 00000000 		.4byte	0
+ 1713 019d 00000000 		.4byte	0
+ 1714              	.LLST12:
+ 1715 01a1 00000000 		.4byte	.LVL38
+ 1716 01a5 0D000000 		.4byte	.LVL40-1
+ 1717 01a9 0100     		.2byte	0x1
+ 1718 01ab 51       		.byte	0x51
+ 1719 01ac 0D000000 		.4byte	.LVL40-1
+ 1720 01b0 50000000 		.4byte	.LVL46
+ 1721 01b4 0100     		.2byte	0x1
+ 1722 01b6 56       		.byte	0x56
+ 1723 01b7 50000000 		.4byte	.LVL46
+ 1724 01bb 52000000 		.4byte	.LFE67
+ 1725 01bf 0400     		.2byte	0x4
+ 1726 01c1 F3       		.byte	0xf3
+ 1727 01c2 01       		.uleb128 0x1
+ 1728 01c3 51       		.byte	0x51
+ 1729 01c4 9F       		.byte	0x9f
+ 1730 01c5 00000000 		.4byte	0
+ 1731 01c9 00000000 		.4byte	0
+ 1732              	.LLST13:
+ 1733 01cd 3A000000 		.4byte	.LVL43
+ 1734 01d1 3E000000 		.4byte	.LVL44
+ 1735 01d5 0100     		.2byte	0x1
+ 1736 01d7 53       		.byte	0x53
+ 1737 01d8 00000000 		.4byte	0
+ 1738 01dc 00000000 		.4byte	0
+ 1739              	.LLST14:
+ 1740 01e0 00000000 		.4byte	.LVL47
+ 1741 01e4 08000000 		.4byte	.LVL48
+ 1742 01e8 0100     		.2byte	0x1
+ 1743 01ea 50       		.byte	0x50
+ 1744 01eb 08000000 		.4byte	.LVL48
+ 1745 01ef 44000000 		.4byte	.LVL54
+ 1746 01f3 0100     		.2byte	0x1
+ 1747 01f5 55       		.byte	0x55
+ 1748 01f6 44000000 		.4byte	.LVL54
+ 1749 01fa 46000000 		.4byte	.LFE68
+ 1750 01fe 0400     		.2byte	0x4
+ 1751 0200 F3       		.byte	0xf3
+ 1752 0201 01       		.uleb128 0x1
+ 1753 0202 50       		.byte	0x50
+ 1754 0203 9F       		.byte	0x9f
+ 1755 0204 00000000 		.4byte	0
+ 1756 0208 00000000 		.4byte	0
+ 1757              	.LLST15:
+ 1758 020c 2C000000 		.4byte	.LVL52
+ 1759 0210 30000000 		.4byte	.LVL53
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccibIqHp.s 			page 35
+
+
+ 1760 0214 0100     		.2byte	0x1
+ 1761 0216 53       		.byte	0x53
+ 1762 0217 00000000 		.4byte	0
+ 1763 021b 00000000 		.4byte	0
+ 1764              		.section	.debug_aranges,"",%progbits
+ 1765 0000 44000000 		.4byte	0x44
+ 1766 0004 0200     		.2byte	0x2
+ 1767 0006 00000000 		.4byte	.Ldebug_info0
+ 1768 000a 04       		.byte	0x4
+ 1769 000b 00       		.byte	0
+ 1770 000c 0000     		.2byte	0
+ 1771 000e 0000     		.2byte	0
+ 1772 0010 00000000 		.4byte	.LFB63
+ 1773 0014 42000000 		.4byte	.LFE63-.LFB63
+ 1774 0018 00000000 		.4byte	.LFB64
+ 1775 001c 5A000000 		.4byte	.LFE64-.LFB64
+ 1776 0020 00000000 		.4byte	.LFB65
+ 1777 0024 72000000 		.4byte	.LFE65-.LFB65
+ 1778 0028 00000000 		.4byte	.LFB66
+ 1779 002c 42000000 		.4byte	.LFE66-.LFB66
+ 1780 0030 00000000 		.4byte	.LFB67
+ 1781 0034 52000000 		.4byte	.LFE67-.LFB67
+ 1782 0038 00000000 		.4byte	.LFB68
+ 1783 003c 46000000 		.4byte	.LFE68-.LFB68
+ 1784 0040 00000000 		.4byte	0
+ 1785 0044 00000000 		.4byte	0
+ 1786              		.section	.debug_ranges,"",%progbits
+ 1787              	.Ldebug_ranges0:
+ 1788 0000 00000000 		.4byte	.LFB63
+ 1789 0004 42000000 		.4byte	.LFE63
+ 1790 0008 00000000 		.4byte	.LFB64
+ 1791 000c 5A000000 		.4byte	.LFE64
+ 1792 0010 00000000 		.4byte	.LFB65
+ 1793 0014 72000000 		.4byte	.LFE65
+ 1794 0018 00000000 		.4byte	.LFB66
+ 1795 001c 42000000 		.4byte	.LFE66
+ 1796 0020 00000000 		.4byte	.LFB67
+ 1797 0024 52000000 		.4byte	.LFE67
+ 1798 0028 00000000 		.4byte	.LFB68
+ 1799 002c 46000000 		.4byte	.LFE68
+ 1800 0030 00000000 		.4byte	0
+ 1801 0034 00000000 		.4byte	0
+ 1802              		.section	.debug_line,"",%progbits
+ 1803              	.Ldebug_line0:
+ 1804 0000 5B020000 		.section	.debug_str,"MS",%progbits,1
+ 1804      0200B001 
+ 1804      00000201 
+ 1804      FB0E0D00 
+ 1804      01010101 
+ 1805              	.LASF5:
+ 1806 0000 5F5F7569 		.ascii	"__uint8_t\000"
+ 1806      6E74385F 
+ 1806      7400
+ 1807              	.LASF31:
+ 1808 000a 70617373 		.ascii	"passwordACK\000"
+ 1808      776F7264 
+ 1808      41434B00 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccibIqHp.s 			page 36
+
+
+ 1809              	.LASF28:
+ 1810 0016 4E746167 		.ascii	"NtagCounterRead\000"
+ 1810      436F756E 
+ 1810      74657252 
+ 1810      65616400 
+ 1811              	.LASF32:
+ 1812 0026 4E746167 		.ascii	"NtagReadSIG\000"
+ 1812      52656164 
+ 1812      53494700 
+ 1813              	.LASF24:
+ 1814 0032 4E746167 		.ascii	"NtagBlockread\000"
+ 1814      426C6F63 
+ 1814      6B726561 
+ 1814      6400
+ 1815              	.LASF14:
+ 1816 0040 666C6F61 		.ascii	"float\000"
+ 1816      7400
+ 1817              	.LASF19:
+ 1818 0046 626C6F63 		.ascii	"block\000"
+ 1818      6B00
+ 1819              	.LASF0:
+ 1820 004c 7369676E 		.ascii	"signed char\000"
+ 1820      65642063 
+ 1820      68617200 
+ 1821              	.LASF1:
+ 1822 0058 756E7369 		.ascii	"unsigned char\000"
+ 1822      676E6564 
+ 1822      20636861 
+ 1822      7200
+ 1823              	.LASF7:
+ 1824 0066 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1824      20756E73 
+ 1824      69676E65 
+ 1824      6420696E 
+ 1824      7400
+ 1825              	.LASF3:
+ 1826 0078 73686F72 		.ascii	"short unsigned int\000"
+ 1826      7420756E 
+ 1826      7369676E 
+ 1826      65642069 
+ 1826      6E7400
+ 1827              	.LASF36:
+ 1828 008b 436C6561 		.ascii	"Clear_FIFO\000"
+ 1828      725F4649 
+ 1828      464F00
+ 1829              	.LASF20:
+ 1830 0096 62756666 		.ascii	"buff\000"
+ 1830      00
+ 1831              	.LASF15:
+ 1832 009b 646F7562 		.ascii	"double\000"
+ 1832      6C6500
+ 1833              	.LASF6:
+ 1834 00a2 5F5F7569 		.ascii	"__uint32_t\000"
+ 1834      6E743332 
+ 1834      5F7400
+ 1835              	.LASF13:
+ 1836 00ad 75696E74 		.ascii	"uint16\000"
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccibIqHp.s 			page 37
+
+
+ 1836      313600
+ 1837              	.LASF25:
+ 1838 00b4 4E746167 		.ascii	"NtagBlockwrite\000"
+ 1838      426C6F63 
+ 1838      6B777269 
+ 1838      746500
+ 1839              	.LASF23:
+ 1840 00c3 72656365 		.ascii	"rece_bitlen\000"
+ 1840      5F626974 
+ 1840      6C656E00 
+ 1841              	.LASF34:
+ 1842 00cf 41444352 		.ascii	"ADCResultCenter\000"
+ 1842      6573756C 
+ 1842      7443656E 
+ 1842      74657200 
+ 1843              	.LASF10:
+ 1844 00df 756E7369 		.ascii	"unsigned int\000"
+ 1844      676E6564 
+ 1844      20696E74 
+ 1844      00
+ 1845              	.LASF40:
+ 1846 00ec 473A5C50 		.ascii	"G:\\Psoc4_prj\\7.rental_house\\18-05-03\\EntranceGu"
+ 1846      736F6334 
+ 1846      5F70726A 
+ 1846      5C372E72 
+ 1846      656E7461 
+ 1847 011b 6172645F 		.ascii	"ard_180512-1624\\EntranceGuard.cydsn\000"
+ 1847      31383035 
+ 1847      31322D31 
+ 1847      3632345C 
+ 1847      456E7472 
+ 1848              	.LASF27:
+ 1849 013f 4E746167 		.ascii	"NtagBlockwriteCompatibility\000"
+ 1849      426C6F63 
+ 1849      6B777269 
+ 1849      7465436F 
+ 1849      6D706174 
+ 1850              	.LASF9:
+ 1851 015b 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1851      206C6F6E 
+ 1851      6720756E 
+ 1851      7369676E 
+ 1851      65642069 
+ 1852              	.LASF11:
+ 1853 0172 75696E74 		.ascii	"uint8_t\000"
+ 1853      385F7400 
+ 1854              	.LASF22:
+ 1855 017a 72657375 		.ascii	"result\000"
+ 1855      6C7400
+ 1856              	.LASF21:
+ 1857 0181 73656E64 		.ascii	"send_buff\000"
+ 1857      5F627566 
+ 1857      6600
+ 1858              	.LASF39:
+ 1859 018b 436F6465 		.ascii	"Code\\Device\\FM175XX\\IOS14443\\NTAG.c\000"
+ 1859      5C446576 
+ 1859      6963655C 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccibIqHp.s 			page 38
+
+
+ 1859      464D3137 
+ 1859      3558585C 
+ 1860              	.LASF26:
+ 1861 01af 72656365 		.ascii	"rece_buff\000"
+ 1861      5F627566 
+ 1861      6600
+ 1862              	.LASF18:
+ 1863 01b9 73697A65 		.ascii	"sizetype\000"
+ 1863      74797065 
+ 1863      00
+ 1864              	.LASF8:
+ 1865 01c2 6C6F6E67 		.ascii	"long long int\000"
+ 1865      206C6F6E 
+ 1865      6720696E 
+ 1865      7400
+ 1866              	.LASF35:
+ 1867 01d0 5063645F 		.ascii	"Pcd_SetTimer\000"
+ 1867      53657454 
+ 1867      696D6572 
+ 1867      00
+ 1868              	.LASF2:
+ 1869 01dd 73686F72 		.ascii	"short int\000"
+ 1869      7420696E 
+ 1869      7400
+ 1870              	.LASF12:
+ 1871 01e7 75696E74 		.ascii	"uint32_t\000"
+ 1871      33325F74 
+ 1871      00
+ 1872              	.LASF4:
+ 1873 01f0 6C6F6E67 		.ascii	"long int\000"
+ 1873      20696E74 
+ 1873      00
+ 1874              	.LASF16:
+ 1875 01f9 63686172 		.ascii	"char\000"
+ 1875      00
+ 1876              	.LASF33:
+ 1877 01fe 5254435F 		.ascii	"RTC_daysBeforeMonthTbl\000"
+ 1877      64617973 
+ 1877      4265666F 
+ 1877      72654D6F 
+ 1877      6E746854 
+ 1878              	.LASF17:
+ 1879 0215 6C6F6E67 		.ascii	"long double\000"
+ 1879      20646F75 
+ 1879      626C6500 
+ 1880              	.LASF29:
+ 1881 0221 4E746167 		.ascii	"NtagPWD_AUTH\000"
+ 1881      5057445F 
+ 1881      41555448 
+ 1881      00
+ 1882              	.LASF37:
+ 1883 022e 5063645F 		.ascii	"Pcd_Comm\000"
+ 1883      436F6D6D 
+ 1883      00
+ 1884              	.LASF38:
+ 1885 0237 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 1885      43313120 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccibIqHp.s 			page 39
+
+
+ 1885      352E342E 
+ 1885      31203230 
+ 1885      31363036 
+ 1886 026a 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m0 -mthumb -g -O"
+ 1886      20726576 
+ 1886      6973696F 
+ 1886      6E203233 
+ 1886      37373135 
+ 1887 029d 73202D66 		.ascii	"s -ffunction-sections -ffat-lto-objects\000"
+ 1887      66756E63 
+ 1887      74696F6E 
+ 1887      2D736563 
+ 1887      74696F6E 
+ 1888              	.LASF30:
+ 1889 02c5 70617373 		.ascii	"password\000"
+ 1889      776F7264 
+ 1889      00
+ 1890              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

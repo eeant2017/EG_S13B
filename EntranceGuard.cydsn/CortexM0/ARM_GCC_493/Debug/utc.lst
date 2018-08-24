@@ -1,0 +1,2204 @@
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cct0CKSV.s 			page 1
+
+
+   1              		.cpu cortex-m0
+   2              		.fpu softvfp
+   3              		.eabi_attribute 20, 1
+   4              		.eabi_attribute 21, 1
+   5              		.eabi_attribute 23, 3
+   6              		.eabi_attribute 24, 1
+   7              		.eabi_attribute 25, 1
+   8              		.eabi_attribute 26, 1
+   9              		.eabi_attribute 30, 4
+  10              		.eabi_attribute 34, 0
+  11              		.eabi_attribute 18, 4
+  12              		.code	16
+  13              		.file	"utc.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.global	__aeabi_uidivmod
+  18              		.global	__aeabi_uidiv
+  19              		.section	.text.UtcTime_ConvertTo_Time,"ax",%progbits
+  20              		.align	1
+  21              		.global	UtcTime_ConvertTo_Time
+  22              		.code	16
+  23              		.thumb_func
+  24              		.type	UtcTime_ConvertTo_Time, %function
+  25              	UtcTime_ConvertTo_Time:
+  26              	.LFB3:
+  27              		.file 1 "Code\\Common\\utc.c"
+   1:Code\Common/utc.c **** //*************************************************************************************************
+   2:Code\Common/utc.c **** // File name		: utc.c
+   3:Code\Common/utc.c **** // Description 		: 格林威治时间和时间的相互转化
+   4:Code\Common/utc.c **** // Author			: Keno
+   5:Code\Common/utc.c **** // Date				: 2016.8.8
+   6:Code\Common/utc.c **** // Version			: V02
+   7:Code\Common/utc.c **** //*************************************************************************************************
+   8:Code\Common/utc.c **** #include "utc.h"
+   9:Code\Common/utc.c **** 
+  10:Code\Common/utc.c **** 
+  11:Code\Common/utc.c **** 
+  12:Code\Common/utc.c **** //*************************************************************************************************
+  13:Code\Common/utc.c **** // Function name	: MonthLength
+  14:Code\Common/utc.c **** // Description		: 计算月长度
+  15:Code\Common/utc.c **** // Parameter		: LeapYearFlag	: 1(闰年)/0(非闰年)
+  16:Code\Common/utc.c **** //					: Month			: 月份(1~12)
+  17:Code\Common/utc.c **** // Return			: 当前月的天数
+  18:Code\Common/utc.c **** //-------------------------------------------------------------------------------------------------
+  19:Code\Common/utc.c **** // Info				: 
+  20:Code\Common/utc.c **** //*************************************************************************************************
+  21:Code\Common/utc.c **** static uint8 MonthLength(uint8 LeapYearFlag, uint8 Month)
+  22:Code\Common/utc.c **** {
+  23:Code\Common/utc.c **** 	uint8 days = 31;
+  24:Code\Common/utc.c **** 
+  25:Code\Common/utc.c **** 	if (Month == 1)
+  26:Code\Common/utc.c **** 	{
+  27:Code\Common/utc.c **** 		days = (28 + LeapYearFlag);
+  28:Code\Common/utc.c **** 	}
+  29:Code\Common/utc.c **** 	else
+  30:Code\Common/utc.c **** 	{
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cct0CKSV.s 			page 2
+
+
+  31:Code\Common/utc.c **** 		if (Month > 6)
+  32:Code\Common/utc.c **** 		{
+  33:Code\Common/utc.c **** 			Month--;
+  34:Code\Common/utc.c **** 		}
+  35:Code\Common/utc.c **** 
+  36:Code\Common/utc.c **** 		if (Month & 1)
+  37:Code\Common/utc.c **** 		{
+  38:Code\Common/utc.c **** 			days = 30;
+  39:Code\Common/utc.c **** 		}
+  40:Code\Common/utc.c **** 	}
+  41:Code\Common/utc.c **** 
+  42:Code\Common/utc.c **** 	return (days);
+  43:Code\Common/utc.c **** }
+  44:Code\Common/utc.c **** 
+  45:Code\Common/utc.c **** 
+  46:Code\Common/utc.c **** //*************************************************************************************************
+  47:Code\Common/utc.c **** // Function name	: UtcTime_ConvertTo_Time
+  48:Code\Common/utc.c **** // Description		: 将世界时间(格林威治时间)转化为日历时间
+  49:Code\Common/utc.c **** // Parameter		: secTime	: 世界时间
+  50:Code\Common/utc.c **** // Return			: tm		: 日历时间
+  51:Code\Common/utc.c **** //-------------------------------------------------------------------------------------------------
+  52:Code\Common/utc.c **** // Info				: 算法输出月份范围为[0-11]，天数范围为[0-30]，函数末尾分别强制转化为[1-12]和[1-31].
+  53:Code\Common/utc.c **** //*************************************************************************************************
+  54:Code\Common/utc.c **** TimeInfo UtcTime_ConvertTo_Time(UTCTime secTime)
+  55:Code\Common/utc.c **** {
+  28              		.loc 1 55 0
+  29              		.cfi_startproc
+  30              	.LVL0:
+  31 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+  32              		.cfi_def_cfa_offset 20
+  33              		.cfi_offset 4, -20
+  34              		.cfi_offset 5, -16
+  35              		.cfi_offset 6, -12
+  36              		.cfi_offset 7, -8
+  37              		.cfi_offset 14, -4
+  38 0002 0C1C     		mov	r4, r1
+  39 0004 85B0     		sub	sp, sp, #20
+  40              		.cfi_def_cfa_offset 40
+  41              		.loc 1 55 0
+  42 0006 061C     		mov	r6, r0
+  43              	.LBB8:
+  56:Code\Common/utc.c **** 	TimeInfo tm;
+  57:Code\Common/utc.c **** 	
+  58:Code\Common/utc.c **** 	//secTime += TimeZone * 3600;
+  59:Code\Common/utc.c **** 	{
+  60:Code\Common/utc.c **** 		uint32 day = secTime % OneDaySeconds;
+  44              		.loc 1 60 0
+  45 0008 081C     		mov	r0, r1
+  46              	.LVL1:
+  47 000a 4349     		ldr	r1, .L28
+  48              	.LVL2:
+  49 000c FFF7FEFF 		bl	__aeabi_uidivmod
+  50              	.LVL3:
+  51 0010 0D1C     		mov	r5, r1
+  52              	.LVL4:
+  61:Code\Common/utc.c **** 
+  62:Code\Common/utc.c **** 		tm.Sec  =  day % 60UL;
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cct0CKSV.s 			page 3
+
+
+  53              		.loc 1 62 0
+  54 0012 081C     		mov	r0, r1
+  55 0014 3C21     		mov	r1, #60
+  56              	.LVL5:
+  57 0016 FFF7FEFF 		bl	__aeabi_uidivmod
+  58              	.LVL6:
+  59 001a CBB2     		uxtb	r3, r1
+  63:Code\Common/utc.c **** 		tm.Min  = (day % 3600UL) / 60UL;
+  60              		.loc 1 63 0
+  61 001c E121     		mov	r1, #225
+  62 001e 281C     		mov	r0, r5
+  63 0020 0901     		lsl	r1, r1, #4
+  62:Code\Common/utc.c **** 		tm.Min  = (day % 3600UL) / 60UL;
+  64              		.loc 1 62 0
+  65 0022 0093     		str	r3, [sp]
+  66              	.LVL7:
+  67              		.loc 1 63 0
+  68 0024 FFF7FEFF 		bl	__aeabi_uidivmod
+  69              	.LVL8:
+  70 0028 081C     		mov	r0, r1
+  71 002a 3C21     		mov	r1, #60
+  72 002c FFF7FEFF 		bl	__aeabi_uidiv
+  73              	.LVL9:
+  64:Code\Common/utc.c **** 		tm.Hour =  day / 3600UL;
+  74              		.loc 1 64 0
+  75 0030 E121     		mov	r1, #225
+  63:Code\Common/utc.c **** 		tm.Min  = (day % 3600UL) / 60UL;
+  76              		.loc 1 63 0
+  77 0032 C3B2     		uxtb	r3, r0
+  78              		.loc 1 64 0
+  79 0034 0901     		lsl	r1, r1, #4
+  80 0036 281C     		mov	r0, r5
+  63:Code\Common/utc.c **** 		tm.Min  = (day % 3600UL) / 60UL;
+  81              		.loc 1 63 0
+  82 0038 0193     		str	r3, [sp, #4]
+  83              	.LVL10:
+  84              		.loc 1 64 0
+  85 003a FFF7FEFF 		bl	__aeabi_uidiv
+  86              	.LVL11:
+  87              	.LBE8:
+  88              	.LBB9:
+  65:Code\Common/utc.c **** 	}
+  66:Code\Common/utc.c **** 
+  67:Code\Common/utc.c **** 	{
+  68:Code\Common/utc.c **** 		uint16 numDays = secTime / OneDaySeconds;
+  89              		.loc 1 68 0
+  90 003e 3649     		ldr	r1, .L28
+  91              	.LBE9:
+  92              	.LBB12:
+  64:Code\Common/utc.c **** 		tm.Hour =  day / 3600UL;
+  93              		.loc 1 64 0
+  94 0040 C3B2     		uxtb	r3, r0
+  95              	.LBE12:
+  96              	.LBB13:
+  97              		.loc 1 68 0
+  98 0042 201C     		mov	r0, r4
+  99              	.LBE13:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cct0CKSV.s 			page 4
+
+
+ 100              	.LBB14:
+  64:Code\Common/utc.c **** 		tm.Hour =  day / 3600UL;
+ 101              		.loc 1 64 0
+ 102 0044 0293     		str	r3, [sp, #8]
+ 103              	.LVL12:
+ 104              	.LBE14:
+ 105              	.LBB15:
+ 106              		.loc 1 68 0
+ 107 0046 FFF7FEFF 		bl	__aeabi_uidiv
+ 108              	.LVL13:
+  69:Code\Common/utc.c **** 		uint8 monthLen;
+  70:Code\Common/utc.c **** 		tm.Year = BeginYear;
+  71:Code\Common/utc.c **** 
+  72:Code\Common/utc.c **** 		while (numDays >= YearLength(tm.Year))
+ 109              		.loc 1 72 0
+ 110 004a 344D     		ldr	r5, .L28+4
+ 111              	.LVL14:
+  68:Code\Common/utc.c **** 		uint8 monthLen;
+ 112              		.loc 1 68 0
+ 113 004c 84B2     		uxth	r4, r0
+ 114              	.LVL15:
+ 115              	.L2:
+ 116              		.loc 1 72 0
+ 117 004e C821     		mov	r1, #200
+ 118 0050 281C     		mov	r0, r5
+ 119 0052 4900     		lsl	r1, r1, #1
+ 120 0054 FFF7FEFF 		bl	__aeabi_uidivmod
+ 121              	.LVL16:
+ 122 0058 8FB2     		uxth	r7, r1
+ 123 005a 002F     		cmp	r7, #0
+ 124 005c 3DD0     		beq	.L4
+ 125              		.loc 1 72 0 is_stmt 0 discriminator 2
+ 126 005e 281C     		mov	r0, r5
+ 127 0060 6421     		mov	r1, #100
+ 128 0062 FFF7FEFF 		bl	__aeabi_uidivmod
+ 129              	.LVL17:
+ 130 0066 89B2     		uxth	r1, r1
+ 131 0068 0029     		cmp	r1, #0
+ 132 006a 3DD0     		beq	.L5
+ 133              		.loc 1 72 0 discriminator 3
+ 134 006c 0320     		mov	r0, #3
+ 135 006e 2840     		and	r0, r5
+ 136 0070 431E     		sub	r3, r0, #1
+ 137 0072 9841     		sbc	r0, r0, r3
+ 138 0074 B723     		mov	r3, #183
+ 139 0076 5B00     		lsl	r3, r3, #1
+ 140 0078 181A     		sub	r0, r3, r0
+ 141 007a 8442     		cmp	r4, r0
+ 142 007c 04DB     		blt	.L13
+ 143              	.L3:
+  73:Code\Common/utc.c **** 		{
+  74:Code\Common/utc.c **** 			numDays -= YearLength(tm.Year);
+ 144              		.loc 1 74 0 is_stmt 1 discriminator 8
+ 145 007e 241A     		sub	r4, r4, r0
+ 146              	.LVL18:
+ 147 0080 0135     		add	r5, r5, #1
+ 148              	.LVL19:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cct0CKSV.s 			page 5
+
+
+ 149 0082 A4B2     		uxth	r4, r4
+ 150              	.LVL20:
+ 151 0084 ADB2     		uxth	r5, r5
+ 152 0086 E2E7     		b	.L2
+ 153              	.LVL21:
+ 154              	.L13:
+  75:Code\Common/utc.c **** 			tm.Year++;
+  76:Code\Common/utc.c **** 		}
+  77:Code\Common/utc.c **** 
+  78:Code\Common/utc.c **** 		tm.Mon = 0;
+  79:Code\Common/utc.c **** 
+  80:Code\Common/utc.c **** 		monthLen = MonthLength(IsLeapYear(tm.Year), tm.Mon);
+  81:Code\Common/utc.c **** 
+  82:Code\Common/utc.c **** 		while (numDays >= monthLen)
+  83:Code\Common/utc.c **** 		{
+  84:Code\Common/utc.c **** 			numDays -= monthLen;
+  85:Code\Common/utc.c **** 			tm.Mon++;
+  86:Code\Common/utc.c **** 
+  87:Code\Common/utc.c **** 			monthLen = MonthLength(IsLeapYear(tm.Year), tm.Mon);
+ 155              		.loc 1 87 0
+ 156 0088 281C     		mov	r0, r5
+ 157 008a 6421     		mov	r1, #100
+ 158 008c FFF7FEFF 		bl	__aeabi_uidivmod
+ 159              	.LVL22:
+ 160 0090 8BB2     		uxth	r3, r1
+ 161 0092 0393     		str	r3, [sp, #12]
+ 162 0094 1F20     		mov	r0, #31
+ 163 0096 0023     		mov	r3, #0
+ 164              	.LVL23:
+ 165              	.L7:
+  82:Code\Common/utc.c **** 		{
+ 166              		.loc 1 82 0
+ 167 0098 80B2     		uxth	r0, r0
+ 168              	.LVL24:
+ 169 009a 5A1C     		add	r2, r3, #1
+ 170 009c 8442     		cmp	r4, r0
+ 171 009e 2AD3     		bcc	.L27
+  84:Code\Common/utc.c **** 			tm.Mon++;
+ 172              		.loc 1 84 0
+ 173 00a0 201A     		sub	r0, r4, r0
+ 174 00a2 84B2     		uxth	r4, r0
+ 175              	.LVL25:
+  85:Code\Common/utc.c **** 
+ 176              		.loc 1 85 0
+ 177 00a4 D2B2     		uxtb	r2, r2
+ 178              	.LVL26:
+ 179              		.loc 1 87 0
+ 180 00a6 0120     		mov	r0, #1
+ 181 00a8 002F     		cmp	r7, #0
+ 182 00aa 08D0     		beq	.L8
+ 183              		.loc 1 87 0 is_stmt 0 discriminator 2
+ 184 00ac 0020     		mov	r0, #0
+ 185 00ae 0399     		ldr	r1, [sp, #12]
+ 186 00b0 8142     		cmp	r1, r0
+ 187 00b2 04D0     		beq	.L8
+ 188              		.loc 1 87 0 discriminator 3
+ 189 00b4 0330     		add	r0, r0, #3
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cct0CKSV.s 			page 6
+
+
+ 190 00b6 2840     		and	r0, r5
+ 191 00b8 4142     		neg	r1, r0
+ 192 00ba 4141     		adc	r1, r1, r0
+ 193 00bc 081C     		mov	r0, r1
+ 194              	.L8:
+ 195              	.LVL27:
+ 196              	.LBB10:
+ 197              	.LBB11:
+  27:Code\Common/utc.c **** 	}
+ 198              		.loc 1 27 0 is_stmt 1 discriminator 8
+ 199 00be 1C30     		add	r0, r0, #28
+ 200              	.LVL28:
+ 201 00c0 C0B2     		uxtb	r0, r0
+  25:Code\Common/utc.c **** 	{
+ 202              		.loc 1 25 0 discriminator 8
+ 203 00c2 012A     		cmp	r2, #1
+ 204 00c4 07D0     		beq	.L10
+  31:Code\Common/utc.c **** 		{
+ 205              		.loc 1 31 0
+ 206 00c6 062A     		cmp	r2, #6
+ 207 00c8 00D8     		bhi	.L11
+ 208 00ca 131C     		mov	r3, r2
+ 209              	.L11:
+ 210              	.LVL29:
+  36:Code\Common/utc.c **** 		{
+ 211              		.loc 1 36 0
+ 212 00cc 0120     		mov	r0, #1
+ 213 00ce 0340     		and	r3, r0
+  38:Code\Common/utc.c **** 		}
+ 214              		.loc 1 38 0
+ 215 00d0 5842     		neg	r0, r3
+ 216 00d2 5841     		adc	r0, r0, r3
+ 217 00d4 1E30     		add	r0, r0, #30
+ 218              	.L10:
+ 219              	.LBE11:
+ 220              	.LBE10:
+ 221 00d6 131C     		mov	r3, r2
+ 222 00d8 DEE7     		b	.L7
+ 223              	.LVL30:
+ 224              	.L4:
+  72:Code\Common/utc.c **** 		{
+ 225              		.loc 1 72 0
+ 226 00da 6E23     		mov	r3, #110
+ 227 00dc FF33     		add	r3, r3, #255
+ 228 00de 9C42     		cmp	r4, r3
+ 229 00e0 D2DD     		ble	.L13
+  74:Code\Common/utc.c **** 			tm.Year++;
+ 230              		.loc 1 74 0
+ 231 00e2 B720     		mov	r0, #183
+ 232 00e4 4000     		lsl	r0, r0, #1
+ 233 00e6 CAE7     		b	.L3
+ 234              	.L5:
+  72:Code\Common/utc.c **** 		{
+ 235              		.loc 1 72 0
+ 236 00e8 B623     		mov	r3, #182
+ 237 00ea 5B00     		lsl	r3, r3, #1
+ 238 00ec 9C42     		cmp	r4, r3
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cct0CKSV.s 			page 7
+
+
+ 239 00ee CBDD     		ble	.L13
+  74:Code\Common/utc.c **** 			tm.Year++;
+ 240              		.loc 1 74 0
+ 241 00f0 6E20     		mov	r0, #110
+ 242 00f2 FF30     		add	r0, r0, #255
+ 243 00f4 C3E7     		b	.L3
+ 244              	.L27:
+ 245              	.LVL31:
+ 246              	.LBE15:
+  88:Code\Common/utc.c **** 		}
+  89:Code\Common/utc.c **** 
+  90:Code\Common/utc.c **** 		tm.Day = numDays;
+  91:Code\Common/utc.c **** 	}
+  92:Code\Common/utc.c **** 	
+  93:Code\Common/utc.c **** 	tm.Mon++;
+  94:Code\Common/utc.c **** 	tm.Day++;
+  95:Code\Common/utc.c **** 	
+  96:Code\Common/utc.c **** 	return tm;
+ 247              		.loc 1 96 0
+ 248 00f6 6B46     		mov	r3, sp
+ 249 00f8 1B7A     		ldrb	r3, [r3, #8]
+  97:Code\Common/utc.c **** }
+ 250              		.loc 1 97 0
+ 251 00fa 301C     		mov	r0, r6
+  96:Code\Common/utc.c **** }
+ 252              		.loc 1 96 0
+ 253 00fc 3371     		strb	r3, [r6, #4]
+ 254 00fe 6B46     		mov	r3, sp
+ 255 0100 1B79     		ldrb	r3, [r3, #4]
+  94:Code\Common/utc.c **** 	
+ 256              		.loc 1 94 0
+ 257 0102 0134     		add	r4, r4, #1
+ 258              	.LVL32:
+  96:Code\Common/utc.c **** }
+ 259              		.loc 1 96 0
+ 260 0104 7371     		strb	r3, [r6, #5]
+ 261 0106 6B46     		mov	r3, sp
+ 262 0108 1B78     		ldrb	r3, [r3]
+ 263 010a 3580     		strh	r5, [r6]
+ 264 010c B270     		strb	r2, [r6, #2]
+ 265 010e F470     		strb	r4, [r6, #3]
+ 266 0110 B371     		strb	r3, [r6, #6]
+ 267              		.loc 1 97 0
+ 268 0112 05B0     		add	sp, sp, #20
+ 269              	.LVL33:
+ 270              		@ sp needed
+ 271              	.LVL34:
+ 272              	.LVL35:
+ 273 0114 F0BD     		pop	{r4, r5, r6, r7, pc}
+ 274              	.L29:
+ 275 0116 C046     		.align	2
+ 276              	.L28:
+ 277 0118 80510100 		.word	86400
+ 278 011c B2070000 		.word	1970
+ 279              		.cfi_endproc
+ 280              	.LFE3:
+ 281              		.size	UtcTime_ConvertTo_Time, .-UtcTime_ConvertTo_Time
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cct0CKSV.s 			page 8
+
+
+ 282              		.section	.text.Time_ConvertTo_UtcTime,"ax",%progbits
+ 283              		.align	1
+ 284              		.global	Time_ConvertTo_UtcTime
+ 285              		.code	16
+ 286              		.thumb_func
+ 287              		.type	Time_ConvertTo_UtcTime, %function
+ 288              	Time_ConvertTo_UtcTime:
+ 289              	.LFB4:
+  98:Code\Common/utc.c **** 
+  99:Code\Common/utc.c **** //*************************************************************************************************
+ 100:Code\Common/utc.c **** // Function name	: Time_ConvertTo_UtcTime
+ 101:Code\Common/utc.c **** // Description		: 将日历时间转化为世界时间
+ 102:Code\Common/utc.c **** // Parameter		: tm		: 日历时间
+ 103:Code\Common/utc.c **** //					: secTime	: 世界时间
+ 104:Code\Common/utc.c **** // Return			: 当前月的天数
+ 105:Code\Common/utc.c **** //-------------------------------------------------------------------------------------------------
+ 106:Code\Common/utc.c **** // Info				: 算法输入月份范围为[0-11]，天数范围为[0-30]，函数头部将[1-12]和[1-31]分别强制转化.
+ 107:Code\Common/utc.c **** //*************************************************************************************************
+ 108:Code\Common/utc.c **** UTCTime Time_ConvertTo_UtcTime(TimeInfo tm)
+ 109:Code\Common/utc.c **** {
+ 290              		.loc 1 109 0
+ 291              		.cfi_startproc
+ 292 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 293              		.cfi_def_cfa_offset 20
+ 294              		.cfi_offset 4, -20
+ 295              		.cfi_offset 5, -16
+ 296              		.cfi_offset 6, -12
+ 297              		.cfi_offset 7, -8
+ 298              		.cfi_offset 14, -4
+ 299 0002 84B2     		uxth	r4, r0
+ 300              	.LVL36:
+ 301 0004 061C     		mov	r6, r0
+ 302 0006 050C     		lsr	r5, r0, #16
+ 110:Code\Common/utc.c **** 	UTCTime seconds;
+ 111:Code\Common/utc.c **** 	
+ 112:Code\Common/utc.c **** 	tm.Mon--;
+ 113:Code\Common/utc.c **** 	tm.Day--;
+ 114:Code\Common/utc.c **** 	
+ 115:Code\Common/utc.c **** 	seconds = (((tm.Hour * 60UL) + tm.Min) * 60UL) + tm.Sec;
+ 303              		.loc 1 115 0
+ 304 0008 3C20     		mov	r0, #60
+ 109:Code\Common/utc.c **** 	UTCTime seconds;
+ 305              		.loc 1 109 0
+ 306 000a 0B1C     		mov	r3, r1
+ 307 000c 0A1C     		add	r2, r1, #0
+ 308              		.loc 1 115 0
+ 309 000e D7B2     		uxtb	r7, r2
+ 310 0010 4743     		mul	r7, r0
+ 109:Code\Common/utc.c **** 	UTCTime seconds;
+ 311              		.loc 1 109 0
+ 312 0012 1B0A     		lsr	r3, r3, #8
+ 313              		.loc 1 115 0
+ 314 0014 DAB2     		uxtb	r2, r3
+ 315 0016 BB18     		add	r3, r7, r2
+ 316 0018 4343     		mul	r3, r0
+ 109:Code\Common/utc.c **** 	UTCTime seconds;
+ 317              		.loc 1 109 0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cct0CKSV.s 			page 9
+
+
+ 318 001a 090C     		lsr	r1, r1, #16
+ 319              		.loc 1 115 0
+ 320 001c C9B2     		uxtb	r1, r1
+ 321 001e 5B18     		add	r3, r3, r1
+ 322              	.LBB21:
+ 323              	.LBB22:
+ 116:Code\Common/utc.c **** 
+ 117:Code\Common/utc.c **** 	{
+ 118:Code\Common/utc.c **** 		uint16 days = tm.Day;
+ 119:Code\Common/utc.c **** 		{
+ 120:Code\Common/utc.c **** 			int8 month = tm.Mon;
+ 121:Code\Common/utc.c **** 			while (--month >= 0)
+ 122:Code\Common/utc.c **** 			{
+ 123:Code\Common/utc.c **** 				days += MonthLength(IsLeapYear(tm.Year), month);
+ 324              		.loc 1 123 0
+ 325 0020 C821     		mov	r1, #200
+ 326              	.LBE22:
+ 327              	.LBE21:
+ 109:Code\Common/utc.c **** 	UTCTime seconds;
+ 328              		.loc 1 109 0
+ 329 0022 85B0     		sub	sp, sp, #20
+ 330              		.cfi_def_cfa_offset 40
+ 331              	.LVL37:
+ 332              	.LBB29:
+ 333              	.LBB25:
+ 334              		.loc 1 123 0
+ 335 0024 201C     		mov	r0, r4
+ 336 0026 4900     		lsl	r1, r1, #1
+ 337              	.LBE25:
+ 338              	.LBE29:
+ 115:Code\Common/utc.c **** 
+ 339              		.loc 1 115 0
+ 340 0028 0193     		str	r3, [sp, #4]
+ 341              	.LVL38:
+ 342              	.LBB30:
+ 343              	.LBB26:
+ 344              		.loc 1 123 0
+ 345 002a FFF7FEFF 		bl	__aeabi_uidivmod
+ 346              	.LVL39:
+ 347 002e 201C     		mov	r0, r4
+ 348 0030 8FB2     		uxth	r7, r1
+ 349 0032 6421     		mov	r1, #100
+ 350 0034 FFF7FEFF 		bl	__aeabi_uidivmod
+ 351              	.LVL40:
+ 352              	.LBE26:
+ 353              	.LBE30:
+ 113:Code\Common/utc.c **** 	
+ 354              		.loc 1 113 0
+ 355 0038 360E     		lsr	r6, r6, #24
+ 356 003a 013E     		sub	r6, r6, #1
+ 357 003c 023D     		sub	r5, r5, #2
+ 358              	.LBB31:
+ 118:Code\Common/utc.c **** 		{
+ 359              		.loc 1 118 0
+ 360 003e F6B2     		uxtb	r6, r6
+ 361              	.LVL41:
+ 362              	.LBB27:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cct0CKSV.s 			page 10
+
+
+ 363              		.loc 1 123 0
+ 364 0040 89B2     		uxth	r1, r1
+ 365 0042 EDB2     		uxtb	r5, r5
+ 366              	.LVL42:
+ 367              	.L31:
+ 121:Code\Common/utc.c **** 			{
+ 368              		.loc 1 121 0
+ 369 0044 6BB2     		sxtb	r3, r5
+ 370 0046 281C     		mov	r0, r5
+ 371              	.LVL43:
+ 372 0048 002B     		cmp	r3, #0
+ 373 004a 32DB     		blt	.L37
+ 374              		.loc 1 123 0
+ 375 004c 0123     		mov	r3, #1
+ 376 004e 002F     		cmp	r7, #0
+ 377 0050 06D0     		beq	.L32
+ 378              		.loc 1 123 0 is_stmt 0 discriminator 2
+ 379 0052 0023     		mov	r3, #0
+ 380 0054 9942     		cmp	r1, r3
+ 381 0056 03D0     		beq	.L32
+ 382              		.loc 1 123 0 discriminator 3
+ 383 0058 0333     		add	r3, r3, #3
+ 384 005a 2340     		and	r3, r4
+ 385 005c 5A42     		neg	r2, r3
+ 386 005e 5341     		adc	r3, r3, r2
+ 387              	.L32:
+ 388              	.LVL44:
+ 389              	.LBB23:
+ 390              	.LBB24:
+  27:Code\Common/utc.c **** 	}
+ 391              		.loc 1 27 0 is_stmt 1 discriminator 8
+ 392 0060 1C33     		add	r3, r3, #28
+ 393              	.LVL45:
+ 394 0062 6A1E     		sub	r2, r5, #1
+ 395 0064 DBB2     		uxtb	r3, r3
+  25:Code\Common/utc.c **** 	{
+ 396              		.loc 1 25 0 discriminator 8
+ 397 0066 012D     		cmp	r5, #1
+ 398 0068 07D0     		beq	.L46
+  31:Code\Common/utc.c **** 		{
+ 399              		.loc 1 31 0
+ 400 006a 062D     		cmp	r5, #6
+ 401 006c 00D9     		bls	.L35
+ 402 006e D0B2     		uxtb	r0, r2
+ 403              	.LVL46:
+ 404              	.L35:
+  36:Code\Common/utc.c **** 		{
+ 405              		.loc 1 36 0
+ 406 0070 0123     		mov	r3, #1
+ 407 0072 0340     		and	r3, r0
+  38:Code\Common/utc.c **** 		}
+ 408              		.loc 1 38 0
+ 409 0074 5842     		neg	r0, r3
+ 410 0076 4341     		adc	r3, r3, r0
+ 411              	.LVL47:
+ 412 0078 1E33     		add	r3, r3, #30
+ 413              	.L46:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cct0CKSV.s 			page 11
+
+
+ 414              	.LBE24:
+ 415              	.LBE23:
+ 416              		.loc 1 123 0 discriminator 8
+ 417 007a F618     		add	r6, r6, r3
+ 418              	.LVL48:
+ 419 007c B6B2     		uxth	r6, r6
+ 420              	.LVL49:
+ 421 007e D5B2     		uxtb	r5, r2
+ 422              	.LVL50:
+ 423 0080 E0E7     		b	.L31
+ 424              	.LVL51:
+ 425              	.L39:
+ 426              	.LBE27:
+ 427              	.LBB28:
+ 124:Code\Common/utc.c **** 			}
+ 125:Code\Common/utc.c **** 		}
+ 126:Code\Common/utc.c **** 
+ 127:Code\Common/utc.c **** 		{
+ 128:Code\Common/utc.c **** 			uint16 year = tm.Year;
+ 129:Code\Common/utc.c **** 			while (--year >= BeginYear)
+ 130:Code\Common/utc.c **** 			{
+ 131:Code\Common/utc.c **** 				days += YearLength(year);
+ 428              		.loc 1 131 0
+ 429 0082 C821     		mov	r1, #200
+ 430 0084 201C     		mov	r0, r4
+ 431 0086 4900     		lsl	r1, r1, #1
+ 432 0088 FFF7FEFF 		bl	__aeabi_uidivmod
+ 433              	.LVL52:
+ 434 008c 89B2     		uxth	r1, r1
+ 435 008e 0029     		cmp	r1, #0
+ 436 0090 15D0     		beq	.L43
+ 437              		.loc 1 131 0 is_stmt 0 discriminator 2
+ 438 0092 201C     		mov	r0, r4
+ 439 0094 6421     		mov	r1, #100
+ 440 0096 FFF7FEFF 		bl	__aeabi_uidivmod
+ 441              	.LVL53:
+ 442 009a 89B2     		uxth	r1, r1
+ 443 009c 0029     		cmp	r1, #0
+ 444 009e 11D0     		beq	.L44
+ 445              		.loc 1 131 0 discriminator 3
+ 446 00a0 0320     		mov	r0, #3
+ 447 00a2 2040     		and	r0, r4
+ 448 00a4 431E     		sub	r3, r0, #1
+ 449 00a6 9841     		sbc	r0, r0, r3
+ 450 00a8 B723     		mov	r3, #183
+ 451 00aa 5B00     		lsl	r3, r3, #1
+ 452 00ac 181A     		sub	r0, r3, r0
+ 453              	.L38:
+ 454              		.loc 1 131 0 discriminator 8
+ 455 00ae 8619     		add	r6, r0, r6
+ 456              	.LVL54:
+ 457 00b0 B6B2     		uxth	r6, r6
+ 458              	.LVL55:
+ 459              	.L37:
+ 129:Code\Common/utc.c **** 			{
+ 460              		.loc 1 129 0 is_stmt 1
+ 461 00b2 013C     		sub	r4, r4, #1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cct0CKSV.s 			page 12
+
+
+ 462              	.LVL56:
+ 463 00b4 084B     		ldr	r3, .L50
+ 464 00b6 A4B2     		uxth	r4, r4
+ 465              	.LVL57:
+ 466 00b8 9C42     		cmp	r4, r3
+ 467 00ba E2D8     		bhi	.L39
+ 468 00bc 05E0     		b	.L49
+ 469              	.L43:
+ 470              		.loc 1 131 0
+ 471 00be B720     		mov	r0, #183
+ 472 00c0 4000     		lsl	r0, r0, #1
+ 473 00c2 F4E7     		b	.L38
+ 474              	.L44:
+ 475 00c4 6E20     		mov	r0, #110
+ 476 00c6 FF30     		add	r0, r0, #255
+ 477 00c8 F1E7     		b	.L38
+ 478              	.L49:
+ 479              	.LVL58:
+ 480              	.LBE28:
+ 132:Code\Common/utc.c **** 			}
+ 133:Code\Common/utc.c **** 		}
+ 134:Code\Common/utc.c **** 
+ 135:Code\Common/utc.c **** 		seconds += (days * OneDaySeconds);
+ 481              		.loc 1 135 0
+ 482 00ca 0448     		ldr	r0, .L50+4
+ 483 00cc 019B     		ldr	r3, [sp, #4]
+ 484 00ce 4643     		mul	r6, r0
+ 485              	.LVL59:
+ 486 00d0 9819     		add	r0, r3, r6
+ 487              	.LBE31:
+ 136:Code\Common/utc.c **** 	}
+ 137:Code\Common/utc.c **** 	
+ 138:Code\Common/utc.c **** 	//seconds -= TimeZone * 3600;
+ 139:Code\Common/utc.c **** 	
+ 140:Code\Common/utc.c **** 	return (seconds);
+ 141:Code\Common/utc.c **** }
+ 488              		.loc 1 141 0
+ 489 00d2 05B0     		add	sp, sp, #20
+ 490              		@ sp needed
+ 491              	.LVL60:
+ 492              	.LVL61:
+ 493 00d4 F0BD     		pop	{r4, r5, r6, r7, pc}
+ 494              	.L51:
+ 495 00d6 C046     		.align	2
+ 496              	.L50:
+ 497 00d8 B1070000 		.word	1969
+ 498 00dc 80510100 		.word	86400
+ 499              		.cfi_endproc
+ 500              	.LFE4:
+ 501              		.size	Time_ConvertTo_UtcTime, .-Time_ConvertTo_UtcTime
+ 502              		.text
+ 503              	.Letext0:
+ 504              		.file 2 "Generated_Source\\PSoC4/cytypes.h"
+ 505              		.file 3 "Code\\Common\\config.h"
+ 506              		.section	.debug_info,"",%progbits
+ 507              	.Ldebug_info0:
+ 508 0000 BF020000 		.4byte	0x2bf
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cct0CKSV.s 			page 13
+
+
+ 509 0004 0400     		.2byte	0x4
+ 510 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 511 000a 04       		.byte	0x4
+ 512 000b 01       		.uleb128 0x1
+ 513 000c 00000000 		.4byte	.LASF32
+ 514 0010 01       		.byte	0x1
+ 515 0011 7B010000 		.4byte	.LASF33
+ 516 0015 8E000000 		.4byte	.LASF34
+ 517 0019 90000000 		.4byte	.Ldebug_ranges0+0x90
+ 518 001d 00000000 		.4byte	0
+ 519 0021 00000000 		.4byte	.Ldebug_line0
+ 520 0025 02       		.uleb128 0x2
+ 521 0026 01       		.byte	0x1
+ 522 0027 06       		.byte	0x6
+ 523 0028 65020000 		.4byte	.LASF0
+ 524 002c 02       		.uleb128 0x2
+ 525 002d 01       		.byte	0x1
+ 526 002e 08       		.byte	0x8
+ 527 002f 3D010000 		.4byte	.LASF1
+ 528 0033 02       		.uleb128 0x2
+ 529 0034 02       		.byte	0x2
+ 530 0035 05       		.byte	0x5
+ 531 0036 45020000 		.4byte	.LASF2
+ 532 003a 02       		.uleb128 0x2
+ 533 003b 02       		.byte	0x2
+ 534 003c 07       		.byte	0x7
+ 535 003d 07010000 		.4byte	.LASF3
+ 536 0041 02       		.uleb128 0x2
+ 537 0042 04       		.byte	0x4
+ 538 0043 05       		.byte	0x5
+ 539 0044 54020000 		.4byte	.LASF4
+ 540 0048 02       		.uleb128 0x2
+ 541 0049 04       		.byte	0x4
+ 542 004a 07       		.byte	0x7
+ 543 004b 5D010000 		.4byte	.LASF5
+ 544 004f 02       		.uleb128 0x2
+ 545 0050 08       		.byte	0x8
+ 546 0051 05       		.byte	0x5
+ 547 0052 25020000 		.4byte	.LASF6
+ 548 0056 02       		.uleb128 0x2
+ 549 0057 08       		.byte	0x8
+ 550 0058 07       		.byte	0x7
+ 551 0059 ED010000 		.4byte	.LASF7
+ 552 005d 03       		.uleb128 0x3
+ 553 005e 04       		.byte	0x4
+ 554 005f 05       		.byte	0x5
+ 555 0060 696E7400 		.ascii	"int\000"
+ 556 0064 02       		.uleb128 0x2
+ 557 0065 04       		.byte	0x4
+ 558 0066 07       		.byte	0x7
+ 559 0067 DA010000 		.4byte	.LASF8
+ 560 006b 04       		.uleb128 0x4
+ 561 006c 6F010000 		.4byte	.LASF9
+ 562 0070 02       		.byte	0x2
+ 563 0071 B901     		.2byte	0x1b9
+ 564 0073 2C000000 		.4byte	0x2c
+ 565 0077 04       		.uleb128 0x4
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cct0CKSV.s 			page 14
+
+
+ 566 0078 C7010000 		.4byte	.LASF10
+ 567 007c 02       		.byte	0x2
+ 568 007d BA01     		.2byte	0x1ba
+ 569 007f 3A000000 		.4byte	0x3a
+ 570 0083 04       		.uleb128 0x4
+ 571 0084 D3010000 		.4byte	.LASF11
+ 572 0088 02       		.byte	0x2
+ 573 0089 BB01     		.2byte	0x1bb
+ 574 008b 48000000 		.4byte	0x48
+ 575 008f 04       		.uleb128 0x4
+ 576 0090 CE010000 		.4byte	.LASF12
+ 577 0094 02       		.byte	0x2
+ 578 0095 BC01     		.2byte	0x1bc
+ 579 0097 25000000 		.4byte	0x25
+ 580 009b 02       		.uleb128 0x2
+ 581 009c 04       		.byte	0x4
+ 582 009d 04       		.byte	0x4
+ 583 009e 37010000 		.4byte	.LASF13
+ 584 00a2 02       		.uleb128 0x2
+ 585 00a3 08       		.byte	0x8
+ 586 00a4 04       		.byte	0x4
+ 587 00a5 92010000 		.4byte	.LASF14
+ 588 00a9 02       		.uleb128 0x2
+ 589 00aa 01       		.byte	0x1
+ 590 00ab 08       		.byte	0x8
+ 591 00ac 3B020000 		.4byte	.LASF15
+ 592 00b0 02       		.uleb128 0x2
+ 593 00b1 04       		.byte	0x4
+ 594 00b2 07       		.byte	0x7
+ 595 00b3 1C020000 		.4byte	.LASF16
+ 596 00b7 05       		.uleb128 0x5
+ 597 00b8 E7010000 		.4byte	.LASF17
+ 598 00bc 03       		.byte	0x3
+ 599 00bd 13       		.byte	0x13
+ 600 00be 2C000000 		.4byte	0x2c
+ 601 00c2 05       		.uleb128 0x5
+ 602 00c3 30010000 		.4byte	.LASF18
+ 603 00c7 03       		.byte	0x3
+ 604 00c8 15       		.byte	0x15
+ 605 00c9 3A000000 		.4byte	0x3a
+ 606 00cd 05       		.uleb128 0x5
+ 607 00ce 28010000 		.4byte	.LASF19
+ 608 00d2 03       		.byte	0x3
+ 609 00d3 46       		.byte	0x46
+ 610 00d4 83000000 		.4byte	0x83
+ 611 00d8 06       		.uleb128 0x6
+ 612 00d9 04020000 		.4byte	.LASF35
+ 613 00dd 08       		.byte	0x8
+ 614 00de 03       		.byte	0x3
+ 615 00df 47       		.byte	0x47
+ 616 00e0 2D010000 		.4byte	0x12d
+ 617 00e4 07       		.uleb128 0x7
+ 618 00e5 8D010000 		.4byte	.LASF20
+ 619 00e9 03       		.byte	0x3
+ 620 00ea 49       		.byte	0x49
+ 621 00eb C2000000 		.4byte	0xc2
+ 622 00ef 00       		.byte	0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cct0CKSV.s 			page 15
+
+
+ 623 00f0 08       		.uleb128 0x8
+ 624 00f1 4D6F6E00 		.ascii	"Mon\000"
+ 625 00f5 03       		.byte	0x3
+ 626 00f6 4A       		.byte	0x4a
+ 627 00f7 B7000000 		.4byte	0xb7
+ 628 00fb 02       		.byte	0x2
+ 629 00fc 08       		.uleb128 0x8
+ 630 00fd 44617900 		.ascii	"Day\000"
+ 631 0101 03       		.byte	0x3
+ 632 0102 4B       		.byte	0x4b
+ 633 0103 B7000000 		.4byte	0xb7
+ 634 0107 03       		.byte	0x3
+ 635 0108 07       		.uleb128 0x7
+ 636 0109 4F020000 		.4byte	.LASF21
+ 637 010d 03       		.byte	0x3
+ 638 010e 4C       		.byte	0x4c
+ 639 010f B7000000 		.4byte	0xb7
+ 640 0113 04       		.byte	0x4
+ 641 0114 08       		.uleb128 0x8
+ 642 0115 4D696E00 		.ascii	"Min\000"
+ 643 0119 03       		.byte	0x3
+ 644 011a 4D       		.byte	0x4d
+ 645 011b B7000000 		.4byte	0xb7
+ 646 011f 05       		.byte	0x5
+ 647 0120 08       		.uleb128 0x8
+ 648 0121 53656300 		.ascii	"Sec\000"
+ 649 0125 03       		.byte	0x3
+ 650 0126 4E       		.byte	0x4e
+ 651 0127 B7000000 		.4byte	0xb7
+ 652 012b 06       		.byte	0x6
+ 653 012c 00       		.byte	0
+ 654 012d 05       		.uleb128 0x5
+ 655 012e 4B010000 		.4byte	.LASF22
+ 656 0132 03       		.byte	0x3
+ 657 0133 4F       		.byte	0x4f
+ 658 0134 D8000000 		.4byte	0xd8
+ 659 0138 09       		.uleb128 0x9
+ 660 0139 10020000 		.4byte	.LASF36
+ 661 013d 01       		.byte	0x1
+ 662 013e 15       		.byte	0x15
+ 663 013f 6B000000 		.4byte	0x6b
+ 664 0143 01       		.byte	0x1
+ 665 0144 6A010000 		.4byte	0x16a
+ 666 0148 0A       		.uleb128 0xa
+ 667 0149 F5000000 		.4byte	.LASF23
+ 668 014d 01       		.byte	0x1
+ 669 014e 15       		.byte	0x15
+ 670 014f 6B000000 		.4byte	0x6b
+ 671 0153 0A       		.uleb128 0xa
+ 672 0154 75010000 		.4byte	.LASF24
+ 673 0158 01       		.byte	0x1
+ 674 0159 15       		.byte	0x15
+ 675 015a 6B000000 		.4byte	0x6b
+ 676 015e 0B       		.uleb128 0xb
+ 677 015f 40020000 		.4byte	.LASF29
+ 678 0163 01       		.byte	0x1
+ 679 0164 17       		.byte	0x17
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cct0CKSV.s 			page 16
+
+
+ 680 0165 6B000000 		.4byte	0x6b
+ 681 0169 00       		.byte	0
+ 682 016a 0C       		.uleb128 0xc
+ 683 016b B0010000 		.4byte	.LASF37
+ 684 016f 01       		.byte	0x1
+ 685 0170 36       		.byte	0x36
+ 686 0171 2D010000 		.4byte	0x12d
+ 687 0175 00000000 		.4byte	.LFB3
+ 688 0179 20010000 		.4byte	.LFE3-.LFB3
+ 689 017d 01       		.uleb128 0x1
+ 690 017e 9C       		.byte	0x9c
+ 691 017f 13020000 		.4byte	0x213
+ 692 0183 0D       		.uleb128 0xd
+ 693 0184 5D020000 		.4byte	.LASF27
+ 694 0188 01       		.byte	0x1
+ 695 0189 36       		.byte	0x36
+ 696 018a CD000000 		.4byte	0xcd
+ 697 018e 00000000 		.4byte	.LLST0
+ 698 0192 0E       		.uleb128 0xe
+ 699 0193 746D00   		.ascii	"tm\000"
+ 700 0196 01       		.byte	0x1
+ 701 0197 38       		.byte	0x38
+ 702 0198 2D010000 		.4byte	0x12d
+ 703 019c 37000000 		.4byte	.LLST1
+ 704 01a0 0F       		.uleb128 0xf
+ 705 01a1 00000000 		.4byte	.Ldebug_ranges0+0
+ 706 01a5 B9010000 		.4byte	0x1b9
+ 707 01a9 0E       		.uleb128 0xe
+ 708 01aa 64617900 		.ascii	"day\000"
+ 709 01ae 01       		.byte	0x1
+ 710 01af 3C       		.byte	0x3c
+ 711 01b0 83000000 		.4byte	0x83
+ 712 01b4 AD010000 		.4byte	.LLST2
+ 713 01b8 00       		.byte	0
+ 714 01b9 10       		.uleb128 0x10
+ 715 01ba 20000000 		.4byte	.Ldebug_ranges0+0x20
+ 716 01be 11       		.uleb128 0x11
+ 717 01bf 1A010000 		.4byte	.LASF25
+ 718 01c3 01       		.byte	0x1
+ 719 01c4 44       		.byte	0x44
+ 720 01c5 77000000 		.4byte	0x77
+ 721 01c9 D6010000 		.4byte	.LLST3
+ 722 01cd 11       		.uleb128 0x11
+ 723 01ce 54010000 		.4byte	.LASF26
+ 724 01d2 01       		.byte	0x1
+ 725 01d3 45       		.byte	0x45
+ 726 01d4 6B000000 		.4byte	0x6b
+ 727 01d8 F4010000 		.4byte	.LLST4
+ 728 01dc 12       		.uleb128 0x12
+ 729 01dd 38010000 		.4byte	0x138
+ 730 01e1 BE000000 		.4byte	.LBB10
+ 731 01e5 18000000 		.4byte	.LBE10-.LBB10
+ 732 01e9 01       		.byte	0x1
+ 733 01ea 57       		.byte	0x57
+ 734 01eb 13       		.uleb128 0x13
+ 735 01ec 53010000 		.4byte	0x153
+ 736 01f0 07020000 		.4byte	.LLST5
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cct0CKSV.s 			page 17
+
+
+ 737 01f4 13       		.uleb128 0x13
+ 738 01f5 48010000 		.4byte	0x148
+ 739 01f9 1A020000 		.4byte	.LLST6
+ 740 01fd 14       		.uleb128 0x14
+ 741 01fe BE000000 		.4byte	.LBB11
+ 742 0202 18000000 		.4byte	.LBE11-.LBB11
+ 743 0206 15       		.uleb128 0x15
+ 744 0207 5E010000 		.4byte	0x15e
+ 745 020b 2D020000 		.4byte	.LLST7
+ 746 020f 00       		.byte	0
+ 747 0210 00       		.byte	0
+ 748 0211 00       		.byte	0
+ 749 0212 00       		.byte	0
+ 750 0213 16       		.uleb128 0x16
+ 751 0214 99010000 		.4byte	.LASF38
+ 752 0218 01       		.byte	0x1
+ 753 0219 6C       		.byte	0x6c
+ 754 021a CD000000 		.4byte	0xcd
+ 755 021e 00000000 		.4byte	.LFB4
+ 756 0222 E0000000 		.4byte	.LFE4-.LFB4
+ 757 0226 01       		.uleb128 0x1
+ 758 0227 9C       		.byte	0x9c
+ 759 0228 17       		.uleb128 0x17
+ 760 0229 746D00   		.ascii	"tm\000"
+ 761 022c 01       		.byte	0x1
+ 762 022d 6C       		.byte	0x6c
+ 763 022e 2D010000 		.4byte	0x12d
+ 764 0232 41020000 		.4byte	.LLST8
+ 765 0236 11       		.uleb128 0x11
+ 766 0237 33020000 		.4byte	.LASF28
+ 767 023b 01       		.byte	0x1
+ 768 023c 6E       		.byte	0x6e
+ 769 023d CD000000 		.4byte	0xcd
+ 770 0241 99020000 		.4byte	.LLST9
+ 771 0245 10       		.uleb128 0x10
+ 772 0246 40000000 		.4byte	.Ldebug_ranges0+0x40
+ 773 024a 11       		.uleb128 0x11
+ 774 024b 40020000 		.4byte	.LASF29
+ 775 024f 01       		.byte	0x1
+ 776 0250 76       		.byte	0x76
+ 777 0251 77000000 		.4byte	0x77
+ 778 0255 D3020000 		.4byte	.LLST10
+ 779 0259 0F       		.uleb128 0xf
+ 780 025a 68000000 		.4byte	.Ldebug_ranges0+0x68
+ 781 025e A7020000 		.4byte	0x2a7
+ 782 0262 11       		.uleb128 0x11
+ 783 0263 22010000 		.4byte	.LASF30
+ 784 0267 01       		.byte	0x1
+ 785 0268 78       		.byte	0x78
+ 786 0269 8F000000 		.4byte	0x8f
+ 787 026d FC020000 		.4byte	.LLST11
+ 788 0271 12       		.uleb128 0x12
+ 789 0272 38010000 		.4byte	0x138
+ 790 0276 60000000 		.4byte	.LBB23
+ 791 027a 1A000000 		.4byte	.LBE23-.LBB23
+ 792 027e 01       		.byte	0x1
+ 793 027f 7B       		.byte	0x7b
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cct0CKSV.s 			page 18
+
+
+ 794 0280 13       		.uleb128 0x13
+ 795 0281 53010000 		.4byte	0x153
+ 796 0285 38030000 		.4byte	.LLST12
+ 797 0289 13       		.uleb128 0x13
+ 798 028a 48010000 		.4byte	0x148
+ 799 028e 56030000 		.4byte	.LLST13
+ 800 0292 14       		.uleb128 0x14
+ 801 0293 60000000 		.4byte	.LBB24
+ 802 0297 1A000000 		.4byte	.LBE24-.LBB24
+ 803 029b 15       		.uleb128 0x15
+ 804 029c 5E010000 		.4byte	0x15e
+ 805 02a0 69030000 		.4byte	.LLST14
+ 806 02a4 00       		.byte	0
+ 807 02a5 00       		.byte	0
+ 808 02a6 00       		.byte	0
+ 809 02a7 14       		.uleb128 0x14
+ 810 02a8 82000000 		.4byte	.LBB28
+ 811 02ac 48000000 		.4byte	.LBE28-.LBB28
+ 812 02b0 11       		.uleb128 0x11
+ 813 02b1 02010000 		.4byte	.LASF31
+ 814 02b5 01       		.byte	0x1
+ 815 02b6 80       		.byte	0x80
+ 816 02b7 77000000 		.4byte	0x77
+ 817 02bb 7D030000 		.4byte	.LLST15
+ 818 02bf 00       		.byte	0
+ 819 02c0 00       		.byte	0
+ 820 02c1 00       		.byte	0
+ 821 02c2 00       		.byte	0
+ 822              		.section	.debug_abbrev,"",%progbits
+ 823              	.Ldebug_abbrev0:
+ 824 0000 01       		.uleb128 0x1
+ 825 0001 11       		.uleb128 0x11
+ 826 0002 01       		.byte	0x1
+ 827 0003 25       		.uleb128 0x25
+ 828 0004 0E       		.uleb128 0xe
+ 829 0005 13       		.uleb128 0x13
+ 830 0006 0B       		.uleb128 0xb
+ 831 0007 03       		.uleb128 0x3
+ 832 0008 0E       		.uleb128 0xe
+ 833 0009 1B       		.uleb128 0x1b
+ 834 000a 0E       		.uleb128 0xe
+ 835 000b 55       		.uleb128 0x55
+ 836 000c 17       		.uleb128 0x17
+ 837 000d 11       		.uleb128 0x11
+ 838 000e 01       		.uleb128 0x1
+ 839 000f 10       		.uleb128 0x10
+ 840 0010 17       		.uleb128 0x17
+ 841 0011 00       		.byte	0
+ 842 0012 00       		.byte	0
+ 843 0013 02       		.uleb128 0x2
+ 844 0014 24       		.uleb128 0x24
+ 845 0015 00       		.byte	0
+ 846 0016 0B       		.uleb128 0xb
+ 847 0017 0B       		.uleb128 0xb
+ 848 0018 3E       		.uleb128 0x3e
+ 849 0019 0B       		.uleb128 0xb
+ 850 001a 03       		.uleb128 0x3
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cct0CKSV.s 			page 19
+
+
+ 851 001b 0E       		.uleb128 0xe
+ 852 001c 00       		.byte	0
+ 853 001d 00       		.byte	0
+ 854 001e 03       		.uleb128 0x3
+ 855 001f 24       		.uleb128 0x24
+ 856 0020 00       		.byte	0
+ 857 0021 0B       		.uleb128 0xb
+ 858 0022 0B       		.uleb128 0xb
+ 859 0023 3E       		.uleb128 0x3e
+ 860 0024 0B       		.uleb128 0xb
+ 861 0025 03       		.uleb128 0x3
+ 862 0026 08       		.uleb128 0x8
+ 863 0027 00       		.byte	0
+ 864 0028 00       		.byte	0
+ 865 0029 04       		.uleb128 0x4
+ 866 002a 16       		.uleb128 0x16
+ 867 002b 00       		.byte	0
+ 868 002c 03       		.uleb128 0x3
+ 869 002d 0E       		.uleb128 0xe
+ 870 002e 3A       		.uleb128 0x3a
+ 871 002f 0B       		.uleb128 0xb
+ 872 0030 3B       		.uleb128 0x3b
+ 873 0031 05       		.uleb128 0x5
+ 874 0032 49       		.uleb128 0x49
+ 875 0033 13       		.uleb128 0x13
+ 876 0034 00       		.byte	0
+ 877 0035 00       		.byte	0
+ 878 0036 05       		.uleb128 0x5
+ 879 0037 16       		.uleb128 0x16
+ 880 0038 00       		.byte	0
+ 881 0039 03       		.uleb128 0x3
+ 882 003a 0E       		.uleb128 0xe
+ 883 003b 3A       		.uleb128 0x3a
+ 884 003c 0B       		.uleb128 0xb
+ 885 003d 3B       		.uleb128 0x3b
+ 886 003e 0B       		.uleb128 0xb
+ 887 003f 49       		.uleb128 0x49
+ 888 0040 13       		.uleb128 0x13
+ 889 0041 00       		.byte	0
+ 890 0042 00       		.byte	0
+ 891 0043 06       		.uleb128 0x6
+ 892 0044 13       		.uleb128 0x13
+ 893 0045 01       		.byte	0x1
+ 894 0046 03       		.uleb128 0x3
+ 895 0047 0E       		.uleb128 0xe
+ 896 0048 0B       		.uleb128 0xb
+ 897 0049 0B       		.uleb128 0xb
+ 898 004a 3A       		.uleb128 0x3a
+ 899 004b 0B       		.uleb128 0xb
+ 900 004c 3B       		.uleb128 0x3b
+ 901 004d 0B       		.uleb128 0xb
+ 902 004e 01       		.uleb128 0x1
+ 903 004f 13       		.uleb128 0x13
+ 904 0050 00       		.byte	0
+ 905 0051 00       		.byte	0
+ 906 0052 07       		.uleb128 0x7
+ 907 0053 0D       		.uleb128 0xd
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cct0CKSV.s 			page 20
+
+
+ 908 0054 00       		.byte	0
+ 909 0055 03       		.uleb128 0x3
+ 910 0056 0E       		.uleb128 0xe
+ 911 0057 3A       		.uleb128 0x3a
+ 912 0058 0B       		.uleb128 0xb
+ 913 0059 3B       		.uleb128 0x3b
+ 914 005a 0B       		.uleb128 0xb
+ 915 005b 49       		.uleb128 0x49
+ 916 005c 13       		.uleb128 0x13
+ 917 005d 38       		.uleb128 0x38
+ 918 005e 0B       		.uleb128 0xb
+ 919 005f 00       		.byte	0
+ 920 0060 00       		.byte	0
+ 921 0061 08       		.uleb128 0x8
+ 922 0062 0D       		.uleb128 0xd
+ 923 0063 00       		.byte	0
+ 924 0064 03       		.uleb128 0x3
+ 925 0065 08       		.uleb128 0x8
+ 926 0066 3A       		.uleb128 0x3a
+ 927 0067 0B       		.uleb128 0xb
+ 928 0068 3B       		.uleb128 0x3b
+ 929 0069 0B       		.uleb128 0xb
+ 930 006a 49       		.uleb128 0x49
+ 931 006b 13       		.uleb128 0x13
+ 932 006c 38       		.uleb128 0x38
+ 933 006d 0B       		.uleb128 0xb
+ 934 006e 00       		.byte	0
+ 935 006f 00       		.byte	0
+ 936 0070 09       		.uleb128 0x9
+ 937 0071 2E       		.uleb128 0x2e
+ 938 0072 01       		.byte	0x1
+ 939 0073 03       		.uleb128 0x3
+ 940 0074 0E       		.uleb128 0xe
+ 941 0075 3A       		.uleb128 0x3a
+ 942 0076 0B       		.uleb128 0xb
+ 943 0077 3B       		.uleb128 0x3b
+ 944 0078 0B       		.uleb128 0xb
+ 945 0079 27       		.uleb128 0x27
+ 946 007a 19       		.uleb128 0x19
+ 947 007b 49       		.uleb128 0x49
+ 948 007c 13       		.uleb128 0x13
+ 949 007d 20       		.uleb128 0x20
+ 950 007e 0B       		.uleb128 0xb
+ 951 007f 01       		.uleb128 0x1
+ 952 0080 13       		.uleb128 0x13
+ 953 0081 00       		.byte	0
+ 954 0082 00       		.byte	0
+ 955 0083 0A       		.uleb128 0xa
+ 956 0084 05       		.uleb128 0x5
+ 957 0085 00       		.byte	0
+ 958 0086 03       		.uleb128 0x3
+ 959 0087 0E       		.uleb128 0xe
+ 960 0088 3A       		.uleb128 0x3a
+ 961 0089 0B       		.uleb128 0xb
+ 962 008a 3B       		.uleb128 0x3b
+ 963 008b 0B       		.uleb128 0xb
+ 964 008c 49       		.uleb128 0x49
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cct0CKSV.s 			page 21
+
+
+ 965 008d 13       		.uleb128 0x13
+ 966 008e 00       		.byte	0
+ 967 008f 00       		.byte	0
+ 968 0090 0B       		.uleb128 0xb
+ 969 0091 34       		.uleb128 0x34
+ 970 0092 00       		.byte	0
+ 971 0093 03       		.uleb128 0x3
+ 972 0094 0E       		.uleb128 0xe
+ 973 0095 3A       		.uleb128 0x3a
+ 974 0096 0B       		.uleb128 0xb
+ 975 0097 3B       		.uleb128 0x3b
+ 976 0098 0B       		.uleb128 0xb
+ 977 0099 49       		.uleb128 0x49
+ 978 009a 13       		.uleb128 0x13
+ 979 009b 00       		.byte	0
+ 980 009c 00       		.byte	0
+ 981 009d 0C       		.uleb128 0xc
+ 982 009e 2E       		.uleb128 0x2e
+ 983 009f 01       		.byte	0x1
+ 984 00a0 3F       		.uleb128 0x3f
+ 985 00a1 19       		.uleb128 0x19
+ 986 00a2 03       		.uleb128 0x3
+ 987 00a3 0E       		.uleb128 0xe
+ 988 00a4 3A       		.uleb128 0x3a
+ 989 00a5 0B       		.uleb128 0xb
+ 990 00a6 3B       		.uleb128 0x3b
+ 991 00a7 0B       		.uleb128 0xb
+ 992 00a8 27       		.uleb128 0x27
+ 993 00a9 19       		.uleb128 0x19
+ 994 00aa 49       		.uleb128 0x49
+ 995 00ab 13       		.uleb128 0x13
+ 996 00ac 11       		.uleb128 0x11
+ 997 00ad 01       		.uleb128 0x1
+ 998 00ae 12       		.uleb128 0x12
+ 999 00af 06       		.uleb128 0x6
+ 1000 00b0 40       		.uleb128 0x40
+ 1001 00b1 18       		.uleb128 0x18
+ 1002 00b2 9642     		.uleb128 0x2116
+ 1003 00b4 19       		.uleb128 0x19
+ 1004 00b5 01       		.uleb128 0x1
+ 1005 00b6 13       		.uleb128 0x13
+ 1006 00b7 00       		.byte	0
+ 1007 00b8 00       		.byte	0
+ 1008 00b9 0D       		.uleb128 0xd
+ 1009 00ba 05       		.uleb128 0x5
+ 1010 00bb 00       		.byte	0
+ 1011 00bc 03       		.uleb128 0x3
+ 1012 00bd 0E       		.uleb128 0xe
+ 1013 00be 3A       		.uleb128 0x3a
+ 1014 00bf 0B       		.uleb128 0xb
+ 1015 00c0 3B       		.uleb128 0x3b
+ 1016 00c1 0B       		.uleb128 0xb
+ 1017 00c2 49       		.uleb128 0x49
+ 1018 00c3 13       		.uleb128 0x13
+ 1019 00c4 02       		.uleb128 0x2
+ 1020 00c5 17       		.uleb128 0x17
+ 1021 00c6 00       		.byte	0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cct0CKSV.s 			page 22
+
+
+ 1022 00c7 00       		.byte	0
+ 1023 00c8 0E       		.uleb128 0xe
+ 1024 00c9 34       		.uleb128 0x34
+ 1025 00ca 00       		.byte	0
+ 1026 00cb 03       		.uleb128 0x3
+ 1027 00cc 08       		.uleb128 0x8
+ 1028 00cd 3A       		.uleb128 0x3a
+ 1029 00ce 0B       		.uleb128 0xb
+ 1030 00cf 3B       		.uleb128 0x3b
+ 1031 00d0 0B       		.uleb128 0xb
+ 1032 00d1 49       		.uleb128 0x49
+ 1033 00d2 13       		.uleb128 0x13
+ 1034 00d3 02       		.uleb128 0x2
+ 1035 00d4 17       		.uleb128 0x17
+ 1036 00d5 00       		.byte	0
+ 1037 00d6 00       		.byte	0
+ 1038 00d7 0F       		.uleb128 0xf
+ 1039 00d8 0B       		.uleb128 0xb
+ 1040 00d9 01       		.byte	0x1
+ 1041 00da 55       		.uleb128 0x55
+ 1042 00db 17       		.uleb128 0x17
+ 1043 00dc 01       		.uleb128 0x1
+ 1044 00dd 13       		.uleb128 0x13
+ 1045 00de 00       		.byte	0
+ 1046 00df 00       		.byte	0
+ 1047 00e0 10       		.uleb128 0x10
+ 1048 00e1 0B       		.uleb128 0xb
+ 1049 00e2 01       		.byte	0x1
+ 1050 00e3 55       		.uleb128 0x55
+ 1051 00e4 17       		.uleb128 0x17
+ 1052 00e5 00       		.byte	0
+ 1053 00e6 00       		.byte	0
+ 1054 00e7 11       		.uleb128 0x11
+ 1055 00e8 34       		.uleb128 0x34
+ 1056 00e9 00       		.byte	0
+ 1057 00ea 03       		.uleb128 0x3
+ 1058 00eb 0E       		.uleb128 0xe
+ 1059 00ec 3A       		.uleb128 0x3a
+ 1060 00ed 0B       		.uleb128 0xb
+ 1061 00ee 3B       		.uleb128 0x3b
+ 1062 00ef 0B       		.uleb128 0xb
+ 1063 00f0 49       		.uleb128 0x49
+ 1064 00f1 13       		.uleb128 0x13
+ 1065 00f2 02       		.uleb128 0x2
+ 1066 00f3 17       		.uleb128 0x17
+ 1067 00f4 00       		.byte	0
+ 1068 00f5 00       		.byte	0
+ 1069 00f6 12       		.uleb128 0x12
+ 1070 00f7 1D       		.uleb128 0x1d
+ 1071 00f8 01       		.byte	0x1
+ 1072 00f9 31       		.uleb128 0x31
+ 1073 00fa 13       		.uleb128 0x13
+ 1074 00fb 11       		.uleb128 0x11
+ 1075 00fc 01       		.uleb128 0x1
+ 1076 00fd 12       		.uleb128 0x12
+ 1077 00fe 06       		.uleb128 0x6
+ 1078 00ff 58       		.uleb128 0x58
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cct0CKSV.s 			page 23
+
+
+ 1079 0100 0B       		.uleb128 0xb
+ 1080 0101 59       		.uleb128 0x59
+ 1081 0102 0B       		.uleb128 0xb
+ 1082 0103 00       		.byte	0
+ 1083 0104 00       		.byte	0
+ 1084 0105 13       		.uleb128 0x13
+ 1085 0106 05       		.uleb128 0x5
+ 1086 0107 00       		.byte	0
+ 1087 0108 31       		.uleb128 0x31
+ 1088 0109 13       		.uleb128 0x13
+ 1089 010a 02       		.uleb128 0x2
+ 1090 010b 17       		.uleb128 0x17
+ 1091 010c 00       		.byte	0
+ 1092 010d 00       		.byte	0
+ 1093 010e 14       		.uleb128 0x14
+ 1094 010f 0B       		.uleb128 0xb
+ 1095 0110 01       		.byte	0x1
+ 1096 0111 11       		.uleb128 0x11
+ 1097 0112 01       		.uleb128 0x1
+ 1098 0113 12       		.uleb128 0x12
+ 1099 0114 06       		.uleb128 0x6
+ 1100 0115 00       		.byte	0
+ 1101 0116 00       		.byte	0
+ 1102 0117 15       		.uleb128 0x15
+ 1103 0118 34       		.uleb128 0x34
+ 1104 0119 00       		.byte	0
+ 1105 011a 31       		.uleb128 0x31
+ 1106 011b 13       		.uleb128 0x13
+ 1107 011c 02       		.uleb128 0x2
+ 1108 011d 17       		.uleb128 0x17
+ 1109 011e 00       		.byte	0
+ 1110 011f 00       		.byte	0
+ 1111 0120 16       		.uleb128 0x16
+ 1112 0121 2E       		.uleb128 0x2e
+ 1113 0122 01       		.byte	0x1
+ 1114 0123 3F       		.uleb128 0x3f
+ 1115 0124 19       		.uleb128 0x19
+ 1116 0125 03       		.uleb128 0x3
+ 1117 0126 0E       		.uleb128 0xe
+ 1118 0127 3A       		.uleb128 0x3a
+ 1119 0128 0B       		.uleb128 0xb
+ 1120 0129 3B       		.uleb128 0x3b
+ 1121 012a 0B       		.uleb128 0xb
+ 1122 012b 27       		.uleb128 0x27
+ 1123 012c 19       		.uleb128 0x19
+ 1124 012d 49       		.uleb128 0x49
+ 1125 012e 13       		.uleb128 0x13
+ 1126 012f 11       		.uleb128 0x11
+ 1127 0130 01       		.uleb128 0x1
+ 1128 0131 12       		.uleb128 0x12
+ 1129 0132 06       		.uleb128 0x6
+ 1130 0133 40       		.uleb128 0x40
+ 1131 0134 18       		.uleb128 0x18
+ 1132 0135 9642     		.uleb128 0x2116
+ 1133 0137 19       		.uleb128 0x19
+ 1134 0138 00       		.byte	0
+ 1135 0139 00       		.byte	0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cct0CKSV.s 			page 24
+
+
+ 1136 013a 17       		.uleb128 0x17
+ 1137 013b 05       		.uleb128 0x5
+ 1138 013c 00       		.byte	0
+ 1139 013d 03       		.uleb128 0x3
+ 1140 013e 08       		.uleb128 0x8
+ 1141 013f 3A       		.uleb128 0x3a
+ 1142 0140 0B       		.uleb128 0xb
+ 1143 0141 3B       		.uleb128 0x3b
+ 1144 0142 0B       		.uleb128 0xb
+ 1145 0143 49       		.uleb128 0x49
+ 1146 0144 13       		.uleb128 0x13
+ 1147 0145 02       		.uleb128 0x2
+ 1148 0146 17       		.uleb128 0x17
+ 1149 0147 00       		.byte	0
+ 1150 0148 00       		.byte	0
+ 1151 0149 00       		.byte	0
+ 1152              		.section	.debug_loc,"",%progbits
+ 1153              	.Ldebug_loc0:
+ 1154              	.LLST0:
+ 1155 0000 00000000 		.4byte	.LVL0
+ 1156 0004 0C000000 		.4byte	.LVL2
+ 1157 0008 0100     		.2byte	0x1
+ 1158 000a 51       		.byte	0x51
+ 1159 000b 0C000000 		.4byte	.LVL2
+ 1160 000f 0F000000 		.4byte	.LVL3-1
+ 1161 0013 0100     		.2byte	0x1
+ 1162 0015 50       		.byte	0x50
+ 1163 0016 0F000000 		.4byte	.LVL3-1
+ 1164 001a 4E000000 		.4byte	.LVL15
+ 1165 001e 0100     		.2byte	0x1
+ 1166 0020 54       		.byte	0x54
+ 1167 0021 4E000000 		.4byte	.LVL15
+ 1168 0025 20010000 		.4byte	.LFE3
+ 1169 0029 0400     		.2byte	0x4
+ 1170 002b F3       		.byte	0xf3
+ 1171 002c 01       		.uleb128 0x1
+ 1172 002d 51       		.byte	0x51
+ 1173 002e 9F       		.byte	0x9f
+ 1174 002f 00000000 		.4byte	0
+ 1175 0033 00000000 		.4byte	0
+ 1176              	.LLST1:
+ 1177 0037 24000000 		.4byte	.LVL7
+ 1178 003b 3A000000 		.4byte	.LVL10
+ 1179 003f 0800     		.2byte	0x8
+ 1180 0041 93       		.byte	0x93
+ 1181 0042 06       		.uleb128 0x6
+ 1182 0043 7D       		.byte	0x7d
+ 1183 0044 00       		.sleb128 0
+ 1184 0045 93       		.byte	0x93
+ 1185 0046 01       		.uleb128 0x1
+ 1186 0047 93       		.byte	0x93
+ 1187 0048 01       		.uleb128 0x1
+ 1188 0049 3A000000 		.4byte	.LVL10
+ 1189 004d 46000000 		.4byte	.LVL12
+ 1190 0051 0C00     		.2byte	0xc
+ 1191 0053 93       		.byte	0x93
+ 1192 0054 05       		.uleb128 0x5
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cct0CKSV.s 			page 25
+
+
+ 1193 0055 91       		.byte	0x91
+ 1194 0056 5C       		.sleb128 -36
+ 1195 0057 93       		.byte	0x93
+ 1196 0058 01       		.uleb128 0x1
+ 1197 0059 7D       		.byte	0x7d
+ 1198 005a 00       		.sleb128 0
+ 1199 005b 93       		.byte	0x93
+ 1200 005c 01       		.uleb128 0x1
+ 1201 005d 93       		.byte	0x93
+ 1202 005e 01       		.uleb128 0x1
+ 1203 005f 46000000 		.4byte	.LVL12
+ 1204 0063 4E000000 		.4byte	.LVL15
+ 1205 0067 1000     		.2byte	0x10
+ 1206 0069 93       		.byte	0x93
+ 1207 006a 04       		.uleb128 0x4
+ 1208 006b 91       		.byte	0x91
+ 1209 006c 60       		.sleb128 -32
+ 1210 006d 93       		.byte	0x93
+ 1211 006e 01       		.uleb128 0x1
+ 1212 006f 91       		.byte	0x91
+ 1213 0070 5C       		.sleb128 -36
+ 1214 0071 93       		.byte	0x93
+ 1215 0072 01       		.uleb128 0x1
+ 1216 0073 7D       		.byte	0x7d
+ 1217 0074 00       		.sleb128 0
+ 1218 0075 93       		.byte	0x93
+ 1219 0076 01       		.uleb128 0x1
+ 1220 0077 93       		.byte	0x93
+ 1221 0078 01       		.uleb128 0x1
+ 1222 0079 4E000000 		.4byte	.LVL15
+ 1223 007d 82000000 		.4byte	.LVL19
+ 1224 0081 1300     		.2byte	0x13
+ 1225 0083 55       		.byte	0x55
+ 1226 0084 93       		.byte	0x93
+ 1227 0085 02       		.uleb128 0x2
+ 1228 0086 93       		.byte	0x93
+ 1229 0087 02       		.uleb128 0x2
+ 1230 0088 91       		.byte	0x91
+ 1231 0089 60       		.sleb128 -32
+ 1232 008a 93       		.byte	0x93
+ 1233 008b 01       		.uleb128 0x1
+ 1234 008c 91       		.byte	0x91
+ 1235 008d 5C       		.sleb128 -36
+ 1236 008e 93       		.byte	0x93
+ 1237 008f 01       		.uleb128 0x1
+ 1238 0090 7D       		.byte	0x7d
+ 1239 0091 00       		.sleb128 0
+ 1240 0092 93       		.byte	0x93
+ 1241 0093 01       		.uleb128 0x1
+ 1242 0094 93       		.byte	0x93
+ 1243 0095 01       		.uleb128 0x1
+ 1244 0096 82000000 		.4byte	.LVL19
+ 1245 009a 88000000 		.4byte	.LVL21
+ 1246 009e 1000     		.2byte	0x10
+ 1247 00a0 93       		.byte	0x93
+ 1248 00a1 04       		.uleb128 0x4
+ 1249 00a2 91       		.byte	0x91
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cct0CKSV.s 			page 26
+
+
+ 1250 00a3 60       		.sleb128 -32
+ 1251 00a4 93       		.byte	0x93
+ 1252 00a5 01       		.uleb128 0x1
+ 1253 00a6 91       		.byte	0x91
+ 1254 00a7 5C       		.sleb128 -36
+ 1255 00a8 93       		.byte	0x93
+ 1256 00a9 01       		.uleb128 0x1
+ 1257 00aa 7D       		.byte	0x7d
+ 1258 00ab 00       		.sleb128 0
+ 1259 00ac 93       		.byte	0x93
+ 1260 00ad 01       		.uleb128 0x1
+ 1261 00ae 93       		.byte	0x93
+ 1262 00af 01       		.uleb128 0x1
+ 1263 00b0 88000000 		.4byte	.LVL21
+ 1264 00b4 98000000 		.4byte	.LVL23
+ 1265 00b8 1700     		.2byte	0x17
+ 1266 00ba 55       		.byte	0x55
+ 1267 00bb 93       		.byte	0x93
+ 1268 00bc 02       		.uleb128 0x2
+ 1269 00bd 30       		.byte	0x30
+ 1270 00be 9F       		.byte	0x9f
+ 1271 00bf 93       		.byte	0x93
+ 1272 00c0 01       		.uleb128 0x1
+ 1273 00c1 93       		.byte	0x93
+ 1274 00c2 01       		.uleb128 0x1
+ 1275 00c3 91       		.byte	0x91
+ 1276 00c4 60       		.sleb128 -32
+ 1277 00c5 93       		.byte	0x93
+ 1278 00c6 01       		.uleb128 0x1
+ 1279 00c7 91       		.byte	0x91
+ 1280 00c8 5C       		.sleb128 -36
+ 1281 00c9 93       		.byte	0x93
+ 1282 00ca 01       		.uleb128 0x1
+ 1283 00cb 7D       		.byte	0x7d
+ 1284 00cc 00       		.sleb128 0
+ 1285 00cd 93       		.byte	0x93
+ 1286 00ce 01       		.uleb128 0x1
+ 1287 00cf 93       		.byte	0x93
+ 1288 00d0 01       		.uleb128 0x1
+ 1289 00d1 98000000 		.4byte	.LVL23
+ 1290 00d5 A6000000 		.4byte	.LVL26
+ 1291 00d9 1300     		.2byte	0x13
+ 1292 00db 55       		.byte	0x55
+ 1293 00dc 93       		.byte	0x93
+ 1294 00dd 02       		.uleb128 0x2
+ 1295 00de 93       		.byte	0x93
+ 1296 00df 02       		.uleb128 0x2
+ 1297 00e0 91       		.byte	0x91
+ 1298 00e1 60       		.sleb128 -32
+ 1299 00e2 93       		.byte	0x93
+ 1300 00e3 01       		.uleb128 0x1
+ 1301 00e4 91       		.byte	0x91
+ 1302 00e5 5C       		.sleb128 -36
+ 1303 00e6 93       		.byte	0x93
+ 1304 00e7 01       		.uleb128 0x1
+ 1305 00e8 7D       		.byte	0x7d
+ 1306 00e9 00       		.sleb128 0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cct0CKSV.s 			page 27
+
+
+ 1307 00ea 93       		.byte	0x93
+ 1308 00eb 01       		.uleb128 0x1
+ 1309 00ec 93       		.byte	0x93
+ 1310 00ed 01       		.uleb128 0x1
+ 1311 00ee A6000000 		.4byte	.LVL26
+ 1312 00f2 DA000000 		.4byte	.LVL30
+ 1313 00f6 1600     		.2byte	0x16
+ 1314 00f8 55       		.byte	0x55
+ 1315 00f9 93       		.byte	0x93
+ 1316 00fa 02       		.uleb128 0x2
+ 1317 00fb 52       		.byte	0x52
+ 1318 00fc 93       		.byte	0x93
+ 1319 00fd 01       		.uleb128 0x1
+ 1320 00fe 93       		.byte	0x93
+ 1321 00ff 01       		.uleb128 0x1
+ 1322 0100 91       		.byte	0x91
+ 1323 0101 60       		.sleb128 -32
+ 1324 0102 93       		.byte	0x93
+ 1325 0103 01       		.uleb128 0x1
+ 1326 0104 91       		.byte	0x91
+ 1327 0105 5C       		.sleb128 -36
+ 1328 0106 93       		.byte	0x93
+ 1329 0107 01       		.uleb128 0x1
+ 1330 0108 7D       		.byte	0x7d
+ 1331 0109 00       		.sleb128 0
+ 1332 010a 93       		.byte	0x93
+ 1333 010b 01       		.uleb128 0x1
+ 1334 010c 93       		.byte	0x93
+ 1335 010d 01       		.uleb128 0x1
+ 1336 010e DA000000 		.4byte	.LVL30
+ 1337 0112 F6000000 		.4byte	.LVL31
+ 1338 0116 1300     		.2byte	0x13
+ 1339 0118 55       		.byte	0x55
+ 1340 0119 93       		.byte	0x93
+ 1341 011a 02       		.uleb128 0x2
+ 1342 011b 93       		.byte	0x93
+ 1343 011c 02       		.uleb128 0x2
+ 1344 011d 91       		.byte	0x91
+ 1345 011e 60       		.sleb128 -32
+ 1346 011f 93       		.byte	0x93
+ 1347 0120 01       		.uleb128 0x1
+ 1348 0121 91       		.byte	0x91
+ 1349 0122 5C       		.sleb128 -36
+ 1350 0123 93       		.byte	0x93
+ 1351 0124 01       		.uleb128 0x1
+ 1352 0125 7D       		.byte	0x7d
+ 1353 0126 00       		.sleb128 0
+ 1354 0127 93       		.byte	0x93
+ 1355 0128 01       		.uleb128 0x1
+ 1356 0129 93       		.byte	0x93
+ 1357 012a 01       		.uleb128 0x1
+ 1358 012b F6000000 		.4byte	.LVL31
+ 1359 012f 04010000 		.4byte	.LVL32
+ 1360 0133 1800     		.2byte	0x18
+ 1361 0135 55       		.byte	0x55
+ 1362 0136 93       		.byte	0x93
+ 1363 0137 02       		.uleb128 0x2
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cct0CKSV.s 			page 28
+
+
+ 1364 0138 93       		.byte	0x93
+ 1365 0139 01       		.uleb128 0x1
+ 1366 013a 74       		.byte	0x74
+ 1367 013b 01       		.sleb128 1
+ 1368 013c 9F       		.byte	0x9f
+ 1369 013d 93       		.byte	0x93
+ 1370 013e 01       		.uleb128 0x1
+ 1371 013f 91       		.byte	0x91
+ 1372 0140 60       		.sleb128 -32
+ 1373 0141 93       		.byte	0x93
+ 1374 0142 01       		.uleb128 0x1
+ 1375 0143 91       		.byte	0x91
+ 1376 0144 5C       		.sleb128 -36
+ 1377 0145 93       		.byte	0x93
+ 1378 0146 01       		.uleb128 0x1
+ 1379 0147 7D       		.byte	0x7d
+ 1380 0148 00       		.sleb128 0
+ 1381 0149 93       		.byte	0x93
+ 1382 014a 01       		.uleb128 0x1
+ 1383 014b 93       		.byte	0x93
+ 1384 014c 01       		.uleb128 0x1
+ 1385 014d 04010000 		.4byte	.LVL32
+ 1386 0151 14010000 		.4byte	.LVL33
+ 1387 0155 1300     		.2byte	0x13
+ 1388 0157 55       		.byte	0x55
+ 1389 0158 93       		.byte	0x93
+ 1390 0159 02       		.uleb128 0x2
+ 1391 015a 93       		.byte	0x93
+ 1392 015b 02       		.uleb128 0x2
+ 1393 015c 91       		.byte	0x91
+ 1394 015d 60       		.sleb128 -32
+ 1395 015e 93       		.byte	0x93
+ 1396 015f 01       		.uleb128 0x1
+ 1397 0160 91       		.byte	0x91
+ 1398 0161 5C       		.sleb128 -36
+ 1399 0162 93       		.byte	0x93
+ 1400 0163 01       		.uleb128 0x1
+ 1401 0164 7D       		.byte	0x7d
+ 1402 0165 00       		.sleb128 0
+ 1403 0166 93       		.byte	0x93
+ 1404 0167 01       		.uleb128 0x1
+ 1405 0168 93       		.byte	0x93
+ 1406 0169 01       		.uleb128 0x1
+ 1407 016a 14010000 		.4byte	.LVL33
+ 1408 016e 14010000 		.4byte	.LVL34
+ 1409 0172 1300     		.2byte	0x13
+ 1410 0174 55       		.byte	0x55
+ 1411 0175 93       		.byte	0x93
+ 1412 0176 02       		.uleb128 0x2
+ 1413 0177 93       		.byte	0x93
+ 1414 0178 02       		.uleb128 0x2
+ 1415 0179 91       		.byte	0x91
+ 1416 017a 60       		.sleb128 -32
+ 1417 017b 93       		.byte	0x93
+ 1418 017c 01       		.uleb128 0x1
+ 1419 017d 91       		.byte	0x91
+ 1420 017e 5C       		.sleb128 -36
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cct0CKSV.s 			page 29
+
+
+ 1421 017f 93       		.byte	0x93
+ 1422 0180 01       		.uleb128 0x1
+ 1423 0181 91       		.byte	0x91
+ 1424 0182 58       		.sleb128 -40
+ 1425 0183 93       		.byte	0x93
+ 1426 0184 01       		.uleb128 0x1
+ 1427 0185 93       		.byte	0x93
+ 1428 0186 01       		.uleb128 0x1
+ 1429 0187 14010000 		.4byte	.LVL34
+ 1430 018b 20010000 		.4byte	.LFE3
+ 1431 018f 1400     		.2byte	0x14
+ 1432 0191 70       		.byte	0x70
+ 1433 0192 00       		.sleb128 0
+ 1434 0193 93       		.byte	0x93
+ 1435 0194 02       		.uleb128 0x2
+ 1436 0195 93       		.byte	0x93
+ 1437 0196 02       		.uleb128 0x2
+ 1438 0197 91       		.byte	0x91
+ 1439 0198 60       		.sleb128 -32
+ 1440 0199 93       		.byte	0x93
+ 1441 019a 01       		.uleb128 0x1
+ 1442 019b 91       		.byte	0x91
+ 1443 019c 5C       		.sleb128 -36
+ 1444 019d 93       		.byte	0x93
+ 1445 019e 01       		.uleb128 0x1
+ 1446 019f 91       		.byte	0x91
+ 1447 01a0 58       		.sleb128 -40
+ 1448 01a1 93       		.byte	0x93
+ 1449 01a2 01       		.uleb128 0x1
+ 1450 01a3 93       		.byte	0x93
+ 1451 01a4 01       		.uleb128 0x1
+ 1452 01a5 00000000 		.4byte	0
+ 1453 01a9 00000000 		.4byte	0
+ 1454              	.LLST2:
+ 1455 01ad 12000000 		.4byte	.LVL4
+ 1456 01b1 16000000 		.4byte	.LVL5
+ 1457 01b5 0100     		.2byte	0x1
+ 1458 01b7 51       		.byte	0x51
+ 1459 01b8 16000000 		.4byte	.LVL5
+ 1460 01bc 19000000 		.4byte	.LVL6-1
+ 1461 01c0 0100     		.2byte	0x1
+ 1462 01c2 50       		.byte	0x50
+ 1463 01c3 19000000 		.4byte	.LVL6-1
+ 1464 01c7 4C000000 		.4byte	.LVL14
+ 1465 01cb 0100     		.2byte	0x1
+ 1466 01cd 55       		.byte	0x55
+ 1467 01ce 00000000 		.4byte	0
+ 1468 01d2 00000000 		.4byte	0
+ 1469              	.LLST3:
+ 1470 01d6 4E000000 		.4byte	.LVL15
+ 1471 01da 80000000 		.4byte	.LVL18
+ 1472 01de 0100     		.2byte	0x1
+ 1473 01e0 54       		.byte	0x54
+ 1474 01e1 84000000 		.4byte	.LVL20
+ 1475 01e5 04010000 		.4byte	.LVL32
+ 1476 01e9 0100     		.2byte	0x1
+ 1477 01eb 54       		.byte	0x54
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cct0CKSV.s 			page 30
+
+
+ 1478 01ec 00000000 		.4byte	0
+ 1479 01f0 00000000 		.4byte	0
+ 1480              	.LLST4:
+ 1481 01f4 98000000 		.4byte	.LVL23
+ 1482 01f8 9A000000 		.4byte	.LVL24
+ 1483 01fc 0100     		.2byte	0x1
+ 1484 01fe 50       		.byte	0x50
+ 1485 01ff 00000000 		.4byte	0
+ 1486 0203 00000000 		.4byte	0
+ 1487              	.LLST5:
+ 1488 0207 BE000000 		.4byte	.LVL27
+ 1489 020b CC000000 		.4byte	.LVL29
+ 1490 020f 0100     		.2byte	0x1
+ 1491 0211 52       		.byte	0x52
+ 1492 0212 00000000 		.4byte	0
+ 1493 0216 00000000 		.4byte	0
+ 1494              	.LLST6:
+ 1495 021a BE000000 		.4byte	.LVL27
+ 1496 021e C0000000 		.4byte	.LVL28
+ 1497 0222 0100     		.2byte	0x1
+ 1498 0224 50       		.byte	0x50
+ 1499 0225 00000000 		.4byte	0
+ 1500 0229 00000000 		.4byte	0
+ 1501              	.LLST7:
+ 1502 022d BE000000 		.4byte	.LVL27
+ 1503 0231 DA000000 		.4byte	.LVL30
+ 1504 0235 0200     		.2byte	0x2
+ 1505 0237 4F       		.byte	0x4f
+ 1506 0238 9F       		.byte	0x9f
+ 1507 0239 00000000 		.4byte	0
+ 1508 023d 00000000 		.4byte	0
+ 1509              	.LLST8:
+ 1510 0241 04000000 		.4byte	.LVL36
+ 1511 0245 24000000 		.4byte	.LVL37
+ 1512 0249 0500     		.2byte	0x5
+ 1513 024b 54       		.byte	0x54
+ 1514 024c 93       		.byte	0x93
+ 1515 024d 02       		.uleb128 0x2
+ 1516 024e 93       		.byte	0x93
+ 1517 024f 06       		.uleb128 0x6
+ 1518 0250 24000000 		.4byte	.LVL37
+ 1519 0254 82000000 		.4byte	.LVL51
+ 1520 0258 1700     		.2byte	0x17
+ 1521 025a 54       		.byte	0x54
+ 1522 025b 93       		.byte	0x93
+ 1523 025c 02       		.uleb128 0x2
+ 1524 025d 91       		.byte	0x91
+ 1525 025e 62       		.sleb128 -30
+ 1526 025f 94       		.byte	0x94
+ 1527 0260 01       		.byte	0x1
+ 1528 0261 31       		.byte	0x31
+ 1529 0262 1C       		.byte	0x1c
+ 1530 0263 9F       		.byte	0x9f
+ 1531 0264 93       		.byte	0x93
+ 1532 0265 01       		.uleb128 0x1
+ 1533 0266 91       		.byte	0x91
+ 1534 0267 63       		.sleb128 -29
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cct0CKSV.s 			page 31
+
+
+ 1535 0268 94       		.byte	0x94
+ 1536 0269 01       		.byte	0x1
+ 1537 026a 31       		.byte	0x31
+ 1538 026b 1C       		.byte	0x1c
+ 1539 026c 9F       		.byte	0x9f
+ 1540 026d 93       		.byte	0x93
+ 1541 026e 01       		.uleb128 0x1
+ 1542 026f 93       		.byte	0x93
+ 1543 0270 04       		.uleb128 0x4
+ 1544 0271 82000000 		.4byte	.LVL51
+ 1545 0275 E0000000 		.4byte	.LFE4
+ 1546 0279 1600     		.2byte	0x16
+ 1547 027b 93       		.byte	0x93
+ 1548 027c 02       		.uleb128 0x2
+ 1549 027d 91       		.byte	0x91
+ 1550 027e 62       		.sleb128 -30
+ 1551 027f 94       		.byte	0x94
+ 1552 0280 01       		.byte	0x1
+ 1553 0281 31       		.byte	0x31
+ 1554 0282 1C       		.byte	0x1c
+ 1555 0283 9F       		.byte	0x9f
+ 1556 0284 93       		.byte	0x93
+ 1557 0285 01       		.uleb128 0x1
+ 1558 0286 91       		.byte	0x91
+ 1559 0287 63       		.sleb128 -29
+ 1560 0288 94       		.byte	0x94
+ 1561 0289 01       		.byte	0x1
+ 1562 028a 31       		.byte	0x31
+ 1563 028b 1C       		.byte	0x1c
+ 1564 028c 9F       		.byte	0x9f
+ 1565 028d 93       		.byte	0x93
+ 1566 028e 01       		.uleb128 0x1
+ 1567 028f 93       		.byte	0x93
+ 1568 0290 04       		.uleb128 0x4
+ 1569 0291 00000000 		.4byte	0
+ 1570 0295 00000000 		.4byte	0
+ 1571              	.LLST9:
+ 1572 0299 2A000000 		.4byte	.LVL38
+ 1573 029d 2D000000 		.4byte	.LVL39-1
+ 1574 02a1 0100     		.2byte	0x1
+ 1575 02a3 53       		.byte	0x53
+ 1576 02a4 2D000000 		.4byte	.LVL39-1
+ 1577 02a8 CA000000 		.4byte	.LVL58
+ 1578 02ac 0200     		.2byte	0x2
+ 1579 02ae 91       		.byte	0x91
+ 1580 02af 5C       		.sleb128 -36
+ 1581 02b0 CA000000 		.4byte	.LVL58
+ 1582 02b4 D0000000 		.4byte	.LVL59
+ 1583 02b8 1100     		.2byte	0x11
+ 1584 02ba 76       		.byte	0x76
+ 1585 02bb 00       		.sleb128 0
+ 1586 02bc 0A       		.byte	0xa
+ 1587 02bd FFFF     		.2byte	0xffff
+ 1588 02bf 1A       		.byte	0x1a
+ 1589 02c0 0C       		.byte	0xc
+ 1590 02c1 80510100 		.4byte	0x15180
+ 1591 02c5 1E       		.byte	0x1e
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cct0CKSV.s 			page 32
+
+
+ 1592 02c6 91       		.byte	0x91
+ 1593 02c7 5C       		.sleb128 -36
+ 1594 02c8 06       		.byte	0x6
+ 1595 02c9 22       		.byte	0x22
+ 1596 02ca 9F       		.byte	0x9f
+ 1597 02cb 00000000 		.4byte	0
+ 1598 02cf 00000000 		.4byte	0
+ 1599              	.LLST10:
+ 1600 02d3 40000000 		.4byte	.LVL41
+ 1601 02d7 7C000000 		.4byte	.LVL48
+ 1602 02db 0100     		.2byte	0x1
+ 1603 02dd 56       		.byte	0x56
+ 1604 02de 7E000000 		.4byte	.LVL49
+ 1605 02e2 B0000000 		.4byte	.LVL54
+ 1606 02e6 0100     		.2byte	0x1
+ 1607 02e8 56       		.byte	0x56
+ 1608 02e9 B2000000 		.4byte	.LVL55
+ 1609 02ed D0000000 		.4byte	.LVL59
+ 1610 02f1 0100     		.2byte	0x1
+ 1611 02f3 56       		.byte	0x56
+ 1612 02f4 00000000 		.4byte	0
+ 1613 02f8 00000000 		.4byte	0
+ 1614              	.LLST11:
+ 1615 02fc 40000000 		.4byte	.LVL41
+ 1616 0300 44000000 		.4byte	.LVL42
+ 1617 0304 0700     		.2byte	0x7
+ 1618 0306 91       		.byte	0x91
+ 1619 0307 62       		.sleb128 -30
+ 1620 0308 94       		.byte	0x94
+ 1621 0309 01       		.byte	0x1
+ 1622 030a 31       		.byte	0x31
+ 1623 030b 1C       		.byte	0x1c
+ 1624 030c 9F       		.byte	0x9f
+ 1625 030d 44000000 		.4byte	.LVL42
+ 1626 0311 48000000 		.4byte	.LVL43
+ 1627 0315 0300     		.2byte	0x3
+ 1628 0317 75       		.byte	0x75
+ 1629 0318 01       		.sleb128 1
+ 1630 0319 9F       		.byte	0x9f
+ 1631 031a 48000000 		.4byte	.LVL43
+ 1632 031e 80000000 		.4byte	.LVL50
+ 1633 0322 0100     		.2byte	0x1
+ 1634 0324 55       		.byte	0x55
+ 1635 0325 82000000 		.4byte	.LVL51
+ 1636 0329 D4000000 		.4byte	.LVL61
+ 1637 032d 0100     		.2byte	0x1
+ 1638 032f 55       		.byte	0x55
+ 1639 0330 00000000 		.4byte	0
+ 1640 0334 00000000 		.4byte	0
+ 1641              	.LLST12:
+ 1642 0338 60000000 		.4byte	.LVL44
+ 1643 033c 70000000 		.4byte	.LVL46
+ 1644 0340 0100     		.2byte	0x1
+ 1645 0342 55       		.byte	0x55
+ 1646 0343 70000000 		.4byte	.LVL46
+ 1647 0347 78000000 		.4byte	.LVL47
+ 1648 034b 0100     		.2byte	0x1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cct0CKSV.s 			page 33
+
+
+ 1649 034d 50       		.byte	0x50
+ 1650 034e 00000000 		.4byte	0
+ 1651 0352 00000000 		.4byte	0
+ 1652              	.LLST13:
+ 1653 0356 60000000 		.4byte	.LVL44
+ 1654 035a 62000000 		.4byte	.LVL45
+ 1655 035e 0100     		.2byte	0x1
+ 1656 0360 53       		.byte	0x53
+ 1657 0361 00000000 		.4byte	0
+ 1658 0365 00000000 		.4byte	0
+ 1659              	.LLST14:
+ 1660 0369 60000000 		.4byte	.LVL44
+ 1661 036d 82000000 		.4byte	.LVL51
+ 1662 0371 0200     		.2byte	0x2
+ 1663 0373 4F       		.byte	0x4f
+ 1664 0374 9F       		.byte	0x9f
+ 1665 0375 00000000 		.4byte	0
+ 1666 0379 00000000 		.4byte	0
+ 1667              	.LLST15:
+ 1668 037d 82000000 		.4byte	.LVL51
+ 1669 0381 B4000000 		.4byte	.LVL56
+ 1670 0385 0100     		.2byte	0x1
+ 1671 0387 54       		.byte	0x54
+ 1672 0388 B8000000 		.4byte	.LVL57
+ 1673 038c D4000000 		.4byte	.LVL60
+ 1674 0390 0100     		.2byte	0x1
+ 1675 0392 54       		.byte	0x54
+ 1676 0393 00000000 		.4byte	0
+ 1677 0397 00000000 		.4byte	0
+ 1678              		.section	.debug_aranges,"",%progbits
+ 1679 0000 24000000 		.4byte	0x24
+ 1680 0004 0200     		.2byte	0x2
+ 1681 0006 00000000 		.4byte	.Ldebug_info0
+ 1682 000a 04       		.byte	0x4
+ 1683 000b 00       		.byte	0
+ 1684 000c 0000     		.2byte	0
+ 1685 000e 0000     		.2byte	0
+ 1686 0010 00000000 		.4byte	.LFB3
+ 1687 0014 20010000 		.4byte	.LFE3-.LFB3
+ 1688 0018 00000000 		.4byte	.LFB4
+ 1689 001c E0000000 		.4byte	.LFE4-.LFB4
+ 1690 0020 00000000 		.4byte	0
+ 1691 0024 00000000 		.4byte	0
+ 1692              		.section	.debug_ranges,"",%progbits
+ 1693              	.Ldebug_ranges0:
+ 1694 0000 08000000 		.4byte	.LBB8
+ 1695 0004 3E000000 		.4byte	.LBE8
+ 1696 0008 40000000 		.4byte	.LBB12
+ 1697 000c 42000000 		.4byte	.LBE12
+ 1698 0010 44000000 		.4byte	.LBB14
+ 1699 0014 46000000 		.4byte	.LBE14
+ 1700 0018 00000000 		.4byte	0
+ 1701 001c 00000000 		.4byte	0
+ 1702 0020 3E000000 		.4byte	.LBB9
+ 1703 0024 40000000 		.4byte	.LBE9
+ 1704 0028 42000000 		.4byte	.LBB13
+ 1705 002c 44000000 		.4byte	.LBE13
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cct0CKSV.s 			page 34
+
+
+ 1706 0030 46000000 		.4byte	.LBB15
+ 1707 0034 F6000000 		.4byte	.LBE15
+ 1708 0038 00000000 		.4byte	0
+ 1709 003c 00000000 		.4byte	0
+ 1710 0040 20000000 		.4byte	.LBB21
+ 1711 0044 22000000 		.4byte	.LBE21
+ 1712 0048 24000000 		.4byte	.LBB29
+ 1713 004c 28000000 		.4byte	.LBE29
+ 1714 0050 2A000000 		.4byte	.LBB30
+ 1715 0054 38000000 		.4byte	.LBE30
+ 1716 0058 3E000000 		.4byte	.LBB31
+ 1717 005c D2000000 		.4byte	.LBE31
+ 1718 0060 00000000 		.4byte	0
+ 1719 0064 00000000 		.4byte	0
+ 1720 0068 20000000 		.4byte	.LBB22
+ 1721 006c 22000000 		.4byte	.LBE22
+ 1722 0070 24000000 		.4byte	.LBB25
+ 1723 0074 28000000 		.4byte	.LBE25
+ 1724 0078 2A000000 		.4byte	.LBB26
+ 1725 007c 38000000 		.4byte	.LBE26
+ 1726 0080 40000000 		.4byte	.LBB27
+ 1727 0084 82000000 		.4byte	.LBE27
+ 1728 0088 00000000 		.4byte	0
+ 1729 008c 00000000 		.4byte	0
+ 1730 0090 00000000 		.4byte	.LFB3
+ 1731 0094 20010000 		.4byte	.LFE3
+ 1732 0098 00000000 		.4byte	.LFB4
+ 1733 009c E0000000 		.4byte	.LFE4
+ 1734 00a0 00000000 		.4byte	0
+ 1735 00a4 00000000 		.4byte	0
+ 1736              		.section	.debug_line,"",%progbits
+ 1737              	.Ldebug_line0:
+ 1738 0000 2A010000 		.section	.debug_str,"MS",%progbits,1
+ 1738      02005800 
+ 1738      00000201 
+ 1738      FB0E0D00 
+ 1738      01010101 
+ 1739              	.LASF32:
+ 1740 0000 474E5520 		.ascii	"GNU C 4.9.3 20150303 (release) [ARM/embedded-4_9-br"
+ 1740      4320342E 
+ 1740      392E3320 
+ 1740      32303135 
+ 1740      30333033 
+ 1741 0033 616E6368 		.ascii	"anch revision 221220] -mcpu=cortex-m0 -mthumb -g -O"
+ 1741      20726576 
+ 1741      6973696F 
+ 1741      6E203232 
+ 1741      31323230 
+ 1742 0066 73202D66 		.ascii	"s -ffunction-sections -ffat-lto-objects\000"
+ 1742      66756E63 
+ 1742      74696F6E 
+ 1742      2D736563 
+ 1742      74696F6E 
+ 1743              	.LASF34:
+ 1744 008e 473A5C50 		.ascii	"G:\\Psoc4_prj\\7.rental_house\\18-04-11\\second_ima"
+ 1744      736F6334 
+ 1744      5F70726A 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cct0CKSV.s 			page 35
+
+
+ 1744      5C372E72 
+ 1744      656E7461 
+ 1745 00bd 6765735B 		.ascii	"ges[4-9]\\EntranceGuard_171019-12.50\\EntranceGuard"
+ 1745      342D395D 
+ 1745      5C456E74 
+ 1745      72616E63 
+ 1745      65477561 
+ 1746 00ee 2E637964 		.ascii	".cydsn\000"
+ 1746      736E00
+ 1747              	.LASF23:
+ 1748 00f5 4C656170 		.ascii	"LeapYearFlag\000"
+ 1748      59656172 
+ 1748      466C6167 
+ 1748      00
+ 1749              	.LASF31:
+ 1750 0102 79656172 		.ascii	"year\000"
+ 1750      00
+ 1751              	.LASF3:
+ 1752 0107 73686F72 		.ascii	"short unsigned int\000"
+ 1752      7420756E 
+ 1752      7369676E 
+ 1752      65642069 
+ 1752      6E7400
+ 1753              	.LASF25:
+ 1754 011a 6E756D44 		.ascii	"numDays\000"
+ 1754      61797300 
+ 1755              	.LASF30:
+ 1756 0122 6D6F6E74 		.ascii	"month\000"
+ 1756      6800
+ 1757              	.LASF19:
+ 1758 0128 55544354 		.ascii	"UTCTime\000"
+ 1758      696D6500 
+ 1759              	.LASF18:
+ 1760 0130 494E5431 		.ascii	"INT16U\000"
+ 1760      365500
+ 1761              	.LASF13:
+ 1762 0137 666C6F61 		.ascii	"float\000"
+ 1762      7400
+ 1763              	.LASF1:
+ 1764 013d 756E7369 		.ascii	"unsigned char\000"
+ 1764      676E6564 
+ 1764      20636861 
+ 1764      7200
+ 1765              	.LASF22:
+ 1766 014b 54696D65 		.ascii	"TimeInfo\000"
+ 1766      496E666F 
+ 1766      00
+ 1767              	.LASF26:
+ 1768 0154 6D6F6E74 		.ascii	"monthLen\000"
+ 1768      684C656E 
+ 1768      00
+ 1769              	.LASF5:
+ 1770 015d 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1770      20756E73 
+ 1770      69676E65 
+ 1770      6420696E 
+ 1770      7400
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cct0CKSV.s 			page 36
+
+
+ 1771              	.LASF9:
+ 1772 016f 75696E74 		.ascii	"uint8\000"
+ 1772      3800
+ 1773              	.LASF24:
+ 1774 0175 4D6F6E74 		.ascii	"Month\000"
+ 1774      6800
+ 1775              	.LASF33:
+ 1776 017b 436F6465 		.ascii	"Code\\Common\\utc.c\000"
+ 1776      5C436F6D 
+ 1776      6D6F6E5C 
+ 1776      7574632E 
+ 1776      6300
+ 1777              	.LASF20:
+ 1778 018d 59656172 		.ascii	"Year\000"
+ 1778      00
+ 1779              	.LASF14:
+ 1780 0192 646F7562 		.ascii	"double\000"
+ 1780      6C6500
+ 1781              	.LASF38:
+ 1782 0199 54696D65 		.ascii	"Time_ConvertTo_UtcTime\000"
+ 1782      5F436F6E 
+ 1782      76657274 
+ 1782      546F5F55 
+ 1782      74635469 
+ 1783              	.LASF37:
+ 1784 01b0 55746354 		.ascii	"UtcTime_ConvertTo_Time\000"
+ 1784      696D655F 
+ 1784      436F6E76 
+ 1784      65727454 
+ 1784      6F5F5469 
+ 1785              	.LASF10:
+ 1786 01c7 75696E74 		.ascii	"uint16\000"
+ 1786      313600
+ 1787              	.LASF12:
+ 1788 01ce 696E7438 		.ascii	"int8\000"
+ 1788      00
+ 1789              	.LASF11:
+ 1790 01d3 75696E74 		.ascii	"uint32\000"
+ 1790      333200
+ 1791              	.LASF8:
+ 1792 01da 756E7369 		.ascii	"unsigned int\000"
+ 1792      676E6564 
+ 1792      20696E74 
+ 1792      00
+ 1793              	.LASF17:
+ 1794 01e7 494E5438 		.ascii	"INT8U\000"
+ 1794      5500
+ 1795              	.LASF7:
+ 1796 01ed 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1796      206C6F6E 
+ 1796      6720756E 
+ 1796      7369676E 
+ 1796      65642069 
+ 1797              	.LASF35:
+ 1798 0204 74616754 		.ascii	"tagTimeInfo\000"
+ 1798      696D6549 
+ 1798      6E666F00 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cct0CKSV.s 			page 37
+
+
+ 1799              	.LASF36:
+ 1800 0210 4D6F6E74 		.ascii	"MonthLength\000"
+ 1800      684C656E 
+ 1800      67746800 
+ 1801              	.LASF16:
+ 1802 021c 73697A65 		.ascii	"sizetype\000"
+ 1802      74797065 
+ 1802      00
+ 1803              	.LASF6:
+ 1804 0225 6C6F6E67 		.ascii	"long long int\000"
+ 1804      206C6F6E 
+ 1804      6720696E 
+ 1804      7400
+ 1805              	.LASF28:
+ 1806 0233 7365636F 		.ascii	"seconds\000"
+ 1806      6E647300 
+ 1807              	.LASF15:
+ 1808 023b 63686172 		.ascii	"char\000"
+ 1808      00
+ 1809              	.LASF29:
+ 1810 0240 64617973 		.ascii	"days\000"
+ 1810      00
+ 1811              	.LASF2:
+ 1812 0245 73686F72 		.ascii	"short int\000"
+ 1812      7420696E 
+ 1812      7400
+ 1813              	.LASF21:
+ 1814 024f 486F7572 		.ascii	"Hour\000"
+ 1814      00
+ 1815              	.LASF4:
+ 1816 0254 6C6F6E67 		.ascii	"long int\000"
+ 1816      20696E74 
+ 1816      00
+ 1817              	.LASF27:
+ 1818 025d 73656354 		.ascii	"secTime\000"
+ 1818      696D6500 
+ 1819              	.LASF0:
+ 1820 0265 7369676E 		.ascii	"signed char\000"
+ 1820      65642063 
+ 1820      68617200 
+ 1821              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.9.3 20150303 (release) [ARM/embedded-4_9-br

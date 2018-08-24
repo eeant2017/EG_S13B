@@ -1,0 +1,4757 @@
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 1
+
+
+   1              		.cpu cortex-m0
+   2              		.fpu softvfp
+   3              		.eabi_attribute 20, 1
+   4              		.eabi_attribute 21, 1
+   5              		.eabi_attribute 23, 3
+   6              		.eabi_attribute 24, 1
+   7              		.eabi_attribute 25, 1
+   8              		.eabi_attribute 26, 1
+   9              		.eabi_attribute 30, 4
+  10              		.eabi_attribute 34, 0
+  11              		.eabi_attribute 18, 4
+  12              		.code	16
+  13              		.file	"aes.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.KeyExpansion,"ax",%progbits
+  18              		.align	1
+  19              		.code	16
+  20              		.thumb_func
+  21              		.type	KeyExpansion, %function
+  22              	KeyExpansion:
+  23              	.LFB65:
+  24              		.file 1 "Code\\Common\\crypt\\aes.c"
+   1:Code\Common\crypt/aes.c **** /*
+   2:Code\Common\crypt/aes.c **** 
+   3:Code\Common\crypt/aes.c **** This is an implementation of the AES128 algorithm, specifically ECB.
+   4:Code\Common\crypt/aes.c **** 
+   5:Code\Common\crypt/aes.c **** The implementation is verified against the test vectors in:
+   6:Code\Common\crypt/aes.c ****   National Institute of Standards and Technology Special Publication 800-38A 2001 ED
+   7:Code\Common\crypt/aes.c **** 
+   8:Code\Common\crypt/aes.c **** ECB-AES128
+   9:Code\Common\crypt/aes.c **** ----------
+  10:Code\Common\crypt/aes.c **** 
+  11:Code\Common\crypt/aes.c ****   plain-text:
+  12:Code\Common\crypt/aes.c ****     6bc1bee22e409f96e93d7e117393172a
+  13:Code\Common\crypt/aes.c ****     ae2d8a571e03ac9c9eb76fac45af8e51
+  14:Code\Common\crypt/aes.c ****     30c81c46a35ce411e5fbc1191a0a52ef
+  15:Code\Common\crypt/aes.c ****     f69f2445df4f9b17ad2b417be66c3710
+  16:Code\Common\crypt/aes.c **** 
+  17:Code\Common\crypt/aes.c ****   key:
+  18:Code\Common\crypt/aes.c ****     2b7e151628aed2a6abf7158809cf4f3c
+  19:Code\Common\crypt/aes.c **** 
+  20:Code\Common\crypt/aes.c ****   resulting cipher
+  21:Code\Common\crypt/aes.c ****     3ad77bb40d7a3660a89ecaf32466ef97 
+  22:Code\Common\crypt/aes.c ****     f5d3d58503b9699de785895a96fdbaaf 
+  23:Code\Common\crypt/aes.c ****     43b1cd7f598ece23881b00e3ed030688 
+  24:Code\Common\crypt/aes.c ****     7b0c785e27e8ad3f8223207104725dd4 
+  25:Code\Common\crypt/aes.c **** 
+  26:Code\Common\crypt/aes.c **** 
+  27:Code\Common\crypt/aes.c **** NOTE:   String length must be evenly divisible by 16byte (str_len % 16 == 0)
+  28:Code\Common\crypt/aes.c ****         You should pad the end of the string with zeros if this is not the case.
+  29:Code\Common\crypt/aes.c **** 
+  30:Code\Common\crypt/aes.c **** */
+  31:Code\Common\crypt/aes.c **** 
+  32:Code\Common\crypt/aes.c **** 
+  33:Code\Common\crypt/aes.c **** /*****************************************************************************/
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 2
+
+
+  34:Code\Common\crypt/aes.c **** /* Includes:                                                                 */
+  35:Code\Common\crypt/aes.c **** /*****************************************************************************/
+  36:Code\Common\crypt/aes.c **** //#include "aes.h"
+  37:Code\Common\crypt/aes.c **** #include <string.h>
+  38:Code\Common\crypt/aes.c **** #include <project.h>
+  39:Code\Common\crypt/aes.c **** #include "common.h"
+  40:Code\Common\crypt/aes.c **** 
+  41:Code\Common\crypt/aes.c **** 
+  42:Code\Common\crypt/aes.c **** /*****************************************************************************/
+  43:Code\Common\crypt/aes.c **** /* Defines:                                                                  */
+  44:Code\Common\crypt/aes.c **** /*****************************************************************************/
+  45:Code\Common\crypt/aes.c **** // The number of columns comprising a state in AES. This is a constant in AES. Value=4
+  46:Code\Common\crypt/aes.c **** #define Nb 		4
+  47:Code\Common\crypt/aes.c **** // The number of 32 bit words in a key.
+  48:Code\Common\crypt/aes.c **** #define Nk 		4
+  49:Code\Common\crypt/aes.c **** // Key length in bytes [128 bit]
+  50:Code\Common\crypt/aes.c **** #define KEYLEN 	16
+  51:Code\Common\crypt/aes.c **** // The number of rounds in AES Cipher.
+  52:Code\Common\crypt/aes.c **** #define Nr 		10
+  53:Code\Common\crypt/aes.c **** 
+  54:Code\Common\crypt/aes.c **** // jcallan@github points out that declaring Multiply as a function 
+  55:Code\Common\crypt/aes.c **** // reduces code size considerably with the Keil ARM compiler.
+  56:Code\Common\crypt/aes.c **** // See this link for more information: https://github.com/kokke/tiny-AES128-C/pull/3
+  57:Code\Common\crypt/aes.c **** #ifndef MULTIPLY_AS_A_FUNCTION
+  58:Code\Common\crypt/aes.c ****   #define MULTIPLY_AS_A_FUNCTION 0
+  59:Code\Common\crypt/aes.c **** #endif
+  60:Code\Common\crypt/aes.c **** 
+  61:Code\Common\crypt/aes.c **** 
+  62:Code\Common\crypt/aes.c **** /*****************************************************************************/
+  63:Code\Common\crypt/aes.c **** /* Private variables:                                                        */
+  64:Code\Common\crypt/aes.c **** /*****************************************************************************/
+  65:Code\Common\crypt/aes.c **** // state - array holding the intermediate results during decryption.
+  66:Code\Common\crypt/aes.c **** typedef uint8_t state_t[4][4];
+  67:Code\Common\crypt/aes.c **** static state_t* state;
+  68:Code\Common\crypt/aes.c **** 
+  69:Code\Common\crypt/aes.c **** // The array that stores the round keys.
+  70:Code\Common\crypt/aes.c **** static uint8_t RoundKey[176];
+  71:Code\Common\crypt/aes.c **** 
+  72:Code\Common\crypt/aes.c **** // The Key input to the AES Program
+  73:Code\Common\crypt/aes.c **** static const uint8_t* Key;
+  74:Code\Common\crypt/aes.c **** 
+  75:Code\Common\crypt/aes.c **** // The lookup-tables are marked const so they can be placed in read-only storage instead of RAM
+  76:Code\Common\crypt/aes.c **** // The numbers below can be computed dynamically trading ROM for RAM - 
+  77:Code\Common\crypt/aes.c **** // This can be useful in (embedded) bootloader applications, where ROM is often limited.
+  78:Code\Common\crypt/aes.c **** static const uint8_t sbox[256] =   {
+  79:Code\Common\crypt/aes.c ****   //0     1    2      3     4    5     6     7      8    9     A      B    C     D     E     F
+  80:Code\Common\crypt/aes.c ****   0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76,
+  81:Code\Common\crypt/aes.c ****   0xca, 0x82, 0xc9, 0x7d, 0xfa, 0x59, 0x47, 0xf0, 0xad, 0xd4, 0xa2, 0xaf, 0x9c, 0xa4, 0x72, 0xc0,
+  82:Code\Common\crypt/aes.c ****   0xb7, 0xfd, 0x93, 0x26, 0x36, 0x3f, 0xf7, 0xcc, 0x34, 0xa5, 0xe5, 0xf1, 0x71, 0xd8, 0x31, 0x15,
+  83:Code\Common\crypt/aes.c ****   0x04, 0xc7, 0x23, 0xc3, 0x18, 0x96, 0x05, 0x9a, 0x07, 0x12, 0x80, 0xe2, 0xeb, 0x27, 0xb2, 0x75,
+  84:Code\Common\crypt/aes.c ****   0x09, 0x83, 0x2c, 0x1a, 0x1b, 0x6e, 0x5a, 0xa0, 0x52, 0x3b, 0xd6, 0xb3, 0x29, 0xe3, 0x2f, 0x84,
+  85:Code\Common\crypt/aes.c ****   0x53, 0xd1, 0x00, 0xed, 0x20, 0xfc, 0xb1, 0x5b, 0x6a, 0xcb, 0xbe, 0x39, 0x4a, 0x4c, 0x58, 0xcf,
+  86:Code\Common\crypt/aes.c ****   0xd0, 0xef, 0xaa, 0xfb, 0x43, 0x4d, 0x33, 0x85, 0x45, 0xf9, 0x02, 0x7f, 0x50, 0x3c, 0x9f, 0xa8,
+  87:Code\Common\crypt/aes.c ****   0x51, 0xa3, 0x40, 0x8f, 0x92, 0x9d, 0x38, 0xf5, 0xbc, 0xb6, 0xda, 0x21, 0x10, 0xff, 0xf3, 0xd2,
+  88:Code\Common\crypt/aes.c ****   0xcd, 0x0c, 0x13, 0xec, 0x5f, 0x97, 0x44, 0x17, 0xc4, 0xa7, 0x7e, 0x3d, 0x64, 0x5d, 0x19, 0x73,
+  89:Code\Common\crypt/aes.c ****   0x60, 0x81, 0x4f, 0xdc, 0x22, 0x2a, 0x90, 0x88, 0x46, 0xee, 0xb8, 0x14, 0xde, 0x5e, 0x0b, 0xdb,
+  90:Code\Common\crypt/aes.c ****   0xe0, 0x32, 0x3a, 0x0a, 0x49, 0x06, 0x24, 0x5c, 0xc2, 0xd3, 0xac, 0x62, 0x91, 0x95, 0xe4, 0x79,
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 3
+
+
+  91:Code\Common\crypt/aes.c ****   0xe7, 0xc8, 0x37, 0x6d, 0x8d, 0xd5, 0x4e, 0xa9, 0x6c, 0x56, 0xf4, 0xea, 0x65, 0x7a, 0xae, 0x08,
+  92:Code\Common\crypt/aes.c ****   0xba, 0x78, 0x25, 0x2e, 0x1c, 0xa6, 0xb4, 0xc6, 0xe8, 0xdd, 0x74, 0x1f, 0x4b, 0xbd, 0x8b, 0x8a,
+  93:Code\Common\crypt/aes.c ****   0x70, 0x3e, 0xb5, 0x66, 0x48, 0x03, 0xf6, 0x0e, 0x61, 0x35, 0x57, 0xb9, 0x86, 0xc1, 0x1d, 0x9e,
+  94:Code\Common\crypt/aes.c ****   0xe1, 0xf8, 0x98, 0x11, 0x69, 0xd9, 0x8e, 0x94, 0x9b, 0x1e, 0x87, 0xe9, 0xce, 0x55, 0x28, 0xdf,
+  95:Code\Common\crypt/aes.c ****   0x8c, 0xa1, 0x89, 0x0d, 0xbf, 0xe6, 0x42, 0x68, 0x41, 0x99, 0x2d, 0x0f, 0xb0, 0x54, 0xbb, 0x16 };
+  96:Code\Common\crypt/aes.c **** 
+  97:Code\Common\crypt/aes.c **** static const uint8_t rsbox[256] =
+  98:Code\Common\crypt/aes.c **** { 0x52, 0x09, 0x6a, 0xd5, 0x30, 0x36, 0xa5, 0x38, 0xbf, 0x40, 0xa3, 0x9e, 0x81, 0xf3, 0xd7, 0xfb,
+  99:Code\Common\crypt/aes.c ****   0x7c, 0xe3, 0x39, 0x82, 0x9b, 0x2f, 0xff, 0x87, 0x34, 0x8e, 0x43, 0x44, 0xc4, 0xde, 0xe9, 0xcb,
+ 100:Code\Common\crypt/aes.c ****   0x54, 0x7b, 0x94, 0x32, 0xa6, 0xc2, 0x23, 0x3d, 0xee, 0x4c, 0x95, 0x0b, 0x42, 0xfa, 0xc3, 0x4e,
+ 101:Code\Common\crypt/aes.c ****   0x08, 0x2e, 0xa1, 0x66, 0x28, 0xd9, 0x24, 0xb2, 0x76, 0x5b, 0xa2, 0x49, 0x6d, 0x8b, 0xd1, 0x25,
+ 102:Code\Common\crypt/aes.c ****   0x72, 0xf8, 0xf6, 0x64, 0x86, 0x68, 0x98, 0x16, 0xd4, 0xa4, 0x5c, 0xcc, 0x5d, 0x65, 0xb6, 0x92,
+ 103:Code\Common\crypt/aes.c ****   0x6c, 0x70, 0x48, 0x50, 0xfd, 0xed, 0xb9, 0xda, 0x5e, 0x15, 0x46, 0x57, 0xa7, 0x8d, 0x9d, 0x84,
+ 104:Code\Common\crypt/aes.c ****   0x90, 0xd8, 0xab, 0x00, 0x8c, 0xbc, 0xd3, 0x0a, 0xf7, 0xe4, 0x58, 0x05, 0xb8, 0xb3, 0x45, 0x06,
+ 105:Code\Common\crypt/aes.c ****   0xd0, 0x2c, 0x1e, 0x8f, 0xca, 0x3f, 0x0f, 0x02, 0xc1, 0xaf, 0xbd, 0x03, 0x01, 0x13, 0x8a, 0x6b,
+ 106:Code\Common\crypt/aes.c ****   0x3a, 0x91, 0x11, 0x41, 0x4f, 0x67, 0xdc, 0xea, 0x97, 0xf2, 0xcf, 0xce, 0xf0, 0xb4, 0xe6, 0x73,
+ 107:Code\Common\crypt/aes.c ****   0x96, 0xac, 0x74, 0x22, 0xe7, 0xad, 0x35, 0x85, 0xe2, 0xf9, 0x37, 0xe8, 0x1c, 0x75, 0xdf, 0x6e,
+ 108:Code\Common\crypt/aes.c ****   0x47, 0xf1, 0x1a, 0x71, 0x1d, 0x29, 0xc5, 0x89, 0x6f, 0xb7, 0x62, 0x0e, 0xaa, 0x18, 0xbe, 0x1b,
+ 109:Code\Common\crypt/aes.c ****   0xfc, 0x56, 0x3e, 0x4b, 0xc6, 0xd2, 0x79, 0x20, 0x9a, 0xdb, 0xc0, 0xfe, 0x78, 0xcd, 0x5a, 0xf4,
+ 110:Code\Common\crypt/aes.c ****   0x1f, 0xdd, 0xa8, 0x33, 0x88, 0x07, 0xc7, 0x31, 0xb1, 0x12, 0x10, 0x59, 0x27, 0x80, 0xec, 0x5f,
+ 111:Code\Common\crypt/aes.c ****   0x60, 0x51, 0x7f, 0xa9, 0x19, 0xb5, 0x4a, 0x0d, 0x2d, 0xe5, 0x7a, 0x9f, 0x93, 0xc9, 0x9c, 0xef,
+ 112:Code\Common\crypt/aes.c ****   0xa0, 0xe0, 0x3b, 0x4d, 0xae, 0x2a, 0xf5, 0xb0, 0xc8, 0xeb, 0xbb, 0x3c, 0x83, 0x53, 0x99, 0x61,
+ 113:Code\Common\crypt/aes.c ****   0x17, 0x2b, 0x04, 0x7e, 0xba, 0x77, 0xd6, 0x26, 0xe1, 0x69, 0x14, 0x63, 0x55, 0x21, 0x0c, 0x7d };
+ 114:Code\Common\crypt/aes.c **** 
+ 115:Code\Common\crypt/aes.c **** 
+ 116:Code\Common\crypt/aes.c **** // The round constant word array, Rcon[i], contains the values given by 
+ 117:Code\Common\crypt/aes.c **** // x to th e power (i-1) being powers of x (x is denoted as {02}) in the field GF(2^8)
+ 118:Code\Common\crypt/aes.c **** // Note that i starts at 1, not 0).
+ 119:Code\Common\crypt/aes.c **** #if 0
+ 120:Code\Common\crypt/aes.c **** static const uint8_t Rcon[255] = {
+ 121:Code\Common\crypt/aes.c ****   0x8d, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36, 0x6c, 0xd8, 0xab, 0x4d, 0x9a, 
+ 122:Code\Common\crypt/aes.c ****   0x2f, 0x5e, 0xbc, 0x63, 0xc6, 0x97, 0x35, 0x6a, 0xd4, 0xb3, 0x7d, 0xfa, 0xef, 0xc5, 0x91, 0x39, 
+ 123:Code\Common\crypt/aes.c ****   0x72, 0xe4, 0xd3, 0xbd, 0x61, 0xc2, 0x9f, 0x25, 0x4a, 0x94, 0x33, 0x66, 0xcc, 0x83, 0x1d, 0x3a, 
+ 124:Code\Common\crypt/aes.c ****   0x74, 0xe8, 0xcb, 0x8d, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36, 0x6c, 0xd8, 
+ 125:Code\Common\crypt/aes.c ****   0xab, 0x4d, 0x9a, 0x2f, 0x5e, 0xbc, 0x63, 0xc6, 0x97, 0x35, 0x6a, 0xd4, 0xb3, 0x7d, 0xfa, 0xef, 
+ 126:Code\Common\crypt/aes.c ****   0xc5, 0x91, 0x39, 0x72, 0xe4, 0xd3, 0xbd, 0x61, 0xc2, 0x9f, 0x25, 0x4a, 0x94, 0x33, 0x66, 0xcc, 
+ 127:Code\Common\crypt/aes.c ****   0x83, 0x1d, 0x3a, 0x74, 0xe8, 0xcb, 0x8d, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 
+ 128:Code\Common\crypt/aes.c ****   0x36, 0x6c, 0xd8, 0xab, 0x4d, 0x9a, 0x2f, 0x5e, 0xbc, 0x63, 0xc6, 0x97, 0x35, 0x6a, 0xd4, 0xb3, 
+ 129:Code\Common\crypt/aes.c ****   0x7d, 0xfa, 0xef, 0xc5, 0x91, 0x39, 0x72, 0xe4, 0xd3, 0xbd, 0x61, 0xc2, 0x9f, 0x25, 0x4a, 0x94, 
+ 130:Code\Common\crypt/aes.c ****   0x33, 0x66, 0xcc, 0x83, 0x1d, 0x3a, 0x74, 0xe8, 0xcb, 0x8d, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 
+ 131:Code\Common\crypt/aes.c ****   0x40, 0x80, 0x1b, 0x36, 0x6c, 0xd8, 0xab, 0x4d, 0x9a, 0x2f, 0x5e, 0xbc, 0x63, 0xc6, 0x97, 0x35, 
+ 132:Code\Common\crypt/aes.c ****   0x6a, 0xd4, 0xb3, 0x7d, 0xfa, 0xef, 0xc5, 0x91, 0x39, 0x72, 0xe4, 0xd3, 0xbd, 0x61, 0xc2, 0x9f, 
+ 133:Code\Common\crypt/aes.c ****   0x25, 0x4a, 0x94, 0x33, 0x66, 0xcc, 0x83, 0x1d, 0x3a, 0x74, 0xe8, 0xcb, 0x8d, 0x01, 0x02, 0x04, 
+ 134:Code\Common\crypt/aes.c ****   0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36, 0x6c, 0xd8, 0xab, 0x4d, 0x9a, 0x2f, 0x5e, 0xbc, 0x63, 
+ 135:Code\Common\crypt/aes.c ****   0xc6, 0x97, 0x35, 0x6a, 0xd4, 0xb3, 0x7d, 0xfa, 0xef, 0xc5, 0x91, 0x39, 0x72, 0xe4, 0xd3, 0xbd, 
+ 136:Code\Common\crypt/aes.c ****   0x61, 0xc2, 0x9f, 0x25, 0x4a, 0x94, 0x33, 0x66, 0xcc, 0x83, 0x1d, 0x3a, 0x74, 0xe8, 0xcb  
+ 137:Code\Common\crypt/aes.c **** };
+ 138:Code\Common\crypt/aes.c **** #endif
+ 139:Code\Common\crypt/aes.c **** 
+ 140:Code\Common\crypt/aes.c **** #if 1
+ 141:Code\Common\crypt/aes.c **** static const uint8 Rcon[16] =     
+ 142:Code\Common\crypt/aes.c **** { 0xef, 0x3a, 0x19,  0x3d, 0xca, 0x0b, 0x36, 0x89, 0xa8, 0x61, 0xf6, 0x6c, 0xd8, 0xab, 0x4d, 0x9a};
+ 143:Code\Common\crypt/aes.c **** #endif
+ 144:Code\Common\crypt/aes.c **** 
+ 145:Code\Common\crypt/aes.c **** 
+ 146:Code\Common\crypt/aes.c **** /*****************************************************************************/
+ 147:Code\Common\crypt/aes.c **** /* Private functions:                                                        */
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 4
+
+
+ 148:Code\Common\crypt/aes.c **** /*****************************************************************************/
+ 149:Code\Common\crypt/aes.c **** static uint8_t getSBoxValue(uint8_t num)
+ 150:Code\Common\crypt/aes.c **** {
+ 151:Code\Common\crypt/aes.c ****   return sbox[num];
+ 152:Code\Common\crypt/aes.c **** }
+ 153:Code\Common\crypt/aes.c **** 
+ 154:Code\Common\crypt/aes.c **** static uint8_t getSBoxInvert(uint8_t num)
+ 155:Code\Common\crypt/aes.c **** {
+ 156:Code\Common\crypt/aes.c ****   return rsbox[num];
+ 157:Code\Common\crypt/aes.c **** }
+ 158:Code\Common\crypt/aes.c **** 
+ 159:Code\Common\crypt/aes.c **** // This function produces Nb(Nr+1) round keys. The round keys are used in each round to decrypt the
+ 160:Code\Common\crypt/aes.c **** static void KeyExpansion(void)
+ 161:Code\Common\crypt/aes.c **** {
+  25              		.loc 1 161 0
+  26              		.cfi_startproc
+  27              	.LVL0:
+ 162:Code\Common\crypt/aes.c ****   uint32_t i, j, k;
+ 163:Code\Common\crypt/aes.c ****   uint8_t tempa[4]; // Used for the column/row operations
+ 164:Code\Common\crypt/aes.c ****   
+ 165:Code\Common\crypt/aes.c ****   // The first round key is the key itself.
+ 166:Code\Common\crypt/aes.c ****   for (i = 0; i < Nk; ++i)
+ 167:Code\Common\crypt/aes.c ****   {
+ 168:Code\Common\crypt/aes.c ****     RoundKey[(i * 4) + 0] = Key[(i * 4) + 0];
+  28              		.loc 1 168 0
+  29 0000 264B     		ldr	r3, .L8
+ 161:Code\Common\crypt/aes.c ****   uint32_t i, j, k;
+  30              		.loc 1 161 0
+  31 0002 F0B5     		push	{r4, r5, r6, r7, lr}
+  32              		.cfi_def_cfa_offset 20
+  33              		.cfi_offset 4, -20
+  34              		.cfi_offset 5, -16
+  35              		.cfi_offset 6, -12
+  36              		.cfi_offset 7, -8
+  37              		.cfi_offset 14, -4
+  38              		.loc 1 168 0
+  39 0004 1A68     		ldr	r2, [r3]
+  40 0006 0533     		add	r3, r3, #5
+  41 0008 101C     		mov	r0, r2
+  42 000a 191C     		mov	r1, r3
+ 161:Code\Common\crypt/aes.c ****   uint32_t i, j, k;
+  43              		.loc 1 161 0
+  44 000c 85B0     		sub	sp, sp, #20
+  45              		.cfi_def_cfa_offset 40
+  46 000e 1030     		add	r0, r0, #16
+  47              	.LVL1:
+  48              	.L2:
+  49              		.loc 1 168 0 discriminator 3
+  50 0010 1578     		ldrb	r5, [r2]
+  51 0012 4C1E     		sub	r4, r1, #1
+  52 0014 2570     		strb	r5, [r4]
+ 169:Code\Common\crypt/aes.c ****     RoundKey[(i * 4) + 1] = Key[(i * 4) + 1];
+  53              		.loc 1 169 0 discriminator 3
+  54 0016 5478     		ldrb	r4, [r2, #1]
+  55 0018 0C70     		strb	r4, [r1]
+ 170:Code\Common\crypt/aes.c ****     RoundKey[(i * 4) + 2] = Key[(i * 4) + 2];
+  56              		.loc 1 170 0 discriminator 3
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 5
+
+
+  57 001a 9478     		ldrb	r4, [r2, #2]
+  58 001c 4C70     		strb	r4, [r1, #1]
+ 171:Code\Common\crypt/aes.c ****     RoundKey[(i * 4) + 3] = Key[(i * 4) + 3];
+  59              		.loc 1 171 0 discriminator 3
+  60 001e D478     		ldrb	r4, [r2, #3]
+  61 0020 0432     		add	r2, r2, #4
+  62 0022 8C70     		strb	r4, [r1, #2]
+  63 0024 0431     		add	r1, r1, #4
+ 166:Code\Common\crypt/aes.c ****   {
+  64              		.loc 1 166 0 discriminator 3
+  65 0026 8242     		cmp	r2, r0
+  66 0028 F2D1     		bne	.L2
+  67 002a 2824     		mov	r4, #40
+  68              	.L3:
+  69 002c 2C21     		mov	r1, #44
+ 168:Code\Common\crypt/aes.c ****     RoundKey[(i * 4) + 1] = Key[(i * 4) + 1];
+  70              		.loc 1 168 0
+  71 002e 0020     		mov	r0, #0
+  72 0030 091B     		sub	r1, r1, r4
+  73              	.LVL2:
+  74              	.L4:
+  75 0032 1D1C     		mov	r5, r3
+  76 0034 0B35     		add	r5, r5, #11
+ 172:Code\Common\crypt/aes.c ****   }
+ 173:Code\Common\crypt/aes.c **** 
+ 174:Code\Common\crypt/aes.c ****   // All other round keys are found from the previous round keys.
+ 175:Code\Common\crypt/aes.c ****   for (; (i < (Nb * (Nr + 1))); ++i)
+ 176:Code\Common\crypt/aes.c ****   {
+ 177:Code\Common\crypt/aes.c ****     for (j = 0; j < 4; ++j)
+ 178:Code\Common\crypt/aes.c ****     {
+ 179:Code\Common\crypt/aes.c ****       tempa[j] = RoundKey[(i-1) * 4 + j];
+  77              		.loc 1 179 0 discriminator 3
+  78 0036 2D5C     		ldrb	r5, [r5, r0]
+  79 0038 03AA     		add	r2, sp, #12
+  80 003a 8554     		strb	r5, [r0, r2]
+ 177:Code\Common\crypt/aes.c ****     {
+  81              		.loc 1 177 0 discriminator 3
+  82 003c 0130     		add	r0, r0, #1
+  83              	.LVL3:
+  84 003e 0428     		cmp	r0, #4
+  85 0040 F7D1     		bne	.L4
+ 180:Code\Common\crypt/aes.c ****     }
+ 181:Code\Common\crypt/aes.c ****     if (i % Nk == 0)
+  86              		.loc 1 181 0
+  87 0042 8807     		lsl	r0, r1, #30
+  88 0044 12D1     		bne	.L5
+  89              	.LVL4:
+  90              	.LBB14:
+  91              	.LBB15:
+ 151:Code\Common\crypt/aes.c **** }
+  92              		.loc 1 151 0
+  93 0046 1648     		ldr	r0, .L8+4
+  94 0048 5578     		ldrb	r5, [r2, #1]
+  95              	.LBE15:
+  96              	.LBE14:
+ 182:Code\Common\crypt/aes.c ****     {
+ 183:Code\Common\crypt/aes.c ****       // This function rotates the 4 bytes in a word to the left once.
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 6
+
+
+ 184:Code\Common\crypt/aes.c ****       // [a0,a1,a2,a3] becomes [a1,a2,a3,a0]
+ 185:Code\Common\crypt/aes.c **** 
+ 186:Code\Common\crypt/aes.c ****       // Function RotWord()
+ 187:Code\Common\crypt/aes.c ****       {
+ 188:Code\Common\crypt/aes.c ****         k = tempa[0];
+ 189:Code\Common\crypt/aes.c ****         tempa[0] = tempa[1];
+ 190:Code\Common\crypt/aes.c ****         tempa[1] = tempa[2];
+ 191:Code\Common\crypt/aes.c ****         tempa[2] = tempa[3];
+  97              		.loc 1 191 0
+  98 004a D778     		ldrb	r7, [r2, #3]
+  99              	.LBB18:
+ 100              	.LBB16:
+ 151:Code\Common\crypt/aes.c **** }
+ 101              		.loc 1 151 0
+ 102 004c 455D     		ldrb	r5, [r0, r5]
+ 103              	.LBE16:
+ 104              	.LBE18:
+ 188:Code\Common\crypt/aes.c ****         tempa[0] = tempa[1];
+ 105              		.loc 1 188 0
+ 106 004e 1678     		ldrb	r6, [r2]
+ 107              	.LVL5:
+ 108              	.LBB19:
+ 109              	.LBB17:
+ 151:Code\Common\crypt/aes.c **** }
+ 110              		.loc 1 151 0
+ 111 0050 0195     		str	r5, [sp, #4]
+ 112              	.LVL6:
+ 113              	.LBE17:
+ 114              	.LBE19:
+ 115              	.LBB20:
+ 116              	.LBB21:
+ 117 0052 9578     		ldrb	r5, [r2, #2]
+ 118              	.LBE21:
+ 119              	.LBE20:
+ 192:Code\Common\crypt/aes.c ****         tempa[3] = k;
+ 193:Code\Common\crypt/aes.c ****       }
+ 194:Code\Common\crypt/aes.c **** 
+ 195:Code\Common\crypt/aes.c ****       // SubWord() is a function that takes a four-byte input word and 
+ 196:Code\Common\crypt/aes.c ****       // applies the S-box to each of the four bytes to produce an output word.
+ 197:Code\Common\crypt/aes.c **** 
+ 198:Code\Common\crypt/aes.c ****       // Function Subword()
+ 199:Code\Common\crypt/aes.c ****       {
+ 200:Code\Common\crypt/aes.c ****         tempa[0] = getSBoxValue(tempa[0]);
+ 201:Code\Common\crypt/aes.c ****         tempa[1] = getSBoxValue(tempa[1]);
+ 202:Code\Common\crypt/aes.c ****         tempa[2] = getSBoxValue(tempa[2]);
+ 120              		.loc 1 202 0
+ 121 0054 C75D     		ldrb	r7, [r0, r7]
+ 201:Code\Common\crypt/aes.c ****         tempa[2] = getSBoxValue(tempa[2]);
+ 122              		.loc 1 201 0
+ 123 0056 455D     		ldrb	r5, [r0, r5]
+ 203:Code\Common\crypt/aes.c ****         tempa[3] = getSBoxValue(tempa[3]);
+ 124              		.loc 1 203 0
+ 125 0058 805D     		ldrb	r0, [r0, r6]
+ 204:Code\Common\crypt/aes.c ****       }
+ 205:Code\Common\crypt/aes.c **** 
+ 206:Code\Common\crypt/aes.c ****       tempa[0] =  tempa[0] ^ Rcon[i/Nk];
+ 126              		.loc 1 206 0
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 7
+
+
+ 127 005a 8908     		lsr	r1, r1, #2
+ 128              	.LVL7:
+ 203:Code\Common\crypt/aes.c ****         tempa[3] = getSBoxValue(tempa[3]);
+ 129              		.loc 1 203 0
+ 130 005c D070     		strb	r0, [r2, #3]
+ 131              		.loc 1 206 0
+ 132 005e 1148     		ldr	r0, .L8+8
+ 201:Code\Common\crypt/aes.c ****         tempa[2] = getSBoxValue(tempa[2]);
+ 133              		.loc 1 201 0
+ 134 0060 5570     		strb	r5, [r2, #1]
+ 135              	.LVL8:
+ 136              		.loc 1 206 0
+ 137 0062 415C     		ldrb	r1, [r0, r1]
+ 138 0064 0198     		ldr	r0, [sp, #4]
+ 202:Code\Common\crypt/aes.c ****         tempa[3] = getSBoxValue(tempa[3]);
+ 139              		.loc 1 202 0
+ 140 0066 9770     		strb	r7, [r2, #2]
+ 141              	.LVL9:
+ 142              		.loc 1 206 0
+ 143 0068 4140     		eor	r1, r0
+ 144 006a 1170     		strb	r1, [r2]
+ 145              	.LVL10:
+ 146              	.L5:
+ 147 006c 591E     		sub	r1, r3, #1
+ 207:Code\Common\crypt/aes.c ****     }
+ 208:Code\Common\crypt/aes.c ****     else if (Nk > 6 && i % Nk == 4)
+ 209:Code\Common\crypt/aes.c ****     {
+ 210:Code\Common\crypt/aes.c ****       // Function Subword()
+ 211:Code\Common\crypt/aes.c ****       {
+ 212:Code\Common\crypt/aes.c ****         tempa[0] = getSBoxValue(tempa[0]);
+ 213:Code\Common\crypt/aes.c ****         tempa[1] = getSBoxValue(tempa[1]);
+ 214:Code\Common\crypt/aes.c ****         tempa[2] = getSBoxValue(tempa[2]);
+ 215:Code\Common\crypt/aes.c ****         tempa[3] = getSBoxValue(tempa[3]);
+ 216:Code\Common\crypt/aes.c ****       }
+ 217:Code\Common\crypt/aes.c ****     }
+ 218:Code\Common\crypt/aes.c ****     RoundKey[i * 4 + 0] = RoundKey[(i - Nk) * 4 + 0] ^ tempa[0];
+ 148              		.loc 1 218 0
+ 149 006e 0878     		ldrb	r0, [r1]
+ 150 0070 1178     		ldrb	r1, [r2]
+ 151 0072 013C     		sub	r4, r4, #1
+ 152              	.LVL11:
+ 153 0074 4140     		eor	r1, r0
+ 154 0076 D973     		strb	r1, [r3, #15]
+ 219:Code\Common\crypt/aes.c ****     RoundKey[i * 4 + 1] = RoundKey[(i - Nk) * 4 + 1] ^ tempa[1];
+ 155              		.loc 1 219 0
+ 156 0078 5178     		ldrb	r1, [r2, #1]
+ 157 007a 1878     		ldrb	r0, [r3]
+ 158 007c 4140     		eor	r1, r0
+ 159 007e 1974     		strb	r1, [r3, #16]
+ 220:Code\Common\crypt/aes.c ****     RoundKey[i * 4 + 2] = RoundKey[(i - Nk) * 4 + 2] ^ tempa[2];
+ 160              		.loc 1 220 0
+ 161 0080 9178     		ldrb	r1, [r2, #2]
+ 162 0082 5878     		ldrb	r0, [r3, #1]
+ 163 0084 4140     		eor	r1, r0
+ 164 0086 5974     		strb	r1, [r3, #17]
+ 221:Code\Common\crypt/aes.c ****     RoundKey[i * 4 + 3] = RoundKey[(i - Nk) * 4 + 3] ^ tempa[3];
+ 165              		.loc 1 221 0
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 8
+
+
+ 166 0088 D278     		ldrb	r2, [r2, #3]
+ 167 008a 9978     		ldrb	r1, [r3, #2]
+ 168 008c 0433     		add	r3, r3, #4
+ 169 008e 4A40     		eor	r2, r1
+ 170 0090 9A73     		strb	r2, [r3, #14]
+ 171              	.LVL12:
+ 175:Code\Common\crypt/aes.c ****   {
+ 172              		.loc 1 175 0
+ 173 0092 002C     		cmp	r4, #0
+ 174 0094 CAD1     		bne	.L3
+ 222:Code\Common\crypt/aes.c ****   }
+ 223:Code\Common\crypt/aes.c **** }
+ 175              		.loc 1 223 0
+ 176 0096 05B0     		add	sp, sp, #20
+ 177              		@ sp needed
+ 178 0098 F0BD     		pop	{r4, r5, r6, r7, pc}
+ 179              	.L9:
+ 180 009a C046     		.align	2
+ 181              	.L8:
+ 182 009c 00000000 		.word	.LANCHOR0
+ 183 00a0 00000000 		.word	.LANCHOR1
+ 184 00a4 00010000 		.word	.LANCHOR2
+ 185              		.cfi_endproc
+ 186              	.LFE65:
+ 187              		.size	KeyExpansion, .-KeyExpansion
+ 188              		.section	.text.AddRoundKey,"ax",%progbits
+ 189              		.align	1
+ 190              		.code	16
+ 191              		.thumb_func
+ 192              		.type	AddRoundKey, %function
+ 193              	AddRoundKey:
+ 194              	.LFB66:
+ 224:Code\Common\crypt/aes.c **** 
+ 225:Code\Common\crypt/aes.c **** // This function adds the round key to state.
+ 226:Code\Common\crypt/aes.c **** // The round key is added to the state by an XOR function.
+ 227:Code\Common\crypt/aes.c **** static void AddRoundKey(uint8_t round)
+ 228:Code\Common\crypt/aes.c **** {
+ 195              		.loc 1 228 0
+ 196              		.cfi_startproc
+ 197              	.LVL13:
+ 198 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 199              		.cfi_def_cfa_offset 20
+ 200              		.cfi_offset 4, -20
+ 201              		.cfi_offset 5, -16
+ 202              		.cfi_offset 6, -12
+ 203              		.cfi_offset 7, -8
+ 204              		.cfi_offset 14, -4
+ 229:Code\Common\crypt/aes.c ****   uint8_t i,j;
+ 230:Code\Common\crypt/aes.c ****   for(i=0;i<4;++i)
+ 231:Code\Common\crypt/aes.c ****   {
+ 232:Code\Common\crypt/aes.c ****     for(j = 0; j < 4; ++j)
+ 233:Code\Common\crypt/aes.c ****     {
+ 234:Code\Common\crypt/aes.c ****       (*state)[i][j] ^= RoundKey[round * Nb * 4 + i * Nb + j];
+ 205              		.loc 1 234 0
+ 206 0002 0024     		mov	r4, #0
+ 207 0004 094B     		ldr	r3, .L14
+ 208 0006 0001     		lsl	r0, r0, #4
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 9
+
+
+ 209              	.LVL14:
+ 210 0008 5D6B     		ldr	r5, [r3, #52]
+ 211              	.LVL15:
+ 212              	.L11:
+ 213 000a 0949     		ldr	r1, .L14+4
+ 214 000c 2318     		add	r3, r4, r0
+ 215 000e 0431     		add	r1, r1, #4
+ 216 0010 C918     		add	r1, r1, r3
+ 228:Code\Common\crypt/aes.c ****   uint8_t i,j;
+ 217              		.loc 1 228 0
+ 218 0012 0023     		mov	r3, #0
+ 219              	.LVL16:
+ 220              	.L12:
+ 221 0014 2A19     		add	r2, r5, r4
+ 222              		.loc 1 234 0 discriminator 3
+ 223 0016 CF5C     		ldrb	r7, [r1, r3]
+ 224 0018 D65C     		ldrb	r6, [r2, r3]
+ 225 001a 7E40     		eor	r6, r7
+ 226 001c D654     		strb	r6, [r2, r3]
+ 227              	.LVL17:
+ 228 001e 0133     		add	r3, r3, #1
+ 229              	.LVL18:
+ 232:Code\Common\crypt/aes.c ****     {
+ 230              		.loc 1 232 0 discriminator 3
+ 231 0020 042B     		cmp	r3, #4
+ 232 0022 F7D1     		bne	.L12
+ 233 0024 0434     		add	r4, r4, #4
+ 230:Code\Common\crypt/aes.c ****   {
+ 234              		.loc 1 230 0 discriminator 2
+ 235 0026 102C     		cmp	r4, #16
+ 236 0028 EFD1     		bne	.L11
+ 235:Code\Common\crypt/aes.c ****     }
+ 236:Code\Common\crypt/aes.c ****   }
+ 237:Code\Common\crypt/aes.c **** }
+ 237              		.loc 1 237 0
+ 238              		@ sp needed
+ 239 002a F0BD     		pop	{r4, r5, r6, r7, pc}
+ 240              	.L15:
+ 241              		.align	2
+ 242              	.L14:
+ 243 002c 80000000 		.word	.LANCHOR3
+ 244 0030 00000000 		.word	.LANCHOR0
+ 245              		.cfi_endproc
+ 246              	.LFE66:
+ 247              		.size	AddRoundKey, .-AddRoundKey
+ 248              		.section	.text.SubBytes,"ax",%progbits
+ 249              		.align	1
+ 250              		.code	16
+ 251              		.thumb_func
+ 252              		.type	SubBytes, %function
+ 253              	SubBytes:
+ 254              	.LFB67:
+ 238:Code\Common\crypt/aes.c **** 
+ 239:Code\Common\crypt/aes.c **** // The SubBytes Function Substitutes the values in the
+ 240:Code\Common\crypt/aes.c **** // state matrix with values in an S-box.
+ 241:Code\Common\crypt/aes.c **** static void SubBytes(void)
+ 242:Code\Common\crypt/aes.c **** {
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 10
+
+
+ 255              		.loc 1 242 0
+ 256              		.cfi_startproc
+ 257              	.LVL19:
+ 243:Code\Common\crypt/aes.c ****   uint8_t i, j;
+ 244:Code\Common\crypt/aes.c ****   for(i = 0; i < 4; ++i)
+ 245:Code\Common\crypt/aes.c ****   {
+ 246:Code\Common\crypt/aes.c ****     for(j = 0; j < 4; ++j)
+ 247:Code\Common\crypt/aes.c ****     {
+ 248:Code\Common\crypt/aes.c ****       (*state)[j][i] = getSBoxValue((*state)[j][i]);
+ 258              		.loc 1 248 0
+ 259 0000 074B     		ldr	r3, .L20
+ 242:Code\Common\crypt/aes.c ****   uint8_t i, j;
+ 260              		.loc 1 242 0
+ 261 0002 10B5     		push	{r4, lr}
+ 262              		.cfi_def_cfa_offset 8
+ 263              		.cfi_offset 4, -8
+ 264              		.cfi_offset 14, -4
+ 265              		.loc 1 248 0
+ 266 0004 5B6B     		ldr	r3, [r3, #52]
+ 267 0006 191D     		add	r1, r3, #4
+ 268              	.LVL20:
+ 269              	.L17:
+ 242:Code\Common\crypt/aes.c ****   uint8_t i, j;
+ 270              		.loc 1 242 0
+ 271 0008 0022     		mov	r2, #0
+ 272              	.LVL21:
+ 273              	.L18:
+ 274              	.LBB22:
+ 275              	.LBB23:
+ 151:Code\Common\crypt/aes.c **** }
+ 276              		.loc 1 151 0 discriminator 3
+ 277 000a 985C     		ldrb	r0, [r3, r2]
+ 278              	.LBE23:
+ 279              	.LBE22:
+ 280              		.loc 1 248 0 discriminator 3
+ 281 000c 054C     		ldr	r4, .L20+4
+ 282 000e 205C     		ldrb	r0, [r4, r0]
+ 283 0010 9854     		strb	r0, [r3, r2]
+ 284              	.LVL22:
+ 285 0012 0432     		add	r2, r2, #4
+ 246:Code\Common\crypt/aes.c ****     {
+ 286              		.loc 1 246 0 discriminator 3
+ 287 0014 102A     		cmp	r2, #16
+ 288 0016 F8D1     		bne	.L18
+ 289              	.LVL23:
+ 290 0018 0133     		add	r3, r3, #1
+ 291              	.LVL24:
+ 244:Code\Common\crypt/aes.c ****   {
+ 292              		.loc 1 244 0 discriminator 2
+ 293 001a 8B42     		cmp	r3, r1
+ 294 001c F4D1     		bne	.L17
+ 249:Code\Common\crypt/aes.c ****     }
+ 250:Code\Common\crypt/aes.c ****   }
+ 251:Code\Common\crypt/aes.c **** }
+ 295              		.loc 1 251 0
+ 296              		@ sp needed
+ 297 001e 10BD     		pop	{r4, pc}
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 11
+
+
+ 298              	.L21:
+ 299              		.align	2
+ 300              	.L20:
+ 301 0020 80000000 		.word	.LANCHOR3
+ 302 0024 00000000 		.word	.LANCHOR1
+ 303              		.cfi_endproc
+ 304              	.LFE67:
+ 305              		.size	SubBytes, .-SubBytes
+ 306              		.section	.text.ShiftRows,"ax",%progbits
+ 307              		.align	1
+ 308              		.code	16
+ 309              		.thumb_func
+ 310              		.type	ShiftRows, %function
+ 311              	ShiftRows:
+ 312              	.LFB68:
+ 252:Code\Common\crypt/aes.c **** 
+ 253:Code\Common\crypt/aes.c **** // The ShiftRows() function shifts the rows in the state to the left.
+ 254:Code\Common\crypt/aes.c **** // Each row is shifted with different offset.
+ 255:Code\Common\crypt/aes.c **** // Offset = Row number. So the first row is not shifted.
+ 256:Code\Common\crypt/aes.c **** static void ShiftRows(void)
+ 257:Code\Common\crypt/aes.c **** {
+ 313              		.loc 1 257 0
+ 314              		.cfi_startproc
+ 258:Code\Common\crypt/aes.c ****   uint8_t temp;
+ 259:Code\Common\crypt/aes.c **** 
+ 260:Code\Common\crypt/aes.c ****   // Rotate first row 1 columns to left  
+ 261:Code\Common\crypt/aes.c ****   temp           = (*state)[0][1];
+ 315              		.loc 1 261 0
+ 316 0000 0D4B     		ldr	r3, .L23
+ 262:Code\Common\crypt/aes.c ****   (*state)[0][1] = (*state)[1][1];
+ 263:Code\Common\crypt/aes.c ****   (*state)[1][1] = (*state)[2][1];
+ 264:Code\Common\crypt/aes.c ****   (*state)[2][1] = (*state)[3][1];
+ 265:Code\Common\crypt/aes.c ****   (*state)[3][1] = temp;
+ 266:Code\Common\crypt/aes.c **** 
+ 267:Code\Common\crypt/aes.c ****   // Rotate second row 2 columns to left  
+ 268:Code\Common\crypt/aes.c ****   temp           = (*state)[0][2];
+ 269:Code\Common\crypt/aes.c ****   (*state)[0][2] = (*state)[2][2];
+ 270:Code\Common\crypt/aes.c ****   (*state)[2][2] = temp;
+ 271:Code\Common\crypt/aes.c **** 
+ 272:Code\Common\crypt/aes.c ****   temp       = (*state)[1][2];
+ 273:Code\Common\crypt/aes.c ****   (*state)[1][2] = (*state)[3][2];
+ 274:Code\Common\crypt/aes.c ****   (*state)[3][2] = temp;
+ 275:Code\Common\crypt/aes.c **** 
+ 276:Code\Common\crypt/aes.c ****   // Rotate third row 3 columns to left
+ 277:Code\Common\crypt/aes.c ****   temp       = (*state)[0][3];
+ 278:Code\Common\crypt/aes.c ****   (*state)[0][3] = (*state)[3][3];
+ 279:Code\Common\crypt/aes.c ****   (*state)[3][3] = (*state)[2][3];
+ 280:Code\Common\crypt/aes.c ****   (*state)[2][3] = (*state)[1][3];
+ 281:Code\Common\crypt/aes.c ****   (*state)[1][3] = temp;
+ 282:Code\Common\crypt/aes.c **** }
+ 317              		.loc 1 282 0
+ 318              		@ sp needed
+ 261:Code\Common\crypt/aes.c ****   (*state)[0][1] = (*state)[1][1];
+ 319              		.loc 1 261 0
+ 320 0002 5B6B     		ldr	r3, [r3, #52]
+ 262:Code\Common\crypt/aes.c ****   (*state)[0][1] = (*state)[1][1];
+ 321              		.loc 1 262 0
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 12
+
+
+ 322 0004 5979     		ldrb	r1, [r3, #5]
+ 261:Code\Common\crypt/aes.c ****   (*state)[0][1] = (*state)[1][1];
+ 323              		.loc 1 261 0
+ 324 0006 5A78     		ldrb	r2, [r3, #1]
+ 325              	.LVL25:
+ 262:Code\Common\crypt/aes.c ****   (*state)[0][1] = (*state)[1][1];
+ 326              		.loc 1 262 0
+ 327 0008 5970     		strb	r1, [r3, #1]
+ 263:Code\Common\crypt/aes.c ****   (*state)[2][1] = (*state)[3][1];
+ 328              		.loc 1 263 0
+ 329 000a 597A     		ldrb	r1, [r3, #9]
+ 330 000c 5971     		strb	r1, [r3, #5]
+ 264:Code\Common\crypt/aes.c ****   (*state)[3][1] = temp;
+ 331              		.loc 1 264 0
+ 332 000e 597B     		ldrb	r1, [r3, #13]
+ 265:Code\Common\crypt/aes.c **** 
+ 333              		.loc 1 265 0
+ 334 0010 5A73     		strb	r2, [r3, #13]
+ 264:Code\Common\crypt/aes.c ****   (*state)[3][1] = temp;
+ 335              		.loc 1 264 0
+ 336 0012 5972     		strb	r1, [r3, #9]
+ 269:Code\Common\crypt/aes.c ****   (*state)[2][2] = temp;
+ 337              		.loc 1 269 0
+ 338 0014 997A     		ldrb	r1, [r3, #10]
+ 268:Code\Common\crypt/aes.c ****   (*state)[0][2] = (*state)[2][2];
+ 339              		.loc 1 268 0
+ 340 0016 9A78     		ldrb	r2, [r3, #2]
+ 341              	.LVL26:
+ 269:Code\Common\crypt/aes.c ****   (*state)[2][2] = temp;
+ 342              		.loc 1 269 0
+ 343 0018 9970     		strb	r1, [r3, #2]
+ 273:Code\Common\crypt/aes.c ****   (*state)[3][2] = temp;
+ 344              		.loc 1 273 0
+ 345 001a 997B     		ldrb	r1, [r3, #14]
+ 270:Code\Common\crypt/aes.c **** 
+ 346              		.loc 1 270 0
+ 347 001c 9A72     		strb	r2, [r3, #10]
+ 272:Code\Common\crypt/aes.c ****   (*state)[1][2] = (*state)[3][2];
+ 348              		.loc 1 272 0
+ 349 001e 9A79     		ldrb	r2, [r3, #6]
+ 350              	.LVL27:
+ 273:Code\Common\crypt/aes.c ****   (*state)[3][2] = temp;
+ 351              		.loc 1 273 0
+ 352 0020 9971     		strb	r1, [r3, #6]
+ 278:Code\Common\crypt/aes.c ****   (*state)[3][3] = (*state)[2][3];
+ 353              		.loc 1 278 0
+ 354 0022 D97B     		ldrb	r1, [r3, #15]
+ 274:Code\Common\crypt/aes.c **** 
+ 355              		.loc 1 274 0
+ 356 0024 9A73     		strb	r2, [r3, #14]
+ 277:Code\Common\crypt/aes.c ****   (*state)[0][3] = (*state)[3][3];
+ 357              		.loc 1 277 0
+ 358 0026 DA78     		ldrb	r2, [r3, #3]
+ 359              	.LVL28:
+ 278:Code\Common\crypt/aes.c ****   (*state)[3][3] = (*state)[2][3];
+ 360              		.loc 1 278 0
+ 361 0028 D970     		strb	r1, [r3, #3]
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 13
+
+
+ 279:Code\Common\crypt/aes.c ****   (*state)[2][3] = (*state)[1][3];
+ 362              		.loc 1 279 0
+ 363 002a D97A     		ldrb	r1, [r3, #11]
+ 364 002c D973     		strb	r1, [r3, #15]
+ 280:Code\Common\crypt/aes.c ****   (*state)[1][3] = temp;
+ 365              		.loc 1 280 0
+ 366 002e D979     		ldrb	r1, [r3, #7]
+ 281:Code\Common\crypt/aes.c **** }
+ 367              		.loc 1 281 0
+ 368 0030 DA71     		strb	r2, [r3, #7]
+ 280:Code\Common\crypt/aes.c ****   (*state)[1][3] = temp;
+ 369              		.loc 1 280 0
+ 370 0032 D972     		strb	r1, [r3, #11]
+ 371              		.loc 1 282 0
+ 372 0034 7047     		bx	lr
+ 373              	.L24:
+ 374 0036 C046     		.align	2
+ 375              	.L23:
+ 376 0038 80000000 		.word	.LANCHOR3
+ 377              		.cfi_endproc
+ 378              	.LFE68:
+ 379              		.size	ShiftRows, .-ShiftRows
+ 380              		.section	.text.xtime,"ax",%progbits
+ 381              		.align	1
+ 382              		.code	16
+ 383              		.thumb_func
+ 384              		.type	xtime, %function
+ 385              	xtime:
+ 386              	.LFB69:
+ 283:Code\Common\crypt/aes.c **** 
+ 284:Code\Common\crypt/aes.c **** static uint8_t xtime(uint8_t x)
+ 285:Code\Common\crypt/aes.c **** {
+ 387              		.loc 1 285 0
+ 388              		.cfi_startproc
+ 389              	.LVL29:
+ 286:Code\Common\crypt/aes.c ****   return ((x<<1) ^ (((x>>7) & 1) * 0x1b));
+ 390              		.loc 1 286 0
+ 391 0000 1B23     		mov	r3, #27
+ 392 0002 C209     		lsr	r2, r0, #7
+ 393 0004 5343     		mul	r3, r2
+ 394 0006 4000     		lsl	r0, r0, #1
+ 395              	.LVL30:
+ 396 0008 5840     		eor	r0, r3
+ 397 000a C0B2     		uxtb	r0, r0
+ 287:Code\Common\crypt/aes.c **** }
+ 398              		.loc 1 287 0
+ 399              		@ sp needed
+ 400 000c 7047     		bx	lr
+ 401              		.cfi_endproc
+ 402              	.LFE69:
+ 403              		.size	xtime, .-xtime
+ 404              		.section	.text.InvSubBytes,"ax",%progbits
+ 405              		.align	1
+ 406              		.code	16
+ 407              		.thumb_func
+ 408              		.type	InvSubBytes, %function
+ 409              	InvSubBytes:
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 14
+
+
+ 410              	.LFB72:
+ 288:Code\Common\crypt/aes.c **** 
+ 289:Code\Common\crypt/aes.c **** // MixColumns function mixes the columns of the state matrix
+ 290:Code\Common\crypt/aes.c **** static void MixColumns(void)
+ 291:Code\Common\crypt/aes.c **** {
+ 292:Code\Common\crypt/aes.c ****   uint8_t i;
+ 293:Code\Common\crypt/aes.c ****   uint8_t Tmp,Tm,t;
+ 294:Code\Common\crypt/aes.c ****   for(i = 0; i < 4; ++i)
+ 295:Code\Common\crypt/aes.c ****   {  
+ 296:Code\Common\crypt/aes.c ****     t   = (*state)[i][0];
+ 297:Code\Common\crypt/aes.c ****     Tmp = (*state)[i][0] ^ (*state)[i][1] ^ (*state)[i][2] ^ (*state)[i][3] ;
+ 298:Code\Common\crypt/aes.c ****     Tm  = (*state)[i][0] ^ (*state)[i][1] ; Tm = xtime(Tm);  (*state)[i][0] ^= Tm ^ Tmp ;
+ 299:Code\Common\crypt/aes.c ****     Tm  = (*state)[i][1] ^ (*state)[i][2] ; Tm = xtime(Tm);  (*state)[i][1] ^= Tm ^ Tmp ;
+ 300:Code\Common\crypt/aes.c ****     Tm  = (*state)[i][2] ^ (*state)[i][3] ; Tm = xtime(Tm);  (*state)[i][2] ^= Tm ^ Tmp ;
+ 301:Code\Common\crypt/aes.c ****     Tm  = (*state)[i][3] ^ t ;        Tm = xtime(Tm);  (*state)[i][3] ^= Tm ^ Tmp ;
+ 302:Code\Common\crypt/aes.c ****   }
+ 303:Code\Common\crypt/aes.c **** }
+ 304:Code\Common\crypt/aes.c **** 
+ 305:Code\Common\crypt/aes.c **** // Multiply is used to multiply numbers in the field GF(2^8)
+ 306:Code\Common\crypt/aes.c **** #if MULTIPLY_AS_A_FUNCTION
+ 307:Code\Common\crypt/aes.c **** static uint8_t Multiply(uint8_t x, uint8_t y)
+ 308:Code\Common\crypt/aes.c **** {
+ 309:Code\Common\crypt/aes.c ****   return (((y & 1) * x) ^
+ 310:Code\Common\crypt/aes.c ****        ((y>>1 & 1) * xtime(x)) ^
+ 311:Code\Common\crypt/aes.c ****        ((y>>2 & 1) * xtime(xtime(x))) ^
+ 312:Code\Common\crypt/aes.c ****        ((y>>3 & 1) * xtime(xtime(xtime(x)))) ^
+ 313:Code\Common\crypt/aes.c ****        ((y>>4 & 1) * xtime(xtime(xtime(xtime(x))))));
+ 314:Code\Common\crypt/aes.c ****   }
+ 315:Code\Common\crypt/aes.c **** #else
+ 316:Code\Common\crypt/aes.c **** #define Multiply(x, y)                                \
+ 317:Code\Common\crypt/aes.c ****       (  ((y & 1) * x) ^                              \
+ 318:Code\Common\crypt/aes.c ****       ((y>>1 & 1) * xtime(x)) ^                       \
+ 319:Code\Common\crypt/aes.c ****       ((y>>2 & 1) * xtime(xtime(x))) ^                \
+ 320:Code\Common\crypt/aes.c ****       ((y>>3 & 1) * xtime(xtime(xtime(x)))) ^         \
+ 321:Code\Common\crypt/aes.c ****       ((y>>4 & 1) * xtime(xtime(xtime(xtime(x))))))   \
+ 322:Code\Common\crypt/aes.c **** 
+ 323:Code\Common\crypt/aes.c **** #endif
+ 324:Code\Common\crypt/aes.c **** 
+ 325:Code\Common\crypt/aes.c **** // MixColumns function mixes the columns of the state matrix.
+ 326:Code\Common\crypt/aes.c **** // The method used to multiply may be difficult to understand for the inexperienced.
+ 327:Code\Common\crypt/aes.c **** // Please use the references to gain more information.
+ 328:Code\Common\crypt/aes.c **** static void InvMixColumns(void)
+ 329:Code\Common\crypt/aes.c **** {
+ 330:Code\Common\crypt/aes.c ****   int i;
+ 331:Code\Common\crypt/aes.c ****   uint8_t a,b,c,d;
+ 332:Code\Common\crypt/aes.c ****   for(i=0;i<4;++i)
+ 333:Code\Common\crypt/aes.c ****   { 
+ 334:Code\Common\crypt/aes.c ****     a = (*state)[i][0];
+ 335:Code\Common\crypt/aes.c ****     b = (*state)[i][1];
+ 336:Code\Common\crypt/aes.c ****     c = (*state)[i][2];
+ 337:Code\Common\crypt/aes.c ****     d = (*state)[i][3];
+ 338:Code\Common\crypt/aes.c **** 
+ 339:Code\Common\crypt/aes.c ****     (*state)[i][0] = Multiply(a, 0x0e) ^ Multiply(b, 0x0b) ^ Multiply(c, 0x0d) ^ Multiply(d, 0x09);
+ 340:Code\Common\crypt/aes.c ****     (*state)[i][1] = Multiply(a, 0x09) ^ Multiply(b, 0x0e) ^ Multiply(c, 0x0b) ^ Multiply(d, 0x0d);
+ 341:Code\Common\crypt/aes.c ****     (*state)[i][2] = Multiply(a, 0x0d) ^ Multiply(b, 0x09) ^ Multiply(c, 0x0e) ^ Multiply(d, 0x0b);
+ 342:Code\Common\crypt/aes.c ****     (*state)[i][3] = Multiply(a, 0x0b) ^ Multiply(b, 0x0d) ^ Multiply(c, 0x09) ^ Multiply(d, 0x0e);
+ 343:Code\Common\crypt/aes.c ****   }
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 15
+
+
+ 344:Code\Common\crypt/aes.c **** }
+ 345:Code\Common\crypt/aes.c **** 
+ 346:Code\Common\crypt/aes.c **** 
+ 347:Code\Common\crypt/aes.c **** // The SubBytes Function Substitutes the values in the
+ 348:Code\Common\crypt/aes.c **** // state matrix with values in an S-box.
+ 349:Code\Common\crypt/aes.c **** static void InvSubBytes(void)
+ 350:Code\Common\crypt/aes.c **** {
+ 411              		.loc 1 350 0
+ 412              		.cfi_startproc
+ 413              	.LVL31:
+ 351:Code\Common\crypt/aes.c ****   uint8_t i,j;
+ 352:Code\Common\crypt/aes.c ****   for(i=0;i<4;++i)
+ 353:Code\Common\crypt/aes.c ****   {
+ 354:Code\Common\crypt/aes.c ****     for(j=0;j<4;++j)
+ 355:Code\Common\crypt/aes.c ****     {
+ 356:Code\Common\crypt/aes.c ****       (*state)[j][i] = getSBoxInvert((*state)[j][i]);
+ 414              		.loc 1 356 0
+ 415 0000 084B     		ldr	r3, .L30
+ 350:Code\Common\crypt/aes.c ****   uint8_t i,j;
+ 416              		.loc 1 350 0
+ 417 0002 10B5     		push	{r4, lr}
+ 418              		.cfi_def_cfa_offset 8
+ 419              		.cfi_offset 4, -8
+ 420              		.cfi_offset 14, -4
+ 421              		.loc 1 356 0
+ 422 0004 5B6B     		ldr	r3, [r3, #52]
+ 423 0006 181D     		add	r0, r3, #4
+ 424              	.LVL32:
+ 425              	.L27:
+ 350:Code\Common\crypt/aes.c ****   uint8_t i,j;
+ 426              		.loc 1 350 0
+ 427 0008 0022     		mov	r2, #0
+ 428              	.LVL33:
+ 429              	.L28:
+ 430              	.LBB24:
+ 431              	.LBB25:
+ 156:Code\Common\crypt/aes.c **** }
+ 432              		.loc 1 156 0 discriminator 3
+ 433 000a 995C     		ldrb	r1, [r3, r2]
+ 434 000c 064C     		ldr	r4, .L30+4
+ 435 000e 6118     		add	r1, r4, r1
+ 436              	.LBE25:
+ 437              	.LBE24:
+ 438              		.loc 1 356 0 discriminator 3
+ 439 0010 097C     		ldrb	r1, [r1, #16]
+ 440 0012 9954     		strb	r1, [r3, r2]
+ 441              	.LVL34:
+ 442 0014 0432     		add	r2, r2, #4
+ 354:Code\Common\crypt/aes.c ****     {
+ 443              		.loc 1 354 0 discriminator 3
+ 444 0016 102A     		cmp	r2, #16
+ 445 0018 F7D1     		bne	.L28
+ 446              	.LVL35:
+ 447 001a 0133     		add	r3, r3, #1
+ 448              	.LVL36:
+ 352:Code\Common\crypt/aes.c ****   {
+ 449              		.loc 1 352 0 discriminator 2
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 16
+
+
+ 450 001c 8342     		cmp	r3, r0
+ 451 001e F3D1     		bne	.L27
+ 357:Code\Common\crypt/aes.c ****     }
+ 358:Code\Common\crypt/aes.c ****   }
+ 359:Code\Common\crypt/aes.c **** }
+ 452              		.loc 1 359 0
+ 453              		@ sp needed
+ 454 0020 10BD     		pop	{r4, pc}
+ 455              	.L31:
+ 456 0022 C046     		.align	2
+ 457              	.L30:
+ 458 0024 80000000 		.word	.LANCHOR3
+ 459 0028 00010000 		.word	.LANCHOR2
+ 460              		.cfi_endproc
+ 461              	.LFE72:
+ 462              		.size	InvSubBytes, .-InvSubBytes
+ 463              		.section	.text.InvShiftRows,"ax",%progbits
+ 464              		.align	1
+ 465              		.code	16
+ 466              		.thumb_func
+ 467              		.type	InvShiftRows, %function
+ 468              	InvShiftRows:
+ 469              	.LFB73:
+ 360:Code\Common\crypt/aes.c **** 
+ 361:Code\Common\crypt/aes.c **** static void InvShiftRows(void)
+ 362:Code\Common\crypt/aes.c **** {
+ 470              		.loc 1 362 0
+ 471              		.cfi_startproc
+ 363:Code\Common\crypt/aes.c ****   uint8_t temp;
+ 364:Code\Common\crypt/aes.c **** 
+ 365:Code\Common\crypt/aes.c ****   // Rotate first row 1 columns to right  
+ 366:Code\Common\crypt/aes.c ****   temp=(*state)[3][1];
+ 472              		.loc 1 366 0
+ 473 0000 0D4B     		ldr	r3, .L33
+ 367:Code\Common\crypt/aes.c ****   (*state)[3][1]=(*state)[2][1];
+ 368:Code\Common\crypt/aes.c ****   (*state)[2][1]=(*state)[1][1];
+ 369:Code\Common\crypt/aes.c ****   (*state)[1][1]=(*state)[0][1];
+ 370:Code\Common\crypt/aes.c ****   (*state)[0][1]=temp;
+ 371:Code\Common\crypt/aes.c **** 
+ 372:Code\Common\crypt/aes.c ****   // Rotate second row 2 columns to right 
+ 373:Code\Common\crypt/aes.c ****   temp=(*state)[0][2];
+ 374:Code\Common\crypt/aes.c ****   (*state)[0][2]=(*state)[2][2];
+ 375:Code\Common\crypt/aes.c ****   (*state)[2][2]=temp;
+ 376:Code\Common\crypt/aes.c **** 
+ 377:Code\Common\crypt/aes.c ****   temp=(*state)[1][2];
+ 378:Code\Common\crypt/aes.c ****   (*state)[1][2]=(*state)[3][2];
+ 379:Code\Common\crypt/aes.c ****   (*state)[3][2]=temp;
+ 380:Code\Common\crypt/aes.c **** 
+ 381:Code\Common\crypt/aes.c ****   // Rotate third row 3 columns to right
+ 382:Code\Common\crypt/aes.c ****   temp=(*state)[0][3];
+ 383:Code\Common\crypt/aes.c ****   (*state)[0][3]=(*state)[1][3];
+ 384:Code\Common\crypt/aes.c ****   (*state)[1][3]=(*state)[2][3];
+ 385:Code\Common\crypt/aes.c ****   (*state)[2][3]=(*state)[3][3];
+ 386:Code\Common\crypt/aes.c ****   (*state)[3][3]=temp;
+ 387:Code\Common\crypt/aes.c **** }
+ 474              		.loc 1 387 0
+ 475              		@ sp needed
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 17
+
+
+ 366:Code\Common\crypt/aes.c ****   (*state)[3][1]=(*state)[2][1];
+ 476              		.loc 1 366 0
+ 477 0002 5B6B     		ldr	r3, [r3, #52]
+ 367:Code\Common\crypt/aes.c ****   (*state)[3][1]=(*state)[2][1];
+ 478              		.loc 1 367 0
+ 479 0004 597A     		ldrb	r1, [r3, #9]
+ 366:Code\Common\crypt/aes.c ****   (*state)[3][1]=(*state)[2][1];
+ 480              		.loc 1 366 0
+ 481 0006 5A7B     		ldrb	r2, [r3, #13]
+ 482              	.LVL37:
+ 367:Code\Common\crypt/aes.c ****   (*state)[3][1]=(*state)[2][1];
+ 483              		.loc 1 367 0
+ 484 0008 5973     		strb	r1, [r3, #13]
+ 368:Code\Common\crypt/aes.c ****   (*state)[1][1]=(*state)[0][1];
+ 485              		.loc 1 368 0
+ 486 000a 5979     		ldrb	r1, [r3, #5]
+ 487 000c 5972     		strb	r1, [r3, #9]
+ 369:Code\Common\crypt/aes.c ****   (*state)[0][1]=temp;
+ 488              		.loc 1 369 0
+ 489 000e 5978     		ldrb	r1, [r3, #1]
+ 370:Code\Common\crypt/aes.c **** 
+ 490              		.loc 1 370 0
+ 491 0010 5A70     		strb	r2, [r3, #1]
+ 369:Code\Common\crypt/aes.c ****   (*state)[0][1]=temp;
+ 492              		.loc 1 369 0
+ 493 0012 5971     		strb	r1, [r3, #5]
+ 374:Code\Common\crypt/aes.c ****   (*state)[2][2]=temp;
+ 494              		.loc 1 374 0
+ 495 0014 997A     		ldrb	r1, [r3, #10]
+ 373:Code\Common\crypt/aes.c ****   (*state)[0][2]=(*state)[2][2];
+ 496              		.loc 1 373 0
+ 497 0016 9A78     		ldrb	r2, [r3, #2]
+ 498              	.LVL38:
+ 374:Code\Common\crypt/aes.c ****   (*state)[2][2]=temp;
+ 499              		.loc 1 374 0
+ 500 0018 9970     		strb	r1, [r3, #2]
+ 378:Code\Common\crypt/aes.c ****   (*state)[3][2]=temp;
+ 501              		.loc 1 378 0
+ 502 001a 997B     		ldrb	r1, [r3, #14]
+ 375:Code\Common\crypt/aes.c **** 
+ 503              		.loc 1 375 0
+ 504 001c 9A72     		strb	r2, [r3, #10]
+ 377:Code\Common\crypt/aes.c ****   (*state)[1][2]=(*state)[3][2];
+ 505              		.loc 1 377 0
+ 506 001e 9A79     		ldrb	r2, [r3, #6]
+ 507              	.LVL39:
+ 378:Code\Common\crypt/aes.c ****   (*state)[3][2]=temp;
+ 508              		.loc 1 378 0
+ 509 0020 9971     		strb	r1, [r3, #6]
+ 383:Code\Common\crypt/aes.c ****   (*state)[1][3]=(*state)[2][3];
+ 510              		.loc 1 383 0
+ 511 0022 D979     		ldrb	r1, [r3, #7]
+ 379:Code\Common\crypt/aes.c **** 
+ 512              		.loc 1 379 0
+ 513 0024 9A73     		strb	r2, [r3, #14]
+ 382:Code\Common\crypt/aes.c ****   (*state)[0][3]=(*state)[1][3];
+ 514              		.loc 1 382 0
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 18
+
+
+ 515 0026 DA78     		ldrb	r2, [r3, #3]
+ 516              	.LVL40:
+ 383:Code\Common\crypt/aes.c ****   (*state)[1][3]=(*state)[2][3];
+ 517              		.loc 1 383 0
+ 518 0028 D970     		strb	r1, [r3, #3]
+ 384:Code\Common\crypt/aes.c ****   (*state)[2][3]=(*state)[3][3];
+ 519              		.loc 1 384 0
+ 520 002a D97A     		ldrb	r1, [r3, #11]
+ 521 002c D971     		strb	r1, [r3, #7]
+ 385:Code\Common\crypt/aes.c ****   (*state)[3][3]=temp;
+ 522              		.loc 1 385 0
+ 523 002e D97B     		ldrb	r1, [r3, #15]
+ 386:Code\Common\crypt/aes.c **** }
+ 524              		.loc 1 386 0
+ 525 0030 DA73     		strb	r2, [r3, #15]
+ 385:Code\Common\crypt/aes.c ****   (*state)[3][3]=temp;
+ 526              		.loc 1 385 0
+ 527 0032 D972     		strb	r1, [r3, #11]
+ 528              		.loc 1 387 0
+ 529 0034 7047     		bx	lr
+ 530              	.L34:
+ 531 0036 C046     		.align	2
+ 532              	.L33:
+ 533 0038 80000000 		.word	.LANCHOR3
+ 534              		.cfi_endproc
+ 535              	.LFE73:
+ 536              		.size	InvShiftRows, .-InvShiftRows
+ 537              		.section	.text.AES128_ECB_encrypt,"ax",%progbits
+ 538              		.align	1
+ 539              		.global	AES128_ECB_encrypt
+ 540              		.code	16
+ 541              		.thumb_func
+ 542              		.type	AES128_ECB_encrypt, %function
+ 543              	AES128_ECB_encrypt:
+ 544              	.LFB77:
+ 388:Code\Common\crypt/aes.c **** 
+ 389:Code\Common\crypt/aes.c **** 
+ 390:Code\Common\crypt/aes.c **** // Cipher is the main function that encrypts the PlainText.
+ 391:Code\Common\crypt/aes.c **** static void Cipher(void)
+ 392:Code\Common\crypt/aes.c **** {
+ 393:Code\Common\crypt/aes.c ****   uint8_t round = 0;
+ 394:Code\Common\crypt/aes.c **** 
+ 395:Code\Common\crypt/aes.c ****   // Add the First round key to the state before starting the rounds.
+ 396:Code\Common\crypt/aes.c ****   AddRoundKey(0); 
+ 397:Code\Common\crypt/aes.c ****   
+ 398:Code\Common\crypt/aes.c ****   // There will be Nr rounds.
+ 399:Code\Common\crypt/aes.c ****   // The first Nr-1 rounds are identical.
+ 400:Code\Common\crypt/aes.c ****   // These Nr-1 rounds are executed in the loop below.
+ 401:Code\Common\crypt/aes.c ****   for(round = 1; round < Nr; ++round)
+ 402:Code\Common\crypt/aes.c ****   {
+ 403:Code\Common\crypt/aes.c ****     SubBytes();
+ 404:Code\Common\crypt/aes.c ****     ShiftRows();
+ 405:Code\Common\crypt/aes.c ****     MixColumns();
+ 406:Code\Common\crypt/aes.c ****     AddRoundKey(round);
+ 407:Code\Common\crypt/aes.c ****   }
+ 408:Code\Common\crypt/aes.c ****   
+ 409:Code\Common\crypt/aes.c ****   // The last round is given below.
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 19
+
+
+ 410:Code\Common\crypt/aes.c ****   // The MixColumns function is not here in the last round.
+ 411:Code\Common\crypt/aes.c ****   SubBytes();
+ 412:Code\Common\crypt/aes.c ****   ShiftRows();
+ 413:Code\Common\crypt/aes.c ****   AddRoundKey(Nr);
+ 414:Code\Common\crypt/aes.c **** }
+ 415:Code\Common\crypt/aes.c **** 
+ 416:Code\Common\crypt/aes.c **** static void InvCipher(void)
+ 417:Code\Common\crypt/aes.c **** {
+ 418:Code\Common\crypt/aes.c ****   uint8_t round=0;
+ 419:Code\Common\crypt/aes.c **** 
+ 420:Code\Common\crypt/aes.c ****   // Add the First round key to the state before starting the rounds.
+ 421:Code\Common\crypt/aes.c ****   AddRoundKey(Nr); 
+ 422:Code\Common\crypt/aes.c **** 
+ 423:Code\Common\crypt/aes.c ****   // There will be Nr rounds.
+ 424:Code\Common\crypt/aes.c ****   // The first Nr-1 rounds are identical.
+ 425:Code\Common\crypt/aes.c ****   // These Nr-1 rounds are executed in the loop below.
+ 426:Code\Common\crypt/aes.c ****   for(round=Nr-1;round>0;round--)
+ 427:Code\Common\crypt/aes.c ****   {
+ 428:Code\Common\crypt/aes.c ****     InvShiftRows();
+ 429:Code\Common\crypt/aes.c ****     InvSubBytes();
+ 430:Code\Common\crypt/aes.c ****     AddRoundKey(round);
+ 431:Code\Common\crypt/aes.c ****     InvMixColumns();
+ 432:Code\Common\crypt/aes.c ****   }
+ 433:Code\Common\crypt/aes.c ****   
+ 434:Code\Common\crypt/aes.c ****   // The last round is given below.
+ 435:Code\Common\crypt/aes.c ****   // The MixColumns function is not here in the last round.
+ 436:Code\Common\crypt/aes.c ****   InvShiftRows();
+ 437:Code\Common\crypt/aes.c ****   InvSubBytes();
+ 438:Code\Common\crypt/aes.c ****   AddRoundKey(0);
+ 439:Code\Common\crypt/aes.c **** }
+ 440:Code\Common\crypt/aes.c **** 
+ 441:Code\Common\crypt/aes.c **** static void BlockCopy(uint8_t* output, uint8_t* input)
+ 442:Code\Common\crypt/aes.c **** {
+ 443:Code\Common\crypt/aes.c ****   uint8_t i;
+ 444:Code\Common\crypt/aes.c ****   for (i = 0; i < KEYLEN; ++i)
+ 445:Code\Common\crypt/aes.c ****   {
+ 446:Code\Common\crypt/aes.c ****     output[i] = input[i];
+ 447:Code\Common\crypt/aes.c ****   }
+ 448:Code\Common\crypt/aes.c **** }
+ 449:Code\Common\crypt/aes.c **** 
+ 450:Code\Common\crypt/aes.c **** /*****************************************************************************/
+ 451:Code\Common\crypt/aes.c **** /* Public functions:                                                         */
+ 452:Code\Common\crypt/aes.c **** /*****************************************************************************/
+ 453:Code\Common\crypt/aes.c **** void AES128_ECB_encrypt(uint8_t* input, const uint8_t* key)
+ 454:Code\Common\crypt/aes.c **** {
+ 545              		.loc 1 454 0
+ 546              		.cfi_startproc
+ 547              	.LVL41:
+ 548 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 549              		.cfi_def_cfa_offset 20
+ 550              		.cfi_offset 4, -20
+ 551              		.cfi_offset 5, -16
+ 552              		.cfi_offset 6, -12
+ 553              		.cfi_offset 7, -8
+ 554              		.cfi_offset 14, -4
+ 455:Code\Common\crypt/aes.c ****   // Copy input to output, and work in-memory on output
+ 456:Code\Common\crypt/aes.c **** //BlockCopy(output, input);
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 20
+
+
+ 457:Code\Common\crypt/aes.c ****   state = (state_t*)input;
+ 555              		.loc 1 457 0
+ 556 0002 2C4B     		ldr	r3, .L38
+ 454:Code\Common\crypt/aes.c ****   // Copy input to output, and work in-memory on output
+ 557              		.loc 1 454 0
+ 558 0004 87B0     		sub	sp, sp, #28
+ 559              		.cfi_def_cfa_offset 48
+ 560              		.loc 1 457 0
+ 561 0006 5863     		str	r0, [r3, #52]
+ 458:Code\Common\crypt/aes.c **** 
+ 459:Code\Common\crypt/aes.c ****   Key = key;
+ 562              		.loc 1 459 0
+ 563 0008 2B4B     		ldr	r3, .L38+4
+ 454:Code\Common\crypt/aes.c ****   // Copy input to output, and work in-memory on output
+ 564              		.loc 1 454 0
+ 565 000a 071C     		mov	r7, r0
+ 566              		.loc 1 459 0
+ 567 000c 1960     		str	r1, [r3]
+ 460:Code\Common\crypt/aes.c ****   KeyExpansion();
+ 568              		.loc 1 460 0
+ 569 000e FFF7FEFF 		bl	KeyExpansion
+ 570              	.LVL42:
+ 571              	.LBB30:
+ 572              	.LBB31:
+ 396:Code\Common\crypt/aes.c ****   
+ 573              		.loc 1 396 0
+ 574 0012 0020     		mov	r0, #0
+ 575 0014 FFF7FEFF 		bl	AddRoundKey
+ 576              	.LVL43:
+ 401:Code\Common\crypt/aes.c ****   {
+ 577              		.loc 1 401 0
+ 578 0018 0125     		mov	r5, #1
+ 579              	.LVL44:
+ 580              	.L37:
+ 403:Code\Common\crypt/aes.c ****     ShiftRows();
+ 581              		.loc 1 403 0
+ 582 001a FFF7FEFF 		bl	SubBytes
+ 583              	.LVL45:
+ 404:Code\Common\crypt/aes.c ****     MixColumns();
+ 584              		.loc 1 404 0
+ 585 001e FFF7FEFF 		bl	ShiftRows
+ 586              	.LVL46:
+ 587 0022 3B1C     		mov	r3, r7
+ 588 0024 3C1C     		mov	r4, r7
+ 589 0026 1033     		add	r3, r3, #16
+ 590 0028 0593     		str	r3, [sp, #20]
+ 591              	.LVL47:
+ 592              	.L36:
+ 593              	.LBB32:
+ 594              	.LBB33:
+ 296:Code\Common\crypt/aes.c ****     Tmp = (*state)[i][0] ^ (*state)[i][1] ^ (*state)[i][2] ^ (*state)[i][3] ;
+ 595              		.loc 1 296 0
+ 596 002a 2378     		ldrb	r3, [r4]
+ 597 002c 0093     		str	r3, [sp]
+ 598              	.LVL48:
+ 297:Code\Common\crypt/aes.c ****     Tm  = (*state)[i][0] ^ (*state)[i][1] ; Tm = xtime(Tm);  (*state)[i][0] ^= Tm ^ Tmp ;
+ 599              		.loc 1 297 0
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 21
+
+
+ 600 002e 0098     		ldr	r0, [sp]
+ 601 0030 6378     		ldrb	r3, [r4, #1]
+ 602 0032 5840     		eor	r0, r3
+ 603 0034 0193     		str	r3, [sp, #4]
+ 604 0036 E378     		ldrb	r3, [r4, #3]
+ 605 0038 0293     		str	r3, [sp, #8]
+ 606 003a A378     		ldrb	r3, [r4, #2]
+ 607 003c 0393     		str	r3, [sp, #12]
+ 608 003e 039A     		ldr	r2, [sp, #12]
+ 609 0040 029B     		ldr	r3, [sp, #8]
+ 610 0042 5340     		eor	r3, r2
+ 611 0044 1E1C     		mov	r6, r3
+ 612 0046 0493     		str	r3, [sp, #16]
+ 613 0048 4640     		eor	r6, r0
+ 614              	.LVL49:
+ 298:Code\Common\crypt/aes.c ****     Tm  = (*state)[i][1] ^ (*state)[i][2] ; Tm = xtime(Tm);  (*state)[i][1] ^= Tm ^ Tmp ;
+ 615              		.loc 1 298 0
+ 616 004a FFF7FEFF 		bl	xtime
+ 617              	.LVL50:
+ 618 004e 009B     		ldr	r3, [sp]
+ 619 0050 5840     		eor	r0, r3
+ 620              	.LVL51:
+ 621 0052 7040     		eor	r0, r6
+ 622 0054 2070     		strb	r0, [r4]
+ 299:Code\Common\crypt/aes.c ****     Tm  = (*state)[i][2] ^ (*state)[i][3] ; Tm = xtime(Tm);  (*state)[i][2] ^= Tm ^ Tmp ;
+ 623              		.loc 1 299 0
+ 624 0056 039B     		ldr	r3, [sp, #12]
+ 625 0058 0198     		ldr	r0, [sp, #4]
+ 626 005a 5840     		eor	r0, r3
+ 627              	.LVL52:
+ 628 005c FFF7FEFF 		bl	xtime
+ 629              	.LVL53:
+ 630 0060 019B     		ldr	r3, [sp, #4]
+ 631 0062 5840     		eor	r0, r3
+ 632              	.LVL54:
+ 300:Code\Common\crypt/aes.c ****     Tm  = (*state)[i][3] ^ t ;        Tm = xtime(Tm);  (*state)[i][3] ^= Tm ^ Tmp ;
+ 633              		.loc 1 300 0
+ 634 0064 6B46     		mov	r3, sp
+ 299:Code\Common\crypt/aes.c ****     Tm  = (*state)[i][2] ^ (*state)[i][3] ; Tm = xtime(Tm);  (*state)[i][2] ^= Tm ^ Tmp ;
+ 635              		.loc 1 299 0
+ 636 0066 7040     		eor	r0, r6
+ 637 0068 6070     		strb	r0, [r4, #1]
+ 300:Code\Common\crypt/aes.c ****     Tm  = (*state)[i][3] ^ t ;        Tm = xtime(Tm);  (*state)[i][3] ^= Tm ^ Tmp ;
+ 638              		.loc 1 300 0
+ 639 006a 187C     		ldrb	r0, [r3, #16]
+ 640              	.LVL55:
+ 641 006c FFF7FEFF 		bl	xtime
+ 642              	.LVL56:
+ 643 0070 039B     		ldr	r3, [sp, #12]
+ 644 0072 5840     		eor	r0, r3
+ 645              	.LVL57:
+ 646 0074 7040     		eor	r0, r6
+ 647 0076 A070     		strb	r0, [r4, #2]
+ 301:Code\Common\crypt/aes.c ****   }
+ 648              		.loc 1 301 0
+ 649 0078 029B     		ldr	r3, [sp, #8]
+ 650 007a 0098     		ldr	r0, [sp]
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 22
+
+
+ 651 007c 5840     		eor	r0, r3
+ 652              	.LVL58:
+ 653 007e FFF7FEFF 		bl	xtime
+ 654              	.LVL59:
+ 655 0082 029B     		ldr	r3, [sp, #8]
+ 656 0084 5840     		eor	r0, r3
+ 657              	.LVL60:
+ 658 0086 4640     		eor	r6, r0
+ 659              	.LVL61:
+ 294:Code\Common\crypt/aes.c ****   {  
+ 660              		.loc 1 294 0
+ 661 0088 059B     		ldr	r3, [sp, #20]
+ 301:Code\Common\crypt/aes.c ****   }
+ 662              		.loc 1 301 0
+ 663 008a E670     		strb	r6, [r4, #3]
+ 664 008c 0434     		add	r4, r4, #4
+ 294:Code\Common\crypt/aes.c ****   {  
+ 665              		.loc 1 294 0
+ 666 008e 9C42     		cmp	r4, r3
+ 667 0090 CBD1     		bne	.L36
+ 668              	.LBE33:
+ 669              	.LBE32:
+ 406:Code\Common\crypt/aes.c ****   }
+ 670              		.loc 1 406 0
+ 671 0092 281C     		mov	r0, r5
+ 401:Code\Common\crypt/aes.c ****   {
+ 672              		.loc 1 401 0
+ 673 0094 0135     		add	r5, r5, #1
+ 674              	.LVL62:
+ 675 0096 EDB2     		uxtb	r5, r5
+ 406:Code\Common\crypt/aes.c ****   }
+ 676              		.loc 1 406 0
+ 677 0098 FFF7FEFF 		bl	AddRoundKey
+ 678              	.LVL63:
+ 401:Code\Common\crypt/aes.c ****   {
+ 679              		.loc 1 401 0
+ 680 009c 0A2D     		cmp	r5, #10
+ 681 009e BCD1     		bne	.L37
+ 411:Code\Common\crypt/aes.c ****   ShiftRows();
+ 682              		.loc 1 411 0
+ 683 00a0 FFF7FEFF 		bl	SubBytes
+ 684              	.LVL64:
+ 412:Code\Common\crypt/aes.c ****   AddRoundKey(Nr);
+ 685              		.loc 1 412 0
+ 686 00a4 FFF7FEFF 		bl	ShiftRows
+ 687              	.LVL65:
+ 413:Code\Common\crypt/aes.c **** }
+ 688              		.loc 1 413 0
+ 689 00a8 281C     		mov	r0, r5
+ 690 00aa FFF7FEFF 		bl	AddRoundKey
+ 691              	.LVL66:
+ 692              	.LBE31:
+ 693              	.LBE30:
+ 461:Code\Common\crypt/aes.c **** 
+ 462:Code\Common\crypt/aes.c ****   // The next function call encrypts the PlainText with the Key using AES algorithm.
+ 463:Code\Common\crypt/aes.c ****   Cipher();
+ 464:Code\Common\crypt/aes.c **** }
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 23
+
+
+ 694              		.loc 1 464 0
+ 695 00ae 07B0     		add	sp, sp, #28
+ 696              	.LVL67:
+ 697              		@ sp needed
+ 698              	.LVL68:
+ 699              	.LVL69:
+ 700 00b0 F0BD     		pop	{r4, r5, r6, r7, pc}
+ 701              	.L39:
+ 702 00b2 C046     		.align	2
+ 703              	.L38:
+ 704 00b4 80000000 		.word	.LANCHOR3
+ 705 00b8 00000000 		.word	.LANCHOR0
+ 706              		.cfi_endproc
+ 707              	.LFE77:
+ 708              		.size	AES128_ECB_encrypt, .-AES128_ECB_encrypt
+ 709              		.section	.text.AES128_ECB_decrypt,"ax",%progbits
+ 710              		.align	1
+ 711              		.global	AES128_ECB_decrypt
+ 712              		.code	16
+ 713              		.thumb_func
+ 714              		.type	AES128_ECB_decrypt, %function
+ 715              	AES128_ECB_decrypt:
+ 716              	.LFB78:
+ 465:Code\Common\crypt/aes.c **** 
+ 466:Code\Common\crypt/aes.c **** void AES128_ECB_decrypt(uint8_t* input, const uint8_t* key, uint8_t *output)
+ 467:Code\Common\crypt/aes.c **** {
+ 717              		.loc 1 467 0
+ 718              		.cfi_startproc
+ 719              	.LVL70:
+ 720 0000 0023     		mov	r3, #0
+ 721 0002 F0B5     		push	{r4, r5, r6, r7, lr}
+ 722              		.cfi_def_cfa_offset 20
+ 723              		.cfi_offset 4, -20
+ 724              		.cfi_offset 5, -16
+ 725              		.cfi_offset 6, -12
+ 726              		.cfi_offset 7, -8
+ 727              		.cfi_offset 14, -4
+ 728 0004 93B0     		sub	sp, sp, #76
+ 729              		.cfi_def_cfa_offset 96
+ 730              	.LVL71:
+ 731              		.loc 1 467 0
+ 732 0006 0492     		str	r2, [sp, #16]
+ 733              	.LVL72:
+ 734              	.L41:
+ 735              	.LBB40:
+ 736              	.LBB41:
+ 446:Code\Common\crypt/aes.c ****   }
+ 737              		.loc 1 446 0
+ 738 0008 C25C     		ldrb	r2, [r0, r3]
+ 739 000a 049C     		ldr	r4, [sp, #16]
+ 740 000c E254     		strb	r2, [r4, r3]
+ 741              	.LVL73:
+ 742 000e 0133     		add	r3, r3, #1
+ 743              	.LVL74:
+ 444:Code\Common\crypt/aes.c ****   {
+ 744              		.loc 1 444 0
+ 745 0010 102B     		cmp	r3, #16
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 24
+
+
+ 746 0012 F9D1     		bne	.L41
+ 747              	.LBE41:
+ 748              	.LBE40:
+ 468:Code\Common\crypt/aes.c ****   // Copy input to output, and work in-memory on output
+ 469:Code\Common\crypt/aes.c ****   BlockCopy(output, input);
+ 470:Code\Common\crypt/aes.c ****   state = (state_t*)output;
+ 749              		.loc 1 470 0
+ 750 0014 594B     		ldr	r3, .L44
+ 751 0016 5C63     		str	r4, [r3, #52]
+ 471:Code\Common\crypt/aes.c **** 
+ 472:Code\Common\crypt/aes.c ****   // The KeyExpansion routine must be called before encryption.
+ 473:Code\Common\crypt/aes.c ****   Key = key;
+ 752              		.loc 1 473 0
+ 753 0018 594B     		ldr	r3, .L44+4
+ 754 001a 1960     		str	r1, [r3]
+ 474:Code\Common\crypt/aes.c ****   KeyExpansion();
+ 755              		.loc 1 474 0
+ 756 001c FFF7FEFF 		bl	KeyExpansion
+ 757              	.LVL75:
+ 758              	.LBB42:
+ 759              	.LBB43:
+ 421:Code\Common\crypt/aes.c **** 
+ 760              		.loc 1 421 0
+ 761 0020 0A20     		mov	r0, #10
+ 762 0022 FFF7FEFF 		bl	AddRoundKey
+ 763              	.LVL76:
+ 426:Code\Common\crypt/aes.c ****   {
+ 764              		.loc 1 426 0
+ 765 0026 0923     		mov	r3, #9
+ 766 0028 0093     		str	r3, [sp]
+ 767              	.LVL77:
+ 768              	.L43:
+ 428:Code\Common\crypt/aes.c ****     InvSubBytes();
+ 769              		.loc 1 428 0
+ 770 002a FFF7FEFF 		bl	InvShiftRows
+ 771              	.LVL78:
+ 429:Code\Common\crypt/aes.c ****     AddRoundKey(round);
+ 772              		.loc 1 429 0
+ 773 002e FFF7FEFF 		bl	InvSubBytes
+ 774              	.LVL79:
+ 430:Code\Common\crypt/aes.c ****     InvMixColumns();
+ 775              		.loc 1 430 0
+ 776 0032 0098     		ldr	r0, [sp]
+ 777 0034 FFF7FEFF 		bl	AddRoundKey
+ 778              	.LVL80:
+ 779 0038 049C     		ldr	r4, [sp, #16]
+ 780 003a 231C     		mov	r3, r4
+ 781 003c 1033     		add	r3, r3, #16
+ 782 003e 1193     		str	r3, [sp, #68]
+ 783              	.LVL81:
+ 784              	.L42:
+ 785              	.LBB44:
+ 786              	.LBB45:
+ 334:Code\Common\crypt/aes.c ****     b = (*state)[i][1];
+ 787              		.loc 1 334 0
+ 788 0040 2378     		ldrb	r3, [r4]
+ 337:Code\Common\crypt/aes.c **** 
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 25
+
+
+ 789              		.loc 1 337 0
+ 790 0042 E678     		ldrb	r6, [r4, #3]
+ 334:Code\Common\crypt/aes.c ****     b = (*state)[i][1];
+ 791              		.loc 1 334 0
+ 792 0044 0193     		str	r3, [sp, #4]
+ 793              	.LVL82:
+ 335:Code\Common\crypt/aes.c ****     c = (*state)[i][2];
+ 794              		.loc 1 335 0
+ 795 0046 6378     		ldrb	r3, [r4, #1]
+ 339:Code\Common\crypt/aes.c ****     (*state)[i][1] = Multiply(a, 0x09) ^ Multiply(b, 0x0e) ^ Multiply(c, 0x0b) ^ Multiply(d, 0x0d);
+ 796              		.loc 1 339 0
+ 797 0048 0198     		ldr	r0, [sp, #4]
+ 335:Code\Common\crypt/aes.c ****     c = (*state)[i][2];
+ 798              		.loc 1 335 0
+ 799 004a 0293     		str	r3, [sp, #8]
+ 800              	.LVL83:
+ 336:Code\Common\crypt/aes.c ****     d = (*state)[i][3];
+ 801              		.loc 1 336 0
+ 802 004c A378     		ldrb	r3, [r4, #2]
+ 803 004e 0393     		str	r3, [sp, #12]
+ 804              	.LVL84:
+ 339:Code\Common\crypt/aes.c ****     (*state)[i][1] = Multiply(a, 0x09) ^ Multiply(b, 0x0e) ^ Multiply(c, 0x0b) ^ Multiply(d, 0x0d);
+ 805              		.loc 1 339 0
+ 806 0050 FFF7FEFF 		bl	xtime
+ 807              	.LVL85:
+ 808 0054 0590     		str	r0, [sp, #20]
+ 809 0056 FFF7FEFF 		bl	xtime
+ 810              	.LVL86:
+ 811 005a 0690     		str	r0, [sp, #24]
+ 812 005c FFF7FEFF 		bl	xtime
+ 813              	.LVL87:
+ 814 0060 0E90     		str	r0, [sp, #56]
+ 815 0062 0298     		ldr	r0, [sp, #8]
+ 816 0064 FFF7FEFF 		bl	xtime
+ 817              	.LVL88:
+ 818 0068 051C     		mov	r5, r0
+ 819 006a FFF7FEFF 		bl	xtime
+ 820              	.LVL89:
+ 821 006e 0790     		str	r0, [sp, #28]
+ 822 0070 FFF7FEFF 		bl	xtime
+ 823              	.LVL90:
+ 824 0074 0F90     		str	r0, [sp, #60]
+ 825 0076 0398     		ldr	r0, [sp, #12]
+ 826 0078 FFF7FEFF 		bl	xtime
+ 827              	.LVL91:
+ 828 007c 0890     		str	r0, [sp, #32]
+ 829 007e FFF7FEFF 		bl	xtime
+ 830              	.LVL92:
+ 831 0082 071C     		mov	r7, r0
+ 832 0084 FFF7FEFF 		bl	xtime
+ 833              	.LVL93:
+ 834 0088 1090     		str	r0, [sp, #64]
+ 835 008a 301C     		mov	r0, r6
+ 836 008c FFF7FEFF 		bl	xtime
+ 837              	.LVL94:
+ 838 0090 0990     		str	r0, [sp, #36]
+ 839 0092 FFF7FEFF 		bl	xtime
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 26
+
+
+ 840              	.LVL95:
+ 841 0096 0A90     		str	r0, [sp, #40]
+ 842 0098 FFF7FEFF 		bl	xtime
+ 843              	.LVL96:
+ 844 009c 3822     		mov	r2, #56
+ 845 009e 6B46     		mov	r3, sp
+ 846 00a0 9B18     		add	r3, r3, r2
+ 847 00a2 1B78     		ldrb	r3, [r3]
+ 848 00a4 0432     		add	r2, r2, #4
+ 849 00a6 0B93     		str	r3, [sp, #44]
+ 850 00a8 6B46     		mov	r3, sp
+ 851 00aa 9B18     		add	r3, r3, r2
+ 852 00ac 1B78     		ldrb	r3, [r3]
+ 853 00ae 0699     		ldr	r1, [sp, #24]
+ 854 00b0 0C93     		str	r3, [sp, #48]
+ 855 00b2 0C9A     		ldr	r2, [sp, #48]
+ 856 00b4 0B9B     		ldr	r3, [sp, #44]
+ 857 00b6 5340     		eor	r3, r2
+ 858 00b8 0D93     		str	r3, [sp, #52]
+ 859 00ba 4022     		mov	r2, #64
+ 860 00bc 6B46     		mov	r3, sp
+ 861 00be 9B18     		add	r3, r3, r2
+ 862 00c0 059A     		ldr	r2, [sp, #20]
+ 863 00c2 1B78     		ldrb	r3, [r3]
+ 864 00c4 5140     		eor	r1, r2
+ 865 00c6 0D9A     		ldr	r2, [sp, #52]
+ 866 00c8 5140     		eor	r1, r2
+ 867 00ca 029A     		ldr	r2, [sp, #8]
+ 868 00cc 5940     		eor	r1, r3
+ 869 00ce 6A40     		eor	r2, r5
+ 870 00d0 4A40     		eor	r2, r1
+ 871 00d2 0399     		ldr	r1, [sp, #12]
+ 872 00d4 7940     		eor	r1, r7
+ 873 00d6 4A40     		eor	r2, r1
+ 874 00d8 311C     		mov	r1, r6
+ 875 00da 4140     		eor	r1, r0
+ 876 00dc 5140     		eor	r1, r2
+ 877 00de 2170     		strb	r1, [r4]
+ 878 00e0 0C9A     		ldr	r2, [sp, #48]
+ 340:Code\Common\crypt/aes.c ****     (*state)[i][2] = Multiply(a, 0x0d) ^ Multiply(b, 0x09) ^ Multiply(c, 0x0e) ^ Multiply(d, 0x0b);
+ 879              		.loc 1 340 0
+ 880 00e2 0799     		ldr	r1, [sp, #28]
+ 881 00e4 C0B2     		uxtb	r0, r0
+ 882 00e6 5A40     		eor	r2, r3
+ 883 00e8 4240     		eor	r2, r0
+ 884 00ea 4D40     		eor	r5, r1
+ 885 00ec 5540     		eor	r5, r2
+ 886 00ee 0199     		ldr	r1, [sp, #4]
+ 887 00f0 0E9A     		ldr	r2, [sp, #56]
+ 888 00f2 4A40     		eor	r2, r1
+ 889 00f4 5540     		eor	r5, r2
+ 890 00f6 0899     		ldr	r1, [sp, #32]
+ 891 00f8 039A     		ldr	r2, [sp, #12]
+ 892 00fa 5140     		eor	r1, r2
+ 893 00fc 0B9A     		ldr	r2, [sp, #44]
+ 894 00fe 4D40     		eor	r5, r1
+ 895 0100 5340     		eor	r3, r2
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 27
+
+
+ 341:Code\Common\crypt/aes.c ****     (*state)[i][3] = Multiply(a, 0x0b) ^ Multiply(b, 0x0d) ^ Multiply(c, 0x09) ^ Multiply(d, 0x0e);
+ 896              		.loc 1 341 0
+ 897 0102 089A     		ldr	r2, [sp, #32]
+ 898 0104 4340     		eor	r3, r0
+ 899 0106 5740     		eor	r7, r2
+ 900 0108 5F40     		eor	r7, r3
+ 901 010a 069A     		ldr	r2, [sp, #24]
+ 902 010c 019B     		ldr	r3, [sp, #4]
+ 340:Code\Common\crypt/aes.c ****     (*state)[i][2] = Multiply(a, 0x0d) ^ Multiply(b, 0x09) ^ Multiply(c, 0x0e) ^ Multiply(d, 0x0b);
+ 903              		.loc 1 340 0
+ 904 010e 0A99     		ldr	r1, [sp, #40]
+ 341:Code\Common\crypt/aes.c ****     (*state)[i][3] = Multiply(a, 0x0b) ^ Multiply(b, 0x0d) ^ Multiply(c, 0x09) ^ Multiply(d, 0x0e);
+ 905              		.loc 1 341 0
+ 906 0110 5A40     		eor	r2, r3
+ 907 0112 5740     		eor	r7, r2
+ 908 0114 0F9B     		ldr	r3, [sp, #60]
+ 909 0116 029A     		ldr	r2, [sp, #8]
+ 340:Code\Common\crypt/aes.c ****     (*state)[i][2] = Multiply(a, 0x0d) ^ Multiply(b, 0x09) ^ Multiply(c, 0x0e) ^ Multiply(d, 0x0b);
+ 910              		.loc 1 340 0
+ 911 0118 7140     		eor	r1, r6
+ 341:Code\Common\crypt/aes.c ****     (*state)[i][3] = Multiply(a, 0x0b) ^ Multiply(b, 0x0d) ^ Multiply(c, 0x09) ^ Multiply(d, 0x0e);
+ 912              		.loc 1 341 0
+ 913 011a 5340     		eor	r3, r2
+ 914 011c 099A     		ldr	r2, [sp, #36]
+ 915 011e 5F40     		eor	r7, r3
+ 916 0120 7240     		eor	r2, r6
+ 342:Code\Common\crypt/aes.c ****   }
+ 917              		.loc 1 342 0
+ 918 0122 099B     		ldr	r3, [sp, #36]
+ 919 0124 0A9E     		ldr	r6, [sp, #40]
+ 920              	.LVL97:
+ 341:Code\Common\crypt/aes.c ****     (*state)[i][3] = Multiply(a, 0x0b) ^ Multiply(b, 0x0d) ^ Multiply(c, 0x09) ^ Multiply(d, 0x0e);
+ 921              		.loc 1 341 0
+ 922 0126 5740     		eor	r7, r2
+ 342:Code\Common\crypt/aes.c ****   }
+ 923              		.loc 1 342 0
+ 924 0128 5E40     		eor	r6, r3
+ 925 012a 0D9B     		ldr	r3, [sp, #52]
+ 926 012c 029A     		ldr	r2, [sp, #8]
+ 927 012e 5E40     		eor	r6, r3
+ 928 0130 7040     		eor	r0, r6
+ 929 0132 019B     		ldr	r3, [sp, #4]
+ 930 0134 059E     		ldr	r6, [sp, #20]
+ 340:Code\Common\crypt/aes.c ****     (*state)[i][2] = Multiply(a, 0x0d) ^ Multiply(b, 0x09) ^ Multiply(c, 0x0e) ^ Multiply(d, 0x0b);
+ 931              		.loc 1 340 0
+ 932 0136 4D40     		eor	r5, r1
+ 342:Code\Common\crypt/aes.c ****   }
+ 933              		.loc 1 342 0
+ 934 0138 5E40     		eor	r6, r3
+ 935 013a 079B     		ldr	r3, [sp, #28]
+ 936 013c 7040     		eor	r0, r6
+ 937 013e 5340     		eor	r3, r2
+ 938 0140 5840     		eor	r0, r3
+ 939 0142 109E     		ldr	r6, [sp, #64]
+ 940 0144 039B     		ldr	r3, [sp, #12]
+ 340:Code\Common\crypt/aes.c ****     (*state)[i][2] = Multiply(a, 0x0d) ^ Multiply(b, 0x09) ^ Multiply(c, 0x0e) ^ Multiply(d, 0x0b);
+ 941              		.loc 1 340 0
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 28
+
+
+ 942 0146 6570     		strb	r5, [r4, #1]
+ 342:Code\Common\crypt/aes.c ****   }
+ 943              		.loc 1 342 0
+ 944 0148 5E40     		eor	r6, r3
+ 945 014a 7040     		eor	r0, r6
+ 332:Code\Common\crypt/aes.c ****   { 
+ 946              		.loc 1 332 0
+ 947 014c 119B     		ldr	r3, [sp, #68]
+ 341:Code\Common\crypt/aes.c ****     (*state)[i][3] = Multiply(a, 0x0b) ^ Multiply(b, 0x0d) ^ Multiply(c, 0x09) ^ Multiply(d, 0x0e);
+ 948              		.loc 1 341 0
+ 949 014e A770     		strb	r7, [r4, #2]
+ 342:Code\Common\crypt/aes.c ****   }
+ 950              		.loc 1 342 0
+ 951 0150 E070     		strb	r0, [r4, #3]
+ 952 0152 0434     		add	r4, r4, #4
+ 332:Code\Common\crypt/aes.c ****   { 
+ 953              		.loc 1 332 0
+ 954 0154 9C42     		cmp	r4, r3
+ 955 0156 00D0     		beq	.LCB837
+ 956 0158 72E7     		b	.L42	@long jump
+ 957              	.LCB837:
+ 958              	.LBE45:
+ 959              	.LBE44:
+ 426:Code\Common\crypt/aes.c ****   {
+ 960              		.loc 1 426 0
+ 961 015a 009B     		ldr	r3, [sp]
+ 962 015c 013B     		sub	r3, r3, #1
+ 963 015e DBB2     		uxtb	r3, r3
+ 964 0160 0093     		str	r3, [sp]
+ 965              	.LVL98:
+ 966 0162 002B     		cmp	r3, #0
+ 967 0164 00D0     		beq	.LCB847
+ 968 0166 60E7     		b	.L43	@long jump
+ 969              	.LCB847:
+ 436:Code\Common\crypt/aes.c ****   InvSubBytes();
+ 970              		.loc 1 436 0
+ 971 0168 FFF7FEFF 		bl	InvShiftRows
+ 972              	.LVL99:
+ 437:Code\Common\crypt/aes.c ****   AddRoundKey(0);
+ 973              		.loc 1 437 0
+ 974 016c FFF7FEFF 		bl	InvSubBytes
+ 975              	.LVL100:
+ 438:Code\Common\crypt/aes.c **** }
+ 976              		.loc 1 438 0
+ 977 0170 0098     		ldr	r0, [sp]
+ 978 0172 FFF7FEFF 		bl	AddRoundKey
+ 979              	.LVL101:
+ 980              	.LBE43:
+ 981              	.LBE42:
+ 475:Code\Common\crypt/aes.c **** 
+ 476:Code\Common\crypt/aes.c ****   InvCipher();
+ 477:Code\Common\crypt/aes.c **** }
+ 982              		.loc 1 477 0
+ 983 0176 13B0     		add	sp, sp, #76
+ 984              	.LVL102:
+ 985              		@ sp needed
+ 986 0178 F0BD     		pop	{r4, r5, r6, r7, pc}
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 29
+
+
+ 987              	.L45:
+ 988 017a C046     		.align	2
+ 989              	.L44:
+ 990 017c 80000000 		.word	.LANCHOR3
+ 991 0180 00000000 		.word	.LANCHOR0
+ 992              		.cfi_endproc
+ 993              	.LFE78:
+ 994              		.size	AES128_ECB_decrypt, .-AES128_ECB_decrypt
+ 995              		.section	.rodata
+ 996              		.set	.LANCHOR1,. + 0
+ 997              		.set	.LANCHOR2,. + 256
+ 998              		.type	sbox, %object
+ 999              		.size	sbox, 256
+ 1000              	sbox:
+ 1001 0000 63       		.byte	99
+ 1002 0001 7C       		.byte	124
+ 1003 0002 77       		.byte	119
+ 1004 0003 7B       		.byte	123
+ 1005 0004 F2       		.byte	-14
+ 1006 0005 6B       		.byte	107
+ 1007 0006 6F       		.byte	111
+ 1008 0007 C5       		.byte	-59
+ 1009 0008 30       		.byte	48
+ 1010 0009 01       		.byte	1
+ 1011 000a 67       		.byte	103
+ 1012 000b 2B       		.byte	43
+ 1013 000c FE       		.byte	-2
+ 1014 000d D7       		.byte	-41
+ 1015 000e AB       		.byte	-85
+ 1016 000f 76       		.byte	118
+ 1017 0010 CA       		.byte	-54
+ 1018 0011 82       		.byte	-126
+ 1019 0012 C9       		.byte	-55
+ 1020 0013 7D       		.byte	125
+ 1021 0014 FA       		.byte	-6
+ 1022 0015 59       		.byte	89
+ 1023 0016 47       		.byte	71
+ 1024 0017 F0       		.byte	-16
+ 1025 0018 AD       		.byte	-83
+ 1026 0019 D4       		.byte	-44
+ 1027 001a A2       		.byte	-94
+ 1028 001b AF       		.byte	-81
+ 1029 001c 9C       		.byte	-100
+ 1030 001d A4       		.byte	-92
+ 1031 001e 72       		.byte	114
+ 1032 001f C0       		.byte	-64
+ 1033 0020 B7       		.byte	-73
+ 1034 0021 FD       		.byte	-3
+ 1035 0022 93       		.byte	-109
+ 1036 0023 26       		.byte	38
+ 1037 0024 36       		.byte	54
+ 1038 0025 3F       		.byte	63
+ 1039 0026 F7       		.byte	-9
+ 1040 0027 CC       		.byte	-52
+ 1041 0028 34       		.byte	52
+ 1042 0029 A5       		.byte	-91
+ 1043 002a E5       		.byte	-27
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 30
+
+
+ 1044 002b F1       		.byte	-15
+ 1045 002c 71       		.byte	113
+ 1046 002d D8       		.byte	-40
+ 1047 002e 31       		.byte	49
+ 1048 002f 15       		.byte	21
+ 1049 0030 04       		.byte	4
+ 1050 0031 C7       		.byte	-57
+ 1051 0032 23       		.byte	35
+ 1052 0033 C3       		.byte	-61
+ 1053 0034 18       		.byte	24
+ 1054 0035 96       		.byte	-106
+ 1055 0036 05       		.byte	5
+ 1056 0037 9A       		.byte	-102
+ 1057 0038 07       		.byte	7
+ 1058 0039 12       		.byte	18
+ 1059 003a 80       		.byte	-128
+ 1060 003b E2       		.byte	-30
+ 1061 003c EB       		.byte	-21
+ 1062 003d 27       		.byte	39
+ 1063 003e B2       		.byte	-78
+ 1064 003f 75       		.byte	117
+ 1065 0040 09       		.byte	9
+ 1066 0041 83       		.byte	-125
+ 1067 0042 2C       		.byte	44
+ 1068 0043 1A       		.byte	26
+ 1069 0044 1B       		.byte	27
+ 1070 0045 6E       		.byte	110
+ 1071 0046 5A       		.byte	90
+ 1072 0047 A0       		.byte	-96
+ 1073 0048 52       		.byte	82
+ 1074 0049 3B       		.byte	59
+ 1075 004a D6       		.byte	-42
+ 1076 004b B3       		.byte	-77
+ 1077 004c 29       		.byte	41
+ 1078 004d E3       		.byte	-29
+ 1079 004e 2F       		.byte	47
+ 1080 004f 84       		.byte	-124
+ 1081 0050 53       		.byte	83
+ 1082 0051 D1       		.byte	-47
+ 1083 0052 00       		.byte	0
+ 1084 0053 ED       		.byte	-19
+ 1085 0054 20       		.byte	32
+ 1086 0055 FC       		.byte	-4
+ 1087 0056 B1       		.byte	-79
+ 1088 0057 5B       		.byte	91
+ 1089 0058 6A       		.byte	106
+ 1090 0059 CB       		.byte	-53
+ 1091 005a BE       		.byte	-66
+ 1092 005b 39       		.byte	57
+ 1093 005c 4A       		.byte	74
+ 1094 005d 4C       		.byte	76
+ 1095 005e 58       		.byte	88
+ 1096 005f CF       		.byte	-49
+ 1097 0060 D0       		.byte	-48
+ 1098 0061 EF       		.byte	-17
+ 1099 0062 AA       		.byte	-86
+ 1100 0063 FB       		.byte	-5
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 31
+
+
+ 1101 0064 43       		.byte	67
+ 1102 0065 4D       		.byte	77
+ 1103 0066 33       		.byte	51
+ 1104 0067 85       		.byte	-123
+ 1105 0068 45       		.byte	69
+ 1106 0069 F9       		.byte	-7
+ 1107 006a 02       		.byte	2
+ 1108 006b 7F       		.byte	127
+ 1109 006c 50       		.byte	80
+ 1110 006d 3C       		.byte	60
+ 1111 006e 9F       		.byte	-97
+ 1112 006f A8       		.byte	-88
+ 1113 0070 51       		.byte	81
+ 1114 0071 A3       		.byte	-93
+ 1115 0072 40       		.byte	64
+ 1116 0073 8F       		.byte	-113
+ 1117 0074 92       		.byte	-110
+ 1118 0075 9D       		.byte	-99
+ 1119 0076 38       		.byte	56
+ 1120 0077 F5       		.byte	-11
+ 1121 0078 BC       		.byte	-68
+ 1122 0079 B6       		.byte	-74
+ 1123 007a DA       		.byte	-38
+ 1124 007b 21       		.byte	33
+ 1125 007c 10       		.byte	16
+ 1126 007d FF       		.byte	-1
+ 1127 007e F3       		.byte	-13
+ 1128 007f D2       		.byte	-46
+ 1129 0080 CD       		.byte	-51
+ 1130 0081 0C       		.byte	12
+ 1131 0082 13       		.byte	19
+ 1132 0083 EC       		.byte	-20
+ 1133 0084 5F       		.byte	95
+ 1134 0085 97       		.byte	-105
+ 1135 0086 44       		.byte	68
+ 1136 0087 17       		.byte	23
+ 1137 0088 C4       		.byte	-60
+ 1138 0089 A7       		.byte	-89
+ 1139 008a 7E       		.byte	126
+ 1140 008b 3D       		.byte	61
+ 1141 008c 64       		.byte	100
+ 1142 008d 5D       		.byte	93
+ 1143 008e 19       		.byte	25
+ 1144 008f 73       		.byte	115
+ 1145 0090 60       		.byte	96
+ 1146 0091 81       		.byte	-127
+ 1147 0092 4F       		.byte	79
+ 1148 0093 DC       		.byte	-36
+ 1149 0094 22       		.byte	34
+ 1150 0095 2A       		.byte	42
+ 1151 0096 90       		.byte	-112
+ 1152 0097 88       		.byte	-120
+ 1153 0098 46       		.byte	70
+ 1154 0099 EE       		.byte	-18
+ 1155 009a B8       		.byte	-72
+ 1156 009b 14       		.byte	20
+ 1157 009c DE       		.byte	-34
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 32
+
+
+ 1158 009d 5E       		.byte	94
+ 1159 009e 0B       		.byte	11
+ 1160 009f DB       		.byte	-37
+ 1161 00a0 E0       		.byte	-32
+ 1162 00a1 32       		.byte	50
+ 1163 00a2 3A       		.byte	58
+ 1164 00a3 0A       		.byte	10
+ 1165 00a4 49       		.byte	73
+ 1166 00a5 06       		.byte	6
+ 1167 00a6 24       		.byte	36
+ 1168 00a7 5C       		.byte	92
+ 1169 00a8 C2       		.byte	-62
+ 1170 00a9 D3       		.byte	-45
+ 1171 00aa AC       		.byte	-84
+ 1172 00ab 62       		.byte	98
+ 1173 00ac 91       		.byte	-111
+ 1174 00ad 95       		.byte	-107
+ 1175 00ae E4       		.byte	-28
+ 1176 00af 79       		.byte	121
+ 1177 00b0 E7       		.byte	-25
+ 1178 00b1 C8       		.byte	-56
+ 1179 00b2 37       		.byte	55
+ 1180 00b3 6D       		.byte	109
+ 1181 00b4 8D       		.byte	-115
+ 1182 00b5 D5       		.byte	-43
+ 1183 00b6 4E       		.byte	78
+ 1184 00b7 A9       		.byte	-87
+ 1185 00b8 6C       		.byte	108
+ 1186 00b9 56       		.byte	86
+ 1187 00ba F4       		.byte	-12
+ 1188 00bb EA       		.byte	-22
+ 1189 00bc 65       		.byte	101
+ 1190 00bd 7A       		.byte	122
+ 1191 00be AE       		.byte	-82
+ 1192 00bf 08       		.byte	8
+ 1193 00c0 BA       		.byte	-70
+ 1194 00c1 78       		.byte	120
+ 1195 00c2 25       		.byte	37
+ 1196 00c3 2E       		.byte	46
+ 1197 00c4 1C       		.byte	28
+ 1198 00c5 A6       		.byte	-90
+ 1199 00c6 B4       		.byte	-76
+ 1200 00c7 C6       		.byte	-58
+ 1201 00c8 E8       		.byte	-24
+ 1202 00c9 DD       		.byte	-35
+ 1203 00ca 74       		.byte	116
+ 1204 00cb 1F       		.byte	31
+ 1205 00cc 4B       		.byte	75
+ 1206 00cd BD       		.byte	-67
+ 1207 00ce 8B       		.byte	-117
+ 1208 00cf 8A       		.byte	-118
+ 1209 00d0 70       		.byte	112
+ 1210 00d1 3E       		.byte	62
+ 1211 00d2 B5       		.byte	-75
+ 1212 00d3 66       		.byte	102
+ 1213 00d4 48       		.byte	72
+ 1214 00d5 03       		.byte	3
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 33
+
+
+ 1215 00d6 F6       		.byte	-10
+ 1216 00d7 0E       		.byte	14
+ 1217 00d8 61       		.byte	97
+ 1218 00d9 35       		.byte	53
+ 1219 00da 57       		.byte	87
+ 1220 00db B9       		.byte	-71
+ 1221 00dc 86       		.byte	-122
+ 1222 00dd C1       		.byte	-63
+ 1223 00de 1D       		.byte	29
+ 1224 00df 9E       		.byte	-98
+ 1225 00e0 E1       		.byte	-31
+ 1226 00e1 F8       		.byte	-8
+ 1227 00e2 98       		.byte	-104
+ 1228 00e3 11       		.byte	17
+ 1229 00e4 69       		.byte	105
+ 1230 00e5 D9       		.byte	-39
+ 1231 00e6 8E       		.byte	-114
+ 1232 00e7 94       		.byte	-108
+ 1233 00e8 9B       		.byte	-101
+ 1234 00e9 1E       		.byte	30
+ 1235 00ea 87       		.byte	-121
+ 1236 00eb E9       		.byte	-23
+ 1237 00ec CE       		.byte	-50
+ 1238 00ed 55       		.byte	85
+ 1239 00ee 28       		.byte	40
+ 1240 00ef DF       		.byte	-33
+ 1241 00f0 8C       		.byte	-116
+ 1242 00f1 A1       		.byte	-95
+ 1243 00f2 89       		.byte	-119
+ 1244 00f3 0D       		.byte	13
+ 1245 00f4 BF       		.byte	-65
+ 1246 00f5 E6       		.byte	-26
+ 1247 00f6 42       		.byte	66
+ 1248 00f7 68       		.byte	104
+ 1249 00f8 41       		.byte	65
+ 1250 00f9 99       		.byte	-103
+ 1251 00fa 2D       		.byte	45
+ 1252 00fb 0F       		.byte	15
+ 1253 00fc B0       		.byte	-80
+ 1254 00fd 54       		.byte	84
+ 1255 00fe BB       		.byte	-69
+ 1256 00ff 16       		.byte	22
+ 1257              		.type	Rcon, %object
+ 1258              		.size	Rcon, 16
+ 1259              	Rcon:
+ 1260 0100 EF       		.byte	-17
+ 1261 0101 3A       		.byte	58
+ 1262 0102 19       		.byte	25
+ 1263 0103 3D       		.byte	61
+ 1264 0104 CA       		.byte	-54
+ 1265 0105 0B       		.byte	11
+ 1266 0106 36       		.byte	54
+ 1267 0107 89       		.byte	-119
+ 1268 0108 A8       		.byte	-88
+ 1269 0109 61       		.byte	97
+ 1270 010a F6       		.byte	-10
+ 1271 010b 6C       		.byte	108
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 34
+
+
+ 1272 010c D8       		.byte	-40
+ 1273 010d AB       		.byte	-85
+ 1274 010e 4D       		.byte	77
+ 1275 010f 9A       		.byte	-102
+ 1276              		.type	rsbox, %object
+ 1277              		.size	rsbox, 256
+ 1278              	rsbox:
+ 1279 0110 52       		.byte	82
+ 1280 0111 09       		.byte	9
+ 1281 0112 6A       		.byte	106
+ 1282 0113 D5       		.byte	-43
+ 1283 0114 30       		.byte	48
+ 1284 0115 36       		.byte	54
+ 1285 0116 A5       		.byte	-91
+ 1286 0117 38       		.byte	56
+ 1287 0118 BF       		.byte	-65
+ 1288 0119 40       		.byte	64
+ 1289 011a A3       		.byte	-93
+ 1290 011b 9E       		.byte	-98
+ 1291 011c 81       		.byte	-127
+ 1292 011d F3       		.byte	-13
+ 1293 011e D7       		.byte	-41
+ 1294 011f FB       		.byte	-5
+ 1295 0120 7C       		.byte	124
+ 1296 0121 E3       		.byte	-29
+ 1297 0122 39       		.byte	57
+ 1298 0123 82       		.byte	-126
+ 1299 0124 9B       		.byte	-101
+ 1300 0125 2F       		.byte	47
+ 1301 0126 FF       		.byte	-1
+ 1302 0127 87       		.byte	-121
+ 1303 0128 34       		.byte	52
+ 1304 0129 8E       		.byte	-114
+ 1305 012a 43       		.byte	67
+ 1306 012b 44       		.byte	68
+ 1307 012c C4       		.byte	-60
+ 1308 012d DE       		.byte	-34
+ 1309 012e E9       		.byte	-23
+ 1310 012f CB       		.byte	-53
+ 1311 0130 54       		.byte	84
+ 1312 0131 7B       		.byte	123
+ 1313 0132 94       		.byte	-108
+ 1314 0133 32       		.byte	50
+ 1315 0134 A6       		.byte	-90
+ 1316 0135 C2       		.byte	-62
+ 1317 0136 23       		.byte	35
+ 1318 0137 3D       		.byte	61
+ 1319 0138 EE       		.byte	-18
+ 1320 0139 4C       		.byte	76
+ 1321 013a 95       		.byte	-107
+ 1322 013b 0B       		.byte	11
+ 1323 013c 42       		.byte	66
+ 1324 013d FA       		.byte	-6
+ 1325 013e C3       		.byte	-61
+ 1326 013f 4E       		.byte	78
+ 1327 0140 08       		.byte	8
+ 1328 0141 2E       		.byte	46
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 35
+
+
+ 1329 0142 A1       		.byte	-95
+ 1330 0143 66       		.byte	102
+ 1331 0144 28       		.byte	40
+ 1332 0145 D9       		.byte	-39
+ 1333 0146 24       		.byte	36
+ 1334 0147 B2       		.byte	-78
+ 1335 0148 76       		.byte	118
+ 1336 0149 5B       		.byte	91
+ 1337 014a A2       		.byte	-94
+ 1338 014b 49       		.byte	73
+ 1339 014c 6D       		.byte	109
+ 1340 014d 8B       		.byte	-117
+ 1341 014e D1       		.byte	-47
+ 1342 014f 25       		.byte	37
+ 1343 0150 72       		.byte	114
+ 1344 0151 F8       		.byte	-8
+ 1345 0152 F6       		.byte	-10
+ 1346 0153 64       		.byte	100
+ 1347 0154 86       		.byte	-122
+ 1348 0155 68       		.byte	104
+ 1349 0156 98       		.byte	-104
+ 1350 0157 16       		.byte	22
+ 1351 0158 D4       		.byte	-44
+ 1352 0159 A4       		.byte	-92
+ 1353 015a 5C       		.byte	92
+ 1354 015b CC       		.byte	-52
+ 1355 015c 5D       		.byte	93
+ 1356 015d 65       		.byte	101
+ 1357 015e B6       		.byte	-74
+ 1358 015f 92       		.byte	-110
+ 1359 0160 6C       		.byte	108
+ 1360 0161 70       		.byte	112
+ 1361 0162 48       		.byte	72
+ 1362 0163 50       		.byte	80
+ 1363 0164 FD       		.byte	-3
+ 1364 0165 ED       		.byte	-19
+ 1365 0166 B9       		.byte	-71
+ 1366 0167 DA       		.byte	-38
+ 1367 0168 5E       		.byte	94
+ 1368 0169 15       		.byte	21
+ 1369 016a 46       		.byte	70
+ 1370 016b 57       		.byte	87
+ 1371 016c A7       		.byte	-89
+ 1372 016d 8D       		.byte	-115
+ 1373 016e 9D       		.byte	-99
+ 1374 016f 84       		.byte	-124
+ 1375 0170 90       		.byte	-112
+ 1376 0171 D8       		.byte	-40
+ 1377 0172 AB       		.byte	-85
+ 1378 0173 00       		.byte	0
+ 1379 0174 8C       		.byte	-116
+ 1380 0175 BC       		.byte	-68
+ 1381 0176 D3       		.byte	-45
+ 1382 0177 0A       		.byte	10
+ 1383 0178 F7       		.byte	-9
+ 1384 0179 E4       		.byte	-28
+ 1385 017a 58       		.byte	88
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 36
+
+
+ 1386 017b 05       		.byte	5
+ 1387 017c B8       		.byte	-72
+ 1388 017d B3       		.byte	-77
+ 1389 017e 45       		.byte	69
+ 1390 017f 06       		.byte	6
+ 1391 0180 D0       		.byte	-48
+ 1392 0181 2C       		.byte	44
+ 1393 0182 1E       		.byte	30
+ 1394 0183 8F       		.byte	-113
+ 1395 0184 CA       		.byte	-54
+ 1396 0185 3F       		.byte	63
+ 1397 0186 0F       		.byte	15
+ 1398 0187 02       		.byte	2
+ 1399 0188 C1       		.byte	-63
+ 1400 0189 AF       		.byte	-81
+ 1401 018a BD       		.byte	-67
+ 1402 018b 03       		.byte	3
+ 1403 018c 01       		.byte	1
+ 1404 018d 13       		.byte	19
+ 1405 018e 8A       		.byte	-118
+ 1406 018f 6B       		.byte	107
+ 1407 0190 3A       		.byte	58
+ 1408 0191 91       		.byte	-111
+ 1409 0192 11       		.byte	17
+ 1410 0193 41       		.byte	65
+ 1411 0194 4F       		.byte	79
+ 1412 0195 67       		.byte	103
+ 1413 0196 DC       		.byte	-36
+ 1414 0197 EA       		.byte	-22
+ 1415 0198 97       		.byte	-105
+ 1416 0199 F2       		.byte	-14
+ 1417 019a CF       		.byte	-49
+ 1418 019b CE       		.byte	-50
+ 1419 019c F0       		.byte	-16
+ 1420 019d B4       		.byte	-76
+ 1421 019e E6       		.byte	-26
+ 1422 019f 73       		.byte	115
+ 1423 01a0 96       		.byte	-106
+ 1424 01a1 AC       		.byte	-84
+ 1425 01a2 74       		.byte	116
+ 1426 01a3 22       		.byte	34
+ 1427 01a4 E7       		.byte	-25
+ 1428 01a5 AD       		.byte	-83
+ 1429 01a6 35       		.byte	53
+ 1430 01a7 85       		.byte	-123
+ 1431 01a8 E2       		.byte	-30
+ 1432 01a9 F9       		.byte	-7
+ 1433 01aa 37       		.byte	55
+ 1434 01ab E8       		.byte	-24
+ 1435 01ac 1C       		.byte	28
+ 1436 01ad 75       		.byte	117
+ 1437 01ae DF       		.byte	-33
+ 1438 01af 6E       		.byte	110
+ 1439 01b0 47       		.byte	71
+ 1440 01b1 F1       		.byte	-15
+ 1441 01b2 1A       		.byte	26
+ 1442 01b3 71       		.byte	113
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 37
+
+
+ 1443 01b4 1D       		.byte	29
+ 1444 01b5 29       		.byte	41
+ 1445 01b6 C5       		.byte	-59
+ 1446 01b7 89       		.byte	-119
+ 1447 01b8 6F       		.byte	111
+ 1448 01b9 B7       		.byte	-73
+ 1449 01ba 62       		.byte	98
+ 1450 01bb 0E       		.byte	14
+ 1451 01bc AA       		.byte	-86
+ 1452 01bd 18       		.byte	24
+ 1453 01be BE       		.byte	-66
+ 1454 01bf 1B       		.byte	27
+ 1455 01c0 FC       		.byte	-4
+ 1456 01c1 56       		.byte	86
+ 1457 01c2 3E       		.byte	62
+ 1458 01c3 4B       		.byte	75
+ 1459 01c4 C6       		.byte	-58
+ 1460 01c5 D2       		.byte	-46
+ 1461 01c6 79       		.byte	121
+ 1462 01c7 20       		.byte	32
+ 1463 01c8 9A       		.byte	-102
+ 1464 01c9 DB       		.byte	-37
+ 1465 01ca C0       		.byte	-64
+ 1466 01cb FE       		.byte	-2
+ 1467 01cc 78       		.byte	120
+ 1468 01cd CD       		.byte	-51
+ 1469 01ce 5A       		.byte	90
+ 1470 01cf F4       		.byte	-12
+ 1471 01d0 1F       		.byte	31
+ 1472 01d1 DD       		.byte	-35
+ 1473 01d2 A8       		.byte	-88
+ 1474 01d3 33       		.byte	51
+ 1475 01d4 88       		.byte	-120
+ 1476 01d5 07       		.byte	7
+ 1477 01d6 C7       		.byte	-57
+ 1478 01d7 31       		.byte	49
+ 1479 01d8 B1       		.byte	-79
+ 1480 01d9 12       		.byte	18
+ 1481 01da 10       		.byte	16
+ 1482 01db 59       		.byte	89
+ 1483 01dc 27       		.byte	39
+ 1484 01dd 80       		.byte	-128
+ 1485 01de EC       		.byte	-20
+ 1486 01df 5F       		.byte	95
+ 1487 01e0 60       		.byte	96
+ 1488 01e1 51       		.byte	81
+ 1489 01e2 7F       		.byte	127
+ 1490 01e3 A9       		.byte	-87
+ 1491 01e4 19       		.byte	25
+ 1492 01e5 B5       		.byte	-75
+ 1493 01e6 4A       		.byte	74
+ 1494 01e7 0D       		.byte	13
+ 1495 01e8 2D       		.byte	45
+ 1496 01e9 E5       		.byte	-27
+ 1497 01ea 7A       		.byte	122
+ 1498 01eb 9F       		.byte	-97
+ 1499 01ec 93       		.byte	-109
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 38
+
+
+ 1500 01ed C9       		.byte	-55
+ 1501 01ee 9C       		.byte	-100
+ 1502 01ef EF       		.byte	-17
+ 1503 01f0 A0       		.byte	-96
+ 1504 01f1 E0       		.byte	-32
+ 1505 01f2 3B       		.byte	59
+ 1506 01f3 4D       		.byte	77
+ 1507 01f4 AE       		.byte	-82
+ 1508 01f5 2A       		.byte	42
+ 1509 01f6 F5       		.byte	-11
+ 1510 01f7 B0       		.byte	-80
+ 1511 01f8 C8       		.byte	-56
+ 1512 01f9 EB       		.byte	-21
+ 1513 01fa BB       		.byte	-69
+ 1514 01fb 3C       		.byte	60
+ 1515 01fc 83       		.byte	-125
+ 1516 01fd 53       		.byte	83
+ 1517 01fe 99       		.byte	-103
+ 1518 01ff 61       		.byte	97
+ 1519 0200 17       		.byte	23
+ 1520 0201 2B       		.byte	43
+ 1521 0202 04       		.byte	4
+ 1522 0203 7E       		.byte	126
+ 1523 0204 BA       		.byte	-70
+ 1524 0205 77       		.byte	119
+ 1525 0206 D6       		.byte	-42
+ 1526 0207 26       		.byte	38
+ 1527 0208 E1       		.byte	-31
+ 1528 0209 69       		.byte	105
+ 1529 020a 14       		.byte	20
+ 1530 020b 63       		.byte	99
+ 1531 020c 55       		.byte	85
+ 1532 020d 21       		.byte	33
+ 1533 020e 0C       		.byte	12
+ 1534 020f 7D       		.byte	125
+ 1535              		.bss
+ 1536              		.align	2
+ 1537              		.set	.LANCHOR0,. + 0
+ 1538              		.set	.LANCHOR3,. + 128
+ 1539              		.type	Key, %object
+ 1540              		.size	Key, 4
+ 1541              	Key:
+ 1542 0000 00000000 		.space	4
+ 1543              		.type	RoundKey, %object
+ 1544              		.size	RoundKey, 176
+ 1545              	RoundKey:
+ 1546 0004 00000000 		.space	176
+ 1546      00000000 
+ 1546      00000000 
+ 1546      00000000 
+ 1546      00000000 
+ 1547              		.type	state, %object
+ 1548              		.size	state, 4
+ 1549              	state:
+ 1550 00b4 00000000 		.space	4
+ 1551              		.text
+ 1552              	.Letext0:
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 39
+
+
+ 1553              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+ 1554              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+ 1555              		.file 4 "Generated_Source\\PSoC4/cytypes.h"
+ 1556              		.section	.debug_info,"",%progbits
+ 1557              	.Ldebug_info0:
+ 1558 0000 40080000 		.4byte	0x840
+ 1559 0004 0400     		.2byte	0x4
+ 1560 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 1561 000a 04       		.byte	0x4
+ 1562 000b 01       		.uleb128 0x1
+ 1563 000c C3000000 		.4byte	.LASF44
+ 1564 0010 01       		.byte	0x1
+ 1565 0011 8F000000 		.4byte	.LASF45
+ 1566 0015 6F020000 		.4byte	.LASF46
+ 1567 0019 20000000 		.4byte	.Ldebug_ranges0+0x20
+ 1568 001d 00000000 		.4byte	0
+ 1569 0021 00000000 		.4byte	.Ldebug_line0
+ 1570 0025 02       		.uleb128 0x2
+ 1571 0026 04       		.byte	0x4
+ 1572 0027 05       		.byte	0x5
+ 1573 0028 696E7400 		.ascii	"int\000"
+ 1574 002c 03       		.uleb128 0x3
+ 1575 002d 04       		.byte	0x4
+ 1576 002e 07       		.byte	0x7
+ 1577 002f 9A010000 		.4byte	.LASF0
+ 1578 0033 03       		.uleb128 0x3
+ 1579 0034 01       		.byte	0x1
+ 1580 0035 06       		.byte	0x6
+ 1581 0036 40020000 		.4byte	.LASF1
+ 1582 003a 04       		.uleb128 0x4
+ 1583 003b 00000000 		.4byte	.LASF6
+ 1584 003f 02       		.byte	0x2
+ 1585 0040 1D       		.byte	0x1d
+ 1586 0041 45000000 		.4byte	0x45
+ 1587 0045 03       		.uleb128 0x3
+ 1588 0046 01       		.byte	0x1
+ 1589 0047 08       		.byte	0x8
+ 1590 0048 7B000000 		.4byte	.LASF2
+ 1591 004c 03       		.uleb128 0x3
+ 1592 004d 02       		.byte	0x2
+ 1593 004e 05       		.byte	0x5
+ 1594 004f 12020000 		.4byte	.LASF3
+ 1595 0053 03       		.uleb128 0x3
+ 1596 0054 02       		.byte	0x2
+ 1597 0055 07       		.byte	0x7
+ 1598 0056 28000000 		.4byte	.LASF4
+ 1599 005a 03       		.uleb128 0x3
+ 1600 005b 04       		.byte	0x4
+ 1601 005c 05       		.byte	0x5
+ 1602 005d 32020000 		.4byte	.LASF5
+ 1603 0061 04       		.uleb128 0x4
+ 1604 0062 69010000 		.4byte	.LASF7
+ 1605 0066 02       		.byte	0x2
+ 1606 0067 41       		.byte	0x41
+ 1607 0068 6C000000 		.4byte	0x6c
+ 1608 006c 03       		.uleb128 0x3
+ 1609 006d 04       		.byte	0x4
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 40
+
+
+ 1610 006e 07       		.byte	0x7
+ 1611 006f 51010000 		.4byte	.LASF8
+ 1612 0073 03       		.uleb128 0x3
+ 1613 0074 08       		.byte	0x8
+ 1614 0075 05       		.byte	0x5
+ 1615 0076 F6010000 		.4byte	.LASF9
+ 1616 007a 03       		.uleb128 0x3
+ 1617 007b 08       		.byte	0x8
+ 1618 007c 07       		.byte	0x7
+ 1619 007d B3010000 		.4byte	.LASF10
+ 1620 0081 03       		.uleb128 0x3
+ 1621 0082 04       		.byte	0x4
+ 1622 0083 07       		.byte	0x7
+ 1623 0084 04020000 		.4byte	.LASF11
+ 1624 0088 03       		.uleb128 0x3
+ 1625 0089 01       		.byte	0x1
+ 1626 008a 08       		.byte	0x8
+ 1627 008b 0D020000 		.4byte	.LASF12
+ 1628 008f 04       		.uleb128 0x4
+ 1629 0090 3B000000 		.4byte	.LASF13
+ 1630 0094 03       		.byte	0x3
+ 1631 0095 15       		.byte	0x15
+ 1632 0096 3A000000 		.4byte	0x3a
+ 1633 009a 04       		.uleb128 0x4
+ 1634 009b 29020000 		.4byte	.LASF14
+ 1635 009f 03       		.byte	0x3
+ 1636 00a0 2D       		.byte	0x2d
+ 1637 00a1 61000000 		.4byte	0x61
+ 1638 00a5 05       		.uleb128 0x5
+ 1639 00a6 23020000 		.4byte	.LASF15
+ 1640 00aa 04       		.byte	0x4
+ 1641 00ab B901     		.2byte	0x1b9
+ 1642 00ad 45000000 		.4byte	0x45
+ 1643 00b1 03       		.uleb128 0x3
+ 1644 00b2 04       		.byte	0x4
+ 1645 00b3 04       		.byte	0x4
+ 1646 00b4 75000000 		.4byte	.LASF16
+ 1647 00b8 03       		.uleb128 0x3
+ 1648 00b9 08       		.byte	0x8
+ 1649 00ba 04       		.byte	0x4
+ 1650 00bb 56000000 		.4byte	.LASF17
+ 1651 00bf 04       		.uleb128 0x4
+ 1652 00c0 B0000000 		.4byte	.LASF18
+ 1653 00c4 01       		.byte	0x1
+ 1654 00c5 42       		.byte	0x42
+ 1655 00c6 CA000000 		.4byte	0xca
+ 1656 00ca 06       		.uleb128 0x6
+ 1657 00cb 8F000000 		.4byte	0x8f
+ 1658 00cf E0000000 		.4byte	0xe0
+ 1659 00d3 07       		.uleb128 0x7
+ 1660 00d4 81000000 		.4byte	0x81
+ 1661 00d8 03       		.byte	0x3
+ 1662 00d9 07       		.uleb128 0x7
+ 1663 00da 81000000 		.4byte	0x81
+ 1664 00de 03       		.byte	0x3
+ 1665 00df 00       		.byte	0
+ 1666 00e0 08       		.uleb128 0x8
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 41
+
+
+ 1667 00e1 74010000 		.4byte	.LASF19
+ 1668 00e5 01       		.byte	0x1
+ 1669 00e6 95       		.byte	0x95
+ 1670 00e7 8F000000 		.4byte	0x8f
+ 1671 00eb 01       		.byte	0x1
+ 1672 00ec FC000000 		.4byte	0xfc
+ 1673 00f0 09       		.uleb128 0x9
+ 1674 00f1 6E756D00 		.ascii	"num\000"
+ 1675 00f5 01       		.byte	0x1
+ 1676 00f6 95       		.byte	0x95
+ 1677 00f7 8F000000 		.4byte	0x8f
+ 1678 00fb 00       		.byte	0
+ 1679 00fc 08       		.uleb128 0x8
+ 1680 00fd 14000000 		.4byte	.LASF20
+ 1681 0101 01       		.byte	0x1
+ 1682 0102 9A       		.byte	0x9a
+ 1683 0103 8F000000 		.4byte	0x8f
+ 1684 0107 01       		.byte	0x1
+ 1685 0108 18010000 		.4byte	0x118
+ 1686 010c 09       		.uleb128 0x9
+ 1687 010d 6E756D00 		.ascii	"num\000"
+ 1688 0111 01       		.byte	0x1
+ 1689 0112 9A       		.byte	0x9a
+ 1690 0113 8F000000 		.4byte	0x8f
+ 1691 0117 00       		.byte	0
+ 1692 0118 0A       		.uleb128 0xa
+ 1693 0119 4C020000 		.4byte	.LASF22
+ 1694 011d 01       		.byte	0x1
+ 1695 011e A0       		.byte	0xa0
+ 1696 011f 00000000 		.4byte	.LFB65
+ 1697 0123 A8000000 		.4byte	.LFE65-.LFB65
+ 1698 0127 01       		.uleb128 0x1
+ 1699 0128 9C       		.byte	0x9c
+ 1700 0129 99010000 		.4byte	0x199
+ 1701 012d 0B       		.uleb128 0xb
+ 1702 012e 6900     		.ascii	"i\000"
+ 1703 0130 01       		.byte	0x1
+ 1704 0131 A2       		.byte	0xa2
+ 1705 0132 9A000000 		.4byte	0x9a
+ 1706 0136 00000000 		.4byte	.LLST0
+ 1707 013a 0B       		.uleb128 0xb
+ 1708 013b 6A00     		.ascii	"j\000"
+ 1709 013d 01       		.byte	0x1
+ 1710 013e A2       		.byte	0xa2
+ 1711 013f 9A000000 		.4byte	0x9a
+ 1712 0143 3F000000 		.4byte	.LLST1
+ 1713 0147 0B       		.uleb128 0xb
+ 1714 0148 6B00     		.ascii	"k\000"
+ 1715 014a 01       		.byte	0x1
+ 1716 014b A2       		.byte	0xa2
+ 1717 014c 9A000000 		.4byte	0x9a
+ 1718 0150 52000000 		.4byte	.LLST2
+ 1719 0154 0C       		.uleb128 0xc
+ 1720 0155 22000000 		.4byte	.LASF21
+ 1721 0159 01       		.byte	0x1
+ 1722 015a A3       		.byte	0xa3
+ 1723 015b 99010000 		.4byte	0x199
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 42
+
+
+ 1724 015f 02       		.uleb128 0x2
+ 1725 0160 91       		.byte	0x91
+ 1726 0161 64       		.sleb128 -28
+ 1727 0162 0D       		.uleb128 0xd
+ 1728 0163 E0000000 		.4byte	0xe0
+ 1729 0167 46000000 		.4byte	.LBB14
+ 1730 016b 00000000 		.4byte	.Ldebug_ranges0+0
+ 1731 016f 01       		.byte	0x1
+ 1732 0170 C8       		.byte	0xc8
+ 1733 0171 7F010000 		.4byte	0x17f
+ 1734 0175 0E       		.uleb128 0xe
+ 1735 0176 F0000000 		.4byte	0xf0
+ 1736 017a 6A000000 		.4byte	.LLST3
+ 1737 017e 00       		.byte	0
+ 1738 017f 0F       		.uleb128 0xf
+ 1739 0180 E0000000 		.4byte	0xe0
+ 1740 0184 52000000 		.4byte	.LBB20
+ 1741 0188 02000000 		.4byte	.LBE20-.LBB20
+ 1742 018c 01       		.byte	0x1
+ 1743 018d C9       		.byte	0xc9
+ 1744 018e 0E       		.uleb128 0xe
+ 1745 018f F0000000 		.4byte	0xf0
+ 1746 0193 7E000000 		.4byte	.LLST4
+ 1747 0197 00       		.byte	0
+ 1748 0198 00       		.byte	0
+ 1749 0199 06       		.uleb128 0x6
+ 1750 019a 8F000000 		.4byte	0x8f
+ 1751 019e A9010000 		.4byte	0x1a9
+ 1752 01a2 07       		.uleb128 0x7
+ 1753 01a3 81000000 		.4byte	0x81
+ 1754 01a7 03       		.byte	0x3
+ 1755 01a8 00       		.byte	0
+ 1756 01a9 0A       		.uleb128 0xa
+ 1757 01aa A7010000 		.4byte	.LASF23
+ 1758 01ae 01       		.byte	0x1
+ 1759 01af E3       		.byte	0xe3
+ 1760 01b0 00000000 		.4byte	.LFB66
+ 1761 01b4 34000000 		.4byte	.LFE66-.LFB66
+ 1762 01b8 01       		.uleb128 0x1
+ 1763 01b9 9C       		.byte	0x9c
+ 1764 01ba E8010000 		.4byte	0x1e8
+ 1765 01be 10       		.uleb128 0x10
+ 1766 01bf 81010000 		.4byte	.LASF27
+ 1767 01c3 01       		.byte	0x1
+ 1768 01c4 E3       		.byte	0xe3
+ 1769 01c5 8F000000 		.4byte	0x8f
+ 1770 01c9 92000000 		.4byte	.LLST5
+ 1771 01cd 0B       		.uleb128 0xb
+ 1772 01ce 6900     		.ascii	"i\000"
+ 1773 01d0 01       		.byte	0x1
+ 1774 01d1 E5       		.byte	0xe5
+ 1775 01d2 8F000000 		.4byte	0x8f
+ 1776 01d6 B3000000 		.4byte	.LLST6
+ 1777 01da 0B       		.uleb128 0xb
+ 1778 01db 6A00     		.ascii	"j\000"
+ 1779 01dd 01       		.byte	0x1
+ 1780 01de E5       		.byte	0xe5
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 43
+
+
+ 1781 01df 8F000000 		.4byte	0x8f
+ 1782 01e3 C7000000 		.4byte	.LLST7
+ 1783 01e7 00       		.byte	0
+ 1784 01e8 0A       		.uleb128 0xa
+ 1785 01e9 A7000000 		.4byte	.LASF24
+ 1786 01ed 01       		.byte	0x1
+ 1787 01ee F1       		.byte	0xf1
+ 1788 01ef 00000000 		.4byte	.LFB67
+ 1789 01f3 28000000 		.4byte	.LFE67-.LFB67
+ 1790 01f7 01       		.uleb128 0x1
+ 1791 01f8 9C       		.byte	0x9c
+ 1792 01f9 31020000 		.4byte	0x231
+ 1793 01fd 0B       		.uleb128 0xb
+ 1794 01fe 6900     		.ascii	"i\000"
+ 1795 0200 01       		.byte	0x1
+ 1796 0201 F3       		.byte	0xf3
+ 1797 0202 8F000000 		.4byte	0x8f
+ 1798 0206 F3000000 		.4byte	.LLST8
+ 1799 020a 0B       		.uleb128 0xb
+ 1800 020b 6A00     		.ascii	"j\000"
+ 1801 020d 01       		.byte	0x1
+ 1802 020e F3       		.byte	0xf3
+ 1803 020f 8F000000 		.4byte	0x8f
+ 1804 0213 33010000 		.4byte	.LLST9
+ 1805 0217 0F       		.uleb128 0xf
+ 1806 0218 E0000000 		.4byte	0xe0
+ 1807 021c 0A000000 		.4byte	.LBB22
+ 1808 0220 02000000 		.4byte	.LBE22-.LBB22
+ 1809 0224 01       		.byte	0x1
+ 1810 0225 F8       		.byte	0xf8
+ 1811 0226 0E       		.uleb128 0xe
+ 1812 0227 F0000000 		.4byte	0xf0
+ 1813 022b 47010000 		.4byte	.LLST10
+ 1814 022f 00       		.byte	0
+ 1815 0230 00       		.byte	0
+ 1816 0231 11       		.uleb128 0x11
+ 1817 0232 0A000000 		.4byte	.LASF25
+ 1818 0236 01       		.byte	0x1
+ 1819 0237 0001     		.2byte	0x100
+ 1820 0239 00000000 		.4byte	.LFB68
+ 1821 023d 3C000000 		.4byte	.LFE68-.LFB68
+ 1822 0241 01       		.uleb128 0x1
+ 1823 0242 9C       		.byte	0x9c
+ 1824 0243 56020000 		.4byte	0x256
+ 1825 0247 12       		.uleb128 0x12
+ 1826 0248 B8000000 		.4byte	.LASF26
+ 1827 024c 01       		.byte	0x1
+ 1828 024d 0201     		.2byte	0x102
+ 1829 024f 8F000000 		.4byte	0x8f
+ 1830 0253 01       		.uleb128 0x1
+ 1831 0254 52       		.byte	0x52
+ 1832 0255 00       		.byte	0
+ 1833 0256 13       		.uleb128 0x13
+ 1834 0257 BD000000 		.4byte	.LASF47
+ 1835 025b 01       		.byte	0x1
+ 1836 025c 1C01     		.2byte	0x11c
+ 1837 025e 8F000000 		.4byte	0x8f
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 44
+
+
+ 1838 0262 00000000 		.4byte	.LFB69
+ 1839 0266 0E000000 		.4byte	.LFE69-.LFB69
+ 1840 026a 01       		.uleb128 0x1
+ 1841 026b 9C       		.byte	0x9c
+ 1842 026c 7F020000 		.4byte	0x27f
+ 1843 0270 14       		.uleb128 0x14
+ 1844 0271 7800     		.ascii	"x\000"
+ 1845 0273 01       		.byte	0x1
+ 1846 0274 1C01     		.2byte	0x11c
+ 1847 0276 8F000000 		.4byte	0x8f
+ 1848 027a 5E010000 		.4byte	.LLST11
+ 1849 027e 00       		.byte	0
+ 1850 027f 11       		.uleb128 0x11
+ 1851 0280 63020000 		.4byte	.LASF28
+ 1852 0284 01       		.byte	0x1
+ 1853 0285 5D01     		.2byte	0x15d
+ 1854 0287 00000000 		.4byte	.LFB72
+ 1855 028b 2C000000 		.4byte	.LFE72-.LFB72
+ 1856 028f 01       		.uleb128 0x1
+ 1857 0290 9C       		.byte	0x9c
+ 1858 0291 CC020000 		.4byte	0x2cc
+ 1859 0295 15       		.uleb128 0x15
+ 1860 0296 6900     		.ascii	"i\000"
+ 1861 0298 01       		.byte	0x1
+ 1862 0299 5F01     		.2byte	0x15f
+ 1863 029b 8F000000 		.4byte	0x8f
+ 1864 029f 7F010000 		.4byte	.LLST12
+ 1865 02a3 15       		.uleb128 0x15
+ 1866 02a4 6A00     		.ascii	"j\000"
+ 1867 02a6 01       		.byte	0x1
+ 1868 02a7 5F01     		.2byte	0x15f
+ 1869 02a9 8F000000 		.4byte	0x8f
+ 1870 02ad BF010000 		.4byte	.LLST13
+ 1871 02b1 16       		.uleb128 0x16
+ 1872 02b2 FC000000 		.4byte	0xfc
+ 1873 02b6 0A000000 		.4byte	.LBB24
+ 1874 02ba 06000000 		.4byte	.LBE24-.LBB24
+ 1875 02be 01       		.byte	0x1
+ 1876 02bf 6401     		.2byte	0x164
+ 1877 02c1 0E       		.uleb128 0xe
+ 1878 02c2 0C010000 		.4byte	0x10c
+ 1879 02c6 D3010000 		.4byte	.LLST14
+ 1880 02ca 00       		.byte	0
+ 1881 02cb 00       		.byte	0
+ 1882 02cc 11       		.uleb128 0x11
+ 1883 02cd 5D000000 		.4byte	.LASF29
+ 1884 02d1 01       		.byte	0x1
+ 1885 02d2 6901     		.2byte	0x169
+ 1886 02d4 00000000 		.4byte	.LFB73
+ 1887 02d8 3C000000 		.4byte	.LFE73-.LFB73
+ 1888 02dc 01       		.uleb128 0x1
+ 1889 02dd 9C       		.byte	0x9c
+ 1890 02de F1020000 		.4byte	0x2f1
+ 1891 02e2 12       		.uleb128 0x12
+ 1892 02e3 B8000000 		.4byte	.LASF26
+ 1893 02e7 01       		.byte	0x1
+ 1894 02e8 6B01     		.2byte	0x16b
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 45
+
+
+ 1895 02ea 8F000000 		.4byte	0x8f
+ 1896 02ee 01       		.uleb128 0x1
+ 1897 02ef 52       		.byte	0x52
+ 1898 02f0 00       		.byte	0
+ 1899 02f1 17       		.uleb128 0x17
+ 1900 02f2 FA020000 		.4byte	.LASF30
+ 1901 02f6 01       		.byte	0x1
+ 1902 02f7 8701     		.2byte	0x187
+ 1903 02f9 01       		.byte	0x1
+ 1904 02fa 0B030000 		.4byte	0x30b
+ 1905 02fe 18       		.uleb128 0x18
+ 1906 02ff 81010000 		.4byte	.LASF27
+ 1907 0303 01       		.byte	0x1
+ 1908 0304 8901     		.2byte	0x189
+ 1909 0306 8F000000 		.4byte	0x8f
+ 1910 030a 00       		.byte	0
+ 1911 030b 17       		.uleb128 0x17
+ 1912 030c EB010000 		.4byte	.LASF31
+ 1913 0310 01       		.byte	0x1
+ 1914 0311 2201     		.2byte	0x122
+ 1915 0313 01       		.byte	0x1
+ 1916 0314 44030000 		.4byte	0x344
+ 1917 0318 19       		.uleb128 0x19
+ 1918 0319 6900     		.ascii	"i\000"
+ 1919 031b 01       		.byte	0x1
+ 1920 031c 2401     		.2byte	0x124
+ 1921 031e 8F000000 		.4byte	0x8f
+ 1922 0322 19       		.uleb128 0x19
+ 1923 0323 546D7000 		.ascii	"Tmp\000"
+ 1924 0327 01       		.byte	0x1
+ 1925 0328 2501     		.2byte	0x125
+ 1926 032a 8F000000 		.4byte	0x8f
+ 1927 032e 19       		.uleb128 0x19
+ 1928 032f 546D00   		.ascii	"Tm\000"
+ 1929 0332 01       		.byte	0x1
+ 1930 0333 2501     		.2byte	0x125
+ 1931 0335 8F000000 		.4byte	0x8f
+ 1932 0339 19       		.uleb128 0x19
+ 1933 033a 7400     		.ascii	"t\000"
+ 1934 033c 01       		.byte	0x1
+ 1935 033d 2501     		.2byte	0x125
+ 1936 033f 8F000000 		.4byte	0x8f
+ 1937 0343 00       		.byte	0
+ 1938 0344 1A       		.uleb128 0x1a
+ 1939 0345 87010000 		.4byte	.LASF37
+ 1940 0349 01       		.byte	0x1
+ 1941 034a C501     		.2byte	0x1c5
+ 1942 034c 00000000 		.4byte	.LFB77
+ 1943 0350 BC000000 		.4byte	.LFE77-.LFB77
+ 1944 0354 01       		.uleb128 0x1
+ 1945 0355 9C       		.byte	0x9c
+ 1946 0356 9C040000 		.4byte	0x49c
+ 1947 035a 1B       		.uleb128 0x1b
+ 1948 035b 89000000 		.4byte	.LASF32
+ 1949 035f 01       		.byte	0x1
+ 1950 0360 C501     		.2byte	0x1c5
+ 1951 0362 9C040000 		.4byte	0x49c
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 46
+
+
+ 1952 0366 EA010000 		.4byte	.LLST15
+ 1953 036a 14       		.uleb128 0x14
+ 1954 036b 6B657900 		.ascii	"key\000"
+ 1955 036f 01       		.byte	0x1
+ 1956 0370 C501     		.2byte	0x1c5
+ 1957 0372 A2040000 		.4byte	0x4a2
+ 1958 0376 18020000 		.4byte	.LLST16
+ 1959 037a 1C       		.uleb128 0x1c
+ 1960 037b F1020000 		.4byte	0x2f1
+ 1961 037f 12000000 		.4byte	.LBB30
+ 1962 0383 9C000000 		.4byte	.LBE30-.LBB30
+ 1963 0387 01       		.byte	0x1
+ 1964 0388 CF01     		.2byte	0x1cf
+ 1965 038a 92040000 		.4byte	0x492
+ 1966 038e 1D       		.uleb128 0x1d
+ 1967 038f 12000000 		.4byte	.LBB31
+ 1968 0393 9C000000 		.4byte	.LBE31-.LBB31
+ 1969 0397 1E       		.uleb128 0x1e
+ 1970 0398 FE020000 		.4byte	0x2fe
+ 1971 039c 39020000 		.4byte	.LLST17
+ 1972 03a0 1C       		.uleb128 0x1c
+ 1973 03a1 0B030000 		.4byte	0x30b
+ 1974 03a5 2A000000 		.4byte	.LBB32
+ 1975 03a9 68000000 		.4byte	.LBE32-.LBB32
+ 1976 03ad 01       		.byte	0x1
+ 1977 03ae 9501     		.2byte	0x195
+ 1978 03b0 40040000 		.4byte	0x440
+ 1979 03b4 1D       		.uleb128 0x1d
+ 1980 03b5 2A000000 		.4byte	.LBB33
+ 1981 03b9 68000000 		.4byte	.LBE33-.LBB33
+ 1982 03bd 1E       		.uleb128 0x1e
+ 1983 03be 18030000 		.4byte	0x318
+ 1984 03c2 6F020000 		.4byte	.LLST18
+ 1985 03c6 1E       		.uleb128 0x1e
+ 1986 03c7 22030000 		.4byte	0x322
+ 1987 03cb 83020000 		.4byte	.LLST19
+ 1988 03cf 1E       		.uleb128 0x1e
+ 1989 03d0 2E030000 		.4byte	0x32e
+ 1990 03d4 C2020000 		.4byte	.LLST20
+ 1991 03d8 1E       		.uleb128 0x1e
+ 1992 03d9 39030000 		.4byte	0x339
+ 1993 03dd 64030000 		.4byte	.LLST21
+ 1994 03e1 1F       		.uleb128 0x1f
+ 1995 03e2 4E000000 		.4byte	.LVL50
+ 1996 03e6 56020000 		.4byte	0x256
+ 1997 03ea FA030000 		.4byte	0x3fa
+ 1998 03ee 20       		.uleb128 0x20
+ 1999 03ef 01       		.uleb128 0x1
+ 2000 03f0 50       		.byte	0x50
+ 2001 03f1 07       		.uleb128 0x7
+ 2002 03f2 7D       		.byte	0x7d
+ 2003 03f3 00       		.sleb128 0
+ 2004 03f4 06       		.byte	0x6
+ 2005 03f5 91       		.byte	0x91
+ 2006 03f6 54       		.sleb128 -44
+ 2007 03f7 06       		.byte	0x6
+ 2008 03f8 27       		.byte	0x27
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 47
+
+
+ 2009 03f9 00       		.byte	0
+ 2010 03fa 1F       		.uleb128 0x1f
+ 2011 03fb 60000000 		.4byte	.LVL53
+ 2012 03ff 56020000 		.4byte	0x256
+ 2013 0403 13040000 		.4byte	0x413
+ 2014 0407 20       		.uleb128 0x20
+ 2015 0408 01       		.uleb128 0x1
+ 2016 0409 50       		.byte	0x50
+ 2017 040a 07       		.uleb128 0x7
+ 2018 040b 91       		.byte	0x91
+ 2019 040c 54       		.sleb128 -44
+ 2020 040d 06       		.byte	0x6
+ 2021 040e 91       		.byte	0x91
+ 2022 040f 5C       		.sleb128 -36
+ 2023 0410 06       		.byte	0x6
+ 2024 0411 27       		.byte	0x27
+ 2025 0412 00       		.byte	0
+ 2026 0413 1F       		.uleb128 0x1f
+ 2027 0414 70000000 		.4byte	.LVL56
+ 2028 0418 56020000 		.4byte	0x256
+ 2029 041c 29040000 		.4byte	0x429
+ 2030 0420 20       		.uleb128 0x20
+ 2031 0421 01       		.uleb128 0x1
+ 2032 0422 50       		.byte	0x50
+ 2033 0423 04       		.uleb128 0x4
+ 2034 0424 7D       		.byte	0x7d
+ 2035 0425 10       		.sleb128 16
+ 2036 0426 94       		.byte	0x94
+ 2037 0427 01       		.byte	0x1
+ 2038 0428 00       		.byte	0
+ 2039 0429 21       		.uleb128 0x21
+ 2040 042a 82000000 		.4byte	.LVL59
+ 2041 042e 56020000 		.4byte	0x256
+ 2042 0432 20       		.uleb128 0x20
+ 2043 0433 01       		.uleb128 0x1
+ 2044 0434 50       		.byte	0x50
+ 2045 0435 07       		.uleb128 0x7
+ 2046 0436 7D       		.byte	0x7d
+ 2047 0437 00       		.sleb128 0
+ 2048 0438 06       		.byte	0x6
+ 2049 0439 91       		.byte	0x91
+ 2050 043a 58       		.sleb128 -40
+ 2051 043b 06       		.byte	0x6
+ 2052 043c 27       		.byte	0x27
+ 2053 043d 00       		.byte	0
+ 2054 043e 00       		.byte	0
+ 2055 043f 00       		.byte	0
+ 2056 0440 1F       		.uleb128 0x1f
+ 2057 0441 18000000 		.4byte	.LVL43
+ 2058 0445 A9010000 		.4byte	0x1a9
+ 2059 0449 53040000 		.4byte	0x453
+ 2060 044d 20       		.uleb128 0x20
+ 2061 044e 01       		.uleb128 0x1
+ 2062 044f 50       		.byte	0x50
+ 2063 0450 01       		.uleb128 0x1
+ 2064 0451 30       		.byte	0x30
+ 2065 0452 00       		.byte	0
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 48
+
+
+ 2066 0453 22       		.uleb128 0x22
+ 2067 0454 1E000000 		.4byte	.LVL45
+ 2068 0458 E8010000 		.4byte	0x1e8
+ 2069 045c 22       		.uleb128 0x22
+ 2070 045d 22000000 		.4byte	.LVL46
+ 2071 0461 31020000 		.4byte	0x231
+ 2072 0465 22       		.uleb128 0x22
+ 2073 0466 9C000000 		.4byte	.LVL63
+ 2074 046a A9010000 		.4byte	0x1a9
+ 2075 046e 22       		.uleb128 0x22
+ 2076 046f A4000000 		.4byte	.LVL64
+ 2077 0473 E8010000 		.4byte	0x1e8
+ 2078 0477 22       		.uleb128 0x22
+ 2079 0478 A8000000 		.4byte	.LVL65
+ 2080 047c 31020000 		.4byte	0x231
+ 2081 0480 21       		.uleb128 0x21
+ 2082 0481 AE000000 		.4byte	.LVL66
+ 2083 0485 A9010000 		.4byte	0x1a9
+ 2084 0489 20       		.uleb128 0x20
+ 2085 048a 01       		.uleb128 0x1
+ 2086 048b 50       		.byte	0x50
+ 2087 048c 02       		.uleb128 0x2
+ 2088 048d 75       		.byte	0x75
+ 2089 048e 00       		.sleb128 0
+ 2090 048f 00       		.byte	0
+ 2091 0490 00       		.byte	0
+ 2092 0491 00       		.byte	0
+ 2093 0492 22       		.uleb128 0x22
+ 2094 0493 12000000 		.4byte	.LVL42
+ 2095 0497 18010000 		.4byte	0x118
+ 2096 049b 00       		.byte	0
+ 2097 049c 23       		.uleb128 0x23
+ 2098 049d 04       		.byte	0x4
+ 2099 049e 8F000000 		.4byte	0x8f
+ 2100 04a2 23       		.uleb128 0x23
+ 2101 04a3 04       		.byte	0x4
+ 2102 04a4 A8040000 		.4byte	0x4a8
+ 2103 04a8 24       		.uleb128 0x24
+ 2104 04a9 8F000000 		.4byte	0x8f
+ 2105 04ad 17       		.uleb128 0x17
+ 2106 04ae 59020000 		.4byte	.LASF33
+ 2107 04b2 01       		.byte	0x1
+ 2108 04b3 B901     		.2byte	0x1b9
+ 2109 04b5 01       		.byte	0x1
+ 2110 04b6 DD040000 		.4byte	0x4dd
+ 2111 04ba 25       		.uleb128 0x25
+ 2112 04bb 1C020000 		.4byte	.LASF34
+ 2113 04bf 01       		.byte	0x1
+ 2114 04c0 B901     		.2byte	0x1b9
+ 2115 04c2 9C040000 		.4byte	0x49c
+ 2116 04c6 25       		.uleb128 0x25
+ 2117 04c7 89000000 		.4byte	.LASF32
+ 2118 04cb 01       		.byte	0x1
+ 2119 04cc B901     		.2byte	0x1b9
+ 2120 04ce 9C040000 		.4byte	0x49c
+ 2121 04d2 19       		.uleb128 0x19
+ 2122 04d3 6900     		.ascii	"i\000"
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 49
+
+
+ 2123 04d5 01       		.byte	0x1
+ 2124 04d6 BB01     		.2byte	0x1bb
+ 2125 04d8 8F000000 		.4byte	0x8f
+ 2126 04dc 00       		.byte	0
+ 2127 04dd 17       		.uleb128 0x17
+ 2128 04de CA010000 		.4byte	.LASF35
+ 2129 04e2 01       		.byte	0x1
+ 2130 04e3 A001     		.2byte	0x1a0
+ 2131 04e5 01       		.byte	0x1
+ 2132 04e6 F7040000 		.4byte	0x4f7
+ 2133 04ea 18       		.uleb128 0x18
+ 2134 04eb 81010000 		.4byte	.LASF27
+ 2135 04ef 01       		.byte	0x1
+ 2136 04f0 A201     		.2byte	0x1a2
+ 2137 04f2 8F000000 		.4byte	0x8f
+ 2138 04f6 00       		.byte	0
+ 2139 04f7 17       		.uleb128 0x17
+ 2140 04f8 DD010000 		.4byte	.LASF36
+ 2141 04fc 01       		.byte	0x1
+ 2142 04fd 4801     		.2byte	0x148
+ 2143 04ff 01       		.byte	0x1
+ 2144 0500 37050000 		.4byte	0x537
+ 2145 0504 19       		.uleb128 0x19
+ 2146 0505 6900     		.ascii	"i\000"
+ 2147 0507 01       		.byte	0x1
+ 2148 0508 4A01     		.2byte	0x14a
+ 2149 050a 25000000 		.4byte	0x25
+ 2150 050e 19       		.uleb128 0x19
+ 2151 050f 6100     		.ascii	"a\000"
+ 2152 0511 01       		.byte	0x1
+ 2153 0512 4B01     		.2byte	0x14b
+ 2154 0514 8F000000 		.4byte	0x8f
+ 2155 0518 19       		.uleb128 0x19
+ 2156 0519 6200     		.ascii	"b\000"
+ 2157 051b 01       		.byte	0x1
+ 2158 051c 4B01     		.2byte	0x14b
+ 2159 051e 8F000000 		.4byte	0x8f
+ 2160 0522 19       		.uleb128 0x19
+ 2161 0523 6300     		.ascii	"c\000"
+ 2162 0525 01       		.byte	0x1
+ 2163 0526 4B01     		.2byte	0x14b
+ 2164 0528 8F000000 		.4byte	0x8f
+ 2165 052c 19       		.uleb128 0x19
+ 2166 052d 6400     		.ascii	"d\000"
+ 2167 052f 01       		.byte	0x1
+ 2168 0530 4B01     		.2byte	0x14b
+ 2169 0532 8F000000 		.4byte	0x8f
+ 2170 0536 00       		.byte	0
+ 2171 0537 1A       		.uleb128 0x1a
+ 2172 0538 43000000 		.4byte	.LASF38
+ 2173 053c 01       		.byte	0x1
+ 2174 053d D201     		.2byte	0x1d2
+ 2175 053f 00000000 		.4byte	.LFB78
+ 2176 0543 84010000 		.4byte	.LFE78-.LFB78
+ 2177 0547 01       		.uleb128 0x1
+ 2178 0548 9C       		.byte	0x9c
+ 2179 0549 98070000 		.4byte	0x798
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 50
+
+
+ 2180 054d 1B       		.uleb128 0x1b
+ 2181 054e 89000000 		.4byte	.LASF32
+ 2182 0552 01       		.byte	0x1
+ 2183 0553 D201     		.2byte	0x1d2
+ 2184 0555 9C040000 		.4byte	0x49c
+ 2185 0559 84030000 		.4byte	.LLST22
+ 2186 055d 14       		.uleb128 0x14
+ 2187 055e 6B657900 		.ascii	"key\000"
+ 2188 0562 01       		.byte	0x1
+ 2189 0563 D201     		.2byte	0x1d2
+ 2190 0565 A2040000 		.4byte	0x4a2
+ 2191 0569 A5030000 		.4byte	.LLST23
+ 2192 056d 1B       		.uleb128 0x1b
+ 2193 056e 1C020000 		.4byte	.LASF34
+ 2194 0572 01       		.byte	0x1
+ 2195 0573 D201     		.2byte	0x1d2
+ 2196 0575 9C040000 		.4byte	0x49c
+ 2197 0579 C6030000 		.4byte	.LLST24
+ 2198 057d 1C       		.uleb128 0x1c
+ 2199 057e AD040000 		.4byte	0x4ad
+ 2200 0582 08000000 		.4byte	.LBB40
+ 2201 0586 0C000000 		.4byte	.LBE40-.LBB40
+ 2202 058a 01       		.byte	0x1
+ 2203 058b D501     		.2byte	0x1d5
+ 2204 058d B7050000 		.4byte	0x5b7
+ 2205 0591 0E       		.uleb128 0xe
+ 2206 0592 C6040000 		.4byte	0x4c6
+ 2207 0596 E6030000 		.4byte	.LLST25
+ 2208 059a 0E       		.uleb128 0xe
+ 2209 059b BA040000 		.4byte	0x4ba
+ 2210 059f 07040000 		.4byte	.LLST26
+ 2211 05a3 1D       		.uleb128 0x1d
+ 2212 05a4 08000000 		.4byte	.LBB41
+ 2213 05a8 0C000000 		.4byte	.LBE41-.LBB41
+ 2214 05ac 1E       		.uleb128 0x1e
+ 2215 05ad D2040000 		.4byte	0x4d2
+ 2216 05b1 1C040000 		.4byte	.LLST27
+ 2217 05b5 00       		.byte	0
+ 2218 05b6 00       		.byte	0
+ 2219 05b7 1C       		.uleb128 0x1c
+ 2220 05b8 DD040000 		.4byte	0x4dd
+ 2221 05bc 20000000 		.4byte	.LBB42
+ 2222 05c0 56010000 		.4byte	.LBE42-.LBB42
+ 2223 05c4 01       		.byte	0x1
+ 2224 05c5 DC01     		.2byte	0x1dc
+ 2225 05c7 8E070000 		.4byte	0x78e
+ 2226 05cb 1D       		.uleb128 0x1d
+ 2227 05cc 20000000 		.4byte	.LBB43
+ 2228 05d0 56010000 		.4byte	.LBE43-.LBB43
+ 2229 05d4 1E       		.uleb128 0x1e
+ 2230 05d5 EA040000 		.4byte	0x4ea
+ 2231 05d9 48040000 		.4byte	.LLST28
+ 2232 05dd 1C       		.uleb128 0x1c
+ 2233 05de F7040000 		.4byte	0x4f7
+ 2234 05e2 40000000 		.4byte	.LBB44
+ 2235 05e6 1A010000 		.4byte	.LBE44-.LBB44
+ 2236 05ea 01       		.byte	0x1
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 51
+
+
+ 2237 05eb AF01     		.2byte	0x1af
+ 2238 05ed 2D070000 		.4byte	0x72d
+ 2239 05f1 1D       		.uleb128 0x1d
+ 2240 05f2 40000000 		.4byte	.LBB45
+ 2241 05f6 1A010000 		.4byte	.LBE45-.LBB45
+ 2242 05fa 1E       		.uleb128 0x1e
+ 2243 05fb 04050000 		.4byte	0x504
+ 2244 05ff 81040000 		.4byte	.LLST29
+ 2245 0603 26       		.uleb128 0x26
+ 2246 0604 0E050000 		.4byte	0x50e
+ 2247 0608 03       		.uleb128 0x3
+ 2248 0609 91       		.byte	0x91
+ 2249 060a A47F     		.sleb128 -92
+ 2250 060c 26       		.uleb128 0x26
+ 2251 060d 18050000 		.4byte	0x518
+ 2252 0611 03       		.uleb128 0x3
+ 2253 0612 91       		.byte	0x91
+ 2254 0613 A87F     		.sleb128 -88
+ 2255 0615 26       		.uleb128 0x26
+ 2256 0616 22050000 		.4byte	0x522
+ 2257 061a 03       		.uleb128 0x3
+ 2258 061b 91       		.byte	0x91
+ 2259 061c AC7F     		.sleb128 -84
+ 2260 061e 1E       		.uleb128 0x1e
+ 2261 061f 2C050000 		.4byte	0x52c
+ 2262 0623 95040000 		.4byte	.LLST30
+ 2263 0627 1F       		.uleb128 0x1f
+ 2264 0628 54000000 		.4byte	.LVL85
+ 2265 062c 56020000 		.4byte	0x256
+ 2266 0630 3E060000 		.4byte	0x63e
+ 2267 0634 20       		.uleb128 0x20
+ 2268 0635 01       		.uleb128 0x1
+ 2269 0636 50       		.byte	0x50
+ 2270 0637 05       		.uleb128 0x5
+ 2271 0638 91       		.byte	0x91
+ 2272 0639 A47F     		.sleb128 -92
+ 2273 063b 94       		.byte	0x94
+ 2274 063c 01       		.byte	0x1
+ 2275 063d 00       		.byte	0
+ 2276 063e 1F       		.uleb128 0x1f
+ 2277 063f 5A000000 		.4byte	.LVL86
+ 2278 0643 56020000 		.4byte	0x256
+ 2279 0647 55060000 		.4byte	0x655
+ 2280 064b 20       		.uleb128 0x20
+ 2281 064c 01       		.uleb128 0x1
+ 2282 064d 50       		.byte	0x50
+ 2283 064e 05       		.uleb128 0x5
+ 2284 064f 91       		.byte	0x91
+ 2285 0650 B47F     		.sleb128 -76
+ 2286 0652 94       		.byte	0x94
+ 2287 0653 01       		.byte	0x1
+ 2288 0654 00       		.byte	0
+ 2289 0655 1F       		.uleb128 0x1f
+ 2290 0656 60000000 		.4byte	.LVL87
+ 2291 065a 56020000 		.4byte	0x256
+ 2292 065e 6C060000 		.4byte	0x66c
+ 2293 0662 20       		.uleb128 0x20
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 52
+
+
+ 2294 0663 01       		.uleb128 0x1
+ 2295 0664 50       		.byte	0x50
+ 2296 0665 05       		.uleb128 0x5
+ 2297 0666 91       		.byte	0x91
+ 2298 0667 B87F     		.sleb128 -72
+ 2299 0669 94       		.byte	0x94
+ 2300 066a 01       		.byte	0x1
+ 2301 066b 00       		.byte	0
+ 2302 066c 1F       		.uleb128 0x1f
+ 2303 066d 68000000 		.4byte	.LVL88
+ 2304 0671 56020000 		.4byte	0x256
+ 2305 0675 83060000 		.4byte	0x683
+ 2306 0679 20       		.uleb128 0x20
+ 2307 067a 01       		.uleb128 0x1
+ 2308 067b 50       		.byte	0x50
+ 2309 067c 05       		.uleb128 0x5
+ 2310 067d 91       		.byte	0x91
+ 2311 067e A87F     		.sleb128 -88
+ 2312 0680 94       		.byte	0x94
+ 2313 0681 01       		.byte	0x1
+ 2314 0682 00       		.byte	0
+ 2315 0683 1F       		.uleb128 0x1f
+ 2316 0684 6E000000 		.4byte	.LVL89
+ 2317 0688 56020000 		.4byte	0x256
+ 2318 068c 97060000 		.4byte	0x697
+ 2319 0690 20       		.uleb128 0x20
+ 2320 0691 01       		.uleb128 0x1
+ 2321 0692 50       		.byte	0x50
+ 2322 0693 02       		.uleb128 0x2
+ 2323 0694 75       		.byte	0x75
+ 2324 0695 00       		.sleb128 0
+ 2325 0696 00       		.byte	0
+ 2326 0697 1F       		.uleb128 0x1f
+ 2327 0698 74000000 		.4byte	.LVL90
+ 2328 069c 56020000 		.4byte	0x256
+ 2329 06a0 AE060000 		.4byte	0x6ae
+ 2330 06a4 20       		.uleb128 0x20
+ 2331 06a5 01       		.uleb128 0x1
+ 2332 06a6 50       		.byte	0x50
+ 2333 06a7 05       		.uleb128 0x5
+ 2334 06a8 91       		.byte	0x91
+ 2335 06a9 BC7F     		.sleb128 -68
+ 2336 06ab 94       		.byte	0x94
+ 2337 06ac 01       		.byte	0x1
+ 2338 06ad 00       		.byte	0
+ 2339 06ae 1F       		.uleb128 0x1f
+ 2340 06af 7C000000 		.4byte	.LVL91
+ 2341 06b3 56020000 		.4byte	0x256
+ 2342 06b7 C5060000 		.4byte	0x6c5
+ 2343 06bb 20       		.uleb128 0x20
+ 2344 06bc 01       		.uleb128 0x1
+ 2345 06bd 50       		.byte	0x50
+ 2346 06be 05       		.uleb128 0x5
+ 2347 06bf 91       		.byte	0x91
+ 2348 06c0 AC7F     		.sleb128 -84
+ 2349 06c2 94       		.byte	0x94
+ 2350 06c3 01       		.byte	0x1
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 53
+
+
+ 2351 06c4 00       		.byte	0
+ 2352 06c5 1F       		.uleb128 0x1f
+ 2353 06c6 82000000 		.4byte	.LVL92
+ 2354 06ca 56020000 		.4byte	0x256
+ 2355 06ce DB060000 		.4byte	0x6db
+ 2356 06d2 20       		.uleb128 0x20
+ 2357 06d3 01       		.uleb128 0x1
+ 2358 06d4 50       		.byte	0x50
+ 2359 06d5 04       		.uleb128 0x4
+ 2360 06d6 91       		.byte	0x91
+ 2361 06d7 40       		.sleb128 -64
+ 2362 06d8 94       		.byte	0x94
+ 2363 06d9 01       		.byte	0x1
+ 2364 06da 00       		.byte	0
+ 2365 06db 1F       		.uleb128 0x1f
+ 2366 06dc 88000000 		.4byte	.LVL93
+ 2367 06e0 56020000 		.4byte	0x256
+ 2368 06e4 EF060000 		.4byte	0x6ef
+ 2369 06e8 20       		.uleb128 0x20
+ 2370 06e9 01       		.uleb128 0x1
+ 2371 06ea 50       		.byte	0x50
+ 2372 06eb 02       		.uleb128 0x2
+ 2373 06ec 77       		.byte	0x77
+ 2374 06ed 00       		.sleb128 0
+ 2375 06ee 00       		.byte	0
+ 2376 06ef 1F       		.uleb128 0x1f
+ 2377 06f0 90000000 		.4byte	.LVL94
+ 2378 06f4 56020000 		.4byte	0x256
+ 2379 06f8 03070000 		.4byte	0x703
+ 2380 06fc 20       		.uleb128 0x20
+ 2381 06fd 01       		.uleb128 0x1
+ 2382 06fe 50       		.byte	0x50
+ 2383 06ff 02       		.uleb128 0x2
+ 2384 0700 76       		.byte	0x76
+ 2385 0701 00       		.sleb128 0
+ 2386 0702 00       		.byte	0
+ 2387 0703 1F       		.uleb128 0x1f
+ 2388 0704 96000000 		.4byte	.LVL95
+ 2389 0708 56020000 		.4byte	0x256
+ 2390 070c 19070000 		.4byte	0x719
+ 2391 0710 20       		.uleb128 0x20
+ 2392 0711 01       		.uleb128 0x1
+ 2393 0712 50       		.byte	0x50
+ 2394 0713 04       		.uleb128 0x4
+ 2395 0714 91       		.byte	0x91
+ 2396 0715 44       		.sleb128 -60
+ 2397 0716 94       		.byte	0x94
+ 2398 0717 01       		.byte	0x1
+ 2399 0718 00       		.byte	0
+ 2400 0719 21       		.uleb128 0x21
+ 2401 071a 9C000000 		.4byte	.LVL96
+ 2402 071e 56020000 		.4byte	0x256
+ 2403 0722 20       		.uleb128 0x20
+ 2404 0723 01       		.uleb128 0x1
+ 2405 0724 50       		.byte	0x50
+ 2406 0725 04       		.uleb128 0x4
+ 2407 0726 91       		.byte	0x91
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 54
+
+
+ 2408 0727 48       		.sleb128 -56
+ 2409 0728 94       		.byte	0x94
+ 2410 0729 01       		.byte	0x1
+ 2411 072a 00       		.byte	0
+ 2412 072b 00       		.byte	0
+ 2413 072c 00       		.byte	0
+ 2414 072d 1F       		.uleb128 0x1f
+ 2415 072e 26000000 		.4byte	.LVL76
+ 2416 0732 A9010000 		.4byte	0x1a9
+ 2417 0736 40070000 		.4byte	0x740
+ 2418 073a 20       		.uleb128 0x20
+ 2419 073b 01       		.uleb128 0x1
+ 2420 073c 50       		.byte	0x50
+ 2421 073d 01       		.uleb128 0x1
+ 2422 073e 3A       		.byte	0x3a
+ 2423 073f 00       		.byte	0
+ 2424 0740 22       		.uleb128 0x22
+ 2425 0741 2E000000 		.4byte	.LVL78
+ 2426 0745 CC020000 		.4byte	0x2cc
+ 2427 0749 22       		.uleb128 0x22
+ 2428 074a 32000000 		.4byte	.LVL79
+ 2429 074e 7F020000 		.4byte	0x27f
+ 2430 0752 1F       		.uleb128 0x1f
+ 2431 0753 38000000 		.4byte	.LVL80
+ 2432 0757 A9010000 		.4byte	0x1a9
+ 2433 075b 68070000 		.4byte	0x768
+ 2434 075f 20       		.uleb128 0x20
+ 2435 0760 01       		.uleb128 0x1
+ 2436 0761 50       		.byte	0x50
+ 2437 0762 04       		.uleb128 0x4
+ 2438 0763 7D       		.byte	0x7d
+ 2439 0764 00       		.sleb128 0
+ 2440 0765 94       		.byte	0x94
+ 2441 0766 01       		.byte	0x1
+ 2442 0767 00       		.byte	0
+ 2443 0768 22       		.uleb128 0x22
+ 2444 0769 6C010000 		.4byte	.LVL99
+ 2445 076d CC020000 		.4byte	0x2cc
+ 2446 0771 22       		.uleb128 0x22
+ 2447 0772 70010000 		.4byte	.LVL100
+ 2448 0776 7F020000 		.4byte	0x27f
+ 2449 077a 21       		.uleb128 0x21
+ 2450 077b 76010000 		.4byte	.LVL101
+ 2451 077f A9010000 		.4byte	0x1a9
+ 2452 0783 20       		.uleb128 0x20
+ 2453 0784 01       		.uleb128 0x1
+ 2454 0785 50       		.byte	0x50
+ 2455 0786 04       		.uleb128 0x4
+ 2456 0787 7D       		.byte	0x7d
+ 2457 0788 00       		.sleb128 0
+ 2458 0789 94       		.byte	0x94
+ 2459 078a 01       		.byte	0x1
+ 2460 078b 00       		.byte	0
+ 2461 078c 00       		.byte	0
+ 2462 078d 00       		.byte	0
+ 2463 078e 22       		.uleb128 0x22
+ 2464 078f 20000000 		.4byte	.LVL75
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 55
+
+
+ 2465 0793 18010000 		.4byte	0x118
+ 2466 0797 00       		.byte	0
+ 2467 0798 0C       		.uleb128 0xc
+ 2468 0799 6F000000 		.4byte	.LASF39
+ 2469 079d 01       		.byte	0x1
+ 2470 079e 43       		.byte	0x43
+ 2471 079f A9070000 		.4byte	0x7a9
+ 2472 07a3 05       		.uleb128 0x5
+ 2473 07a4 03       		.byte	0x3
+ 2474 07a5 B4000000 		.4byte	state
+ 2475 07a9 23       		.uleb128 0x23
+ 2476 07aa 04       		.byte	0x4
+ 2477 07ab BF000000 		.4byte	0xbf
+ 2478 07af 06       		.uleb128 0x6
+ 2479 07b0 8F000000 		.4byte	0x8f
+ 2480 07b4 BF070000 		.4byte	0x7bf
+ 2481 07b8 07       		.uleb128 0x7
+ 2482 07b9 81000000 		.4byte	0x81
+ 2483 07bd AF       		.byte	0xaf
+ 2484 07be 00       		.byte	0
+ 2485 07bf 0C       		.uleb128 0xc
+ 2486 07c0 D4010000 		.4byte	.LASF40
+ 2487 07c4 01       		.byte	0x1
+ 2488 07c5 46       		.byte	0x46
+ 2489 07c6 AF070000 		.4byte	0x7af
+ 2490 07ca 05       		.uleb128 0x5
+ 2491 07cb 03       		.byte	0x3
+ 2492 07cc 04000000 		.4byte	RoundKey
+ 2493 07d0 27       		.uleb128 0x27
+ 2494 07d1 4B657900 		.ascii	"Key\000"
+ 2495 07d5 01       		.byte	0x1
+ 2496 07d6 49       		.byte	0x49
+ 2497 07d7 A2040000 		.4byte	0x4a2
+ 2498 07db 05       		.uleb128 0x5
+ 2499 07dc 03       		.byte	0x3
+ 2500 07dd 00000000 		.4byte	Key
+ 2501 07e1 06       		.uleb128 0x6
+ 2502 07e2 8F000000 		.4byte	0x8f
+ 2503 07e6 F1070000 		.4byte	0x7f1
+ 2504 07ea 07       		.uleb128 0x7
+ 2505 07eb 81000000 		.4byte	0x81
+ 2506 07ef FF       		.byte	0xff
+ 2507 07f0 00       		.byte	0
+ 2508 07f1 0C       		.uleb128 0xc
+ 2509 07f2 6A000000 		.4byte	.LASF41
+ 2510 07f6 01       		.byte	0x1
+ 2511 07f7 4E       		.byte	0x4e
+ 2512 07f8 02080000 		.4byte	0x802
+ 2513 07fc 05       		.uleb128 0x5
+ 2514 07fd 03       		.byte	0x3
+ 2515 07fe 00000000 		.4byte	sbox
+ 2516 0802 24       		.uleb128 0x24
+ 2517 0803 E1070000 		.4byte	0x7e1
+ 2518 0807 0C       		.uleb128 0xc
+ 2519 0808 63010000 		.4byte	.LASF42
+ 2520 080c 01       		.byte	0x1
+ 2521 080d 61       		.byte	0x61
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 56
+
+
+ 2522 080e 18080000 		.4byte	0x818
+ 2523 0812 05       		.uleb128 0x5
+ 2524 0813 03       		.byte	0x3
+ 2525 0814 10010000 		.4byte	rsbox
+ 2526 0818 24       		.uleb128 0x24
+ 2527 0819 E1070000 		.4byte	0x7e1
+ 2528 081d 06       		.uleb128 0x6
+ 2529 081e A5000000 		.4byte	0xa5
+ 2530 0822 2D080000 		.4byte	0x82d
+ 2531 0826 07       		.uleb128 0x7
+ 2532 0827 81000000 		.4byte	0x81
+ 2533 082b 0F       		.byte	0xf
+ 2534 082c 00       		.byte	0
+ 2535 082d 0C       		.uleb128 0xc
+ 2536 082e 3B020000 		.4byte	.LASF43
+ 2537 0832 01       		.byte	0x1
+ 2538 0833 8D       		.byte	0x8d
+ 2539 0834 3E080000 		.4byte	0x83e
+ 2540 0838 05       		.uleb128 0x5
+ 2541 0839 03       		.byte	0x3
+ 2542 083a 00010000 		.4byte	Rcon
+ 2543 083e 24       		.uleb128 0x24
+ 2544 083f 1D080000 		.4byte	0x81d
+ 2545 0843 00       		.byte	0
+ 2546              		.section	.debug_abbrev,"",%progbits
+ 2547              	.Ldebug_abbrev0:
+ 2548 0000 01       		.uleb128 0x1
+ 2549 0001 11       		.uleb128 0x11
+ 2550 0002 01       		.byte	0x1
+ 2551 0003 25       		.uleb128 0x25
+ 2552 0004 0E       		.uleb128 0xe
+ 2553 0005 13       		.uleb128 0x13
+ 2554 0006 0B       		.uleb128 0xb
+ 2555 0007 03       		.uleb128 0x3
+ 2556 0008 0E       		.uleb128 0xe
+ 2557 0009 1B       		.uleb128 0x1b
+ 2558 000a 0E       		.uleb128 0xe
+ 2559 000b 55       		.uleb128 0x55
+ 2560 000c 17       		.uleb128 0x17
+ 2561 000d 11       		.uleb128 0x11
+ 2562 000e 01       		.uleb128 0x1
+ 2563 000f 10       		.uleb128 0x10
+ 2564 0010 17       		.uleb128 0x17
+ 2565 0011 00       		.byte	0
+ 2566 0012 00       		.byte	0
+ 2567 0013 02       		.uleb128 0x2
+ 2568 0014 24       		.uleb128 0x24
+ 2569 0015 00       		.byte	0
+ 2570 0016 0B       		.uleb128 0xb
+ 2571 0017 0B       		.uleb128 0xb
+ 2572 0018 3E       		.uleb128 0x3e
+ 2573 0019 0B       		.uleb128 0xb
+ 2574 001a 03       		.uleb128 0x3
+ 2575 001b 08       		.uleb128 0x8
+ 2576 001c 00       		.byte	0
+ 2577 001d 00       		.byte	0
+ 2578 001e 03       		.uleb128 0x3
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 57
+
+
+ 2579 001f 24       		.uleb128 0x24
+ 2580 0020 00       		.byte	0
+ 2581 0021 0B       		.uleb128 0xb
+ 2582 0022 0B       		.uleb128 0xb
+ 2583 0023 3E       		.uleb128 0x3e
+ 2584 0024 0B       		.uleb128 0xb
+ 2585 0025 03       		.uleb128 0x3
+ 2586 0026 0E       		.uleb128 0xe
+ 2587 0027 00       		.byte	0
+ 2588 0028 00       		.byte	0
+ 2589 0029 04       		.uleb128 0x4
+ 2590 002a 16       		.uleb128 0x16
+ 2591 002b 00       		.byte	0
+ 2592 002c 03       		.uleb128 0x3
+ 2593 002d 0E       		.uleb128 0xe
+ 2594 002e 3A       		.uleb128 0x3a
+ 2595 002f 0B       		.uleb128 0xb
+ 2596 0030 3B       		.uleb128 0x3b
+ 2597 0031 0B       		.uleb128 0xb
+ 2598 0032 49       		.uleb128 0x49
+ 2599 0033 13       		.uleb128 0x13
+ 2600 0034 00       		.byte	0
+ 2601 0035 00       		.byte	0
+ 2602 0036 05       		.uleb128 0x5
+ 2603 0037 16       		.uleb128 0x16
+ 2604 0038 00       		.byte	0
+ 2605 0039 03       		.uleb128 0x3
+ 2606 003a 0E       		.uleb128 0xe
+ 2607 003b 3A       		.uleb128 0x3a
+ 2608 003c 0B       		.uleb128 0xb
+ 2609 003d 3B       		.uleb128 0x3b
+ 2610 003e 05       		.uleb128 0x5
+ 2611 003f 49       		.uleb128 0x49
+ 2612 0040 13       		.uleb128 0x13
+ 2613 0041 00       		.byte	0
+ 2614 0042 00       		.byte	0
+ 2615 0043 06       		.uleb128 0x6
+ 2616 0044 01       		.uleb128 0x1
+ 2617 0045 01       		.byte	0x1
+ 2618 0046 49       		.uleb128 0x49
+ 2619 0047 13       		.uleb128 0x13
+ 2620 0048 01       		.uleb128 0x1
+ 2621 0049 13       		.uleb128 0x13
+ 2622 004a 00       		.byte	0
+ 2623 004b 00       		.byte	0
+ 2624 004c 07       		.uleb128 0x7
+ 2625 004d 21       		.uleb128 0x21
+ 2626 004e 00       		.byte	0
+ 2627 004f 49       		.uleb128 0x49
+ 2628 0050 13       		.uleb128 0x13
+ 2629 0051 2F       		.uleb128 0x2f
+ 2630 0052 0B       		.uleb128 0xb
+ 2631 0053 00       		.byte	0
+ 2632 0054 00       		.byte	0
+ 2633 0055 08       		.uleb128 0x8
+ 2634 0056 2E       		.uleb128 0x2e
+ 2635 0057 01       		.byte	0x1
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 58
+
+
+ 2636 0058 03       		.uleb128 0x3
+ 2637 0059 0E       		.uleb128 0xe
+ 2638 005a 3A       		.uleb128 0x3a
+ 2639 005b 0B       		.uleb128 0xb
+ 2640 005c 3B       		.uleb128 0x3b
+ 2641 005d 0B       		.uleb128 0xb
+ 2642 005e 27       		.uleb128 0x27
+ 2643 005f 19       		.uleb128 0x19
+ 2644 0060 49       		.uleb128 0x49
+ 2645 0061 13       		.uleb128 0x13
+ 2646 0062 20       		.uleb128 0x20
+ 2647 0063 0B       		.uleb128 0xb
+ 2648 0064 01       		.uleb128 0x1
+ 2649 0065 13       		.uleb128 0x13
+ 2650 0066 00       		.byte	0
+ 2651 0067 00       		.byte	0
+ 2652 0068 09       		.uleb128 0x9
+ 2653 0069 05       		.uleb128 0x5
+ 2654 006a 00       		.byte	0
+ 2655 006b 03       		.uleb128 0x3
+ 2656 006c 08       		.uleb128 0x8
+ 2657 006d 3A       		.uleb128 0x3a
+ 2658 006e 0B       		.uleb128 0xb
+ 2659 006f 3B       		.uleb128 0x3b
+ 2660 0070 0B       		.uleb128 0xb
+ 2661 0071 49       		.uleb128 0x49
+ 2662 0072 13       		.uleb128 0x13
+ 2663 0073 00       		.byte	0
+ 2664 0074 00       		.byte	0
+ 2665 0075 0A       		.uleb128 0xa
+ 2666 0076 2E       		.uleb128 0x2e
+ 2667 0077 01       		.byte	0x1
+ 2668 0078 03       		.uleb128 0x3
+ 2669 0079 0E       		.uleb128 0xe
+ 2670 007a 3A       		.uleb128 0x3a
+ 2671 007b 0B       		.uleb128 0xb
+ 2672 007c 3B       		.uleb128 0x3b
+ 2673 007d 0B       		.uleb128 0xb
+ 2674 007e 27       		.uleb128 0x27
+ 2675 007f 19       		.uleb128 0x19
+ 2676 0080 11       		.uleb128 0x11
+ 2677 0081 01       		.uleb128 0x1
+ 2678 0082 12       		.uleb128 0x12
+ 2679 0083 06       		.uleb128 0x6
+ 2680 0084 40       		.uleb128 0x40
+ 2681 0085 18       		.uleb128 0x18
+ 2682 0086 9742     		.uleb128 0x2117
+ 2683 0088 19       		.uleb128 0x19
+ 2684 0089 01       		.uleb128 0x1
+ 2685 008a 13       		.uleb128 0x13
+ 2686 008b 00       		.byte	0
+ 2687 008c 00       		.byte	0
+ 2688 008d 0B       		.uleb128 0xb
+ 2689 008e 34       		.uleb128 0x34
+ 2690 008f 00       		.byte	0
+ 2691 0090 03       		.uleb128 0x3
+ 2692 0091 08       		.uleb128 0x8
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 59
+
+
+ 2693 0092 3A       		.uleb128 0x3a
+ 2694 0093 0B       		.uleb128 0xb
+ 2695 0094 3B       		.uleb128 0x3b
+ 2696 0095 0B       		.uleb128 0xb
+ 2697 0096 49       		.uleb128 0x49
+ 2698 0097 13       		.uleb128 0x13
+ 2699 0098 02       		.uleb128 0x2
+ 2700 0099 17       		.uleb128 0x17
+ 2701 009a 00       		.byte	0
+ 2702 009b 00       		.byte	0
+ 2703 009c 0C       		.uleb128 0xc
+ 2704 009d 34       		.uleb128 0x34
+ 2705 009e 00       		.byte	0
+ 2706 009f 03       		.uleb128 0x3
+ 2707 00a0 0E       		.uleb128 0xe
+ 2708 00a1 3A       		.uleb128 0x3a
+ 2709 00a2 0B       		.uleb128 0xb
+ 2710 00a3 3B       		.uleb128 0x3b
+ 2711 00a4 0B       		.uleb128 0xb
+ 2712 00a5 49       		.uleb128 0x49
+ 2713 00a6 13       		.uleb128 0x13
+ 2714 00a7 02       		.uleb128 0x2
+ 2715 00a8 18       		.uleb128 0x18
+ 2716 00a9 00       		.byte	0
+ 2717 00aa 00       		.byte	0
+ 2718 00ab 0D       		.uleb128 0xd
+ 2719 00ac 1D       		.uleb128 0x1d
+ 2720 00ad 01       		.byte	0x1
+ 2721 00ae 31       		.uleb128 0x31
+ 2722 00af 13       		.uleb128 0x13
+ 2723 00b0 52       		.uleb128 0x52
+ 2724 00b1 01       		.uleb128 0x1
+ 2725 00b2 55       		.uleb128 0x55
+ 2726 00b3 17       		.uleb128 0x17
+ 2727 00b4 58       		.uleb128 0x58
+ 2728 00b5 0B       		.uleb128 0xb
+ 2729 00b6 59       		.uleb128 0x59
+ 2730 00b7 0B       		.uleb128 0xb
+ 2731 00b8 01       		.uleb128 0x1
+ 2732 00b9 13       		.uleb128 0x13
+ 2733 00ba 00       		.byte	0
+ 2734 00bb 00       		.byte	0
+ 2735 00bc 0E       		.uleb128 0xe
+ 2736 00bd 05       		.uleb128 0x5
+ 2737 00be 00       		.byte	0
+ 2738 00bf 31       		.uleb128 0x31
+ 2739 00c0 13       		.uleb128 0x13
+ 2740 00c1 02       		.uleb128 0x2
+ 2741 00c2 17       		.uleb128 0x17
+ 2742 00c3 00       		.byte	0
+ 2743 00c4 00       		.byte	0
+ 2744 00c5 0F       		.uleb128 0xf
+ 2745 00c6 1D       		.uleb128 0x1d
+ 2746 00c7 01       		.byte	0x1
+ 2747 00c8 31       		.uleb128 0x31
+ 2748 00c9 13       		.uleb128 0x13
+ 2749 00ca 11       		.uleb128 0x11
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 60
+
+
+ 2750 00cb 01       		.uleb128 0x1
+ 2751 00cc 12       		.uleb128 0x12
+ 2752 00cd 06       		.uleb128 0x6
+ 2753 00ce 58       		.uleb128 0x58
+ 2754 00cf 0B       		.uleb128 0xb
+ 2755 00d0 59       		.uleb128 0x59
+ 2756 00d1 0B       		.uleb128 0xb
+ 2757 00d2 00       		.byte	0
+ 2758 00d3 00       		.byte	0
+ 2759 00d4 10       		.uleb128 0x10
+ 2760 00d5 05       		.uleb128 0x5
+ 2761 00d6 00       		.byte	0
+ 2762 00d7 03       		.uleb128 0x3
+ 2763 00d8 0E       		.uleb128 0xe
+ 2764 00d9 3A       		.uleb128 0x3a
+ 2765 00da 0B       		.uleb128 0xb
+ 2766 00db 3B       		.uleb128 0x3b
+ 2767 00dc 0B       		.uleb128 0xb
+ 2768 00dd 49       		.uleb128 0x49
+ 2769 00de 13       		.uleb128 0x13
+ 2770 00df 02       		.uleb128 0x2
+ 2771 00e0 17       		.uleb128 0x17
+ 2772 00e1 00       		.byte	0
+ 2773 00e2 00       		.byte	0
+ 2774 00e3 11       		.uleb128 0x11
+ 2775 00e4 2E       		.uleb128 0x2e
+ 2776 00e5 01       		.byte	0x1
+ 2777 00e6 03       		.uleb128 0x3
+ 2778 00e7 0E       		.uleb128 0xe
+ 2779 00e8 3A       		.uleb128 0x3a
+ 2780 00e9 0B       		.uleb128 0xb
+ 2781 00ea 3B       		.uleb128 0x3b
+ 2782 00eb 05       		.uleb128 0x5
+ 2783 00ec 27       		.uleb128 0x27
+ 2784 00ed 19       		.uleb128 0x19
+ 2785 00ee 11       		.uleb128 0x11
+ 2786 00ef 01       		.uleb128 0x1
+ 2787 00f0 12       		.uleb128 0x12
+ 2788 00f1 06       		.uleb128 0x6
+ 2789 00f2 40       		.uleb128 0x40
+ 2790 00f3 18       		.uleb128 0x18
+ 2791 00f4 9742     		.uleb128 0x2117
+ 2792 00f6 19       		.uleb128 0x19
+ 2793 00f7 01       		.uleb128 0x1
+ 2794 00f8 13       		.uleb128 0x13
+ 2795 00f9 00       		.byte	0
+ 2796 00fa 00       		.byte	0
+ 2797 00fb 12       		.uleb128 0x12
+ 2798 00fc 34       		.uleb128 0x34
+ 2799 00fd 00       		.byte	0
+ 2800 00fe 03       		.uleb128 0x3
+ 2801 00ff 0E       		.uleb128 0xe
+ 2802 0100 3A       		.uleb128 0x3a
+ 2803 0101 0B       		.uleb128 0xb
+ 2804 0102 3B       		.uleb128 0x3b
+ 2805 0103 05       		.uleb128 0x5
+ 2806 0104 49       		.uleb128 0x49
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 61
+
+
+ 2807 0105 13       		.uleb128 0x13
+ 2808 0106 02       		.uleb128 0x2
+ 2809 0107 18       		.uleb128 0x18
+ 2810 0108 00       		.byte	0
+ 2811 0109 00       		.byte	0
+ 2812 010a 13       		.uleb128 0x13
+ 2813 010b 2E       		.uleb128 0x2e
+ 2814 010c 01       		.byte	0x1
+ 2815 010d 03       		.uleb128 0x3
+ 2816 010e 0E       		.uleb128 0xe
+ 2817 010f 3A       		.uleb128 0x3a
+ 2818 0110 0B       		.uleb128 0xb
+ 2819 0111 3B       		.uleb128 0x3b
+ 2820 0112 05       		.uleb128 0x5
+ 2821 0113 27       		.uleb128 0x27
+ 2822 0114 19       		.uleb128 0x19
+ 2823 0115 49       		.uleb128 0x49
+ 2824 0116 13       		.uleb128 0x13
+ 2825 0117 11       		.uleb128 0x11
+ 2826 0118 01       		.uleb128 0x1
+ 2827 0119 12       		.uleb128 0x12
+ 2828 011a 06       		.uleb128 0x6
+ 2829 011b 40       		.uleb128 0x40
+ 2830 011c 18       		.uleb128 0x18
+ 2831 011d 9742     		.uleb128 0x2117
+ 2832 011f 19       		.uleb128 0x19
+ 2833 0120 01       		.uleb128 0x1
+ 2834 0121 13       		.uleb128 0x13
+ 2835 0122 00       		.byte	0
+ 2836 0123 00       		.byte	0
+ 2837 0124 14       		.uleb128 0x14
+ 2838 0125 05       		.uleb128 0x5
+ 2839 0126 00       		.byte	0
+ 2840 0127 03       		.uleb128 0x3
+ 2841 0128 08       		.uleb128 0x8
+ 2842 0129 3A       		.uleb128 0x3a
+ 2843 012a 0B       		.uleb128 0xb
+ 2844 012b 3B       		.uleb128 0x3b
+ 2845 012c 05       		.uleb128 0x5
+ 2846 012d 49       		.uleb128 0x49
+ 2847 012e 13       		.uleb128 0x13
+ 2848 012f 02       		.uleb128 0x2
+ 2849 0130 17       		.uleb128 0x17
+ 2850 0131 00       		.byte	0
+ 2851 0132 00       		.byte	0
+ 2852 0133 15       		.uleb128 0x15
+ 2853 0134 34       		.uleb128 0x34
+ 2854 0135 00       		.byte	0
+ 2855 0136 03       		.uleb128 0x3
+ 2856 0137 08       		.uleb128 0x8
+ 2857 0138 3A       		.uleb128 0x3a
+ 2858 0139 0B       		.uleb128 0xb
+ 2859 013a 3B       		.uleb128 0x3b
+ 2860 013b 05       		.uleb128 0x5
+ 2861 013c 49       		.uleb128 0x49
+ 2862 013d 13       		.uleb128 0x13
+ 2863 013e 02       		.uleb128 0x2
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 62
+
+
+ 2864 013f 17       		.uleb128 0x17
+ 2865 0140 00       		.byte	0
+ 2866 0141 00       		.byte	0
+ 2867 0142 16       		.uleb128 0x16
+ 2868 0143 1D       		.uleb128 0x1d
+ 2869 0144 01       		.byte	0x1
+ 2870 0145 31       		.uleb128 0x31
+ 2871 0146 13       		.uleb128 0x13
+ 2872 0147 11       		.uleb128 0x11
+ 2873 0148 01       		.uleb128 0x1
+ 2874 0149 12       		.uleb128 0x12
+ 2875 014a 06       		.uleb128 0x6
+ 2876 014b 58       		.uleb128 0x58
+ 2877 014c 0B       		.uleb128 0xb
+ 2878 014d 59       		.uleb128 0x59
+ 2879 014e 05       		.uleb128 0x5
+ 2880 014f 00       		.byte	0
+ 2881 0150 00       		.byte	0
+ 2882 0151 17       		.uleb128 0x17
+ 2883 0152 2E       		.uleb128 0x2e
+ 2884 0153 01       		.byte	0x1
+ 2885 0154 03       		.uleb128 0x3
+ 2886 0155 0E       		.uleb128 0xe
+ 2887 0156 3A       		.uleb128 0x3a
+ 2888 0157 0B       		.uleb128 0xb
+ 2889 0158 3B       		.uleb128 0x3b
+ 2890 0159 05       		.uleb128 0x5
+ 2891 015a 27       		.uleb128 0x27
+ 2892 015b 19       		.uleb128 0x19
+ 2893 015c 20       		.uleb128 0x20
+ 2894 015d 0B       		.uleb128 0xb
+ 2895 015e 01       		.uleb128 0x1
+ 2896 015f 13       		.uleb128 0x13
+ 2897 0160 00       		.byte	0
+ 2898 0161 00       		.byte	0
+ 2899 0162 18       		.uleb128 0x18
+ 2900 0163 34       		.uleb128 0x34
+ 2901 0164 00       		.byte	0
+ 2902 0165 03       		.uleb128 0x3
+ 2903 0166 0E       		.uleb128 0xe
+ 2904 0167 3A       		.uleb128 0x3a
+ 2905 0168 0B       		.uleb128 0xb
+ 2906 0169 3B       		.uleb128 0x3b
+ 2907 016a 05       		.uleb128 0x5
+ 2908 016b 49       		.uleb128 0x49
+ 2909 016c 13       		.uleb128 0x13
+ 2910 016d 00       		.byte	0
+ 2911 016e 00       		.byte	0
+ 2912 016f 19       		.uleb128 0x19
+ 2913 0170 34       		.uleb128 0x34
+ 2914 0171 00       		.byte	0
+ 2915 0172 03       		.uleb128 0x3
+ 2916 0173 08       		.uleb128 0x8
+ 2917 0174 3A       		.uleb128 0x3a
+ 2918 0175 0B       		.uleb128 0xb
+ 2919 0176 3B       		.uleb128 0x3b
+ 2920 0177 05       		.uleb128 0x5
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 63
+
+
+ 2921 0178 49       		.uleb128 0x49
+ 2922 0179 13       		.uleb128 0x13
+ 2923 017a 00       		.byte	0
+ 2924 017b 00       		.byte	0
+ 2925 017c 1A       		.uleb128 0x1a
+ 2926 017d 2E       		.uleb128 0x2e
+ 2927 017e 01       		.byte	0x1
+ 2928 017f 3F       		.uleb128 0x3f
+ 2929 0180 19       		.uleb128 0x19
+ 2930 0181 03       		.uleb128 0x3
+ 2931 0182 0E       		.uleb128 0xe
+ 2932 0183 3A       		.uleb128 0x3a
+ 2933 0184 0B       		.uleb128 0xb
+ 2934 0185 3B       		.uleb128 0x3b
+ 2935 0186 05       		.uleb128 0x5
+ 2936 0187 27       		.uleb128 0x27
+ 2937 0188 19       		.uleb128 0x19
+ 2938 0189 11       		.uleb128 0x11
+ 2939 018a 01       		.uleb128 0x1
+ 2940 018b 12       		.uleb128 0x12
+ 2941 018c 06       		.uleb128 0x6
+ 2942 018d 40       		.uleb128 0x40
+ 2943 018e 18       		.uleb128 0x18
+ 2944 018f 9742     		.uleb128 0x2117
+ 2945 0191 19       		.uleb128 0x19
+ 2946 0192 01       		.uleb128 0x1
+ 2947 0193 13       		.uleb128 0x13
+ 2948 0194 00       		.byte	0
+ 2949 0195 00       		.byte	0
+ 2950 0196 1B       		.uleb128 0x1b
+ 2951 0197 05       		.uleb128 0x5
+ 2952 0198 00       		.byte	0
+ 2953 0199 03       		.uleb128 0x3
+ 2954 019a 0E       		.uleb128 0xe
+ 2955 019b 3A       		.uleb128 0x3a
+ 2956 019c 0B       		.uleb128 0xb
+ 2957 019d 3B       		.uleb128 0x3b
+ 2958 019e 05       		.uleb128 0x5
+ 2959 019f 49       		.uleb128 0x49
+ 2960 01a0 13       		.uleb128 0x13
+ 2961 01a1 02       		.uleb128 0x2
+ 2962 01a2 17       		.uleb128 0x17
+ 2963 01a3 00       		.byte	0
+ 2964 01a4 00       		.byte	0
+ 2965 01a5 1C       		.uleb128 0x1c
+ 2966 01a6 1D       		.uleb128 0x1d
+ 2967 01a7 01       		.byte	0x1
+ 2968 01a8 31       		.uleb128 0x31
+ 2969 01a9 13       		.uleb128 0x13
+ 2970 01aa 11       		.uleb128 0x11
+ 2971 01ab 01       		.uleb128 0x1
+ 2972 01ac 12       		.uleb128 0x12
+ 2973 01ad 06       		.uleb128 0x6
+ 2974 01ae 58       		.uleb128 0x58
+ 2975 01af 0B       		.uleb128 0xb
+ 2976 01b0 59       		.uleb128 0x59
+ 2977 01b1 05       		.uleb128 0x5
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 64
+
+
+ 2978 01b2 01       		.uleb128 0x1
+ 2979 01b3 13       		.uleb128 0x13
+ 2980 01b4 00       		.byte	0
+ 2981 01b5 00       		.byte	0
+ 2982 01b6 1D       		.uleb128 0x1d
+ 2983 01b7 0B       		.uleb128 0xb
+ 2984 01b8 01       		.byte	0x1
+ 2985 01b9 11       		.uleb128 0x11
+ 2986 01ba 01       		.uleb128 0x1
+ 2987 01bb 12       		.uleb128 0x12
+ 2988 01bc 06       		.uleb128 0x6
+ 2989 01bd 00       		.byte	0
+ 2990 01be 00       		.byte	0
+ 2991 01bf 1E       		.uleb128 0x1e
+ 2992 01c0 34       		.uleb128 0x34
+ 2993 01c1 00       		.byte	0
+ 2994 01c2 31       		.uleb128 0x31
+ 2995 01c3 13       		.uleb128 0x13
+ 2996 01c4 02       		.uleb128 0x2
+ 2997 01c5 17       		.uleb128 0x17
+ 2998 01c6 00       		.byte	0
+ 2999 01c7 00       		.byte	0
+ 3000 01c8 1F       		.uleb128 0x1f
+ 3001 01c9 898201   		.uleb128 0x4109
+ 3002 01cc 01       		.byte	0x1
+ 3003 01cd 11       		.uleb128 0x11
+ 3004 01ce 01       		.uleb128 0x1
+ 3005 01cf 31       		.uleb128 0x31
+ 3006 01d0 13       		.uleb128 0x13
+ 3007 01d1 01       		.uleb128 0x1
+ 3008 01d2 13       		.uleb128 0x13
+ 3009 01d3 00       		.byte	0
+ 3010 01d4 00       		.byte	0
+ 3011 01d5 20       		.uleb128 0x20
+ 3012 01d6 8A8201   		.uleb128 0x410a
+ 3013 01d9 00       		.byte	0
+ 3014 01da 02       		.uleb128 0x2
+ 3015 01db 18       		.uleb128 0x18
+ 3016 01dc 9142     		.uleb128 0x2111
+ 3017 01de 18       		.uleb128 0x18
+ 3018 01df 00       		.byte	0
+ 3019 01e0 00       		.byte	0
+ 3020 01e1 21       		.uleb128 0x21
+ 3021 01e2 898201   		.uleb128 0x4109
+ 3022 01e5 01       		.byte	0x1
+ 3023 01e6 11       		.uleb128 0x11
+ 3024 01e7 01       		.uleb128 0x1
+ 3025 01e8 31       		.uleb128 0x31
+ 3026 01e9 13       		.uleb128 0x13
+ 3027 01ea 00       		.byte	0
+ 3028 01eb 00       		.byte	0
+ 3029 01ec 22       		.uleb128 0x22
+ 3030 01ed 898201   		.uleb128 0x4109
+ 3031 01f0 00       		.byte	0
+ 3032 01f1 11       		.uleb128 0x11
+ 3033 01f2 01       		.uleb128 0x1
+ 3034 01f3 31       		.uleb128 0x31
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 65
+
+
+ 3035 01f4 13       		.uleb128 0x13
+ 3036 01f5 00       		.byte	0
+ 3037 01f6 00       		.byte	0
+ 3038 01f7 23       		.uleb128 0x23
+ 3039 01f8 0F       		.uleb128 0xf
+ 3040 01f9 00       		.byte	0
+ 3041 01fa 0B       		.uleb128 0xb
+ 3042 01fb 0B       		.uleb128 0xb
+ 3043 01fc 49       		.uleb128 0x49
+ 3044 01fd 13       		.uleb128 0x13
+ 3045 01fe 00       		.byte	0
+ 3046 01ff 00       		.byte	0
+ 3047 0200 24       		.uleb128 0x24
+ 3048 0201 26       		.uleb128 0x26
+ 3049 0202 00       		.byte	0
+ 3050 0203 49       		.uleb128 0x49
+ 3051 0204 13       		.uleb128 0x13
+ 3052 0205 00       		.byte	0
+ 3053 0206 00       		.byte	0
+ 3054 0207 25       		.uleb128 0x25
+ 3055 0208 05       		.uleb128 0x5
+ 3056 0209 00       		.byte	0
+ 3057 020a 03       		.uleb128 0x3
+ 3058 020b 0E       		.uleb128 0xe
+ 3059 020c 3A       		.uleb128 0x3a
+ 3060 020d 0B       		.uleb128 0xb
+ 3061 020e 3B       		.uleb128 0x3b
+ 3062 020f 05       		.uleb128 0x5
+ 3063 0210 49       		.uleb128 0x49
+ 3064 0211 13       		.uleb128 0x13
+ 3065 0212 00       		.byte	0
+ 3066 0213 00       		.byte	0
+ 3067 0214 26       		.uleb128 0x26
+ 3068 0215 34       		.uleb128 0x34
+ 3069 0216 00       		.byte	0
+ 3070 0217 31       		.uleb128 0x31
+ 3071 0218 13       		.uleb128 0x13
+ 3072 0219 02       		.uleb128 0x2
+ 3073 021a 18       		.uleb128 0x18
+ 3074 021b 00       		.byte	0
+ 3075 021c 00       		.byte	0
+ 3076 021d 27       		.uleb128 0x27
+ 3077 021e 34       		.uleb128 0x34
+ 3078 021f 00       		.byte	0
+ 3079 0220 03       		.uleb128 0x3
+ 3080 0221 08       		.uleb128 0x8
+ 3081 0222 3A       		.uleb128 0x3a
+ 3082 0223 0B       		.uleb128 0xb
+ 3083 0224 3B       		.uleb128 0x3b
+ 3084 0225 0B       		.uleb128 0xb
+ 3085 0226 49       		.uleb128 0x49
+ 3086 0227 13       		.uleb128 0x13
+ 3087 0228 02       		.uleb128 0x2
+ 3088 0229 18       		.uleb128 0x18
+ 3089 022a 00       		.byte	0
+ 3090 022b 00       		.byte	0
+ 3091 022c 00       		.byte	0
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 66
+
+
+ 3092              		.section	.debug_loc,"",%progbits
+ 3093              	.Ldebug_loc0:
+ 3094              	.LLST0:
+ 3095 0000 00000000 		.4byte	.LVL0
+ 3096 0004 10000000 		.4byte	.LVL1
+ 3097 0008 0200     		.2byte	0x2
+ 3098 000a 30       		.byte	0x30
+ 3099 000b 9F       		.byte	0x9f
+ 3100 000c 32000000 		.4byte	.LVL2
+ 3101 0010 5C000000 		.4byte	.LVL7
+ 3102 0014 0100     		.2byte	0x1
+ 3103 0016 51       		.byte	0x51
+ 3104 0017 5C000000 		.4byte	.LVL7
+ 3105 001b 74000000 		.4byte	.LVL11
+ 3106 001f 0600     		.2byte	0x6
+ 3107 0021 08       		.byte	0x8
+ 3108 0022 2C       		.byte	0x2c
+ 3109 0023 74       		.byte	0x74
+ 3110 0024 00       		.sleb128 0
+ 3111 0025 1C       		.byte	0x1c
+ 3112 0026 9F       		.byte	0x9f
+ 3113 0027 74000000 		.4byte	.LVL11
+ 3114 002b 92000000 		.4byte	.LVL12
+ 3115 002f 0600     		.2byte	0x6
+ 3116 0031 08       		.byte	0x8
+ 3117 0032 2B       		.byte	0x2b
+ 3118 0033 74       		.byte	0x74
+ 3119 0034 00       		.sleb128 0
+ 3120 0035 1C       		.byte	0x1c
+ 3121 0036 9F       		.byte	0x9f
+ 3122 0037 00000000 		.4byte	0
+ 3123 003b 00000000 		.4byte	0
+ 3124              	.LLST1:
+ 3125 003f 32000000 		.4byte	.LVL2
+ 3126 0043 46000000 		.4byte	.LVL4
+ 3127 0047 0100     		.2byte	0x1
+ 3128 0049 50       		.byte	0x50
+ 3129 004a 00000000 		.4byte	0
+ 3130 004e 00000000 		.4byte	0
+ 3131              	.LLST2:
+ 3132 0052 50000000 		.4byte	.LVL5
+ 3133 0056 6C000000 		.4byte	.LVL10
+ 3134 005a 0600     		.2byte	0x6
+ 3135 005c 76       		.byte	0x76
+ 3136 005d 00       		.sleb128 0
+ 3137 005e 08       		.byte	0x8
+ 3138 005f FF       		.byte	0xff
+ 3139 0060 1A       		.byte	0x1a
+ 3140 0061 9F       		.byte	0x9f
+ 3141 0062 00000000 		.4byte	0
+ 3142 0066 00000000 		.4byte	0
+ 3143              	.LLST3:
+ 3144 006a 50000000 		.4byte	.LVL5
+ 3145 006e 62000000 		.4byte	.LVL8
+ 3146 0072 0200     		.2byte	0x2
+ 3147 0074 91       		.byte	0x91
+ 3148 0075 65       		.sleb128 -27
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 67
+
+
+ 3149 0076 00000000 		.4byte	0
+ 3150 007a 00000000 		.4byte	0
+ 3151              	.LLST4:
+ 3152 007e 52000000 		.4byte	.LVL6
+ 3153 0082 68000000 		.4byte	.LVL9
+ 3154 0086 0200     		.2byte	0x2
+ 3155 0088 91       		.byte	0x91
+ 3156 0089 66       		.sleb128 -26
+ 3157 008a 00000000 		.4byte	0
+ 3158 008e 00000000 		.4byte	0
+ 3159              	.LLST5:
+ 3160 0092 00000000 		.4byte	.LVL13
+ 3161 0096 08000000 		.4byte	.LVL14
+ 3162 009a 0100     		.2byte	0x1
+ 3163 009c 50       		.byte	0x50
+ 3164 009d 08000000 		.4byte	.LVL14
+ 3165 00a1 34000000 		.4byte	.LFE66
+ 3166 00a5 0400     		.2byte	0x4
+ 3167 00a7 F3       		.byte	0xf3
+ 3168 00a8 01       		.uleb128 0x1
+ 3169 00a9 50       		.byte	0x50
+ 3170 00aa 9F       		.byte	0x9f
+ 3171 00ab 00000000 		.4byte	0
+ 3172 00af 00000000 		.4byte	0
+ 3173              	.LLST6:
+ 3174 00b3 00000000 		.4byte	.LVL13
+ 3175 00b7 0A000000 		.4byte	.LVL15
+ 3176 00bb 0200     		.2byte	0x2
+ 3177 00bd 30       		.byte	0x30
+ 3178 00be 9F       		.byte	0x9f
+ 3179 00bf 00000000 		.4byte	0
+ 3180 00c3 00000000 		.4byte	0
+ 3181              	.LLST7:
+ 3182 00c7 0A000000 		.4byte	.LVL15
+ 3183 00cb 14000000 		.4byte	.LVL16
+ 3184 00cf 0200     		.2byte	0x2
+ 3185 00d1 30       		.byte	0x30
+ 3186 00d2 9F       		.byte	0x9f
+ 3187 00d3 14000000 		.4byte	.LVL16
+ 3188 00d7 1E000000 		.4byte	.LVL17
+ 3189 00db 0100     		.2byte	0x1
+ 3190 00dd 53       		.byte	0x53
+ 3191 00de 1E000000 		.4byte	.LVL17
+ 3192 00e2 20000000 		.4byte	.LVL18
+ 3193 00e6 0300     		.2byte	0x3
+ 3194 00e8 73       		.byte	0x73
+ 3195 00e9 01       		.sleb128 1
+ 3196 00ea 9F       		.byte	0x9f
+ 3197 00eb 00000000 		.4byte	0
+ 3198 00ef 00000000 		.4byte	0
+ 3199              	.LLST8:
+ 3200 00f3 00000000 		.4byte	.LVL19
+ 3201 00f7 08000000 		.4byte	.LVL20
+ 3202 00fb 0200     		.2byte	0x2
+ 3203 00fd 30       		.byte	0x30
+ 3204 00fe 9F       		.byte	0x9f
+ 3205 00ff 08000000 		.4byte	.LVL20
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 68
+
+
+ 3206 0103 18000000 		.4byte	.LVL23
+ 3207 0107 0B00     		.2byte	0xb
+ 3208 0109 73       		.byte	0x73
+ 3209 010a 00       		.sleb128 0
+ 3210 010b 03       		.byte	0x3
+ 3211 010c B4000000 		.4byte	state
+ 3212 0110 94       		.byte	0x94
+ 3213 0111 01       		.byte	0x1
+ 3214 0112 1C       		.byte	0x1c
+ 3215 0113 9F       		.byte	0x9f
+ 3216 0114 18000000 		.4byte	.LVL23
+ 3217 0118 1A000000 		.4byte	.LVL24
+ 3218 011c 0D00     		.2byte	0xd
+ 3219 011e 73       		.byte	0x73
+ 3220 011f 00       		.sleb128 0
+ 3221 0120 03       		.byte	0x3
+ 3222 0121 B4000000 		.4byte	state
+ 3223 0125 94       		.byte	0x94
+ 3224 0126 01       		.byte	0x1
+ 3225 0127 1C       		.byte	0x1c
+ 3226 0128 23       		.byte	0x23
+ 3227 0129 01       		.uleb128 0x1
+ 3228 012a 9F       		.byte	0x9f
+ 3229 012b 00000000 		.4byte	0
+ 3230 012f 00000000 		.4byte	0
+ 3231              	.LLST9:
+ 3232 0133 08000000 		.4byte	.LVL20
+ 3233 0137 0A000000 		.4byte	.LVL21
+ 3234 013b 0200     		.2byte	0x2
+ 3235 013d 30       		.byte	0x30
+ 3236 013e 9F       		.byte	0x9f
+ 3237 013f 00000000 		.4byte	0
+ 3238 0143 00000000 		.4byte	0
+ 3239              	.LLST10:
+ 3240 0147 0A000000 		.4byte	.LVL21
+ 3241 014b 12000000 		.4byte	.LVL22
+ 3242 014f 0500     		.2byte	0x5
+ 3243 0151 73       		.byte	0x73
+ 3244 0152 00       		.sleb128 0
+ 3245 0153 72       		.byte	0x72
+ 3246 0154 00       		.sleb128 0
+ 3247 0155 22       		.byte	0x22
+ 3248 0156 00000000 		.4byte	0
+ 3249 015a 00000000 		.4byte	0
+ 3250              	.LLST11:
+ 3251 015e 00000000 		.4byte	.LVL29
+ 3252 0162 08000000 		.4byte	.LVL30
+ 3253 0166 0100     		.2byte	0x1
+ 3254 0168 50       		.byte	0x50
+ 3255 0169 08000000 		.4byte	.LVL30
+ 3256 016d 0E000000 		.4byte	.LFE69
+ 3257 0171 0400     		.2byte	0x4
+ 3258 0173 F3       		.byte	0xf3
+ 3259 0174 01       		.uleb128 0x1
+ 3260 0175 50       		.byte	0x50
+ 3261 0176 9F       		.byte	0x9f
+ 3262 0177 00000000 		.4byte	0
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 69
+
+
+ 3263 017b 00000000 		.4byte	0
+ 3264              	.LLST12:
+ 3265 017f 00000000 		.4byte	.LVL31
+ 3266 0183 08000000 		.4byte	.LVL32
+ 3267 0187 0200     		.2byte	0x2
+ 3268 0189 30       		.byte	0x30
+ 3269 018a 9F       		.byte	0x9f
+ 3270 018b 08000000 		.4byte	.LVL32
+ 3271 018f 1A000000 		.4byte	.LVL35
+ 3272 0193 0B00     		.2byte	0xb
+ 3273 0195 73       		.byte	0x73
+ 3274 0196 00       		.sleb128 0
+ 3275 0197 03       		.byte	0x3
+ 3276 0198 B4000000 		.4byte	state
+ 3277 019c 94       		.byte	0x94
+ 3278 019d 01       		.byte	0x1
+ 3279 019e 1C       		.byte	0x1c
+ 3280 019f 9F       		.byte	0x9f
+ 3281 01a0 1A000000 		.4byte	.LVL35
+ 3282 01a4 1C000000 		.4byte	.LVL36
+ 3283 01a8 0D00     		.2byte	0xd
+ 3284 01aa 73       		.byte	0x73
+ 3285 01ab 00       		.sleb128 0
+ 3286 01ac 03       		.byte	0x3
+ 3287 01ad B4000000 		.4byte	state
+ 3288 01b1 94       		.byte	0x94
+ 3289 01b2 01       		.byte	0x1
+ 3290 01b3 1C       		.byte	0x1c
+ 3291 01b4 23       		.byte	0x23
+ 3292 01b5 01       		.uleb128 0x1
+ 3293 01b6 9F       		.byte	0x9f
+ 3294 01b7 00000000 		.4byte	0
+ 3295 01bb 00000000 		.4byte	0
+ 3296              	.LLST13:
+ 3297 01bf 08000000 		.4byte	.LVL32
+ 3298 01c3 0A000000 		.4byte	.LVL33
+ 3299 01c7 0200     		.2byte	0x2
+ 3300 01c9 30       		.byte	0x30
+ 3301 01ca 9F       		.byte	0x9f
+ 3302 01cb 00000000 		.4byte	0
+ 3303 01cf 00000000 		.4byte	0
+ 3304              	.LLST14:
+ 3305 01d3 0A000000 		.4byte	.LVL33
+ 3306 01d7 14000000 		.4byte	.LVL34
+ 3307 01db 0500     		.2byte	0x5
+ 3308 01dd 73       		.byte	0x73
+ 3309 01de 00       		.sleb128 0
+ 3310 01df 72       		.byte	0x72
+ 3311 01e0 00       		.sleb128 0
+ 3312 01e1 22       		.byte	0x22
+ 3313 01e2 00000000 		.4byte	0
+ 3314 01e6 00000000 		.4byte	0
+ 3315              	.LLST15:
+ 3316 01ea 00000000 		.4byte	.LVL41
+ 3317 01ee 11000000 		.4byte	.LVL42-1
+ 3318 01f2 0100     		.2byte	0x1
+ 3319 01f4 50       		.byte	0x50
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 70
+
+
+ 3320 01f5 11000000 		.4byte	.LVL42-1
+ 3321 01f9 B0000000 		.4byte	.LVL69
+ 3322 01fd 0100     		.2byte	0x1
+ 3323 01ff 57       		.byte	0x57
+ 3324 0200 B0000000 		.4byte	.LVL69
+ 3325 0204 BC000000 		.4byte	.LFE77
+ 3326 0208 0600     		.2byte	0x6
+ 3327 020a 91       		.byte	0x91
+ 3328 020b 64       		.sleb128 -28
+ 3329 020c 06       		.byte	0x6
+ 3330 020d 40       		.byte	0x40
+ 3331 020e 1C       		.byte	0x1c
+ 3332 020f 9F       		.byte	0x9f
+ 3333 0210 00000000 		.4byte	0
+ 3334 0214 00000000 		.4byte	0
+ 3335              	.LLST16:
+ 3336 0218 00000000 		.4byte	.LVL41
+ 3337 021c 11000000 		.4byte	.LVL42-1
+ 3338 0220 0100     		.2byte	0x1
+ 3339 0222 51       		.byte	0x51
+ 3340 0223 11000000 		.4byte	.LVL42-1
+ 3341 0227 BC000000 		.4byte	.LFE77
+ 3342 022b 0400     		.2byte	0x4
+ 3343 022d F3       		.byte	0xf3
+ 3344 022e 01       		.uleb128 0x1
+ 3345 022f 51       		.byte	0x51
+ 3346 0230 9F       		.byte	0x9f
+ 3347 0231 00000000 		.4byte	0
+ 3348 0235 00000000 		.4byte	0
+ 3349              	.LLST17:
+ 3350 0239 12000000 		.4byte	.LVL42
+ 3351 023d 18000000 		.4byte	.LVL43
+ 3352 0241 0200     		.2byte	0x2
+ 3353 0243 30       		.byte	0x30
+ 3354 0244 9F       		.byte	0x9f
+ 3355 0245 18000000 		.4byte	.LVL43
+ 3356 0249 1A000000 		.4byte	.LVL44
+ 3357 024d 0200     		.2byte	0x2
+ 3358 024f 31       		.byte	0x31
+ 3359 0250 9F       		.byte	0x9f
+ 3360 0251 1A000000 		.4byte	.LVL44
+ 3361 0255 96000000 		.4byte	.LVL62
+ 3362 0259 0100     		.2byte	0x1
+ 3363 025b 55       		.byte	0x55
+ 3364 025c 9C000000 		.4byte	.LVL63
+ 3365 0260 B0000000 		.4byte	.LVL68
+ 3366 0264 0100     		.2byte	0x1
+ 3367 0266 55       		.byte	0x55
+ 3368 0267 00000000 		.4byte	0
+ 3369 026b 00000000 		.4byte	0
+ 3370              	.LLST18:
+ 3371 026f 22000000 		.4byte	.LVL46
+ 3372 0273 2A000000 		.4byte	.LVL47
+ 3373 0277 0200     		.2byte	0x2
+ 3374 0279 30       		.byte	0x30
+ 3375 027a 9F       		.byte	0x9f
+ 3376 027b 00000000 		.4byte	0
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 71
+
+
+ 3377 027f 00000000 		.4byte	0
+ 3378              	.LLST19:
+ 3379 0283 4A000000 		.4byte	.LVL49
+ 3380 0287 88000000 		.4byte	.LVL61
+ 3381 028b 0100     		.2byte	0x1
+ 3382 028d 56       		.byte	0x56
+ 3383 028e 88000000 		.4byte	.LVL61
+ 3384 0292 B0000000 		.4byte	.LVL67
+ 3385 0296 0C00     		.2byte	0xc
+ 3386 0298 7D       		.byte	0x7d
+ 3387 0299 00       		.sleb128 0
+ 3388 029a 06       		.byte	0x6
+ 3389 029b 91       		.byte	0x91
+ 3390 029c 54       		.sleb128 -44
+ 3391 029d 06       		.byte	0x6
+ 3392 029e 27       		.byte	0x27
+ 3393 029f 91       		.byte	0x91
+ 3394 02a0 60       		.sleb128 -32
+ 3395 02a1 06       		.byte	0x6
+ 3396 02a2 27       		.byte	0x27
+ 3397 02a3 9F       		.byte	0x9f
+ 3398 02a4 B0000000 		.4byte	.LVL67
+ 3399 02a8 BC000000 		.4byte	.LFE77
+ 3400 02ac 0C00     		.2byte	0xc
+ 3401 02ae 91       		.byte	0x91
+ 3402 02af 50       		.sleb128 -48
+ 3403 02b0 06       		.byte	0x6
+ 3404 02b1 91       		.byte	0x91
+ 3405 02b2 54       		.sleb128 -44
+ 3406 02b3 06       		.byte	0x6
+ 3407 02b4 27       		.byte	0x27
+ 3408 02b5 91       		.byte	0x91
+ 3409 02b6 60       		.sleb128 -32
+ 3410 02b7 06       		.byte	0x6
+ 3411 02b8 27       		.byte	0x27
+ 3412 02b9 9F       		.byte	0x9f
+ 3413 02ba 00000000 		.4byte	0
+ 3414 02be 00000000 		.4byte	0
+ 3415              	.LLST20:
+ 3416 02c2 4A000000 		.4byte	.LVL49
+ 3417 02c6 4D000000 		.4byte	.LVL50-1
+ 3418 02ca 0100     		.2byte	0x1
+ 3419 02cc 50       		.byte	0x50
+ 3420 02cd 4D000000 		.4byte	.LVL50-1
+ 3421 02d1 4E000000 		.4byte	.LVL50
+ 3422 02d5 0800     		.2byte	0x8
+ 3423 02d7 7D       		.byte	0x7d
+ 3424 02d8 00       		.sleb128 0
+ 3425 02d9 06       		.byte	0x6
+ 3426 02da 91       		.byte	0x91
+ 3427 02db 54       		.sleb128 -44
+ 3428 02dc 06       		.byte	0x6
+ 3429 02dd 27       		.byte	0x27
+ 3430 02de 9F       		.byte	0x9f
+ 3431 02df 4E000000 		.4byte	.LVL50
+ 3432 02e3 52000000 		.4byte	.LVL51
+ 3433 02e7 0100     		.2byte	0x1
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 72
+
+
+ 3434 02e9 50       		.byte	0x50
+ 3435 02ea 5C000000 		.4byte	.LVL52
+ 3436 02ee 5F000000 		.4byte	.LVL53-1
+ 3437 02f2 0100     		.2byte	0x1
+ 3438 02f4 50       		.byte	0x50
+ 3439 02f5 5F000000 		.4byte	.LVL53-1
+ 3440 02f9 60000000 		.4byte	.LVL53
+ 3441 02fd 0800     		.2byte	0x8
+ 3442 02ff 91       		.byte	0x91
+ 3443 0300 54       		.sleb128 -44
+ 3444 0301 06       		.byte	0x6
+ 3445 0302 91       		.byte	0x91
+ 3446 0303 5C       		.sleb128 -36
+ 3447 0304 06       		.byte	0x6
+ 3448 0305 27       		.byte	0x27
+ 3449 0306 9F       		.byte	0x9f
+ 3450 0307 60000000 		.4byte	.LVL53
+ 3451 030b 64000000 		.4byte	.LVL54
+ 3452 030f 0100     		.2byte	0x1
+ 3453 0311 50       		.byte	0x50
+ 3454 0312 6C000000 		.4byte	.LVL55
+ 3455 0316 6F000000 		.4byte	.LVL56-1
+ 3456 031a 0100     		.2byte	0x1
+ 3457 031c 50       		.byte	0x50
+ 3458 031d 6F000000 		.4byte	.LVL56-1
+ 3459 0321 70000000 		.4byte	.LVL56
+ 3460 0325 0200     		.2byte	0x2
+ 3461 0327 7D       		.byte	0x7d
+ 3462 0328 10       		.sleb128 16
+ 3463 0329 70000000 		.4byte	.LVL56
+ 3464 032d 74000000 		.4byte	.LVL57
+ 3465 0331 0100     		.2byte	0x1
+ 3466 0333 50       		.byte	0x50
+ 3467 0334 7E000000 		.4byte	.LVL58
+ 3468 0338 81000000 		.4byte	.LVL59-1
+ 3469 033c 0100     		.2byte	0x1
+ 3470 033e 50       		.byte	0x50
+ 3471 033f 81000000 		.4byte	.LVL59-1
+ 3472 0343 82000000 		.4byte	.LVL59
+ 3473 0347 0800     		.2byte	0x8
+ 3474 0349 7D       		.byte	0x7d
+ 3475 034a 00       		.sleb128 0
+ 3476 034b 06       		.byte	0x6
+ 3477 034c 91       		.byte	0x91
+ 3478 034d 58       		.sleb128 -40
+ 3479 034e 06       		.byte	0x6
+ 3480 034f 27       		.byte	0x27
+ 3481 0350 9F       		.byte	0x9f
+ 3482 0351 82000000 		.4byte	.LVL59
+ 3483 0355 86000000 		.4byte	.LVL60
+ 3484 0359 0100     		.2byte	0x1
+ 3485 035b 50       		.byte	0x50
+ 3486 035c 00000000 		.4byte	0
+ 3487 0360 00000000 		.4byte	0
+ 3488              	.LLST21:
+ 3489 0364 2E000000 		.4byte	.LVL48
+ 3490 0368 B0000000 		.4byte	.LVL67
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 73
+
+
+ 3491 036c 0200     		.2byte	0x2
+ 3492 036e 7D       		.byte	0x7d
+ 3493 036f 00       		.sleb128 0
+ 3494 0370 B0000000 		.4byte	.LVL67
+ 3495 0374 BC000000 		.4byte	.LFE77
+ 3496 0378 0200     		.2byte	0x2
+ 3497 037a 91       		.byte	0x91
+ 3498 037b 50       		.sleb128 -48
+ 3499 037c 00000000 		.4byte	0
+ 3500 0380 00000000 		.4byte	0
+ 3501              	.LLST22:
+ 3502 0384 00000000 		.4byte	.LVL70
+ 3503 0388 1F000000 		.4byte	.LVL75-1
+ 3504 038c 0100     		.2byte	0x1
+ 3505 038e 50       		.byte	0x50
+ 3506 038f 1F000000 		.4byte	.LVL75-1
+ 3507 0393 84010000 		.4byte	.LFE78
+ 3508 0397 0400     		.2byte	0x4
+ 3509 0399 F3       		.byte	0xf3
+ 3510 039a 01       		.uleb128 0x1
+ 3511 039b 50       		.byte	0x50
+ 3512 039c 9F       		.byte	0x9f
+ 3513 039d 00000000 		.4byte	0
+ 3514 03a1 00000000 		.4byte	0
+ 3515              	.LLST23:
+ 3516 03a5 00000000 		.4byte	.LVL70
+ 3517 03a9 1F000000 		.4byte	.LVL75-1
+ 3518 03ad 0100     		.2byte	0x1
+ 3519 03af 51       		.byte	0x51
+ 3520 03b0 1F000000 		.4byte	.LVL75-1
+ 3521 03b4 84010000 		.4byte	.LFE78
+ 3522 03b8 0400     		.2byte	0x4
+ 3523 03ba F3       		.byte	0xf3
+ 3524 03bb 01       		.uleb128 0x1
+ 3525 03bc 51       		.byte	0x51
+ 3526 03bd 9F       		.byte	0x9f
+ 3527 03be 00000000 		.4byte	0
+ 3528 03c2 00000000 		.4byte	0
+ 3529              	.LLST24:
+ 3530 03c6 00000000 		.4byte	.LVL70
+ 3531 03ca 08000000 		.4byte	.LVL72
+ 3532 03ce 0100     		.2byte	0x1
+ 3533 03d0 52       		.byte	0x52
+ 3534 03d1 08000000 		.4byte	.LVL72
+ 3535 03d5 84010000 		.4byte	.LFE78
+ 3536 03d9 0300     		.2byte	0x3
+ 3537 03db 91       		.byte	0x91
+ 3538 03dc B07F     		.sleb128 -80
+ 3539 03de 00000000 		.4byte	0
+ 3540 03e2 00000000 		.4byte	0
+ 3541              	.LLST25:
+ 3542 03e6 06000000 		.4byte	.LVL71
+ 3543 03ea 1F000000 		.4byte	.LVL75-1
+ 3544 03ee 0100     		.2byte	0x1
+ 3545 03f0 50       		.byte	0x50
+ 3546 03f1 1F000000 		.4byte	.LVL75-1
+ 3547 03f5 84010000 		.4byte	.LFE78
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 74
+
+
+ 3548 03f9 0400     		.2byte	0x4
+ 3549 03fb F3       		.byte	0xf3
+ 3550 03fc 01       		.uleb128 0x1
+ 3551 03fd 50       		.byte	0x50
+ 3552 03fe 9F       		.byte	0x9f
+ 3553 03ff 00000000 		.4byte	0
+ 3554 0403 00000000 		.4byte	0
+ 3555              	.LLST26:
+ 3556 0407 06000000 		.4byte	.LVL71
+ 3557 040b 08000000 		.4byte	.LVL72
+ 3558 040f 0300     		.2byte	0x3
+ 3559 0411 91       		.byte	0x91
+ 3560 0412 B07F     		.sleb128 -80
+ 3561 0414 00000000 		.4byte	0
+ 3562 0418 00000000 		.4byte	0
+ 3563              	.LLST27:
+ 3564 041c 06000000 		.4byte	.LVL71
+ 3565 0420 08000000 		.4byte	.LVL72
+ 3566 0424 0200     		.2byte	0x2
+ 3567 0426 30       		.byte	0x30
+ 3568 0427 9F       		.byte	0x9f
+ 3569 0428 08000000 		.4byte	.LVL72
+ 3570 042c 0E000000 		.4byte	.LVL73
+ 3571 0430 0100     		.2byte	0x1
+ 3572 0432 53       		.byte	0x53
+ 3573 0433 0E000000 		.4byte	.LVL73
+ 3574 0437 10000000 		.4byte	.LVL74
+ 3575 043b 0300     		.2byte	0x3
+ 3576 043d 73       		.byte	0x73
+ 3577 043e 01       		.sleb128 1
+ 3578 043f 9F       		.byte	0x9f
+ 3579 0440 00000000 		.4byte	0
+ 3580 0444 00000000 		.4byte	0
+ 3581              	.LLST28:
+ 3582 0448 20000000 		.4byte	.LVL75
+ 3583 044c 26000000 		.4byte	.LVL76
+ 3584 0450 0200     		.2byte	0x2
+ 3585 0452 30       		.byte	0x30
+ 3586 0453 9F       		.byte	0x9f
+ 3587 0454 26000000 		.4byte	.LVL76
+ 3588 0458 2A000000 		.4byte	.LVL77
+ 3589 045c 0200     		.2byte	0x2
+ 3590 045e 39       		.byte	0x39
+ 3591 045f 9F       		.byte	0x9f
+ 3592 0460 2A000000 		.4byte	.LVL77
+ 3593 0464 78010000 		.4byte	.LVL102
+ 3594 0468 0200     		.2byte	0x2
+ 3595 046a 7D       		.byte	0x7d
+ 3596 046b 00       		.sleb128 0
+ 3597 046c 78010000 		.4byte	.LVL102
+ 3598 0470 84010000 		.4byte	.LFE78
+ 3599 0474 0300     		.2byte	0x3
+ 3600 0476 91       		.byte	0x91
+ 3601 0477 A07F     		.sleb128 -96
+ 3602 0479 00000000 		.4byte	0
+ 3603 047d 00000000 		.4byte	0
+ 3604              	.LLST29:
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 75
+
+
+ 3605 0481 38000000 		.4byte	.LVL80
+ 3606 0485 40000000 		.4byte	.LVL81
+ 3607 0489 0200     		.2byte	0x2
+ 3608 048b 30       		.byte	0x30
+ 3609 048c 9F       		.byte	0x9f
+ 3610 048d 00000000 		.4byte	0
+ 3611 0491 00000000 		.4byte	0
+ 3612              	.LLST30:
+ 3613 0495 50000000 		.4byte	.LVL84
+ 3614 0499 26010000 		.4byte	.LVL97
+ 3615 049d 0100     		.2byte	0x1
+ 3616 049f 56       		.byte	0x56
+ 3617 04a0 00000000 		.4byte	0
+ 3618 04a4 00000000 		.4byte	0
+ 3619              		.section	.debug_aranges,"",%progbits
+ 3620 0000 5C000000 		.4byte	0x5c
+ 3621 0004 0200     		.2byte	0x2
+ 3622 0006 00000000 		.4byte	.Ldebug_info0
+ 3623 000a 04       		.byte	0x4
+ 3624 000b 00       		.byte	0
+ 3625 000c 0000     		.2byte	0
+ 3626 000e 0000     		.2byte	0
+ 3627 0010 00000000 		.4byte	.LFB65
+ 3628 0014 A8000000 		.4byte	.LFE65-.LFB65
+ 3629 0018 00000000 		.4byte	.LFB66
+ 3630 001c 34000000 		.4byte	.LFE66-.LFB66
+ 3631 0020 00000000 		.4byte	.LFB67
+ 3632 0024 28000000 		.4byte	.LFE67-.LFB67
+ 3633 0028 00000000 		.4byte	.LFB68
+ 3634 002c 3C000000 		.4byte	.LFE68-.LFB68
+ 3635 0030 00000000 		.4byte	.LFB69
+ 3636 0034 0E000000 		.4byte	.LFE69-.LFB69
+ 3637 0038 00000000 		.4byte	.LFB72
+ 3638 003c 2C000000 		.4byte	.LFE72-.LFB72
+ 3639 0040 00000000 		.4byte	.LFB73
+ 3640 0044 3C000000 		.4byte	.LFE73-.LFB73
+ 3641 0048 00000000 		.4byte	.LFB77
+ 3642 004c BC000000 		.4byte	.LFE77-.LFB77
+ 3643 0050 00000000 		.4byte	.LFB78
+ 3644 0054 84010000 		.4byte	.LFE78-.LFB78
+ 3645 0058 00000000 		.4byte	0
+ 3646 005c 00000000 		.4byte	0
+ 3647              		.section	.debug_ranges,"",%progbits
+ 3648              	.Ldebug_ranges0:
+ 3649 0000 46000000 		.4byte	.LBB14
+ 3650 0004 4A000000 		.4byte	.LBE14
+ 3651 0008 4C000000 		.4byte	.LBB18
+ 3652 000c 4E000000 		.4byte	.LBE18
+ 3653 0010 50000000 		.4byte	.LBB19
+ 3654 0014 52000000 		.4byte	.LBE19
+ 3655 0018 00000000 		.4byte	0
+ 3656 001c 00000000 		.4byte	0
+ 3657 0020 00000000 		.4byte	.LFB65
+ 3658 0024 A8000000 		.4byte	.LFE65
+ 3659 0028 00000000 		.4byte	.LFB66
+ 3660 002c 34000000 		.4byte	.LFE66
+ 3661 0030 00000000 		.4byte	.LFB67
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 76
+
+
+ 3662 0034 28000000 		.4byte	.LFE67
+ 3663 0038 00000000 		.4byte	.LFB68
+ 3664 003c 3C000000 		.4byte	.LFE68
+ 3665 0040 00000000 		.4byte	.LFB69
+ 3666 0044 0E000000 		.4byte	.LFE69
+ 3667 0048 00000000 		.4byte	.LFB72
+ 3668 004c 2C000000 		.4byte	.LFE72
+ 3669 0050 00000000 		.4byte	.LFB73
+ 3670 0054 3C000000 		.4byte	.LFE73
+ 3671 0058 00000000 		.4byte	.LFB77
+ 3672 005c BC000000 		.4byte	.LFE77
+ 3673 0060 00000000 		.4byte	.LFB78
+ 3674 0064 84010000 		.4byte	.LFE78
+ 3675 0068 00000000 		.4byte	0
+ 3676 006c 00000000 		.4byte	0
+ 3677              		.section	.debug_line,"",%progbits
+ 3678              	.Ldebug_line0:
+ 3679 0000 3D030000 		.section	.debug_str,"MS",%progbits,1
+ 3679      02004A01 
+ 3679      00000201 
+ 3679      FB0E0D00 
+ 3679      01010101 
+ 3680              	.LASF6:
+ 3681 0000 5F5F7569 		.ascii	"__uint8_t\000"
+ 3681      6E74385F 
+ 3681      7400
+ 3682              	.LASF25:
+ 3683 000a 53686966 		.ascii	"ShiftRows\000"
+ 3683      74526F77 
+ 3683      7300
+ 3684              	.LASF20:
+ 3685 0014 67657453 		.ascii	"getSBoxInvert\000"
+ 3685      426F7849 
+ 3685      6E766572 
+ 3685      7400
+ 3686              	.LASF21:
+ 3687 0022 74656D70 		.ascii	"tempa\000"
+ 3687      6100
+ 3688              	.LASF4:
+ 3689 0028 73686F72 		.ascii	"short unsigned int\000"
+ 3689      7420756E 
+ 3689      7369676E 
+ 3689      65642069 
+ 3689      6E7400
+ 3690              	.LASF13:
+ 3691 003b 75696E74 		.ascii	"uint8_t\000"
+ 3691      385F7400 
+ 3692              	.LASF38:
+ 3693 0043 41455331 		.ascii	"AES128_ECB_decrypt\000"
+ 3693      32385F45 
+ 3693      43425F64 
+ 3693      65637279 
+ 3693      707400
+ 3694              	.LASF17:
+ 3695 0056 646F7562 		.ascii	"double\000"
+ 3695      6C6500
+ 3696              	.LASF29:
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 77
+
+
+ 3697 005d 496E7653 		.ascii	"InvShiftRows\000"
+ 3697      68696674 
+ 3697      526F7773 
+ 3697      00
+ 3698              	.LASF41:
+ 3699 006a 73626F78 		.ascii	"sbox\000"
+ 3699      00
+ 3700              	.LASF39:
+ 3701 006f 73746174 		.ascii	"state\000"
+ 3701      6500
+ 3702              	.LASF16:
+ 3703 0075 666C6F61 		.ascii	"float\000"
+ 3703      7400
+ 3704              	.LASF2:
+ 3705 007b 756E7369 		.ascii	"unsigned char\000"
+ 3705      676E6564 
+ 3705      20636861 
+ 3705      7200
+ 3706              	.LASF32:
+ 3707 0089 696E7075 		.ascii	"input\000"
+ 3707      7400
+ 3708              	.LASF45:
+ 3709 008f 436F6465 		.ascii	"Code\\Common\\crypt\\aes.c\000"
+ 3709      5C436F6D 
+ 3709      6D6F6E5C 
+ 3709      63727970 
+ 3709      745C6165 
+ 3710              	.LASF24:
+ 3711 00a7 53756242 		.ascii	"SubBytes\000"
+ 3711      79746573 
+ 3711      00
+ 3712              	.LASF18:
+ 3713 00b0 73746174 		.ascii	"state_t\000"
+ 3713      655F7400 
+ 3714              	.LASF26:
+ 3715 00b8 74656D70 		.ascii	"temp\000"
+ 3715      00
+ 3716              	.LASF47:
+ 3717 00bd 7874696D 		.ascii	"xtime\000"
+ 3717      6500
+ 3718              	.LASF44:
+ 3719 00c3 474E5520 		.ascii	"GNU C 4.9.3 20150303 (release) [ARM/embedded-4_9-br"
+ 3719      4320342E 
+ 3719      392E3320 
+ 3719      32303135 
+ 3719      30333033 
+ 3720 00f6 616E6368 		.ascii	"anch revision 221220] -mcpu=cortex-m0 -mthumb -g -O"
+ 3720      20726576 
+ 3720      6973696F 
+ 3720      6E203232 
+ 3720      31323230 
+ 3721 0129 73202D66 		.ascii	"s -ffunction-sections -ffat-lto-objects\000"
+ 3721      66756E63 
+ 3721      74696F6E 
+ 3721      2D736563 
+ 3721      74696F6E 
+ 3722              	.LASF8:
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 78
+
+
+ 3723 0151 6C6F6E67 		.ascii	"long unsigned int\000"
+ 3723      20756E73 
+ 3723      69676E65 
+ 3723      6420696E 
+ 3723      7400
+ 3724              	.LASF42:
+ 3725 0163 7273626F 		.ascii	"rsbox\000"
+ 3725      7800
+ 3726              	.LASF7:
+ 3727 0169 5F5F7569 		.ascii	"__uint32_t\000"
+ 3727      6E743332 
+ 3727      5F7400
+ 3728              	.LASF19:
+ 3729 0174 67657453 		.ascii	"getSBoxValue\000"
+ 3729      426F7856 
+ 3729      616C7565 
+ 3729      00
+ 3730              	.LASF27:
+ 3731 0181 726F756E 		.ascii	"round\000"
+ 3731      6400
+ 3732              	.LASF37:
+ 3733 0187 41455331 		.ascii	"AES128_ECB_encrypt\000"
+ 3733      32385F45 
+ 3733      43425F65 
+ 3733      6E637279 
+ 3733      707400
+ 3734              	.LASF0:
+ 3735 019a 756E7369 		.ascii	"unsigned int\000"
+ 3735      676E6564 
+ 3735      20696E74 
+ 3735      00
+ 3736              	.LASF23:
+ 3737 01a7 41646452 		.ascii	"AddRoundKey\000"
+ 3737      6F756E64 
+ 3737      4B657900 
+ 3738              	.LASF10:
+ 3739 01b3 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 3739      206C6F6E 
+ 3739      6720756E 
+ 3739      7369676E 
+ 3739      65642069 
+ 3740              	.LASF35:
+ 3741 01ca 496E7643 		.ascii	"InvCipher\000"
+ 3741      69706865 
+ 3741      7200
+ 3742              	.LASF40:
+ 3743 01d4 526F756E 		.ascii	"RoundKey\000"
+ 3743      644B6579 
+ 3743      00
+ 3744              	.LASF36:
+ 3745 01dd 496E764D 		.ascii	"InvMixColumns\000"
+ 3745      6978436F 
+ 3745      6C756D6E 
+ 3745      7300
+ 3746              	.LASF31:
+ 3747 01eb 4D697843 		.ascii	"MixColumns\000"
+ 3747      6F6C756D 
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 79
+
+
+ 3747      6E7300
+ 3748              	.LASF9:
+ 3749 01f6 6C6F6E67 		.ascii	"long long int\000"
+ 3749      206C6F6E 
+ 3749      6720696E 
+ 3749      7400
+ 3750              	.LASF11:
+ 3751 0204 73697A65 		.ascii	"sizetype\000"
+ 3751      74797065 
+ 3751      00
+ 3752              	.LASF12:
+ 3753 020d 63686172 		.ascii	"char\000"
+ 3753      00
+ 3754              	.LASF3:
+ 3755 0212 73686F72 		.ascii	"short int\000"
+ 3755      7420696E 
+ 3755      7400
+ 3756              	.LASF34:
+ 3757 021c 6F757470 		.ascii	"output\000"
+ 3757      757400
+ 3758              	.LASF15:
+ 3759 0223 75696E74 		.ascii	"uint8\000"
+ 3759      3800
+ 3760              	.LASF14:
+ 3761 0229 75696E74 		.ascii	"uint32_t\000"
+ 3761      33325F74 
+ 3761      00
+ 3762              	.LASF5:
+ 3763 0232 6C6F6E67 		.ascii	"long int\000"
+ 3763      20696E74 
+ 3763      00
+ 3764              	.LASF43:
+ 3765 023b 52636F6E 		.ascii	"Rcon\000"
+ 3765      00
+ 3766              	.LASF1:
+ 3767 0240 7369676E 		.ascii	"signed char\000"
+ 3767      65642063 
+ 3767      68617200 
+ 3768              	.LASF22:
+ 3769 024c 4B657945 		.ascii	"KeyExpansion\000"
+ 3769      7870616E 
+ 3769      73696F6E 
+ 3769      00
+ 3770              	.LASF33:
+ 3771 0259 426C6F63 		.ascii	"BlockCopy\000"
+ 3771      6B436F70 
+ 3771      7900
+ 3772              	.LASF28:
+ 3773 0263 496E7653 		.ascii	"InvSubBytes\000"
+ 3773      75624279 
+ 3773      74657300 
+ 3774              	.LASF46:
+ 3775 026f 433A5C55 		.ascii	"C:\\Users\\zhiantec\\Documents\\Tencent Files\\1241"
+ 3775      73657273 
+ 3775      5C7A6869 
+ 3775      616E7465 
+ 3775      635C446F 
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccAwAEyq.s 			page 80
+
+
+ 3776 029d 39333938 		.ascii	"939835\\FileRecv\\MobileFile\\second_images[4-8]\\E"
+ 3776      33355C46 
+ 3776      696C6552 
+ 3776      6563765C 
+ 3776      4D6F6269 
+ 3777 02cc 6E747261 		.ascii	"ntranceGuard_171019-12.50\\EntranceGuard.cydsn\000"
+ 3777      6E636547 
+ 3777      75617264 
+ 3777      5F313731 
+ 3777      3031392D 
+ 3778              	.LASF30:
+ 3779 02fa 43697068 		.ascii	"Cipher\000"
+ 3779      657200
+ 3780              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.9.3 20150303 (release) [ARM/embedded-4_9-br

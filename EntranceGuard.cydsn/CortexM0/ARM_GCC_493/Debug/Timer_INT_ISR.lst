@@ -1,0 +1,2388 @@
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccqPbJvl.s 			page 1
+
+
+   1              		.cpu cortex-m0
+   2              		.fpu softvfp
+   3              		.eabi_attribute 20, 1
+   4              		.eabi_attribute 21, 1
+   5              		.eabi_attribute 23, 3
+   6              		.eabi_attribute 24, 1
+   7              		.eabi_attribute 25, 1
+   8              		.eabi_attribute 26, 1
+   9              		.eabi_attribute 30, 4
+  10              		.eabi_attribute 34, 0
+  11              		.eabi_attribute 18, 4
+  12              		.code	16
+  13              		.file	"Timer_INT_ISR.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.Timer_INT_ISR_Interrupt,"ax",%progbits
+  18              		.align	1
+  19              		.global	Timer_INT_ISR_Interrupt
+  20              		.code	16
+  21              		.thumb_func
+  22              		.type	Timer_INT_ISR_Interrupt, %function
+  23              	Timer_INT_ISR_Interrupt:
+  24              	.LFB5:
+  25              		.file 1 "Generated_Source\\PSoC4\\Timer_INT_ISR.c"
+   1:Generated_Source\PSoC4/Timer_INT_ISR.c **** /*******************************************************************************
+   2:Generated_Source\PSoC4/Timer_INT_ISR.c **** * File Name: Timer_INT_ISR.c  
+   3:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Version 1.70
+   4:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+   5:Generated_Source\PSoC4/Timer_INT_ISR.c **** *  Description:
+   6:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   API for controlling the state of an interrupt.
+   7:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+   8:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+   9:Generated_Source\PSoC4/Timer_INT_ISR.c **** *  Note:
+  10:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+  11:Generated_Source\PSoC4/Timer_INT_ISR.c **** ********************************************************************************
+  12:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Copyright 2008-2015, Cypress Semiconductor Corporation.  All rights reserved.
+  13:Generated_Source\PSoC4/Timer_INT_ISR.c **** * You may use this file only in accordance with the license, terms, conditions, 
+  14:Generated_Source\PSoC4/Timer_INT_ISR.c **** * disclaimers, and limitations in the end user license agreement accompanying 
+  15:Generated_Source\PSoC4/Timer_INT_ISR.c **** * the software package with which this file was provided.
+  16:Generated_Source\PSoC4/Timer_INT_ISR.c **** *******************************************************************************/
+  17:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+  18:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+  19:Generated_Source\PSoC4/Timer_INT_ISR.c **** #include <cydevice_trm.h>
+  20:Generated_Source\PSoC4/Timer_INT_ISR.c **** #include <CyLib.h>
+  21:Generated_Source\PSoC4/Timer_INT_ISR.c **** #include <Timer_INT_ISR.h>
+  22:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+  23:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+  24:Generated_Source\PSoC4/Timer_INT_ISR.c **** #if !defined(Timer_INT_ISR__REMOVED) /* Check for removal by optimization */
+  25:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+  26:Generated_Source\PSoC4/Timer_INT_ISR.c **** /*******************************************************************************
+  27:Generated_Source\PSoC4/Timer_INT_ISR.c **** *  Place your includes, defines and code here 
+  28:Generated_Source\PSoC4/Timer_INT_ISR.c **** ********************************************************************************/
+  29:Generated_Source\PSoC4/Timer_INT_ISR.c **** /* `#START Timer_INT_ISR_intc` */
+  30:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+  31:Generated_Source\PSoC4/Timer_INT_ISR.c **** /* `#END` */
+  32:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccqPbJvl.s 			page 2
+
+
+  33:Generated_Source\PSoC4/Timer_INT_ISR.c **** extern cyisraddress CyRamVectors[CYINT_IRQ_BASE + CY_NUM_INTERRUPTS];
+  34:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+  35:Generated_Source\PSoC4/Timer_INT_ISR.c **** /* Declared in startup, used to set unused interrupts to. */
+  36:Generated_Source\PSoC4/Timer_INT_ISR.c **** CY_ISR_PROTO(IntDefaultHandler);
+  37:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+  38:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+  39:Generated_Source\PSoC4/Timer_INT_ISR.c **** /*******************************************************************************
+  40:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Function Name: Timer_INT_ISR_Start
+  41:Generated_Source\PSoC4/Timer_INT_ISR.c **** ********************************************************************************
+  42:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+  43:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Summary:
+  44:Generated_Source\PSoC4/Timer_INT_ISR.c **** *  Set up the interrupt and enable it. This function disables the interrupt, 
+  45:Generated_Source\PSoC4/Timer_INT_ISR.c **** *  sets the default interrupt vector, sets the priority from the value in the
+  46:Generated_Source\PSoC4/Timer_INT_ISR.c **** *  Design Wide Resources Interrupt Editor, then enables the interrupt to the 
+  47:Generated_Source\PSoC4/Timer_INT_ISR.c **** *  interrupt controller.
+  48:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+  49:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Parameters:  
+  50:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   None
+  51:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+  52:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Return:
+  53:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   None
+  54:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+  55:Generated_Source\PSoC4/Timer_INT_ISR.c **** *******************************************************************************/
+  56:Generated_Source\PSoC4/Timer_INT_ISR.c **** void Timer_INT_ISR_Start(void)
+  57:Generated_Source\PSoC4/Timer_INT_ISR.c **** {
+  58:Generated_Source\PSoC4/Timer_INT_ISR.c ****     /* For all we know the interrupt is active. */
+  59:Generated_Source\PSoC4/Timer_INT_ISR.c ****     Timer_INT_ISR_Disable();
+  60:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+  61:Generated_Source\PSoC4/Timer_INT_ISR.c ****     /* Set the ISR to point to the Timer_INT_ISR Interrupt. */
+  62:Generated_Source\PSoC4/Timer_INT_ISR.c ****     Timer_INT_ISR_SetVector(&Timer_INT_ISR_Interrupt);
+  63:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+  64:Generated_Source\PSoC4/Timer_INT_ISR.c ****     /* Set the priority. */
+  65:Generated_Source\PSoC4/Timer_INT_ISR.c ****     Timer_INT_ISR_SetPriority((uint8)Timer_INT_ISR_INTC_PRIOR_NUMBER);
+  66:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+  67:Generated_Source\PSoC4/Timer_INT_ISR.c ****     /* Enable it. */
+  68:Generated_Source\PSoC4/Timer_INT_ISR.c ****     Timer_INT_ISR_Enable();
+  69:Generated_Source\PSoC4/Timer_INT_ISR.c **** }
+  70:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+  71:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+  72:Generated_Source\PSoC4/Timer_INT_ISR.c **** /*******************************************************************************
+  73:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Function Name: Timer_INT_ISR_StartEx
+  74:Generated_Source\PSoC4/Timer_INT_ISR.c **** ********************************************************************************
+  75:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+  76:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Summary:
+  77:Generated_Source\PSoC4/Timer_INT_ISR.c **** *  Sets up the interrupt and enables it. This function disables the interrupt,
+  78:Generated_Source\PSoC4/Timer_INT_ISR.c **** *  sets the interrupt vector based on the address passed in, sets the priority 
+  79:Generated_Source\PSoC4/Timer_INT_ISR.c **** *  from the value in the Design Wide Resources Interrupt Editor, then enables 
+  80:Generated_Source\PSoC4/Timer_INT_ISR.c **** *  the interrupt to the interrupt controller.
+  81:Generated_Source\PSoC4/Timer_INT_ISR.c **** *  
+  82:Generated_Source\PSoC4/Timer_INT_ISR.c **** *  When defining ISR functions, the CY_ISR and CY_ISR_PROTO macros should be 
+  83:Generated_Source\PSoC4/Timer_INT_ISR.c **** *  used to provide consistent definition across compilers:
+  84:Generated_Source\PSoC4/Timer_INT_ISR.c **** *  
+  85:Generated_Source\PSoC4/Timer_INT_ISR.c **** *  Function definition example:
+  86:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   CY_ISR(MyISR)
+  87:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   {
+  88:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   }
+  89:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   Function prototype example:
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccqPbJvl.s 			page 3
+
+
+  90:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   CY_ISR_PROTO(MyISR);
+  91:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+  92:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Parameters:  
+  93:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   address: Address of the ISR to set in the interrupt vector table.
+  94:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+  95:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Return:
+  96:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   None
+  97:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+  98:Generated_Source\PSoC4/Timer_INT_ISR.c **** *******************************************************************************/
+  99:Generated_Source\PSoC4/Timer_INT_ISR.c **** void Timer_INT_ISR_StartEx(cyisraddress address)
+ 100:Generated_Source\PSoC4/Timer_INT_ISR.c **** {
+ 101:Generated_Source\PSoC4/Timer_INT_ISR.c ****     /* For all we know the interrupt is active. */
+ 102:Generated_Source\PSoC4/Timer_INT_ISR.c ****     Timer_INT_ISR_Disable();
+ 103:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 104:Generated_Source\PSoC4/Timer_INT_ISR.c ****     /* Set the ISR to point to the Timer_INT_ISR Interrupt. */
+ 105:Generated_Source\PSoC4/Timer_INT_ISR.c ****     Timer_INT_ISR_SetVector(address);
+ 106:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 107:Generated_Source\PSoC4/Timer_INT_ISR.c ****     /* Set the priority. */
+ 108:Generated_Source\PSoC4/Timer_INT_ISR.c ****     Timer_INT_ISR_SetPriority((uint8)Timer_INT_ISR_INTC_PRIOR_NUMBER);
+ 109:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 110:Generated_Source\PSoC4/Timer_INT_ISR.c ****     /* Enable it. */
+ 111:Generated_Source\PSoC4/Timer_INT_ISR.c ****     Timer_INT_ISR_Enable();
+ 112:Generated_Source\PSoC4/Timer_INT_ISR.c **** }
+ 113:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 114:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 115:Generated_Source\PSoC4/Timer_INT_ISR.c **** /*******************************************************************************
+ 116:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Function Name: Timer_INT_ISR_Stop
+ 117:Generated_Source\PSoC4/Timer_INT_ISR.c **** ********************************************************************************
+ 118:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 119:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Summary:
+ 120:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   Disables and removes the interrupt.
+ 121:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 122:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Parameters:  
+ 123:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   None
+ 124:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 125:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Return:
+ 126:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   None
+ 127:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 128:Generated_Source\PSoC4/Timer_INT_ISR.c **** *******************************************************************************/
+ 129:Generated_Source\PSoC4/Timer_INT_ISR.c **** void Timer_INT_ISR_Stop(void)
+ 130:Generated_Source\PSoC4/Timer_INT_ISR.c **** {
+ 131:Generated_Source\PSoC4/Timer_INT_ISR.c ****     /* Disable this interrupt. */
+ 132:Generated_Source\PSoC4/Timer_INT_ISR.c ****     Timer_INT_ISR_Disable();
+ 133:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 134:Generated_Source\PSoC4/Timer_INT_ISR.c ****     /* Set the ISR to point to the passive one. */
+ 135:Generated_Source\PSoC4/Timer_INT_ISR.c ****     Timer_INT_ISR_SetVector(&IntDefaultHandler);
+ 136:Generated_Source\PSoC4/Timer_INT_ISR.c **** }
+ 137:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 138:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 139:Generated_Source\PSoC4/Timer_INT_ISR.c **** /*******************************************************************************
+ 140:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Function Name: Timer_INT_ISR_Interrupt
+ 141:Generated_Source\PSoC4/Timer_INT_ISR.c **** ********************************************************************************
+ 142:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 143:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Summary:
+ 144:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   The default Interrupt Service Routine for Timer_INT_ISR.
+ 145:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 146:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   Add custom code between the START and END comments to keep the next version
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccqPbJvl.s 			page 4
+
+
+ 147:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   of this file from over-writing your code.
+ 148:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 149:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   Note You may use either the default ISR by using this API, or you may define
+ 150:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   your own separate ISR through ISR_StartEx().
+ 151:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 152:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Parameters:  
+ 153:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   None
+ 154:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 155:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Return:
+ 156:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   None
+ 157:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 158:Generated_Source\PSoC4/Timer_INT_ISR.c **** *******************************************************************************/
+ 159:Generated_Source\PSoC4/Timer_INT_ISR.c **** CY_ISR(Timer_INT_ISR_Interrupt)
+ 160:Generated_Source\PSoC4/Timer_INT_ISR.c **** {
+  26              		.loc 1 160 0
+  27              		.cfi_startproc
+ 161:Generated_Source\PSoC4/Timer_INT_ISR.c ****     #ifdef Timer_INT_ISR_INTERRUPT_INTERRUPT_CALLBACK
+ 162:Generated_Source\PSoC4/Timer_INT_ISR.c ****         Timer_INT_ISR_Interrupt_InterruptCallback();
+ 163:Generated_Source\PSoC4/Timer_INT_ISR.c ****     #endif /* Timer_INT_ISR_INTERRUPT_INTERRUPT_CALLBACK */ 
+ 164:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 165:Generated_Source\PSoC4/Timer_INT_ISR.c ****     /*  Place your Interrupt code here. */
+ 166:Generated_Source\PSoC4/Timer_INT_ISR.c ****     /* `#START Timer_INT_ISR_Interrupt` */
+ 167:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 168:Generated_Source\PSoC4/Timer_INT_ISR.c ****     /* `#END` */
+ 169:Generated_Source\PSoC4/Timer_INT_ISR.c **** }
+  28              		.loc 1 169 0
+  29              		@ sp needed
+  30 0000 7047     		bx	lr
+  31              		.cfi_endproc
+  32              	.LFE5:
+  33              		.size	Timer_INT_ISR_Interrupt, .-Timer_INT_ISR_Interrupt
+  34              		.section	.text.Timer_INT_ISR_Stop,"ax",%progbits
+  35              		.align	1
+  36              		.global	Timer_INT_ISR_Stop
+  37              		.code	16
+  38              		.thumb_func
+  39              		.type	Timer_INT_ISR_Stop, %function
+  40              	Timer_INT_ISR_Stop:
+  41              	.LFB4:
+ 130:Generated_Source\PSoC4/Timer_INT_ISR.c ****     /* Disable this interrupt. */
+  42              		.loc 1 130 0
+  43              		.cfi_startproc
+  44              	.LBB18:
+  45              	.LBB19:
+ 170:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 171:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 172:Generated_Source\PSoC4/Timer_INT_ISR.c **** /*******************************************************************************
+ 173:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Function Name: Timer_INT_ISR_SetVector
+ 174:Generated_Source\PSoC4/Timer_INT_ISR.c **** ********************************************************************************
+ 175:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 176:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Summary:
+ 177:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   Change the ISR vector for the Interrupt. Note calling Timer_INT_ISR_Start
+ 178:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   will override any effect this method would have had. To set the vector 
+ 179:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   before the component has been started use Timer_INT_ISR_StartEx instead.
+ 180:Generated_Source\PSoC4/Timer_INT_ISR.c **** * 
+ 181:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   When defining ISR functions, the CY_ISR and CY_ISR_PROTO macros should be 
+ 182:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   used to provide consistent definition across compilers:
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccqPbJvl.s 			page 5
+
+
+ 183:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 184:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   Function definition example:
+ 185:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   CY_ISR(MyISR)
+ 186:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   {
+ 187:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   }
+ 188:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 189:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   Function prototype example:
+ 190:Generated_Source\PSoC4/Timer_INT_ISR.c **** *     CY_ISR_PROTO(MyISR);
+ 191:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 192:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Parameters:
+ 193:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   address: Address of the ISR to set in the interrupt vector table.
+ 194:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 195:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Return:
+ 196:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   None
+ 197:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 198:Generated_Source\PSoC4/Timer_INT_ISR.c **** *******************************************************************************/
+ 199:Generated_Source\PSoC4/Timer_INT_ISR.c **** void Timer_INT_ISR_SetVector(cyisraddress address)
+ 200:Generated_Source\PSoC4/Timer_INT_ISR.c **** {
+ 201:Generated_Source\PSoC4/Timer_INT_ISR.c ****     CyRamVectors[CYINT_IRQ_BASE + Timer_INT_ISR__INTC_NUMBER] = address;
+ 202:Generated_Source\PSoC4/Timer_INT_ISR.c **** }
+ 203:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 204:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 205:Generated_Source\PSoC4/Timer_INT_ISR.c **** /*******************************************************************************
+ 206:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Function Name: Timer_INT_ISR_GetVector
+ 207:Generated_Source\PSoC4/Timer_INT_ISR.c **** ********************************************************************************
+ 208:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 209:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Summary:
+ 210:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   Gets the "address" of the current ISR vector for the Interrupt.
+ 211:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 212:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Parameters:
+ 213:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   None
+ 214:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 215:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Return:
+ 216:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   Address of the ISR in the interrupt vector table.
+ 217:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 218:Generated_Source\PSoC4/Timer_INT_ISR.c **** *******************************************************************************/
+ 219:Generated_Source\PSoC4/Timer_INT_ISR.c **** cyisraddress Timer_INT_ISR_GetVector(void)
+ 220:Generated_Source\PSoC4/Timer_INT_ISR.c **** {
+ 221:Generated_Source\PSoC4/Timer_INT_ISR.c ****     return CyRamVectors[CYINT_IRQ_BASE + Timer_INT_ISR__INTC_NUMBER];
+ 222:Generated_Source\PSoC4/Timer_INT_ISR.c **** }
+ 223:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 224:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 225:Generated_Source\PSoC4/Timer_INT_ISR.c **** /*******************************************************************************
+ 226:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Function Name: Timer_INT_ISR_SetPriority
+ 227:Generated_Source\PSoC4/Timer_INT_ISR.c **** ********************************************************************************
+ 228:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 229:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Summary:
+ 230:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   Sets the Priority of the Interrupt. 
+ 231:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 232:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   Note calling Timer_INT_ISR_Start or Timer_INT_ISR_StartEx will 
+ 233:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   override any effect this API would have had. This API should only be called
+ 234:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   after Timer_INT_ISR_Start or Timer_INT_ISR_StartEx has been called. 
+ 235:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   To set the initial priority for the component, use the Design-Wide Resources
+ 236:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   Interrupt Editor.
+ 237:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 238:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   Note This API has no effect on Non-maskable interrupt NMI).
+ 239:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccqPbJvl.s 			page 6
+
+
+ 240:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Parameters:
+ 241:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   priority: Priority of the interrupt, 0 being the highest priority
+ 242:Generated_Source\PSoC4/Timer_INT_ISR.c **** *             PSoC 3 and PSoC 5LP: Priority is from 0 to 7.
+ 243:Generated_Source\PSoC4/Timer_INT_ISR.c **** *             PSoC 4: Priority is from 0 to 3.
+ 244:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 245:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Return:
+ 246:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   None
+ 247:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 248:Generated_Source\PSoC4/Timer_INT_ISR.c **** *******************************************************************************/
+ 249:Generated_Source\PSoC4/Timer_INT_ISR.c **** void Timer_INT_ISR_SetPriority(uint8 priority)
+ 250:Generated_Source\PSoC4/Timer_INT_ISR.c **** {
+ 251:Generated_Source\PSoC4/Timer_INT_ISR.c **** 	uint8 interruptState;
+ 252:Generated_Source\PSoC4/Timer_INT_ISR.c ****     uint32 priorityOffset = ((Timer_INT_ISR__INTC_NUMBER % 4u) * 8u) + 6u;
+ 253:Generated_Source\PSoC4/Timer_INT_ISR.c ****     
+ 254:Generated_Source\PSoC4/Timer_INT_ISR.c **** 	interruptState = CyEnterCriticalSection();
+ 255:Generated_Source\PSoC4/Timer_INT_ISR.c ****     *Timer_INT_ISR_INTC_PRIOR = (*Timer_INT_ISR_INTC_PRIOR & (uint32)(~Timer_INT_ISR__INTC_PRIOR_MA
+ 256:Generated_Source\PSoC4/Timer_INT_ISR.c ****                                     ((uint32)priority << priorityOffset);
+ 257:Generated_Source\PSoC4/Timer_INT_ISR.c **** 	CyExitCriticalSection(interruptState);
+ 258:Generated_Source\PSoC4/Timer_INT_ISR.c **** }
+ 259:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 260:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 261:Generated_Source\PSoC4/Timer_INT_ISR.c **** /*******************************************************************************
+ 262:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Function Name: Timer_INT_ISR_GetPriority
+ 263:Generated_Source\PSoC4/Timer_INT_ISR.c **** ********************************************************************************
+ 264:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 265:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Summary:
+ 266:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   Gets the Priority of the Interrupt.
+ 267:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 268:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Parameters:
+ 269:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   None
+ 270:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 271:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Return:
+ 272:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   Priority of the interrupt, 0 being the highest priority
+ 273:Generated_Source\PSoC4/Timer_INT_ISR.c **** *    PSoC 3 and PSoC 5LP: Priority is from 0 to 7.
+ 274:Generated_Source\PSoC4/Timer_INT_ISR.c **** *    PSoC 4: Priority is from 0 to 3.
+ 275:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 276:Generated_Source\PSoC4/Timer_INT_ISR.c **** *******************************************************************************/
+ 277:Generated_Source\PSoC4/Timer_INT_ISR.c **** uint8 Timer_INT_ISR_GetPriority(void)
+ 278:Generated_Source\PSoC4/Timer_INT_ISR.c **** {
+ 279:Generated_Source\PSoC4/Timer_INT_ISR.c ****     uint32 priority;
+ 280:Generated_Source\PSoC4/Timer_INT_ISR.c **** 	uint32 priorityOffset = ((Timer_INT_ISR__INTC_NUMBER % 4u) * 8u) + 6u;
+ 281:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 282:Generated_Source\PSoC4/Timer_INT_ISR.c ****     priority = (*Timer_INT_ISR_INTC_PRIOR & Timer_INT_ISR__INTC_PRIOR_MASK) >> priorityOffset;
+ 283:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 284:Generated_Source\PSoC4/Timer_INT_ISR.c ****     return (uint8)priority;
+ 285:Generated_Source\PSoC4/Timer_INT_ISR.c **** }
+ 286:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 287:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 288:Generated_Source\PSoC4/Timer_INT_ISR.c **** /*******************************************************************************
+ 289:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Function Name: Timer_INT_ISR_Enable
+ 290:Generated_Source\PSoC4/Timer_INT_ISR.c **** ********************************************************************************
+ 291:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 292:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Summary:
+ 293:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   Enables the interrupt to the interrupt controller. Do not call this function
+ 294:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   unless ISR_Start() has been called or the functionality of the ISR_Start() 
+ 295:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   function, which sets the vector and the priority, has been called.
+ 296:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccqPbJvl.s 			page 7
+
+
+ 297:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Parameters:
+ 298:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   None
+ 299:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 300:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Return:
+ 301:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   None
+ 302:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 303:Generated_Source\PSoC4/Timer_INT_ISR.c **** *******************************************************************************/
+ 304:Generated_Source\PSoC4/Timer_INT_ISR.c **** void Timer_INT_ISR_Enable(void)
+ 305:Generated_Source\PSoC4/Timer_INT_ISR.c **** {
+ 306:Generated_Source\PSoC4/Timer_INT_ISR.c ****     /* Enable the general interrupt. */
+ 307:Generated_Source\PSoC4/Timer_INT_ISR.c ****     *Timer_INT_ISR_INTC_SET_EN = Timer_INT_ISR__INTC_MASK;
+ 308:Generated_Source\PSoC4/Timer_INT_ISR.c **** }
+ 309:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 310:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 311:Generated_Source\PSoC4/Timer_INT_ISR.c **** /*******************************************************************************
+ 312:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Function Name: Timer_INT_ISR_GetState
+ 313:Generated_Source\PSoC4/Timer_INT_ISR.c **** ********************************************************************************
+ 314:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 315:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Summary:
+ 316:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   Gets the state (enabled, disabled) of the Interrupt.
+ 317:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 318:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Parameters:
+ 319:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   None
+ 320:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 321:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Return:
+ 322:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   1 if enabled, 0 if disabled.
+ 323:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 324:Generated_Source\PSoC4/Timer_INT_ISR.c **** *******************************************************************************/
+ 325:Generated_Source\PSoC4/Timer_INT_ISR.c **** uint8 Timer_INT_ISR_GetState(void)
+ 326:Generated_Source\PSoC4/Timer_INT_ISR.c **** {
+ 327:Generated_Source\PSoC4/Timer_INT_ISR.c ****     /* Get the state of the general interrupt. */
+ 328:Generated_Source\PSoC4/Timer_INT_ISR.c ****     return ((*Timer_INT_ISR_INTC_SET_EN & (uint32)Timer_INT_ISR__INTC_MASK) != 0u) ? 1u:0u;
+ 329:Generated_Source\PSoC4/Timer_INT_ISR.c **** }
+ 330:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 331:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 332:Generated_Source\PSoC4/Timer_INT_ISR.c **** /*******************************************************************************
+ 333:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Function Name: Timer_INT_ISR_Disable
+ 334:Generated_Source\PSoC4/Timer_INT_ISR.c **** ********************************************************************************
+ 335:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 336:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Summary:
+ 337:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   Disables the Interrupt in the interrupt controller.
+ 338:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 339:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Parameters:
+ 340:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   None
+ 341:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 342:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Return:
+ 343:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   None
+ 344:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 345:Generated_Source\PSoC4/Timer_INT_ISR.c **** *******************************************************************************/
+ 346:Generated_Source\PSoC4/Timer_INT_ISR.c **** void Timer_INT_ISR_Disable(void)
+ 347:Generated_Source\PSoC4/Timer_INT_ISR.c **** {
+ 348:Generated_Source\PSoC4/Timer_INT_ISR.c ****     /* Disable the general interrupt. */
+ 349:Generated_Source\PSoC4/Timer_INT_ISR.c ****     *Timer_INT_ISR_INTC_CLR_EN = Timer_INT_ISR__INTC_MASK;
+  46              		.loc 1 349 0
+  47 0000 8022     		mov	r2, #128
+  48 0002 044B     		ldr	r3, .L3
+  49 0004 D202     		lsl	r2, r2, #11
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccqPbJvl.s 			page 8
+
+
+  50 0006 1A60     		str	r2, [r3]
+  51              	.LVL0:
+  52              	.LBE19:
+  53              	.LBE18:
+  54              	.LBB20:
+  55              	.LBB21:
+ 201:Generated_Source\PSoC4/Timer_INT_ISR.c **** }
+  56              		.loc 1 201 0
+  57 0008 034B     		ldr	r3, .L3+4
+  58 000a 044A     		ldr	r2, .L3+8
+  59 000c 8833     		add	r3, r3, #136
+  60 000e 1A60     		str	r2, [r3]
+  61              	.LBE21:
+  62              	.LBE20:
+ 136:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+  63              		.loc 1 136 0
+  64              		@ sp needed
+  65 0010 7047     		bx	lr
+  66              	.L4:
+  67 0012 C046     		.align	2
+  68              	.L3:
+  69 0014 80E100E0 		.word	-536813184
+  70 0018 00000000 		.word	CyRamVectors
+  71 001c 00000000 		.word	IntDefaultHandler
+  72              		.cfi_endproc
+  73              	.LFE4:
+  74              		.size	Timer_INT_ISR_Stop, .-Timer_INT_ISR_Stop
+  75              		.section	.text.Timer_INT_ISR_SetVector,"ax",%progbits
+  76              		.align	1
+  77              		.global	Timer_INT_ISR_SetVector
+  78              		.code	16
+  79              		.thumb_func
+  80              		.type	Timer_INT_ISR_SetVector, %function
+  81              	Timer_INT_ISR_SetVector:
+  82              	.LFB6:
+ 200:Generated_Source\PSoC4/Timer_INT_ISR.c ****     CyRamVectors[CYINT_IRQ_BASE + Timer_INT_ISR__INTC_NUMBER] = address;
+  83              		.loc 1 200 0
+  84              		.cfi_startproc
+  85              	.LVL1:
+ 201:Generated_Source\PSoC4/Timer_INT_ISR.c **** }
+  86              		.loc 1 201 0
+  87 0000 014B     		ldr	r3, .L6
+ 202:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+  88              		.loc 1 202 0
+  89              		@ sp needed
+ 201:Generated_Source\PSoC4/Timer_INT_ISR.c **** }
+  90              		.loc 1 201 0
+  91 0002 8833     		add	r3, r3, #136
+  92 0004 1860     		str	r0, [r3]
+ 202:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+  93              		.loc 1 202 0
+  94 0006 7047     		bx	lr
+  95              	.L7:
+  96              		.align	2
+  97              	.L6:
+  98 0008 00000000 		.word	CyRamVectors
+  99              		.cfi_endproc
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccqPbJvl.s 			page 9
+
+
+ 100              	.LFE6:
+ 101              		.size	Timer_INT_ISR_SetVector, .-Timer_INT_ISR_SetVector
+ 102              		.section	.text.Timer_INT_ISR_GetVector,"ax",%progbits
+ 103              		.align	1
+ 104              		.global	Timer_INT_ISR_GetVector
+ 105              		.code	16
+ 106              		.thumb_func
+ 107              		.type	Timer_INT_ISR_GetVector, %function
+ 108              	Timer_INT_ISR_GetVector:
+ 109              	.LFB7:
+ 220:Generated_Source\PSoC4/Timer_INT_ISR.c ****     return CyRamVectors[CYINT_IRQ_BASE + Timer_INT_ISR__INTC_NUMBER];
+ 110              		.loc 1 220 0
+ 111              		.cfi_startproc
+ 221:Generated_Source\PSoC4/Timer_INT_ISR.c **** }
+ 112              		.loc 1 221 0
+ 113 0000 014B     		ldr	r3, .L9
+ 222:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 114              		.loc 1 222 0
+ 115              		@ sp needed
+ 221:Generated_Source\PSoC4/Timer_INT_ISR.c **** }
+ 116              		.loc 1 221 0
+ 117 0002 8833     		add	r3, r3, #136
+ 118 0004 1868     		ldr	r0, [r3]
+ 222:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 119              		.loc 1 222 0
+ 120 0006 7047     		bx	lr
+ 121              	.L10:
+ 122              		.align	2
+ 123              	.L9:
+ 124 0008 00000000 		.word	CyRamVectors
+ 125              		.cfi_endproc
+ 126              	.LFE7:
+ 127              		.size	Timer_INT_ISR_GetVector, .-Timer_INT_ISR_GetVector
+ 128              		.section	.text.Timer_INT_ISR_SetPriority,"ax",%progbits
+ 129              		.align	1
+ 130              		.global	Timer_INT_ISR_SetPriority
+ 131              		.code	16
+ 132              		.thumb_func
+ 133              		.type	Timer_INT_ISR_SetPriority, %function
+ 134              	Timer_INT_ISR_SetPriority:
+ 135              	.LFB8:
+ 250:Generated_Source\PSoC4/Timer_INT_ISR.c **** 	uint8 interruptState;
+ 136              		.loc 1 250 0
+ 137              		.cfi_startproc
+ 138              	.LVL2:
+ 139 0000 10B5     		push	{r4, lr}
+ 140              		.cfi_def_cfa_offset 8
+ 141              		.cfi_offset 4, -8
+ 142              		.cfi_offset 14, -4
+ 250:Generated_Source\PSoC4/Timer_INT_ISR.c **** 	uint8 interruptState;
+ 143              		.loc 1 250 0
+ 144 0002 041C     		mov	r4, r0
+ 254:Generated_Source\PSoC4/Timer_INT_ISR.c ****     *Timer_INT_ISR_INTC_PRIOR = (*Timer_INT_ISR_INTC_PRIOR & (uint32)(~Timer_INT_ISR__INTC_PRIOR_MA
+ 145              		.loc 1 254 0
+ 146 0004 FFF7FEFF 		bl	CyEnterCriticalSection
+ 147              	.LVL3:
+ 255:Generated_Source\PSoC4/Timer_INT_ISR.c ****                                     ((uint32)priority << priorityOffset);
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccqPbJvl.s 			page 10
+
+
+ 148              		.loc 1 255 0
+ 149 0008 0449     		ldr	r1, .L12
+ 150 000a 054A     		ldr	r2, .L12+4
+ 151 000c 0B68     		ldr	r3, [r1]
+ 256:Generated_Source\PSoC4/Timer_INT_ISR.c **** 	CyExitCriticalSection(interruptState);
+ 152              		.loc 1 256 0
+ 153 000e A405     		lsl	r4, r4, #22
+ 255:Generated_Source\PSoC4/Timer_INT_ISR.c ****                                     ((uint32)priority << priorityOffset);
+ 154              		.loc 1 255 0
+ 155 0010 1340     		and	r3, r2
+ 156 0012 2343     		orr	r3, r4
+ 157 0014 0B60     		str	r3, [r1]
+ 257:Generated_Source\PSoC4/Timer_INT_ISR.c **** }
+ 158              		.loc 1 257 0
+ 159 0016 FFF7FEFF 		bl	CyExitCriticalSection
+ 160              	.LVL4:
+ 258:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 161              		.loc 1 258 0
+ 162              		@ sp needed
+ 163 001a 10BD     		pop	{r4, pc}
+ 164              	.L13:
+ 165              		.align	2
+ 166              	.L12:
+ 167 001c 10E400E0 		.word	-536812528
+ 168 0020 FFFF3FFF 		.word	-12582913
+ 169              		.cfi_endproc
+ 170              	.LFE8:
+ 171              		.size	Timer_INT_ISR_SetPriority, .-Timer_INT_ISR_SetPriority
+ 172              		.section	.text.Timer_INT_ISR_Start,"ax",%progbits
+ 173              		.align	1
+ 174              		.global	Timer_INT_ISR_Start
+ 175              		.code	16
+ 176              		.thumb_func
+ 177              		.type	Timer_INT_ISR_Start, %function
+ 178              	Timer_INT_ISR_Start:
+ 179              	.LFB2:
+  57:Generated_Source\PSoC4/Timer_INT_ISR.c ****     /* For all we know the interrupt is active. */
+ 180              		.loc 1 57 0
+ 181              		.cfi_startproc
+ 182 0000 10B5     		push	{r4, lr}
+ 183              		.cfi_def_cfa_offset 8
+ 184              		.cfi_offset 4, -8
+ 185              		.cfi_offset 14, -4
+ 186              	.LBB22:
+ 187              	.LBB23:
+ 188              		.loc 1 349 0
+ 189 0002 8024     		mov	r4, #128
+ 190 0004 064B     		ldr	r3, .L15
+ 191 0006 E402     		lsl	r4, r4, #11
+ 192 0008 1C60     		str	r4, [r3]
+ 193              	.LVL5:
+ 194              	.LBE23:
+ 195              	.LBE22:
+ 196              	.LBB24:
+ 197              	.LBB25:
+ 201:Generated_Source\PSoC4/Timer_INT_ISR.c **** }
+ 198              		.loc 1 201 0
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccqPbJvl.s 			page 11
+
+
+ 199 000a 064B     		ldr	r3, .L15+4
+ 200 000c 064A     		ldr	r2, .L15+8
+ 201 000e 8833     		add	r3, r3, #136
+ 202              	.LBE25:
+ 203              	.LBE24:
+  65:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 204              		.loc 1 65 0
+ 205 0010 0320     		mov	r0, #3
+ 206              	.LBB27:
+ 207              	.LBB26:
+ 201:Generated_Source\PSoC4/Timer_INT_ISR.c **** }
+ 208              		.loc 1 201 0
+ 209 0012 1A60     		str	r2, [r3]
+ 210              	.LBE26:
+ 211              	.LBE27:
+  65:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 212              		.loc 1 65 0
+ 213 0014 FFF7FEFF 		bl	Timer_INT_ISR_SetPriority
+ 214              	.LVL6:
+ 215              	.LBB28:
+ 216              	.LBB29:
+ 307:Generated_Source\PSoC4/Timer_INT_ISR.c **** }
+ 217              		.loc 1 307 0
+ 218 0018 044B     		ldr	r3, .L15+12
+ 219              	.LBE29:
+ 220              	.LBE28:
+  69:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 221              		.loc 1 69 0
+ 222              		@ sp needed
+ 223              	.LBB31:
+ 224              	.LBB30:
+ 307:Generated_Source\PSoC4/Timer_INT_ISR.c **** }
+ 225              		.loc 1 307 0
+ 226 001a 1C60     		str	r4, [r3]
+ 227              	.LBE30:
+ 228              	.LBE31:
+  69:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 229              		.loc 1 69 0
+ 230 001c 10BD     		pop	{r4, pc}
+ 231              	.L16:
+ 232 001e C046     		.align	2
+ 233              	.L15:
+ 234 0020 80E100E0 		.word	-536813184
+ 235 0024 00000000 		.word	CyRamVectors
+ 236 0028 00000000 		.word	Timer_INT_ISR_Interrupt
+ 237 002c 00E100E0 		.word	-536813312
+ 238              		.cfi_endproc
+ 239              	.LFE2:
+ 240              		.size	Timer_INT_ISR_Start, .-Timer_INT_ISR_Start
+ 241              		.section	.text.Timer_INT_ISR_StartEx,"ax",%progbits
+ 242              		.align	1
+ 243              		.global	Timer_INT_ISR_StartEx
+ 244              		.code	16
+ 245              		.thumb_func
+ 246              		.type	Timer_INT_ISR_StartEx, %function
+ 247              	Timer_INT_ISR_StartEx:
+ 248              	.LFB3:
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccqPbJvl.s 			page 12
+
+
+ 100:Generated_Source\PSoC4/Timer_INT_ISR.c ****     /* For all we know the interrupt is active. */
+ 249              		.loc 1 100 0
+ 250              		.cfi_startproc
+ 251              	.LVL7:
+ 252 0000 10B5     		push	{r4, lr}
+ 253              		.cfi_def_cfa_offset 8
+ 254              		.cfi_offset 4, -8
+ 255              		.cfi_offset 14, -4
+ 256              	.LBB32:
+ 257              	.LBB33:
+ 258              		.loc 1 349 0
+ 259 0002 8024     		mov	r4, #128
+ 260 0004 054B     		ldr	r3, .L18
+ 261 0006 E402     		lsl	r4, r4, #11
+ 262 0008 1C60     		str	r4, [r3]
+ 263              	.LVL8:
+ 264              	.LBE33:
+ 265              	.LBE32:
+ 266              	.LBB34:
+ 267              	.LBB35:
+ 201:Generated_Source\PSoC4/Timer_INT_ISR.c **** }
+ 268              		.loc 1 201 0
+ 269 000a 054B     		ldr	r3, .L18+4
+ 270              	.LBE35:
+ 271              	.LBE34:
+ 112:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 272              		.loc 1 112 0
+ 273              		@ sp needed
+ 274              	.LBB37:
+ 275              	.LBB36:
+ 201:Generated_Source\PSoC4/Timer_INT_ISR.c **** }
+ 276              		.loc 1 201 0
+ 277 000c 8833     		add	r3, r3, #136
+ 278 000e 1860     		str	r0, [r3]
+ 279              	.LBE36:
+ 280              	.LBE37:
+ 108:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 281              		.loc 1 108 0
+ 282 0010 0320     		mov	r0, #3
+ 283              	.LVL9:
+ 284 0012 FFF7FEFF 		bl	Timer_INT_ISR_SetPriority
+ 285              	.LVL10:
+ 286              	.LBB38:
+ 287              	.LBB39:
+ 307:Generated_Source\PSoC4/Timer_INT_ISR.c **** }
+ 288              		.loc 1 307 0
+ 289 0016 034B     		ldr	r3, .L18+8
+ 290 0018 1C60     		str	r4, [r3]
+ 291              	.LBE39:
+ 292              	.LBE38:
+ 112:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 293              		.loc 1 112 0
+ 294 001a 10BD     		pop	{r4, pc}
+ 295              	.L19:
+ 296              		.align	2
+ 297              	.L18:
+ 298 001c 80E100E0 		.word	-536813184
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccqPbJvl.s 			page 13
+
+
+ 299 0020 00000000 		.word	CyRamVectors
+ 300 0024 00E100E0 		.word	-536813312
+ 301              		.cfi_endproc
+ 302              	.LFE3:
+ 303              		.size	Timer_INT_ISR_StartEx, .-Timer_INT_ISR_StartEx
+ 304              		.section	.text.Timer_INT_ISR_GetPriority,"ax",%progbits
+ 305              		.align	1
+ 306              		.global	Timer_INT_ISR_GetPriority
+ 307              		.code	16
+ 308              		.thumb_func
+ 309              		.type	Timer_INT_ISR_GetPriority, %function
+ 310              	Timer_INT_ISR_GetPriority:
+ 311              	.LFB9:
+ 278:Generated_Source\PSoC4/Timer_INT_ISR.c ****     uint32 priority;
+ 312              		.loc 1 278 0
+ 313              		.cfi_startproc
+ 314              	.LVL11:
+ 282:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 315              		.loc 1 282 0
+ 316 0000 024B     		ldr	r3, .L21
+ 285:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 317              		.loc 1 285 0
+ 318              		@ sp needed
+ 282:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 319              		.loc 1 282 0
+ 320 0002 1868     		ldr	r0, [r3]
+ 321              	.LVL12:
+ 322 0004 0002     		lsl	r0, r0, #8
+ 323              	.LVL13:
+ 284:Generated_Source\PSoC4/Timer_INT_ISR.c **** }
+ 324              		.loc 1 284 0
+ 325 0006 800F     		lsr	r0, r0, #30
+ 285:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 326              		.loc 1 285 0
+ 327 0008 7047     		bx	lr
+ 328              	.L22:
+ 329 000a C046     		.align	2
+ 330              	.L21:
+ 331 000c 10E400E0 		.word	-536812528
+ 332              		.cfi_endproc
+ 333              	.LFE9:
+ 334              		.size	Timer_INT_ISR_GetPriority, .-Timer_INT_ISR_GetPriority
+ 335              		.section	.text.Timer_INT_ISR_Enable,"ax",%progbits
+ 336              		.align	1
+ 337              		.global	Timer_INT_ISR_Enable
+ 338              		.code	16
+ 339              		.thumb_func
+ 340              		.type	Timer_INT_ISR_Enable, %function
+ 341              	Timer_INT_ISR_Enable:
+ 342              	.LFB10:
+ 305:Generated_Source\PSoC4/Timer_INT_ISR.c ****     /* Enable the general interrupt. */
+ 343              		.loc 1 305 0
+ 344              		.cfi_startproc
+ 307:Generated_Source\PSoC4/Timer_INT_ISR.c **** }
+ 345              		.loc 1 307 0
+ 346 0000 8022     		mov	r2, #128
+ 347 0002 024B     		ldr	r3, .L24
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccqPbJvl.s 			page 14
+
+
+ 348 0004 D202     		lsl	r2, r2, #11
+ 349 0006 1A60     		str	r2, [r3]
+ 308:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 350              		.loc 1 308 0
+ 351              		@ sp needed
+ 352 0008 7047     		bx	lr
+ 353              	.L25:
+ 354 000a C046     		.align	2
+ 355              	.L24:
+ 356 000c 00E100E0 		.word	-536813312
+ 357              		.cfi_endproc
+ 358              	.LFE10:
+ 359              		.size	Timer_INT_ISR_Enable, .-Timer_INT_ISR_Enable
+ 360              		.section	.text.Timer_INT_ISR_GetState,"ax",%progbits
+ 361              		.align	1
+ 362              		.global	Timer_INT_ISR_GetState
+ 363              		.code	16
+ 364              		.thumb_func
+ 365              		.type	Timer_INT_ISR_GetState, %function
+ 366              	Timer_INT_ISR_GetState:
+ 367              	.LFB11:
+ 326:Generated_Source\PSoC4/Timer_INT_ISR.c ****     /* Get the state of the general interrupt. */
+ 368              		.loc 1 326 0
+ 369              		.cfi_startproc
+ 328:Generated_Source\PSoC4/Timer_INT_ISR.c **** }
+ 370              		.loc 1 328 0
+ 371 0000 024B     		ldr	r3, .L27
+ 329:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 372              		.loc 1 329 0
+ 373              		@ sp needed
+ 328:Generated_Source\PSoC4/Timer_INT_ISR.c **** }
+ 374              		.loc 1 328 0
+ 375 0002 1868     		ldr	r0, [r3]
+ 376 0004 4003     		lsl	r0, r0, #13
+ 377 0006 C00F     		lsr	r0, r0, #31
+ 329:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 378              		.loc 1 329 0
+ 379 0008 7047     		bx	lr
+ 380              	.L28:
+ 381 000a C046     		.align	2
+ 382              	.L27:
+ 383 000c 00E100E0 		.word	-536813312
+ 384              		.cfi_endproc
+ 385              	.LFE11:
+ 386              		.size	Timer_INT_ISR_GetState, .-Timer_INT_ISR_GetState
+ 387              		.section	.text.Timer_INT_ISR_Disable,"ax",%progbits
+ 388              		.align	1
+ 389              		.global	Timer_INT_ISR_Disable
+ 390              		.code	16
+ 391              		.thumb_func
+ 392              		.type	Timer_INT_ISR_Disable, %function
+ 393              	Timer_INT_ISR_Disable:
+ 394              	.LFB12:
+ 347:Generated_Source\PSoC4/Timer_INT_ISR.c ****     /* Disable the general interrupt. */
+ 395              		.loc 1 347 0
+ 396              		.cfi_startproc
+ 397              		.loc 1 349 0
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccqPbJvl.s 			page 15
+
+
+ 398 0000 8022     		mov	r2, #128
+ 399 0002 024B     		ldr	r3, .L30
+ 400 0004 D202     		lsl	r2, r2, #11
+ 401 0006 1A60     		str	r2, [r3]
+ 350:Generated_Source\PSoC4/Timer_INT_ISR.c **** }
+ 402              		.loc 1 350 0
+ 403              		@ sp needed
+ 404 0008 7047     		bx	lr
+ 405              	.L31:
+ 406 000a C046     		.align	2
+ 407              	.L30:
+ 408 000c 80E100E0 		.word	-536813184
+ 409              		.cfi_endproc
+ 410              	.LFE12:
+ 411              		.size	Timer_INT_ISR_Disable, .-Timer_INT_ISR_Disable
+ 412              		.section	.text.Timer_INT_ISR_SetPending,"ax",%progbits
+ 413              		.align	1
+ 414              		.global	Timer_INT_ISR_SetPending
+ 415              		.code	16
+ 416              		.thumb_func
+ 417              		.type	Timer_INT_ISR_SetPending, %function
+ 418              	Timer_INT_ISR_SetPending:
+ 419              	.LFB13:
+ 351:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 352:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 353:Generated_Source\PSoC4/Timer_INT_ISR.c **** /*******************************************************************************
+ 354:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Function Name: Timer_INT_ISR_SetPending
+ 355:Generated_Source\PSoC4/Timer_INT_ISR.c **** ********************************************************************************
+ 356:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 357:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Summary:
+ 358:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   Causes the Interrupt to enter the pending state, a software method of
+ 359:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   generating the interrupt.
+ 360:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 361:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Parameters:
+ 362:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   None
+ 363:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 364:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Return:
+ 365:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   None
+ 366:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 367:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Side Effects:
+ 368:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   If interrupts are enabled and the interrupt is set up properly, the ISR is
+ 369:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   entered (depending on the priority of this interrupt and other pending 
+ 370:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   interrupts).
+ 371:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 372:Generated_Source\PSoC4/Timer_INT_ISR.c **** *******************************************************************************/
+ 373:Generated_Source\PSoC4/Timer_INT_ISR.c **** void Timer_INT_ISR_SetPending(void)
+ 374:Generated_Source\PSoC4/Timer_INT_ISR.c **** {
+ 420              		.loc 1 374 0
+ 421              		.cfi_startproc
+ 375:Generated_Source\PSoC4/Timer_INT_ISR.c ****     *Timer_INT_ISR_INTC_SET_PD = Timer_INT_ISR__INTC_MASK;
+ 422              		.loc 1 375 0
+ 423 0000 8022     		mov	r2, #128
+ 424 0002 024B     		ldr	r3, .L33
+ 425 0004 D202     		lsl	r2, r2, #11
+ 426 0006 1A60     		str	r2, [r3]
+ 376:Generated_Source\PSoC4/Timer_INT_ISR.c **** }
+ 427              		.loc 1 376 0
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccqPbJvl.s 			page 16
+
+
+ 428              		@ sp needed
+ 429 0008 7047     		bx	lr
+ 430              	.L34:
+ 431 000a C046     		.align	2
+ 432              	.L33:
+ 433 000c 00E200E0 		.word	-536813056
+ 434              		.cfi_endproc
+ 435              	.LFE13:
+ 436              		.size	Timer_INT_ISR_SetPending, .-Timer_INT_ISR_SetPending
+ 437              		.section	.text.Timer_INT_ISR_ClearPending,"ax",%progbits
+ 438              		.align	1
+ 439              		.global	Timer_INT_ISR_ClearPending
+ 440              		.code	16
+ 441              		.thumb_func
+ 442              		.type	Timer_INT_ISR_ClearPending, %function
+ 443              	Timer_INT_ISR_ClearPending:
+ 444              	.LFB14:
+ 377:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 378:Generated_Source\PSoC4/Timer_INT_ISR.c **** 
+ 379:Generated_Source\PSoC4/Timer_INT_ISR.c **** /*******************************************************************************
+ 380:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Function Name: Timer_INT_ISR_ClearPending
+ 381:Generated_Source\PSoC4/Timer_INT_ISR.c **** ********************************************************************************
+ 382:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 383:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Summary:
+ 384:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   Clears a pending interrupt in the interrupt controller.
+ 385:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 386:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   Note Some interrupt sources are clear-on-read and require the block 
+ 387:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   interrupt/status register to be read/cleared with the appropriate block API 
+ 388:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   (GPIO, UART, and so on). Otherwise the ISR will continue to remain in 
+ 389:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   pending state even though the interrupt itself is cleared using this API.
+ 390:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 391:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Parameters:
+ 392:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   None
+ 393:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 394:Generated_Source\PSoC4/Timer_INT_ISR.c **** * Return:
+ 395:Generated_Source\PSoC4/Timer_INT_ISR.c **** *   None
+ 396:Generated_Source\PSoC4/Timer_INT_ISR.c **** *
+ 397:Generated_Source\PSoC4/Timer_INT_ISR.c **** *******************************************************************************/
+ 398:Generated_Source\PSoC4/Timer_INT_ISR.c **** void Timer_INT_ISR_ClearPending(void)
+ 399:Generated_Source\PSoC4/Timer_INT_ISR.c **** {
+ 445              		.loc 1 399 0
+ 446              		.cfi_startproc
+ 400:Generated_Source\PSoC4/Timer_INT_ISR.c ****     *Timer_INT_ISR_INTC_CLR_PD = Timer_INT_ISR__INTC_MASK;
+ 447              		.loc 1 400 0
+ 448 0000 8022     		mov	r2, #128
+ 449 0002 024B     		ldr	r3, .L36
+ 450 0004 D202     		lsl	r2, r2, #11
+ 451 0006 1A60     		str	r2, [r3]
+ 401:Generated_Source\PSoC4/Timer_INT_ISR.c **** }
+ 452              		.loc 1 401 0
+ 453              		@ sp needed
+ 454 0008 7047     		bx	lr
+ 455              	.L37:
+ 456 000a C046     		.align	2
+ 457              	.L36:
+ 458 000c 80E200E0 		.word	-536812928
+ 459              		.cfi_endproc
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccqPbJvl.s 			page 17
+
+
+ 460              	.LFE14:
+ 461              		.size	Timer_INT_ISR_ClearPending, .-Timer_INT_ISR_ClearPending
+ 462              		.text
+ 463              	.Letext0:
+ 464              		.file 2 "Generated_Source\\PSoC4/cytypes.h"
+ 465              		.file 3 "Generated_Source\\PSoC4/CyLib.h"
+ 466              		.section	.debug_info,"",%progbits
+ 467              	.Ldebug_info0:
+ 468 0000 4C030000 		.4byte	0x34c
+ 469 0004 0400     		.2byte	0x4
+ 470 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 471 000a 04       		.byte	0x4
+ 472 000b 01       		.uleb128 0x1
+ 473 000c 91000000 		.4byte	.LASF32
+ 474 0010 01       		.byte	0x1
+ 475 0011 70030000 		.4byte	.LASF33
+ 476 0015 00000000 		.4byte	.LASF34
+ 477 0019 48000000 		.4byte	.Ldebug_ranges0+0x48
+ 478 001d 00000000 		.4byte	0
+ 479 0021 00000000 		.4byte	.Ldebug_line0
+ 480 0025 02       		.uleb128 0x2
+ 481 0026 01       		.byte	0x1
+ 482 0027 06       		.byte	0x6
+ 483 0028 4B030000 		.4byte	.LASF0
+ 484 002c 02       		.uleb128 0x2
+ 485 002d 01       		.byte	0x1
+ 486 002e 08       		.byte	0x8
+ 487 002f B5010000 		.4byte	.LASF1
+ 488 0033 02       		.uleb128 0x2
+ 489 0034 02       		.byte	0x2
+ 490 0035 05       		.byte	0x5
+ 491 0036 DF020000 		.4byte	.LASF2
+ 492 003a 02       		.uleb128 0x2
+ 493 003b 02       		.byte	0x2
+ 494 003c 07       		.byte	0x7
+ 495 003d 5D010000 		.4byte	.LASF3
+ 496 0041 02       		.uleb128 0x2
+ 497 0042 04       		.byte	0x4
+ 498 0043 05       		.byte	0x5
+ 499 0044 28030000 		.4byte	.LASF4
+ 500 0048 02       		.uleb128 0x2
+ 501 0049 04       		.byte	0x4
+ 502 004a 07       		.byte	0x7
+ 503 004b D2010000 		.4byte	.LASF5
+ 504 004f 02       		.uleb128 0x2
+ 505 0050 08       		.byte	0x8
+ 506 0051 05       		.byte	0x5
+ 507 0052 CC020000 		.4byte	.LASF6
+ 508 0056 02       		.uleb128 0x2
+ 509 0057 08       		.byte	0x8
+ 510 0058 07       		.byte	0x7
+ 511 0059 9E010000 		.4byte	.LASF7
+ 512 005d 03       		.uleb128 0x3
+ 513 005e 04       		.byte	0x4
+ 514 005f 05       		.byte	0x5
+ 515 0060 696E7400 		.ascii	"int\000"
+ 516 0064 02       		.uleb128 0x2
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccqPbJvl.s 			page 18
+
+
+ 517 0065 04       		.byte	0x4
+ 518 0066 07       		.byte	0x7
+ 519 0067 74020000 		.4byte	.LASF8
+ 520 006b 04       		.uleb128 0x4
+ 521 006c E4010000 		.4byte	.LASF9
+ 522 0070 02       		.byte	0x2
+ 523 0071 B901     		.2byte	0x1b9
+ 524 0073 2C000000 		.4byte	0x2c
+ 525 0077 04       		.uleb128 0x4
+ 526 0078 56020000 		.4byte	.LASF10
+ 527 007c 02       		.byte	0x2
+ 528 007d BB01     		.2byte	0x1bb
+ 529 007f 48000000 		.4byte	0x48
+ 530 0083 02       		.uleb128 0x2
+ 531 0084 04       		.byte	0x4
+ 532 0085 04       		.byte	0x4
+ 533 0086 98010000 		.4byte	.LASF11
+ 534 008a 02       		.uleb128 0x2
+ 535 008b 08       		.byte	0x8
+ 536 008c 04       		.byte	0x4
+ 537 008d 35020000 		.4byte	.LASF12
+ 538 0091 02       		.uleb128 0x2
+ 539 0092 01       		.byte	0x1
+ 540 0093 08       		.byte	0x8
+ 541 0094 DA020000 		.4byte	.LASF13
+ 542 0098 04       		.uleb128 0x4
+ 543 0099 8B000000 		.4byte	.LASF14
+ 544 009d 02       		.byte	0x2
+ 545 009e 6502     		.2byte	0x265
+ 546 00a0 A4000000 		.4byte	0xa4
+ 547 00a4 05       		.uleb128 0x5
+ 548 00a5 77000000 		.4byte	0x77
+ 549 00a9 04       		.uleb128 0x4
+ 550 00aa B6020000 		.4byte	.LASF15
+ 551 00ae 02       		.byte	0x2
+ 552 00af 7502     		.2byte	0x275
+ 553 00b1 B5000000 		.4byte	0xb5
+ 554 00b5 06       		.uleb128 0x6
+ 555 00b6 04       		.byte	0x4
+ 556 00b7 BB000000 		.4byte	0xbb
+ 557 00bb 07       		.uleb128 0x7
+ 558 00bc 02       		.uleb128 0x2
+ 559 00bd 04       		.byte	0x4
+ 560 00be 07       		.byte	0x7
+ 561 00bf C3020000 		.4byte	.LASF16
+ 562 00c3 08       		.uleb128 0x8
+ 563 00c4 47010000 		.4byte	.LASF17
+ 564 00c8 01       		.byte	0x1
+ 565 00c9 5A01     		.2byte	0x15a
+ 566 00cb 01       		.byte	0x1
+ 567 00cc 09       		.uleb128 0x9
+ 568 00cd 1D020000 		.4byte	.LASF35
+ 569 00d1 01       		.byte	0x1
+ 570 00d2 C7       		.byte	0xc7
+ 571 00d3 01       		.byte	0x1
+ 572 00d4 E4000000 		.4byte	0xe4
+ 573 00d8 0A       		.uleb128 0xa
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccqPbJvl.s 			page 19
+
+
+ 574 00d9 98020000 		.4byte	.LASF26
+ 575 00dd 01       		.byte	0x1
+ 576 00de C7       		.byte	0xc7
+ 577 00df A9000000 		.4byte	0xa9
+ 578 00e3 00       		.byte	0
+ 579 00e4 08       		.uleb128 0x8
+ 580 00e5 70010000 		.4byte	.LASF18
+ 581 00e9 01       		.byte	0x1
+ 582 00ea 3001     		.2byte	0x130
+ 583 00ec 01       		.byte	0x1
+ 584 00ed 0B       		.uleb128 0xb
+ 585 00ee 01030000 		.4byte	.LASF29
+ 586 00f2 01       		.byte	0x1
+ 587 00f3 9F       		.byte	0x9f
+ 588 00f4 00000000 		.4byte	.LFB5
+ 589 00f8 02000000 		.4byte	.LFE5-.LFB5
+ 590 00fc 01       		.uleb128 0x1
+ 591 00fd 9C       		.byte	0x9c
+ 592 00fe 0C       		.uleb128 0xc
+ 593 00ff 85010000 		.4byte	.LASF19
+ 594 0103 01       		.byte	0x1
+ 595 0104 81       		.byte	0x81
+ 596 0105 00000000 		.4byte	.LFB4
+ 597 0109 20000000 		.4byte	.LFE4-.LFB4
+ 598 010d 01       		.uleb128 0x1
+ 599 010e 9C       		.byte	0x9c
+ 600 010f 38010000 		.4byte	0x138
+ 601 0113 0D       		.uleb128 0xd
+ 602 0114 C3000000 		.4byte	0xc3
+ 603 0118 00000000 		.4byte	.LBB18
+ 604 011c 08000000 		.4byte	.LBE18-.LBB18
+ 605 0120 01       		.byte	0x1
+ 606 0121 84       		.byte	0x84
+ 607 0122 0E       		.uleb128 0xe
+ 608 0123 CC000000 		.4byte	0xcc
+ 609 0127 08000000 		.4byte	.LBB20
+ 610 012b 08000000 		.4byte	.LBE20-.LBB20
+ 611 012f 01       		.byte	0x1
+ 612 0130 87       		.byte	0x87
+ 613 0131 0F       		.uleb128 0xf
+ 614 0132 D8000000 		.4byte	0xd8
+ 615 0136 00       		.byte	0
+ 616 0137 00       		.byte	0
+ 617 0138 10       		.uleb128 0x10
+ 618 0139 CC000000 		.4byte	0xcc
+ 619 013d 00000000 		.4byte	.LFB6
+ 620 0141 0C000000 		.4byte	.LFE6-.LFB6
+ 621 0145 01       		.uleb128 0x1
+ 622 0146 9C       		.byte	0x9c
+ 623 0147 53010000 		.4byte	0x153
+ 624 014b 11       		.uleb128 0x11
+ 625 014c D8000000 		.4byte	0xd8
+ 626 0150 01       		.uleb128 0x1
+ 627 0151 50       		.byte	0x50
+ 628 0152 00       		.byte	0
+ 629 0153 12       		.uleb128 0x12
+ 630 0154 E9020000 		.4byte	.LASF27
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccqPbJvl.s 			page 20
+
+
+ 631 0158 01       		.byte	0x1
+ 632 0159 DB       		.byte	0xdb
+ 633 015a A9000000 		.4byte	0xa9
+ 634 015e 00000000 		.4byte	.LFB7
+ 635 0162 0C000000 		.4byte	.LFE7-.LFB7
+ 636 0166 01       		.uleb128 0x1
+ 637 0167 9C       		.byte	0x9c
+ 638 0168 0C       		.uleb128 0xc
+ 639 0169 31030000 		.4byte	.LASF20
+ 640 016d 01       		.byte	0x1
+ 641 016e F9       		.byte	0xf9
+ 642 016f 00000000 		.4byte	.LFB8
+ 643 0173 24000000 		.4byte	.LFE8-.LFB8
+ 644 0177 01       		.uleb128 0x1
+ 645 0178 9C       		.byte	0x9c
+ 646 0179 BA010000 		.4byte	0x1ba
+ 647 017d 13       		.uleb128 0x13
+ 648 017e FE010000 		.4byte	.LASF25
+ 649 0182 01       		.byte	0x1
+ 650 0183 F9       		.byte	0xf9
+ 651 0184 6B000000 		.4byte	0x6b
+ 652 0188 00000000 		.4byte	.LLST0
+ 653 018c 14       		.uleb128 0x14
+ 654 018d C3010000 		.4byte	.LASF21
+ 655 0191 01       		.byte	0x1
+ 656 0192 FB       		.byte	0xfb
+ 657 0193 6B000000 		.4byte	0x6b
+ 658 0197 21000000 		.4byte	.LLST1
+ 659 019b 15       		.uleb128 0x15
+ 660 019c 19030000 		.4byte	.LASF22
+ 661 01a0 01       		.byte	0x1
+ 662 01a1 FC       		.byte	0xfc
+ 663 01a2 77000000 		.4byte	0x77
+ 664 01a6 16       		.byte	0x16
+ 665 01a7 16       		.uleb128 0x16
+ 666 01a8 08000000 		.4byte	.LVL3
+ 667 01ac 37030000 		.4byte	0x337
+ 668 01b0 16       		.uleb128 0x16
+ 669 01b1 1A000000 		.4byte	.LVL4
+ 670 01b5 42030000 		.4byte	0x342
+ 671 01b9 00       		.byte	0
+ 672 01ba 0C       		.uleb128 0xc
+ 673 01bb EA010000 		.4byte	.LASF23
+ 674 01bf 01       		.byte	0x1
+ 675 01c0 38       		.byte	0x38
+ 676 01c1 00000000 		.4byte	.LFB2
+ 677 01c5 30000000 		.4byte	.LFE2-.LFB2
+ 678 01c9 01       		.uleb128 0x1
+ 679 01ca 9C       		.byte	0x9c
+ 680 01cb 1D020000 		.4byte	0x21d
+ 681 01cf 0D       		.uleb128 0xd
+ 682 01d0 C3000000 		.4byte	0xc3
+ 683 01d4 02000000 		.4byte	.LBB22
+ 684 01d8 08000000 		.4byte	.LBE22-.LBB22
+ 685 01dc 01       		.byte	0x1
+ 686 01dd 3B       		.byte	0x3b
+ 687 01de 17       		.uleb128 0x17
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccqPbJvl.s 			page 21
+
+
+ 688 01df CC000000 		.4byte	0xcc
+ 689 01e3 0A000000 		.4byte	.LBB24
+ 690 01e7 00000000 		.4byte	.Ldebug_ranges0+0
+ 691 01eb 01       		.byte	0x1
+ 692 01ec 3E       		.byte	0x3e
+ 693 01ed FE010000 		.4byte	0x1fe
+ 694 01f1 11       		.uleb128 0x11
+ 695 01f2 D8000000 		.4byte	0xd8
+ 696 01f6 06       		.uleb128 0x6
+ 697 01f7 03       		.byte	0x3
+ 698 01f8 00000000 		.4byte	Timer_INT_ISR_Interrupt
+ 699 01fc 9F       		.byte	0x9f
+ 700 01fd 00       		.byte	0
+ 701 01fe 18       		.uleb128 0x18
+ 702 01ff E4000000 		.4byte	0xe4
+ 703 0203 18000000 		.4byte	.LBB28
+ 704 0207 18000000 		.4byte	.Ldebug_ranges0+0x18
+ 705 020b 01       		.byte	0x1
+ 706 020c 44       		.byte	0x44
+ 707 020d 19       		.uleb128 0x19
+ 708 020e 18000000 		.4byte	.LVL6
+ 709 0212 68010000 		.4byte	0x168
+ 710 0216 1A       		.uleb128 0x1a
+ 711 0217 01       		.uleb128 0x1
+ 712 0218 50       		.byte	0x50
+ 713 0219 01       		.uleb128 0x1
+ 714 021a 33       		.byte	0x33
+ 715 021b 00       		.byte	0
+ 716 021c 00       		.byte	0
+ 717 021d 0C       		.uleb128 0xc
+ 718 021e 07020000 		.4byte	.LASF24
+ 719 0222 01       		.byte	0x1
+ 720 0223 63       		.byte	0x63
+ 721 0224 00000000 		.4byte	.LFB3
+ 722 0228 28000000 		.4byte	.LFE3-.LFB3
+ 723 022c 01       		.uleb128 0x1
+ 724 022d 9C       		.byte	0x9c
+ 725 022e 8C020000 		.4byte	0x28c
+ 726 0232 13       		.uleb128 0x13
+ 727 0233 98020000 		.4byte	.LASF26
+ 728 0237 01       		.byte	0x1
+ 729 0238 63       		.byte	0x63
+ 730 0239 A9000000 		.4byte	0xa9
+ 731 023d 34000000 		.4byte	.LLST2
+ 732 0241 0D       		.uleb128 0xd
+ 733 0242 C3000000 		.4byte	0xc3
+ 734 0246 02000000 		.4byte	.LBB32
+ 735 024a 08000000 		.4byte	.LBE32-.LBB32
+ 736 024e 01       		.byte	0x1
+ 737 024f 66       		.byte	0x66
+ 738 0250 17       		.uleb128 0x17
+ 739 0251 CC000000 		.4byte	0xcc
+ 740 0255 0A000000 		.4byte	.LBB34
+ 741 0259 30000000 		.4byte	.Ldebug_ranges0+0x30
+ 742 025d 01       		.byte	0x1
+ 743 025e 69       		.byte	0x69
+ 744 025f 6D020000 		.4byte	0x26d
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccqPbJvl.s 			page 22
+
+
+ 745 0263 1B       		.uleb128 0x1b
+ 746 0264 D8000000 		.4byte	0xd8
+ 747 0268 61000000 		.4byte	.LLST3
+ 748 026c 00       		.byte	0
+ 749 026d 0D       		.uleb128 0xd
+ 750 026e E4000000 		.4byte	0xe4
+ 751 0272 16000000 		.4byte	.LBB38
+ 752 0276 04000000 		.4byte	.LBE38-.LBB38
+ 753 027a 01       		.byte	0x1
+ 754 027b 6F       		.byte	0x6f
+ 755 027c 19       		.uleb128 0x19
+ 756 027d 16000000 		.4byte	.LVL10
+ 757 0281 68010000 		.4byte	0x168
+ 758 0285 1A       		.uleb128 0x1a
+ 759 0286 01       		.uleb128 0x1
+ 760 0287 50       		.byte	0x50
+ 761 0288 01       		.uleb128 0x1
+ 762 0289 33       		.byte	0x33
+ 763 028a 00       		.byte	0
+ 764 028b 00       		.byte	0
+ 765 028c 1C       		.uleb128 0x1c
+ 766 028d 3C020000 		.4byte	.LASF36
+ 767 0291 01       		.byte	0x1
+ 768 0292 1501     		.2byte	0x115
+ 769 0294 6B000000 		.4byte	0x6b
+ 770 0298 00000000 		.4byte	.LFB9
+ 771 029c 10000000 		.4byte	.LFE9-.LFB9
+ 772 02a0 01       		.uleb128 0x1
+ 773 02a1 9C       		.byte	0x9c
+ 774 02a2 C4020000 		.4byte	0x2c4
+ 775 02a6 1D       		.uleb128 0x1d
+ 776 02a7 FE010000 		.4byte	.LASF25
+ 777 02ab 01       		.byte	0x1
+ 778 02ac 1701     		.2byte	0x117
+ 779 02ae 77000000 		.4byte	0x77
+ 780 02b2 8E000000 		.4byte	.LLST4
+ 781 02b6 1E       		.uleb128 0x1e
+ 782 02b7 19030000 		.4byte	.LASF22
+ 783 02bb 01       		.byte	0x1
+ 784 02bc 1801     		.2byte	0x118
+ 785 02be 77000000 		.4byte	0x77
+ 786 02c2 16       		.byte	0x16
+ 787 02c3 00       		.byte	0
+ 788 02c4 1F       		.uleb128 0x1f
+ 789 02c5 E4000000 		.4byte	0xe4
+ 790 02c9 00000000 		.4byte	.LFB10
+ 791 02cd 10000000 		.4byte	.LFE10-.LFB10
+ 792 02d1 01       		.uleb128 0x1
+ 793 02d2 9C       		.byte	0x9c
+ 794 02d3 20       		.uleb128 0x20
+ 795 02d4 81020000 		.4byte	.LASF28
+ 796 02d8 01       		.byte	0x1
+ 797 02d9 4501     		.2byte	0x145
+ 798 02db 6B000000 		.4byte	0x6b
+ 799 02df 00000000 		.4byte	.LFB11
+ 800 02e3 10000000 		.4byte	.LFE11-.LFB11
+ 801 02e7 01       		.uleb128 0x1
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccqPbJvl.s 			page 23
+
+
+ 802 02e8 9C       		.byte	0x9c
+ 803 02e9 1F       		.uleb128 0x1f
+ 804 02ea C3000000 		.4byte	0xc3
+ 805 02ee 00000000 		.4byte	.LFB12
+ 806 02f2 10000000 		.4byte	.LFE12-.LFB12
+ 807 02f6 01       		.uleb128 0x1
+ 808 02f7 9C       		.byte	0x9c
+ 809 02f8 21       		.uleb128 0x21
+ 810 02f9 57030000 		.4byte	.LASF30
+ 811 02fd 01       		.byte	0x1
+ 812 02fe 7501     		.2byte	0x175
+ 813 0300 00000000 		.4byte	.LFB13
+ 814 0304 10000000 		.4byte	.LFE13-.LFB13
+ 815 0308 01       		.uleb128 0x1
+ 816 0309 9C       		.byte	0x9c
+ 817 030a 21       		.uleb128 0x21
+ 818 030b 2C010000 		.4byte	.LASF31
+ 819 030f 01       		.byte	0x1
+ 820 0310 8E01     		.2byte	0x18e
+ 821 0312 00000000 		.4byte	.LFB14
+ 822 0316 10000000 		.4byte	.LFE14-.LFB14
+ 823 031a 01       		.uleb128 0x1
+ 824 031b 9C       		.byte	0x9c
+ 825 031c 22       		.uleb128 0x22
+ 826 031d A9000000 		.4byte	0xa9
+ 827 0321 2C030000 		.4byte	0x32c
+ 828 0325 23       		.uleb128 0x23
+ 829 0326 BC000000 		.4byte	0xbc
+ 830 032a 2F       		.byte	0x2f
+ 831 032b 00       		.byte	0
+ 832 032c 24       		.uleb128 0x24
+ 833 032d 1F010000 		.4byte	.LASF37
+ 834 0331 01       		.byte	0x1
+ 835 0332 21       		.byte	0x21
+ 836 0333 1C030000 		.4byte	0x31c
+ 837 0337 25       		.uleb128 0x25
+ 838 0338 5D020000 		.4byte	.LASF38
+ 839 033c 03       		.byte	0x3
+ 840 033d E5       		.byte	0xe5
+ 841 033e 6B000000 		.4byte	0x6b
+ 842 0342 26       		.uleb128 0x26
+ 843 0343 A0020000 		.4byte	.LASF39
+ 844 0347 03       		.byte	0x3
+ 845 0348 E6       		.byte	0xe6
+ 846 0349 27       		.uleb128 0x27
+ 847 034a 6B000000 		.4byte	0x6b
+ 848 034e 00       		.byte	0
+ 849 034f 00       		.byte	0
+ 850              		.section	.debug_abbrev,"",%progbits
+ 851              	.Ldebug_abbrev0:
+ 852 0000 01       		.uleb128 0x1
+ 853 0001 11       		.uleb128 0x11
+ 854 0002 01       		.byte	0x1
+ 855 0003 25       		.uleb128 0x25
+ 856 0004 0E       		.uleb128 0xe
+ 857 0005 13       		.uleb128 0x13
+ 858 0006 0B       		.uleb128 0xb
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccqPbJvl.s 			page 24
+
+
+ 859 0007 03       		.uleb128 0x3
+ 860 0008 0E       		.uleb128 0xe
+ 861 0009 1B       		.uleb128 0x1b
+ 862 000a 0E       		.uleb128 0xe
+ 863 000b 55       		.uleb128 0x55
+ 864 000c 17       		.uleb128 0x17
+ 865 000d 11       		.uleb128 0x11
+ 866 000e 01       		.uleb128 0x1
+ 867 000f 10       		.uleb128 0x10
+ 868 0010 17       		.uleb128 0x17
+ 869 0011 00       		.byte	0
+ 870 0012 00       		.byte	0
+ 871 0013 02       		.uleb128 0x2
+ 872 0014 24       		.uleb128 0x24
+ 873 0015 00       		.byte	0
+ 874 0016 0B       		.uleb128 0xb
+ 875 0017 0B       		.uleb128 0xb
+ 876 0018 3E       		.uleb128 0x3e
+ 877 0019 0B       		.uleb128 0xb
+ 878 001a 03       		.uleb128 0x3
+ 879 001b 0E       		.uleb128 0xe
+ 880 001c 00       		.byte	0
+ 881 001d 00       		.byte	0
+ 882 001e 03       		.uleb128 0x3
+ 883 001f 24       		.uleb128 0x24
+ 884 0020 00       		.byte	0
+ 885 0021 0B       		.uleb128 0xb
+ 886 0022 0B       		.uleb128 0xb
+ 887 0023 3E       		.uleb128 0x3e
+ 888 0024 0B       		.uleb128 0xb
+ 889 0025 03       		.uleb128 0x3
+ 890 0026 08       		.uleb128 0x8
+ 891 0027 00       		.byte	0
+ 892 0028 00       		.byte	0
+ 893 0029 04       		.uleb128 0x4
+ 894 002a 16       		.uleb128 0x16
+ 895 002b 00       		.byte	0
+ 896 002c 03       		.uleb128 0x3
+ 897 002d 0E       		.uleb128 0xe
+ 898 002e 3A       		.uleb128 0x3a
+ 899 002f 0B       		.uleb128 0xb
+ 900 0030 3B       		.uleb128 0x3b
+ 901 0031 05       		.uleb128 0x5
+ 902 0032 49       		.uleb128 0x49
+ 903 0033 13       		.uleb128 0x13
+ 904 0034 00       		.byte	0
+ 905 0035 00       		.byte	0
+ 906 0036 05       		.uleb128 0x5
+ 907 0037 35       		.uleb128 0x35
+ 908 0038 00       		.byte	0
+ 909 0039 49       		.uleb128 0x49
+ 910 003a 13       		.uleb128 0x13
+ 911 003b 00       		.byte	0
+ 912 003c 00       		.byte	0
+ 913 003d 06       		.uleb128 0x6
+ 914 003e 0F       		.uleb128 0xf
+ 915 003f 00       		.byte	0
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccqPbJvl.s 			page 25
+
+
+ 916 0040 0B       		.uleb128 0xb
+ 917 0041 0B       		.uleb128 0xb
+ 918 0042 49       		.uleb128 0x49
+ 919 0043 13       		.uleb128 0x13
+ 920 0044 00       		.byte	0
+ 921 0045 00       		.byte	0
+ 922 0046 07       		.uleb128 0x7
+ 923 0047 15       		.uleb128 0x15
+ 924 0048 00       		.byte	0
+ 925 0049 27       		.uleb128 0x27
+ 926 004a 19       		.uleb128 0x19
+ 927 004b 00       		.byte	0
+ 928 004c 00       		.byte	0
+ 929 004d 08       		.uleb128 0x8
+ 930 004e 2E       		.uleb128 0x2e
+ 931 004f 00       		.byte	0
+ 932 0050 3F       		.uleb128 0x3f
+ 933 0051 19       		.uleb128 0x19
+ 934 0052 03       		.uleb128 0x3
+ 935 0053 0E       		.uleb128 0xe
+ 936 0054 3A       		.uleb128 0x3a
+ 937 0055 0B       		.uleb128 0xb
+ 938 0056 3B       		.uleb128 0x3b
+ 939 0057 05       		.uleb128 0x5
+ 940 0058 27       		.uleb128 0x27
+ 941 0059 19       		.uleb128 0x19
+ 942 005a 20       		.uleb128 0x20
+ 943 005b 0B       		.uleb128 0xb
+ 944 005c 00       		.byte	0
+ 945 005d 00       		.byte	0
+ 946 005e 09       		.uleb128 0x9
+ 947 005f 2E       		.uleb128 0x2e
+ 948 0060 01       		.byte	0x1
+ 949 0061 3F       		.uleb128 0x3f
+ 950 0062 19       		.uleb128 0x19
+ 951 0063 03       		.uleb128 0x3
+ 952 0064 0E       		.uleb128 0xe
+ 953 0065 3A       		.uleb128 0x3a
+ 954 0066 0B       		.uleb128 0xb
+ 955 0067 3B       		.uleb128 0x3b
+ 956 0068 0B       		.uleb128 0xb
+ 957 0069 27       		.uleb128 0x27
+ 958 006a 19       		.uleb128 0x19
+ 959 006b 20       		.uleb128 0x20
+ 960 006c 0B       		.uleb128 0xb
+ 961 006d 01       		.uleb128 0x1
+ 962 006e 13       		.uleb128 0x13
+ 963 006f 00       		.byte	0
+ 964 0070 00       		.byte	0
+ 965 0071 0A       		.uleb128 0xa
+ 966 0072 05       		.uleb128 0x5
+ 967 0073 00       		.byte	0
+ 968 0074 03       		.uleb128 0x3
+ 969 0075 0E       		.uleb128 0xe
+ 970 0076 3A       		.uleb128 0x3a
+ 971 0077 0B       		.uleb128 0xb
+ 972 0078 3B       		.uleb128 0x3b
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccqPbJvl.s 			page 26
+
+
+ 973 0079 0B       		.uleb128 0xb
+ 974 007a 49       		.uleb128 0x49
+ 975 007b 13       		.uleb128 0x13
+ 976 007c 00       		.byte	0
+ 977 007d 00       		.byte	0
+ 978 007e 0B       		.uleb128 0xb
+ 979 007f 2E       		.uleb128 0x2e
+ 980 0080 00       		.byte	0
+ 981 0081 3F       		.uleb128 0x3f
+ 982 0082 19       		.uleb128 0x19
+ 983 0083 03       		.uleb128 0x3
+ 984 0084 0E       		.uleb128 0xe
+ 985 0085 3A       		.uleb128 0x3a
+ 986 0086 0B       		.uleb128 0xb
+ 987 0087 3B       		.uleb128 0x3b
+ 988 0088 0B       		.uleb128 0xb
+ 989 0089 27       		.uleb128 0x27
+ 990 008a 19       		.uleb128 0x19
+ 991 008b 11       		.uleb128 0x11
+ 992 008c 01       		.uleb128 0x1
+ 993 008d 12       		.uleb128 0x12
+ 994 008e 06       		.uleb128 0x6
+ 995 008f 40       		.uleb128 0x40
+ 996 0090 18       		.uleb128 0x18
+ 997 0091 9742     		.uleb128 0x2117
+ 998 0093 19       		.uleb128 0x19
+ 999 0094 00       		.byte	0
+ 1000 0095 00       		.byte	0
+ 1001 0096 0C       		.uleb128 0xc
+ 1002 0097 2E       		.uleb128 0x2e
+ 1003 0098 01       		.byte	0x1
+ 1004 0099 3F       		.uleb128 0x3f
+ 1005 009a 19       		.uleb128 0x19
+ 1006 009b 03       		.uleb128 0x3
+ 1007 009c 0E       		.uleb128 0xe
+ 1008 009d 3A       		.uleb128 0x3a
+ 1009 009e 0B       		.uleb128 0xb
+ 1010 009f 3B       		.uleb128 0x3b
+ 1011 00a0 0B       		.uleb128 0xb
+ 1012 00a1 27       		.uleb128 0x27
+ 1013 00a2 19       		.uleb128 0x19
+ 1014 00a3 11       		.uleb128 0x11
+ 1015 00a4 01       		.uleb128 0x1
+ 1016 00a5 12       		.uleb128 0x12
+ 1017 00a6 06       		.uleb128 0x6
+ 1018 00a7 40       		.uleb128 0x40
+ 1019 00a8 18       		.uleb128 0x18
+ 1020 00a9 9742     		.uleb128 0x2117
+ 1021 00ab 19       		.uleb128 0x19
+ 1022 00ac 01       		.uleb128 0x1
+ 1023 00ad 13       		.uleb128 0x13
+ 1024 00ae 00       		.byte	0
+ 1025 00af 00       		.byte	0
+ 1026 00b0 0D       		.uleb128 0xd
+ 1027 00b1 1D       		.uleb128 0x1d
+ 1028 00b2 00       		.byte	0
+ 1029 00b3 31       		.uleb128 0x31
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccqPbJvl.s 			page 27
+
+
+ 1030 00b4 13       		.uleb128 0x13
+ 1031 00b5 11       		.uleb128 0x11
+ 1032 00b6 01       		.uleb128 0x1
+ 1033 00b7 12       		.uleb128 0x12
+ 1034 00b8 06       		.uleb128 0x6
+ 1035 00b9 58       		.uleb128 0x58
+ 1036 00ba 0B       		.uleb128 0xb
+ 1037 00bb 59       		.uleb128 0x59
+ 1038 00bc 0B       		.uleb128 0xb
+ 1039 00bd 00       		.byte	0
+ 1040 00be 00       		.byte	0
+ 1041 00bf 0E       		.uleb128 0xe
+ 1042 00c0 1D       		.uleb128 0x1d
+ 1043 00c1 01       		.byte	0x1
+ 1044 00c2 31       		.uleb128 0x31
+ 1045 00c3 13       		.uleb128 0x13
+ 1046 00c4 11       		.uleb128 0x11
+ 1047 00c5 01       		.uleb128 0x1
+ 1048 00c6 12       		.uleb128 0x12
+ 1049 00c7 06       		.uleb128 0x6
+ 1050 00c8 58       		.uleb128 0x58
+ 1051 00c9 0B       		.uleb128 0xb
+ 1052 00ca 59       		.uleb128 0x59
+ 1053 00cb 0B       		.uleb128 0xb
+ 1054 00cc 00       		.byte	0
+ 1055 00cd 00       		.byte	0
+ 1056 00ce 0F       		.uleb128 0xf
+ 1057 00cf 05       		.uleb128 0x5
+ 1058 00d0 00       		.byte	0
+ 1059 00d1 31       		.uleb128 0x31
+ 1060 00d2 13       		.uleb128 0x13
+ 1061 00d3 00       		.byte	0
+ 1062 00d4 00       		.byte	0
+ 1063 00d5 10       		.uleb128 0x10
+ 1064 00d6 2E       		.uleb128 0x2e
+ 1065 00d7 01       		.byte	0x1
+ 1066 00d8 31       		.uleb128 0x31
+ 1067 00d9 13       		.uleb128 0x13
+ 1068 00da 11       		.uleb128 0x11
+ 1069 00db 01       		.uleb128 0x1
+ 1070 00dc 12       		.uleb128 0x12
+ 1071 00dd 06       		.uleb128 0x6
+ 1072 00de 40       		.uleb128 0x40
+ 1073 00df 18       		.uleb128 0x18
+ 1074 00e0 9742     		.uleb128 0x2117
+ 1075 00e2 19       		.uleb128 0x19
+ 1076 00e3 01       		.uleb128 0x1
+ 1077 00e4 13       		.uleb128 0x13
+ 1078 00e5 00       		.byte	0
+ 1079 00e6 00       		.byte	0
+ 1080 00e7 11       		.uleb128 0x11
+ 1081 00e8 05       		.uleb128 0x5
+ 1082 00e9 00       		.byte	0
+ 1083 00ea 31       		.uleb128 0x31
+ 1084 00eb 13       		.uleb128 0x13
+ 1085 00ec 02       		.uleb128 0x2
+ 1086 00ed 18       		.uleb128 0x18
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccqPbJvl.s 			page 28
+
+
+ 1087 00ee 00       		.byte	0
+ 1088 00ef 00       		.byte	0
+ 1089 00f0 12       		.uleb128 0x12
+ 1090 00f1 2E       		.uleb128 0x2e
+ 1091 00f2 00       		.byte	0
+ 1092 00f3 3F       		.uleb128 0x3f
+ 1093 00f4 19       		.uleb128 0x19
+ 1094 00f5 03       		.uleb128 0x3
+ 1095 00f6 0E       		.uleb128 0xe
+ 1096 00f7 3A       		.uleb128 0x3a
+ 1097 00f8 0B       		.uleb128 0xb
+ 1098 00f9 3B       		.uleb128 0x3b
+ 1099 00fa 0B       		.uleb128 0xb
+ 1100 00fb 27       		.uleb128 0x27
+ 1101 00fc 19       		.uleb128 0x19
+ 1102 00fd 49       		.uleb128 0x49
+ 1103 00fe 13       		.uleb128 0x13
+ 1104 00ff 11       		.uleb128 0x11
+ 1105 0100 01       		.uleb128 0x1
+ 1106 0101 12       		.uleb128 0x12
+ 1107 0102 06       		.uleb128 0x6
+ 1108 0103 40       		.uleb128 0x40
+ 1109 0104 18       		.uleb128 0x18
+ 1110 0105 9742     		.uleb128 0x2117
+ 1111 0107 19       		.uleb128 0x19
+ 1112 0108 00       		.byte	0
+ 1113 0109 00       		.byte	0
+ 1114 010a 13       		.uleb128 0x13
+ 1115 010b 05       		.uleb128 0x5
+ 1116 010c 00       		.byte	0
+ 1117 010d 03       		.uleb128 0x3
+ 1118 010e 0E       		.uleb128 0xe
+ 1119 010f 3A       		.uleb128 0x3a
+ 1120 0110 0B       		.uleb128 0xb
+ 1121 0111 3B       		.uleb128 0x3b
+ 1122 0112 0B       		.uleb128 0xb
+ 1123 0113 49       		.uleb128 0x49
+ 1124 0114 13       		.uleb128 0x13
+ 1125 0115 02       		.uleb128 0x2
+ 1126 0116 17       		.uleb128 0x17
+ 1127 0117 00       		.byte	0
+ 1128 0118 00       		.byte	0
+ 1129 0119 14       		.uleb128 0x14
+ 1130 011a 34       		.uleb128 0x34
+ 1131 011b 00       		.byte	0
+ 1132 011c 03       		.uleb128 0x3
+ 1133 011d 0E       		.uleb128 0xe
+ 1134 011e 3A       		.uleb128 0x3a
+ 1135 011f 0B       		.uleb128 0xb
+ 1136 0120 3B       		.uleb128 0x3b
+ 1137 0121 0B       		.uleb128 0xb
+ 1138 0122 49       		.uleb128 0x49
+ 1139 0123 13       		.uleb128 0x13
+ 1140 0124 02       		.uleb128 0x2
+ 1141 0125 17       		.uleb128 0x17
+ 1142 0126 00       		.byte	0
+ 1143 0127 00       		.byte	0
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccqPbJvl.s 			page 29
+
+
+ 1144 0128 15       		.uleb128 0x15
+ 1145 0129 34       		.uleb128 0x34
+ 1146 012a 00       		.byte	0
+ 1147 012b 03       		.uleb128 0x3
+ 1148 012c 0E       		.uleb128 0xe
+ 1149 012d 3A       		.uleb128 0x3a
+ 1150 012e 0B       		.uleb128 0xb
+ 1151 012f 3B       		.uleb128 0x3b
+ 1152 0130 0B       		.uleb128 0xb
+ 1153 0131 49       		.uleb128 0x49
+ 1154 0132 13       		.uleb128 0x13
+ 1155 0133 1C       		.uleb128 0x1c
+ 1156 0134 0B       		.uleb128 0xb
+ 1157 0135 00       		.byte	0
+ 1158 0136 00       		.byte	0
+ 1159 0137 16       		.uleb128 0x16
+ 1160 0138 898201   		.uleb128 0x4109
+ 1161 013b 00       		.byte	0
+ 1162 013c 11       		.uleb128 0x11
+ 1163 013d 01       		.uleb128 0x1
+ 1164 013e 31       		.uleb128 0x31
+ 1165 013f 13       		.uleb128 0x13
+ 1166 0140 00       		.byte	0
+ 1167 0141 00       		.byte	0
+ 1168 0142 17       		.uleb128 0x17
+ 1169 0143 1D       		.uleb128 0x1d
+ 1170 0144 01       		.byte	0x1
+ 1171 0145 31       		.uleb128 0x31
+ 1172 0146 13       		.uleb128 0x13
+ 1173 0147 52       		.uleb128 0x52
+ 1174 0148 01       		.uleb128 0x1
+ 1175 0149 55       		.uleb128 0x55
+ 1176 014a 17       		.uleb128 0x17
+ 1177 014b 58       		.uleb128 0x58
+ 1178 014c 0B       		.uleb128 0xb
+ 1179 014d 59       		.uleb128 0x59
+ 1180 014e 0B       		.uleb128 0xb
+ 1181 014f 01       		.uleb128 0x1
+ 1182 0150 13       		.uleb128 0x13
+ 1183 0151 00       		.byte	0
+ 1184 0152 00       		.byte	0
+ 1185 0153 18       		.uleb128 0x18
+ 1186 0154 1D       		.uleb128 0x1d
+ 1187 0155 00       		.byte	0
+ 1188 0156 31       		.uleb128 0x31
+ 1189 0157 13       		.uleb128 0x13
+ 1190 0158 52       		.uleb128 0x52
+ 1191 0159 01       		.uleb128 0x1
+ 1192 015a 55       		.uleb128 0x55
+ 1193 015b 17       		.uleb128 0x17
+ 1194 015c 58       		.uleb128 0x58
+ 1195 015d 0B       		.uleb128 0xb
+ 1196 015e 59       		.uleb128 0x59
+ 1197 015f 0B       		.uleb128 0xb
+ 1198 0160 00       		.byte	0
+ 1199 0161 00       		.byte	0
+ 1200 0162 19       		.uleb128 0x19
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccqPbJvl.s 			page 30
+
+
+ 1201 0163 898201   		.uleb128 0x4109
+ 1202 0166 01       		.byte	0x1
+ 1203 0167 11       		.uleb128 0x11
+ 1204 0168 01       		.uleb128 0x1
+ 1205 0169 31       		.uleb128 0x31
+ 1206 016a 13       		.uleb128 0x13
+ 1207 016b 00       		.byte	0
+ 1208 016c 00       		.byte	0
+ 1209 016d 1A       		.uleb128 0x1a
+ 1210 016e 8A8201   		.uleb128 0x410a
+ 1211 0171 00       		.byte	0
+ 1212 0172 02       		.uleb128 0x2
+ 1213 0173 18       		.uleb128 0x18
+ 1214 0174 9142     		.uleb128 0x2111
+ 1215 0176 18       		.uleb128 0x18
+ 1216 0177 00       		.byte	0
+ 1217 0178 00       		.byte	0
+ 1218 0179 1B       		.uleb128 0x1b
+ 1219 017a 05       		.uleb128 0x5
+ 1220 017b 00       		.byte	0
+ 1221 017c 31       		.uleb128 0x31
+ 1222 017d 13       		.uleb128 0x13
+ 1223 017e 02       		.uleb128 0x2
+ 1224 017f 17       		.uleb128 0x17
+ 1225 0180 00       		.byte	0
+ 1226 0181 00       		.byte	0
+ 1227 0182 1C       		.uleb128 0x1c
+ 1228 0183 2E       		.uleb128 0x2e
+ 1229 0184 01       		.byte	0x1
+ 1230 0185 3F       		.uleb128 0x3f
+ 1231 0186 19       		.uleb128 0x19
+ 1232 0187 03       		.uleb128 0x3
+ 1233 0188 0E       		.uleb128 0xe
+ 1234 0189 3A       		.uleb128 0x3a
+ 1235 018a 0B       		.uleb128 0xb
+ 1236 018b 3B       		.uleb128 0x3b
+ 1237 018c 05       		.uleb128 0x5
+ 1238 018d 27       		.uleb128 0x27
+ 1239 018e 19       		.uleb128 0x19
+ 1240 018f 49       		.uleb128 0x49
+ 1241 0190 13       		.uleb128 0x13
+ 1242 0191 11       		.uleb128 0x11
+ 1243 0192 01       		.uleb128 0x1
+ 1244 0193 12       		.uleb128 0x12
+ 1245 0194 06       		.uleb128 0x6
+ 1246 0195 40       		.uleb128 0x40
+ 1247 0196 18       		.uleb128 0x18
+ 1248 0197 9742     		.uleb128 0x2117
+ 1249 0199 19       		.uleb128 0x19
+ 1250 019a 01       		.uleb128 0x1
+ 1251 019b 13       		.uleb128 0x13
+ 1252 019c 00       		.byte	0
+ 1253 019d 00       		.byte	0
+ 1254 019e 1D       		.uleb128 0x1d
+ 1255 019f 34       		.uleb128 0x34
+ 1256 01a0 00       		.byte	0
+ 1257 01a1 03       		.uleb128 0x3
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccqPbJvl.s 			page 31
+
+
+ 1258 01a2 0E       		.uleb128 0xe
+ 1259 01a3 3A       		.uleb128 0x3a
+ 1260 01a4 0B       		.uleb128 0xb
+ 1261 01a5 3B       		.uleb128 0x3b
+ 1262 01a6 05       		.uleb128 0x5
+ 1263 01a7 49       		.uleb128 0x49
+ 1264 01a8 13       		.uleb128 0x13
+ 1265 01a9 02       		.uleb128 0x2
+ 1266 01aa 17       		.uleb128 0x17
+ 1267 01ab 00       		.byte	0
+ 1268 01ac 00       		.byte	0
+ 1269 01ad 1E       		.uleb128 0x1e
+ 1270 01ae 34       		.uleb128 0x34
+ 1271 01af 00       		.byte	0
+ 1272 01b0 03       		.uleb128 0x3
+ 1273 01b1 0E       		.uleb128 0xe
+ 1274 01b2 3A       		.uleb128 0x3a
+ 1275 01b3 0B       		.uleb128 0xb
+ 1276 01b4 3B       		.uleb128 0x3b
+ 1277 01b5 05       		.uleb128 0x5
+ 1278 01b6 49       		.uleb128 0x49
+ 1279 01b7 13       		.uleb128 0x13
+ 1280 01b8 1C       		.uleb128 0x1c
+ 1281 01b9 0B       		.uleb128 0xb
+ 1282 01ba 00       		.byte	0
+ 1283 01bb 00       		.byte	0
+ 1284 01bc 1F       		.uleb128 0x1f
+ 1285 01bd 2E       		.uleb128 0x2e
+ 1286 01be 00       		.byte	0
+ 1287 01bf 31       		.uleb128 0x31
+ 1288 01c0 13       		.uleb128 0x13
+ 1289 01c1 11       		.uleb128 0x11
+ 1290 01c2 01       		.uleb128 0x1
+ 1291 01c3 12       		.uleb128 0x12
+ 1292 01c4 06       		.uleb128 0x6
+ 1293 01c5 40       		.uleb128 0x40
+ 1294 01c6 18       		.uleb128 0x18
+ 1295 01c7 9742     		.uleb128 0x2117
+ 1296 01c9 19       		.uleb128 0x19
+ 1297 01ca 00       		.byte	0
+ 1298 01cb 00       		.byte	0
+ 1299 01cc 20       		.uleb128 0x20
+ 1300 01cd 2E       		.uleb128 0x2e
+ 1301 01ce 00       		.byte	0
+ 1302 01cf 3F       		.uleb128 0x3f
+ 1303 01d0 19       		.uleb128 0x19
+ 1304 01d1 03       		.uleb128 0x3
+ 1305 01d2 0E       		.uleb128 0xe
+ 1306 01d3 3A       		.uleb128 0x3a
+ 1307 01d4 0B       		.uleb128 0xb
+ 1308 01d5 3B       		.uleb128 0x3b
+ 1309 01d6 05       		.uleb128 0x5
+ 1310 01d7 27       		.uleb128 0x27
+ 1311 01d8 19       		.uleb128 0x19
+ 1312 01d9 49       		.uleb128 0x49
+ 1313 01da 13       		.uleb128 0x13
+ 1314 01db 11       		.uleb128 0x11
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccqPbJvl.s 			page 32
+
+
+ 1315 01dc 01       		.uleb128 0x1
+ 1316 01dd 12       		.uleb128 0x12
+ 1317 01de 06       		.uleb128 0x6
+ 1318 01df 40       		.uleb128 0x40
+ 1319 01e0 18       		.uleb128 0x18
+ 1320 01e1 9742     		.uleb128 0x2117
+ 1321 01e3 19       		.uleb128 0x19
+ 1322 01e4 00       		.byte	0
+ 1323 01e5 00       		.byte	0
+ 1324 01e6 21       		.uleb128 0x21
+ 1325 01e7 2E       		.uleb128 0x2e
+ 1326 01e8 00       		.byte	0
+ 1327 01e9 3F       		.uleb128 0x3f
+ 1328 01ea 19       		.uleb128 0x19
+ 1329 01eb 03       		.uleb128 0x3
+ 1330 01ec 0E       		.uleb128 0xe
+ 1331 01ed 3A       		.uleb128 0x3a
+ 1332 01ee 0B       		.uleb128 0xb
+ 1333 01ef 3B       		.uleb128 0x3b
+ 1334 01f0 05       		.uleb128 0x5
+ 1335 01f1 27       		.uleb128 0x27
+ 1336 01f2 19       		.uleb128 0x19
+ 1337 01f3 11       		.uleb128 0x11
+ 1338 01f4 01       		.uleb128 0x1
+ 1339 01f5 12       		.uleb128 0x12
+ 1340 01f6 06       		.uleb128 0x6
+ 1341 01f7 40       		.uleb128 0x40
+ 1342 01f8 18       		.uleb128 0x18
+ 1343 01f9 9742     		.uleb128 0x2117
+ 1344 01fb 19       		.uleb128 0x19
+ 1345 01fc 00       		.byte	0
+ 1346 01fd 00       		.byte	0
+ 1347 01fe 22       		.uleb128 0x22
+ 1348 01ff 01       		.uleb128 0x1
+ 1349 0200 01       		.byte	0x1
+ 1350 0201 49       		.uleb128 0x49
+ 1351 0202 13       		.uleb128 0x13
+ 1352 0203 01       		.uleb128 0x1
+ 1353 0204 13       		.uleb128 0x13
+ 1354 0205 00       		.byte	0
+ 1355 0206 00       		.byte	0
+ 1356 0207 23       		.uleb128 0x23
+ 1357 0208 21       		.uleb128 0x21
+ 1358 0209 00       		.byte	0
+ 1359 020a 49       		.uleb128 0x49
+ 1360 020b 13       		.uleb128 0x13
+ 1361 020c 2F       		.uleb128 0x2f
+ 1362 020d 0B       		.uleb128 0xb
+ 1363 020e 00       		.byte	0
+ 1364 020f 00       		.byte	0
+ 1365 0210 24       		.uleb128 0x24
+ 1366 0211 34       		.uleb128 0x34
+ 1367 0212 00       		.byte	0
+ 1368 0213 03       		.uleb128 0x3
+ 1369 0214 0E       		.uleb128 0xe
+ 1370 0215 3A       		.uleb128 0x3a
+ 1371 0216 0B       		.uleb128 0xb
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccqPbJvl.s 			page 33
+
+
+ 1372 0217 3B       		.uleb128 0x3b
+ 1373 0218 0B       		.uleb128 0xb
+ 1374 0219 49       		.uleb128 0x49
+ 1375 021a 13       		.uleb128 0x13
+ 1376 021b 3F       		.uleb128 0x3f
+ 1377 021c 19       		.uleb128 0x19
+ 1378 021d 3C       		.uleb128 0x3c
+ 1379 021e 19       		.uleb128 0x19
+ 1380 021f 00       		.byte	0
+ 1381 0220 00       		.byte	0
+ 1382 0221 25       		.uleb128 0x25
+ 1383 0222 2E       		.uleb128 0x2e
+ 1384 0223 00       		.byte	0
+ 1385 0224 3F       		.uleb128 0x3f
+ 1386 0225 19       		.uleb128 0x19
+ 1387 0226 03       		.uleb128 0x3
+ 1388 0227 0E       		.uleb128 0xe
+ 1389 0228 3A       		.uleb128 0x3a
+ 1390 0229 0B       		.uleb128 0xb
+ 1391 022a 3B       		.uleb128 0x3b
+ 1392 022b 0B       		.uleb128 0xb
+ 1393 022c 27       		.uleb128 0x27
+ 1394 022d 19       		.uleb128 0x19
+ 1395 022e 49       		.uleb128 0x49
+ 1396 022f 13       		.uleb128 0x13
+ 1397 0230 3C       		.uleb128 0x3c
+ 1398 0231 19       		.uleb128 0x19
+ 1399 0232 00       		.byte	0
+ 1400 0233 00       		.byte	0
+ 1401 0234 26       		.uleb128 0x26
+ 1402 0235 2E       		.uleb128 0x2e
+ 1403 0236 01       		.byte	0x1
+ 1404 0237 3F       		.uleb128 0x3f
+ 1405 0238 19       		.uleb128 0x19
+ 1406 0239 03       		.uleb128 0x3
+ 1407 023a 0E       		.uleb128 0xe
+ 1408 023b 3A       		.uleb128 0x3a
+ 1409 023c 0B       		.uleb128 0xb
+ 1410 023d 3B       		.uleb128 0x3b
+ 1411 023e 0B       		.uleb128 0xb
+ 1412 023f 27       		.uleb128 0x27
+ 1413 0240 19       		.uleb128 0x19
+ 1414 0241 3C       		.uleb128 0x3c
+ 1415 0242 19       		.uleb128 0x19
+ 1416 0243 00       		.byte	0
+ 1417 0244 00       		.byte	0
+ 1418 0245 27       		.uleb128 0x27
+ 1419 0246 05       		.uleb128 0x5
+ 1420 0247 00       		.byte	0
+ 1421 0248 49       		.uleb128 0x49
+ 1422 0249 13       		.uleb128 0x13
+ 1423 024a 00       		.byte	0
+ 1424 024b 00       		.byte	0
+ 1425 024c 00       		.byte	0
+ 1426              		.section	.debug_loc,"",%progbits
+ 1427              	.Ldebug_loc0:
+ 1428              	.LLST0:
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccqPbJvl.s 			page 34
+
+
+ 1429 0000 00000000 		.4byte	.LVL2
+ 1430 0004 07000000 		.4byte	.LVL3-1
+ 1431 0008 0100     		.2byte	0x1
+ 1432 000a 50       		.byte	0x50
+ 1433 000b 07000000 		.4byte	.LVL3-1
+ 1434 000f 24000000 		.4byte	.LFE8
+ 1435 0013 0400     		.2byte	0x4
+ 1436 0015 F3       		.byte	0xf3
+ 1437 0016 01       		.uleb128 0x1
+ 1438 0017 50       		.byte	0x50
+ 1439 0018 9F       		.byte	0x9f
+ 1440 0019 00000000 		.4byte	0
+ 1441 001d 00000000 		.4byte	0
+ 1442              	.LLST1:
+ 1443 0021 08000000 		.4byte	.LVL3
+ 1444 0025 19000000 		.4byte	.LVL4-1
+ 1445 0029 0100     		.2byte	0x1
+ 1446 002b 50       		.byte	0x50
+ 1447 002c 00000000 		.4byte	0
+ 1448 0030 00000000 		.4byte	0
+ 1449              	.LLST2:
+ 1450 0034 00000000 		.4byte	.LVL7
+ 1451 0038 12000000 		.4byte	.LVL9
+ 1452 003c 0100     		.2byte	0x1
+ 1453 003e 50       		.byte	0x50
+ 1454 003f 12000000 		.4byte	.LVL9
+ 1455 0043 15000000 		.4byte	.LVL10-1
+ 1456 0047 0200     		.2byte	0x2
+ 1457 0049 73       		.byte	0x73
+ 1458 004a 00       		.sleb128 0
+ 1459 004b 15000000 		.4byte	.LVL10-1
+ 1460 004f 28000000 		.4byte	.LFE3
+ 1461 0053 0400     		.2byte	0x4
+ 1462 0055 F3       		.byte	0xf3
+ 1463 0056 01       		.uleb128 0x1
+ 1464 0057 50       		.byte	0x50
+ 1465 0058 9F       		.byte	0x9f
+ 1466 0059 00000000 		.4byte	0
+ 1467 005d 00000000 		.4byte	0
+ 1468              	.LLST3:
+ 1469 0061 0A000000 		.4byte	.LVL8
+ 1470 0065 12000000 		.4byte	.LVL9
+ 1471 0069 0100     		.2byte	0x1
+ 1472 006b 50       		.byte	0x50
+ 1473 006c 12000000 		.4byte	.LVL9
+ 1474 0070 15000000 		.4byte	.LVL10-1
+ 1475 0074 0200     		.2byte	0x2
+ 1476 0076 73       		.byte	0x73
+ 1477 0077 00       		.sleb128 0
+ 1478 0078 15000000 		.4byte	.LVL10-1
+ 1479 007c 28000000 		.4byte	.LFE3
+ 1480 0080 0400     		.2byte	0x4
+ 1481 0082 F3       		.byte	0xf3
+ 1482 0083 01       		.uleb128 0x1
+ 1483 0084 50       		.byte	0x50
+ 1484 0085 9F       		.byte	0x9f
+ 1485 0086 00000000 		.4byte	0
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccqPbJvl.s 			page 35
+
+
+ 1486 008a 00000000 		.4byte	0
+ 1487              	.LLST4:
+ 1488 008e 04000000 		.4byte	.LVL12
+ 1489 0092 06000000 		.4byte	.LVL13
+ 1490 0096 0900     		.2byte	0x9
+ 1491 0098 70       		.byte	0x70
+ 1492 0099 00       		.sleb128 0
+ 1493 009a 48       		.byte	0x48
+ 1494 009b 43       		.byte	0x43
+ 1495 009c 24       		.byte	0x24
+ 1496 009d 1A       		.byte	0x1a
+ 1497 009e 46       		.byte	0x46
+ 1498 009f 25       		.byte	0x25
+ 1499 00a0 9F       		.byte	0x9f
+ 1500 00a1 00000000 		.4byte	0
+ 1501 00a5 00000000 		.4byte	0
+ 1502              		.section	.debug_aranges,"",%progbits
+ 1503 0000 7C000000 		.4byte	0x7c
+ 1504 0004 0200     		.2byte	0x2
+ 1505 0006 00000000 		.4byte	.Ldebug_info0
+ 1506 000a 04       		.byte	0x4
+ 1507 000b 00       		.byte	0
+ 1508 000c 0000     		.2byte	0
+ 1509 000e 0000     		.2byte	0
+ 1510 0010 00000000 		.4byte	.LFB5
+ 1511 0014 02000000 		.4byte	.LFE5-.LFB5
+ 1512 0018 00000000 		.4byte	.LFB4
+ 1513 001c 20000000 		.4byte	.LFE4-.LFB4
+ 1514 0020 00000000 		.4byte	.LFB6
+ 1515 0024 0C000000 		.4byte	.LFE6-.LFB6
+ 1516 0028 00000000 		.4byte	.LFB7
+ 1517 002c 0C000000 		.4byte	.LFE7-.LFB7
+ 1518 0030 00000000 		.4byte	.LFB8
+ 1519 0034 24000000 		.4byte	.LFE8-.LFB8
+ 1520 0038 00000000 		.4byte	.LFB2
+ 1521 003c 30000000 		.4byte	.LFE2-.LFB2
+ 1522 0040 00000000 		.4byte	.LFB3
+ 1523 0044 28000000 		.4byte	.LFE3-.LFB3
+ 1524 0048 00000000 		.4byte	.LFB9
+ 1525 004c 10000000 		.4byte	.LFE9-.LFB9
+ 1526 0050 00000000 		.4byte	.LFB10
+ 1527 0054 10000000 		.4byte	.LFE10-.LFB10
+ 1528 0058 00000000 		.4byte	.LFB11
+ 1529 005c 10000000 		.4byte	.LFE11-.LFB11
+ 1530 0060 00000000 		.4byte	.LFB12
+ 1531 0064 10000000 		.4byte	.LFE12-.LFB12
+ 1532 0068 00000000 		.4byte	.LFB13
+ 1533 006c 10000000 		.4byte	.LFE13-.LFB13
+ 1534 0070 00000000 		.4byte	.LFB14
+ 1535 0074 10000000 		.4byte	.LFE14-.LFB14
+ 1536 0078 00000000 		.4byte	0
+ 1537 007c 00000000 		.4byte	0
+ 1538              		.section	.debug_ranges,"",%progbits
+ 1539              	.Ldebug_ranges0:
+ 1540 0000 0A000000 		.4byte	.LBB24
+ 1541 0004 10000000 		.4byte	.LBE24
+ 1542 0008 12000000 		.4byte	.LBB27
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccqPbJvl.s 			page 36
+
+
+ 1543 000c 14000000 		.4byte	.LBE27
+ 1544 0010 00000000 		.4byte	0
+ 1545 0014 00000000 		.4byte	0
+ 1546 0018 18000000 		.4byte	.LBB28
+ 1547 001c 1A000000 		.4byte	.LBE28
+ 1548 0020 1A000000 		.4byte	.LBB31
+ 1549 0024 1C000000 		.4byte	.LBE31
+ 1550 0028 00000000 		.4byte	0
+ 1551 002c 00000000 		.4byte	0
+ 1552 0030 0A000000 		.4byte	.LBB34
+ 1553 0034 0C000000 		.4byte	.LBE34
+ 1554 0038 0C000000 		.4byte	.LBB37
+ 1555 003c 10000000 		.4byte	.LBE37
+ 1556 0040 00000000 		.4byte	0
+ 1557 0044 00000000 		.4byte	0
+ 1558 0048 00000000 		.4byte	.LFB5
+ 1559 004c 02000000 		.4byte	.LFE5
+ 1560 0050 00000000 		.4byte	.LFB4
+ 1561 0054 20000000 		.4byte	.LFE4
+ 1562 0058 00000000 		.4byte	.LFB6
+ 1563 005c 0C000000 		.4byte	.LFE6
+ 1564 0060 00000000 		.4byte	.LFB7
+ 1565 0064 0C000000 		.4byte	.LFE7
+ 1566 0068 00000000 		.4byte	.LFB8
+ 1567 006c 24000000 		.4byte	.LFE8
+ 1568 0070 00000000 		.4byte	.LFB2
+ 1569 0074 30000000 		.4byte	.LFE2
+ 1570 0078 00000000 		.4byte	.LFB3
+ 1571 007c 28000000 		.4byte	.LFE3
+ 1572 0080 00000000 		.4byte	.LFB9
+ 1573 0084 10000000 		.4byte	.LFE9
+ 1574 0088 00000000 		.4byte	.LFB10
+ 1575 008c 10000000 		.4byte	.LFE10
+ 1576 0090 00000000 		.4byte	.LFB11
+ 1577 0094 10000000 		.4byte	.LFE11
+ 1578 0098 00000000 		.4byte	.LFB12
+ 1579 009c 10000000 		.4byte	.LFE12
+ 1580 00a0 00000000 		.4byte	.LFB13
+ 1581 00a4 10000000 		.4byte	.LFE13
+ 1582 00a8 00000000 		.4byte	.LFB14
+ 1583 00ac 10000000 		.4byte	.LFE14
+ 1584 00b0 00000000 		.4byte	0
+ 1585 00b4 00000000 		.4byte	0
+ 1586              		.section	.debug_line,"",%progbits
+ 1587              	.Ldebug_line0:
+ 1588 0000 99010000 		.section	.debug_str,"MS",%progbits,1
+ 1588      02005500 
+ 1588      00000201 
+ 1588      FB0E0D00 
+ 1588      01010101 
+ 1589              	.LASF34:
+ 1590 0000 433A5C55 		.ascii	"C:\\Users\\zhiantec\\Documents\\Tencent Files\\1241"
+ 1590      73657273 
+ 1590      5C7A6869 
+ 1590      616E7465 
+ 1590      635C446F 
+ 1591 002e 39333938 		.ascii	"939835\\FileRecv\\MobileFile\\second_images[4-8]\\E"
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccqPbJvl.s 			page 37
+
+
+ 1591      33355C46 
+ 1591      696C6552 
+ 1591      6563765C 
+ 1591      4D6F6269 
+ 1592 005d 6E747261 		.ascii	"ntranceGuard_171019-12.50\\EntranceGuard.cydsn\000"
+ 1592      6E636547 
+ 1592      75617264 
+ 1592      5F313731 
+ 1592      3031392D 
+ 1593              	.LASF14:
+ 1594 008b 72656733 		.ascii	"reg32\000"
+ 1594      3200
+ 1595              	.LASF32:
+ 1596 0091 474E5520 		.ascii	"GNU C 4.9.3 20150303 (release) [ARM/embedded-4_9-br"
+ 1596      4320342E 
+ 1596      392E3320 
+ 1596      32303135 
+ 1596      30333033 
+ 1597 00c4 616E6368 		.ascii	"anch revision 221220] -mcpu=cortex-m0 -mthumb -g -O"
+ 1597      20726576 
+ 1597      6973696F 
+ 1597      6E203232 
+ 1597      31323230 
+ 1598 00f7 73202D66 		.ascii	"s -ffunction-sections -ffat-lto-objects\000"
+ 1598      66756E63 
+ 1598      74696F6E 
+ 1598      2D736563 
+ 1598      74696F6E 
+ 1599              	.LASF37:
+ 1600 011f 43795261 		.ascii	"CyRamVectors\000"
+ 1600      6D566563 
+ 1600      746F7273 
+ 1600      00
+ 1601              	.LASF31:
+ 1602 012c 54696D65 		.ascii	"Timer_INT_ISR_ClearPending\000"
+ 1602      725F494E 
+ 1602      545F4953 
+ 1602      525F436C 
+ 1602      65617250 
+ 1603              	.LASF17:
+ 1604 0147 54696D65 		.ascii	"Timer_INT_ISR_Disable\000"
+ 1604      725F494E 
+ 1604      545F4953 
+ 1604      525F4469 
+ 1604      7361626C 
+ 1605              	.LASF3:
+ 1606 015d 73686F72 		.ascii	"short unsigned int\000"
+ 1606      7420756E 
+ 1606      7369676E 
+ 1606      65642069 
+ 1606      6E7400
+ 1607              	.LASF18:
+ 1608 0170 54696D65 		.ascii	"Timer_INT_ISR_Enable\000"
+ 1608      725F494E 
+ 1608      545F4953 
+ 1608      525F456E 
+ 1608      61626C65 
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccqPbJvl.s 			page 38
+
+
+ 1609              	.LASF19:
+ 1610 0185 54696D65 		.ascii	"Timer_INT_ISR_Stop\000"
+ 1610      725F494E 
+ 1610      545F4953 
+ 1610      525F5374 
+ 1610      6F7000
+ 1611              	.LASF11:
+ 1612 0198 666C6F61 		.ascii	"float\000"
+ 1612      7400
+ 1613              	.LASF7:
+ 1614 019e 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1614      206C6F6E 
+ 1614      6720756E 
+ 1614      7369676E 
+ 1614      65642069 
+ 1615              	.LASF1:
+ 1616 01b5 756E7369 		.ascii	"unsigned char\000"
+ 1616      676E6564 
+ 1616      20636861 
+ 1616      7200
+ 1617              	.LASF21:
+ 1618 01c3 696E7465 		.ascii	"interruptState\000"
+ 1618      72727570 
+ 1618      74537461 
+ 1618      746500
+ 1619              	.LASF5:
+ 1620 01d2 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1620      20756E73 
+ 1620      69676E65 
+ 1620      6420696E 
+ 1620      7400
+ 1621              	.LASF9:
+ 1622 01e4 75696E74 		.ascii	"uint8\000"
+ 1622      3800
+ 1623              	.LASF23:
+ 1624 01ea 54696D65 		.ascii	"Timer_INT_ISR_Start\000"
+ 1624      725F494E 
+ 1624      545F4953 
+ 1624      525F5374 
+ 1624      61727400 
+ 1625              	.LASF25:
+ 1626 01fe 7072696F 		.ascii	"priority\000"
+ 1626      72697479 
+ 1626      00
+ 1627              	.LASF24:
+ 1628 0207 54696D65 		.ascii	"Timer_INT_ISR_StartEx\000"
+ 1628      725F494E 
+ 1628      545F4953 
+ 1628      525F5374 
+ 1628      61727445 
+ 1629              	.LASF35:
+ 1630 021d 54696D65 		.ascii	"Timer_INT_ISR_SetVector\000"
+ 1630      725F494E 
+ 1630      545F4953 
+ 1630      525F5365 
+ 1630      74566563 
+ 1631              	.LASF12:
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccqPbJvl.s 			page 39
+
+
+ 1632 0235 646F7562 		.ascii	"double\000"
+ 1632      6C6500
+ 1633              	.LASF36:
+ 1634 023c 54696D65 		.ascii	"Timer_INT_ISR_GetPriority\000"
+ 1634      725F494E 
+ 1634      545F4953 
+ 1634      525F4765 
+ 1634      74507269 
+ 1635              	.LASF10:
+ 1636 0256 75696E74 		.ascii	"uint32\000"
+ 1636      333200
+ 1637              	.LASF38:
+ 1638 025d 4379456E 		.ascii	"CyEnterCriticalSection\000"
+ 1638      74657243 
+ 1638      72697469 
+ 1638      63616C53 
+ 1638      65637469 
+ 1639              	.LASF8:
+ 1640 0274 756E7369 		.ascii	"unsigned int\000"
+ 1640      676E6564 
+ 1640      20696E74 
+ 1640      00
+ 1641              	.LASF28:
+ 1642 0281 54696D65 		.ascii	"Timer_INT_ISR_GetState\000"
+ 1642      725F494E 
+ 1642      545F4953 
+ 1642      525F4765 
+ 1642      74537461 
+ 1643              	.LASF26:
+ 1644 0298 61646472 		.ascii	"address\000"
+ 1644      65737300 
+ 1645              	.LASF39:
+ 1646 02a0 43794578 		.ascii	"CyExitCriticalSection\000"
+ 1646      69744372 
+ 1646      69746963 
+ 1646      616C5365 
+ 1646      6374696F 
+ 1647              	.LASF15:
+ 1648 02b6 63796973 		.ascii	"cyisraddress\000"
+ 1648      72616464 
+ 1648      72657373 
+ 1648      00
+ 1649              	.LASF16:
+ 1650 02c3 73697A65 		.ascii	"sizetype\000"
+ 1650      74797065 
+ 1650      00
+ 1651              	.LASF6:
+ 1652 02cc 6C6F6E67 		.ascii	"long long int\000"
+ 1652      206C6F6E 
+ 1652      6720696E 
+ 1652      7400
+ 1653              	.LASF13:
+ 1654 02da 63686172 		.ascii	"char\000"
+ 1654      00
+ 1655              	.LASF2:
+ 1656 02df 73686F72 		.ascii	"short int\000"
+ 1656      7420696E 
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccqPbJvl.s 			page 40
+
+
+ 1656      7400
+ 1657              	.LASF27:
+ 1658 02e9 54696D65 		.ascii	"Timer_INT_ISR_GetVector\000"
+ 1658      725F494E 
+ 1658      545F4953 
+ 1658      525F4765 
+ 1658      74566563 
+ 1659              	.LASF29:
+ 1660 0301 54696D65 		.ascii	"Timer_INT_ISR_Interrupt\000"
+ 1660      725F494E 
+ 1660      545F4953 
+ 1660      525F496E 
+ 1660      74657272 
+ 1661              	.LASF22:
+ 1662 0319 7072696F 		.ascii	"priorityOffset\000"
+ 1662      72697479 
+ 1662      4F666673 
+ 1662      657400
+ 1663              	.LASF4:
+ 1664 0328 6C6F6E67 		.ascii	"long int\000"
+ 1664      20696E74 
+ 1664      00
+ 1665              	.LASF20:
+ 1666 0331 54696D65 		.ascii	"Timer_INT_ISR_SetPriority\000"
+ 1666      725F494E 
+ 1666      545F4953 
+ 1666      525F5365 
+ 1666      74507269 
+ 1667              	.LASF0:
+ 1668 034b 7369676E 		.ascii	"signed char\000"
+ 1668      65642063 
+ 1668      68617200 
+ 1669              	.LASF30:
+ 1670 0357 54696D65 		.ascii	"Timer_INT_ISR_SetPending\000"
+ 1670      725F494E 
+ 1670      545F4953 
+ 1670      525F5365 
+ 1670      7450656E 
+ 1671              	.LASF33:
+ 1672 0370 47656E65 		.ascii	"Generated_Source\\PSoC4\\Timer_INT_ISR.c\000"
+ 1672      72617465 
+ 1672      645F536F 
+ 1672      75726365 
+ 1672      5C50536F 
+ 1673              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.9.3 20150303 (release) [ARM/embedded-4_9-br

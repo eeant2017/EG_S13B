@@ -1,0 +1,631 @@
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccaatwIM.s 			page 1
+
+
+   1              		.cpu cortex-m0
+   2              		.fpu softvfp
+   3              		.eabi_attribute 20, 1
+   4              		.eabi_attribute 21, 1
+   5              		.eabi_attribute 23, 3
+   6              		.eabi_attribute 24, 1
+   7              		.eabi_attribute 25, 1
+   8              		.eabi_attribute 26, 1
+   9              		.eabi_attribute 30, 4
+  10              		.eabi_attribute 34, 0
+  11              		.eabi_attribute 18, 4
+  12              		.code	16
+  13              		.file	"UserRTC.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.SetSysRTCTime,"ax",%progbits
+  18              		.align	1
+  19              		.global	SetSysRTCTime
+  20              		.code	16
+  21              		.thumb_func
+  22              		.type	SetSysRTCTime, %function
+  23              	SetSysRTCTime:
+  24              	.LFB63:
+  25              		.file 1 "Code\\Device\\RTC\\UserRTC.c"
+   1:Code\Device\RTC/UserRTC.c **** //*************************************************************************************************
+   2:Code\Device\RTC/UserRTC.c **** // File name		: UserRTC.c
+   3:Code\Device\RTC/UserRTC.c **** // Description		: RTC配置的相关函数
+   4:Code\Device\RTC/UserRTC.c **** // Author			: Keno
+   5:Code\Device\RTC/UserRTC.c **** // Date				: 2016.8.8
+   6:Code\Device\RTC/UserRTC.c **** // Version			: V02
+   7:Code\Device\RTC/UserRTC.c **** //-------------------------------------------------------------------------------------------------
+   8:Code\Device\RTC/UserRTC.c **** // Info				: 
+   9:Code\Device\RTC/UserRTC.c **** //*************************************************************************************************
+  10:Code\Device\RTC/UserRTC.c **** #include "UserRTC.h"
+  11:Code\Device\RTC/UserRTC.c **** 
+  12:Code\Device\RTC/UserRTC.c **** 
+  13:Code\Device\RTC/UserRTC.c **** 
+  14:Code\Device\RTC/UserRTC.c **** //******************************************* 外部变量声明 **********************************
+  15:Code\Device\RTC/UserRTC.c **** extern uint32 cur_time;
+  16:Code\Device\RTC/UserRTC.c **** 
+  17:Code\Device\RTC/UserRTC.c **** 
+  18:Code\Device\RTC/UserRTC.c **** //*************************************************************************************************
+  19:Code\Device\RTC/UserRTC.c **** // Function name	: SetSysRTCTime
+  20:Code\Device\RTC/UserRTC.c **** // Description		: 设置系统RTC时间
+  21:Code\Device\RTC/UserRTC.c **** // Parameter		: *arr	: 
+  22:Code\Device\RTC/UserRTC.c **** //					: size	
+  23:Code\Device\RTC/UserRTC.c **** // Return			: none
+  24:Code\Device\RTC/UserRTC.c **** //-------------------------------------------------------------------------------------------------
+  25:Code\Device\RTC/UserRTC.c **** // Info				: 
+  26:Code\Device\RTC/UserRTC.c **** //*************************************************************************************************
+  27:Code\Device\RTC/UserRTC.c **** void SetSysRTCTime(uint8_t *arr)
+  28:Code\Device\RTC/UserRTC.c **** {
+  26              		.loc 1 28 0
+  27              		.cfi_startproc
+  28              	.LVL0:
+  29 0000 021C     		mov	r2, r0
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccaatwIM.s 			page 2
+
+
+  30 0002 08B5     		push	{r3, lr}
+  31              		.cfi_def_cfa_offset 8
+  32              		.cfi_offset 3, -8
+  33              		.cfi_offset 14, -4
+  29:Code\Device\RTC/UserRTC.c **** 	uint8_t *p = arr;
+  30:Code\Device\RTC/UserRTC.c **** 	cur_time = BYTE2LONG(*p, *(p + 1), *(p + 2), *(p + 3));
+  34              		.loc 1 30 0
+  35 0004 0378     		ldrb	r3, [r0]
+  31:Code\Device\RTC/UserRTC.c **** 	RTC_SetUnixTime(cur_time);
+  36              		.loc 1 31 0
+  37 0006 0021     		mov	r1, #0
+  30:Code\Device\RTC/UserRTC.c **** 	RTC_SetUnixTime(cur_time);
+  38              		.loc 1 30 0
+  39 0008 1806     		lsl	r0, r3, #24
+  40              	.LVL1:
+  41 000a 5378     		ldrb	r3, [r2, #1]
+  32:Code\Device\RTC/UserRTC.c **** }
+  42              		.loc 1 32 0
+  43              		@ sp needed
+  30:Code\Device\RTC/UserRTC.c **** 	RTC_SetUnixTime(cur_time);
+  44              		.loc 1 30 0
+  45 000c 1B04     		lsl	r3, r3, #16
+  46 000e 0343     		orr	r3, r0
+  47 0010 D078     		ldrb	r0, [r2, #3]
+  48 0012 1843     		orr	r0, r3
+  49 0014 9378     		ldrb	r3, [r2, #2]
+  50 0016 1B02     		lsl	r3, r3, #8
+  51 0018 1843     		orr	r0, r3
+  52 001a 024B     		ldr	r3, .L2
+  53 001c 1860     		str	r0, [r3]
+  31:Code\Device\RTC/UserRTC.c **** 	RTC_SetUnixTime(cur_time);
+  54              		.loc 1 31 0
+  55 001e FFF7FEFF 		bl	RTC_SetUnixTime
+  56              	.LVL2:
+  57              		.loc 1 32 0
+  58 0022 08BD     		pop	{r3, pc}
+  59              	.L3:
+  60              		.align	2
+  61              	.L2:
+  62 0024 00000000 		.word	cur_time
+  63              		.cfi_endproc
+  64              	.LFE63:
+  65              		.size	SetSysRTCTime, .-SetSysRTCTime
+  66              		.text
+  67              	.Letext0:
+  68              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+  69              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+  70              		.file 4 "Generated_Source\\PSoC4/cytypes.h"
+  71              		.file 5 "Generated_Source\\PSoC4/RTC.h"
+  72              		.section	.debug_info,"",%progbits
+  73              	.Ldebug_info0:
+  74 0000 18010000 		.4byte	0x118
+  75 0004 0400     		.2byte	0x4
+  76 0006 00000000 		.4byte	.Ldebug_abbrev0
+  77 000a 04       		.byte	0x4
+  78 000b 01       		.uleb128 0x1
+  79 000c 3F000000 		.4byte	.LASF18
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccaatwIM.s 			page 3
+
+
+  80 0010 01       		.byte	0x1
+  81 0011 00010000 		.4byte	.LASF19
+  82 0015 1A010000 		.4byte	.LASF20
+  83 0019 00000000 		.4byte	.Ldebug_ranges0+0
+  84 001d 00000000 		.4byte	0
+  85 0021 00000000 		.4byte	.Ldebug_line0
+  86 0025 02       		.uleb128 0x2
+  87 0026 01       		.byte	0x1
+  88 0027 06       		.byte	0x6
+  89 0028 F3010000 		.4byte	.LASF0
+  90 002c 03       		.uleb128 0x3
+  91 002d F6000000 		.4byte	.LASF9
+  92 0031 02       		.byte	0x2
+  93 0032 1D       		.byte	0x1d
+  94 0033 37000000 		.4byte	0x37
+  95 0037 02       		.uleb128 0x2
+  96 0038 01       		.byte	0x1
+  97 0039 08       		.byte	0x8
+  98 003a AD010000 		.4byte	.LASF1
+  99 003e 02       		.uleb128 0x2
+ 100 003f 02       		.byte	0x2
+ 101 0040 05       		.byte	0x5
+ 102 0041 0C020000 		.4byte	.LASF2
+ 103 0045 02       		.uleb128 0x2
+ 104 0046 02       		.byte	0x2
+ 105 0047 07       		.byte	0x7
+ 106 0048 E0010000 		.4byte	.LASF3
+ 107 004c 02       		.uleb128 0x2
+ 108 004d 04       		.byte	0x4
+ 109 004e 05       		.byte	0x5
+ 110 004f C0010000 		.4byte	.LASF4
+ 111 0053 02       		.uleb128 0x2
+ 112 0054 04       		.byte	0x4
+ 113 0055 07       		.byte	0x7
+ 114 0056 CD000000 		.4byte	.LASF5
+ 115 005a 02       		.uleb128 0x2
+ 116 005b 08       		.byte	0x8
+ 117 005c 05       		.byte	0x5
+ 118 005d 00000000 		.4byte	.LASF6
+ 119 0061 02       		.uleb128 0x2
+ 120 0062 08       		.byte	0x8
+ 121 0063 07       		.byte	0x7
+ 122 0064 DF000000 		.4byte	.LASF7
+ 123 0068 04       		.uleb128 0x4
+ 124 0069 04       		.byte	0x4
+ 125 006a 05       		.byte	0x5
+ 126 006b 696E7400 		.ascii	"int\000"
+ 127 006f 02       		.uleb128 0x2
+ 128 0070 04       		.byte	0x4
+ 129 0071 07       		.byte	0x7
+ 130 0072 23000000 		.4byte	.LASF8
+ 131 0076 03       		.uleb128 0x3
+ 132 0077 A5010000 		.4byte	.LASF10
+ 133 007b 03       		.byte	0x3
+ 134 007c 15       		.byte	0x15
+ 135 007d 2C000000 		.4byte	0x2c
+ 136 0081 05       		.uleb128 0x5
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccaatwIM.s 			page 4
+
+
+ 137 0082 30000000 		.4byte	.LASF11
+ 138 0086 04       		.byte	0x4
+ 139 0087 B901     		.2byte	0x1b9
+ 140 0089 37000000 		.4byte	0x37
+ 141 008d 05       		.uleb128 0x5
+ 142 008e 0E000000 		.4byte	.LASF12
+ 143 0092 04       		.byte	0x4
+ 144 0093 BB01     		.2byte	0x1bb
+ 145 0095 53000000 		.4byte	0x53
+ 146 0099 02       		.uleb128 0x2
+ 147 009a 04       		.byte	0x4
+ 148 009b 04       		.byte	0x4
+ 149 009c FF010000 		.4byte	.LASF13
+ 150 00a0 02       		.uleb128 0x2
+ 151 00a1 08       		.byte	0x8
+ 152 00a2 04       		.byte	0x4
+ 153 00a3 C9010000 		.4byte	.LASF14
+ 154 00a7 05       		.uleb128 0x5
+ 155 00a8 05020000 		.4byte	.LASF15
+ 156 00ac 04       		.byte	0x4
+ 157 00ad C501     		.2byte	0x1c5
+ 158 00af 61000000 		.4byte	0x61
+ 159 00b3 02       		.uleb128 0x2
+ 160 00b4 01       		.byte	0x1
+ 161 00b5 08       		.byte	0x8
+ 162 00b6 BB010000 		.4byte	.LASF16
+ 163 00ba 02       		.uleb128 0x2
+ 164 00bb 04       		.byte	0x4
+ 165 00bc 07       		.byte	0x7
+ 166 00bd 16020000 		.4byte	.LASF17
+ 167 00c1 06       		.uleb128 0x6
+ 168 00c2 15000000 		.4byte	.LASF21
+ 169 00c6 01       		.byte	0x1
+ 170 00c7 1B       		.byte	0x1b
+ 171 00c8 00000000 		.4byte	.LFB63
+ 172 00cc 28000000 		.4byte	.LFE63-.LFB63
+ 173 00d0 01       		.uleb128 0x1
+ 174 00d1 9C       		.byte	0x9c
+ 175 00d2 FC000000 		.4byte	0xfc
+ 176 00d6 07       		.uleb128 0x7
+ 177 00d7 61727200 		.ascii	"arr\000"
+ 178 00db 01       		.byte	0x1
+ 179 00dc 1B       		.byte	0x1b
+ 180 00dd FC000000 		.4byte	0xfc
+ 181 00e1 00000000 		.4byte	.LLST0
+ 182 00e5 08       		.uleb128 0x8
+ 183 00e6 7000     		.ascii	"p\000"
+ 184 00e8 01       		.byte	0x1
+ 185 00e9 1D       		.byte	0x1d
+ 186 00ea FC000000 		.4byte	0xfc
+ 187 00ee 00000000 		.4byte	.LLST0
+ 188 00f2 09       		.uleb128 0x9
+ 189 00f3 22000000 		.4byte	.LVL2
+ 190 00f7 0D010000 		.4byte	0x10d
+ 191 00fb 00       		.byte	0
+ 192 00fc 0A       		.uleb128 0xa
+ 193 00fd 04       		.byte	0x4
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccaatwIM.s 			page 5
+
+
+ 194 00fe 76000000 		.4byte	0x76
+ 195 0102 0B       		.uleb128 0xb
+ 196 0103 36000000 		.4byte	.LASF22
+ 197 0107 01       		.byte	0x1
+ 198 0108 0F       		.byte	0xf
+ 199 0109 8D000000 		.4byte	0x8d
+ 200 010d 0C       		.uleb128 0xc
+ 201 010e D0010000 		.4byte	.LASF23
+ 202 0112 05       		.byte	0x5
+ 203 0113 5101     		.2byte	0x151
+ 204 0115 0D       		.uleb128 0xd
+ 205 0116 A7000000 		.4byte	0xa7
+ 206 011a 00       		.byte	0
+ 207 011b 00       		.byte	0
+ 208              		.section	.debug_abbrev,"",%progbits
+ 209              	.Ldebug_abbrev0:
+ 210 0000 01       		.uleb128 0x1
+ 211 0001 11       		.uleb128 0x11
+ 212 0002 01       		.byte	0x1
+ 213 0003 25       		.uleb128 0x25
+ 214 0004 0E       		.uleb128 0xe
+ 215 0005 13       		.uleb128 0x13
+ 216 0006 0B       		.uleb128 0xb
+ 217 0007 03       		.uleb128 0x3
+ 218 0008 0E       		.uleb128 0xe
+ 219 0009 1B       		.uleb128 0x1b
+ 220 000a 0E       		.uleb128 0xe
+ 221 000b 55       		.uleb128 0x55
+ 222 000c 17       		.uleb128 0x17
+ 223 000d 11       		.uleb128 0x11
+ 224 000e 01       		.uleb128 0x1
+ 225 000f 10       		.uleb128 0x10
+ 226 0010 17       		.uleb128 0x17
+ 227 0011 00       		.byte	0
+ 228 0012 00       		.byte	0
+ 229 0013 02       		.uleb128 0x2
+ 230 0014 24       		.uleb128 0x24
+ 231 0015 00       		.byte	0
+ 232 0016 0B       		.uleb128 0xb
+ 233 0017 0B       		.uleb128 0xb
+ 234 0018 3E       		.uleb128 0x3e
+ 235 0019 0B       		.uleb128 0xb
+ 236 001a 03       		.uleb128 0x3
+ 237 001b 0E       		.uleb128 0xe
+ 238 001c 00       		.byte	0
+ 239 001d 00       		.byte	0
+ 240 001e 03       		.uleb128 0x3
+ 241 001f 16       		.uleb128 0x16
+ 242 0020 00       		.byte	0
+ 243 0021 03       		.uleb128 0x3
+ 244 0022 0E       		.uleb128 0xe
+ 245 0023 3A       		.uleb128 0x3a
+ 246 0024 0B       		.uleb128 0xb
+ 247 0025 3B       		.uleb128 0x3b
+ 248 0026 0B       		.uleb128 0xb
+ 249 0027 49       		.uleb128 0x49
+ 250 0028 13       		.uleb128 0x13
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccaatwIM.s 			page 6
+
+
+ 251 0029 00       		.byte	0
+ 252 002a 00       		.byte	0
+ 253 002b 04       		.uleb128 0x4
+ 254 002c 24       		.uleb128 0x24
+ 255 002d 00       		.byte	0
+ 256 002e 0B       		.uleb128 0xb
+ 257 002f 0B       		.uleb128 0xb
+ 258 0030 3E       		.uleb128 0x3e
+ 259 0031 0B       		.uleb128 0xb
+ 260 0032 03       		.uleb128 0x3
+ 261 0033 08       		.uleb128 0x8
+ 262 0034 00       		.byte	0
+ 263 0035 00       		.byte	0
+ 264 0036 05       		.uleb128 0x5
+ 265 0037 16       		.uleb128 0x16
+ 266 0038 00       		.byte	0
+ 267 0039 03       		.uleb128 0x3
+ 268 003a 0E       		.uleb128 0xe
+ 269 003b 3A       		.uleb128 0x3a
+ 270 003c 0B       		.uleb128 0xb
+ 271 003d 3B       		.uleb128 0x3b
+ 272 003e 05       		.uleb128 0x5
+ 273 003f 49       		.uleb128 0x49
+ 274 0040 13       		.uleb128 0x13
+ 275 0041 00       		.byte	0
+ 276 0042 00       		.byte	0
+ 277 0043 06       		.uleb128 0x6
+ 278 0044 2E       		.uleb128 0x2e
+ 279 0045 01       		.byte	0x1
+ 280 0046 3F       		.uleb128 0x3f
+ 281 0047 19       		.uleb128 0x19
+ 282 0048 03       		.uleb128 0x3
+ 283 0049 0E       		.uleb128 0xe
+ 284 004a 3A       		.uleb128 0x3a
+ 285 004b 0B       		.uleb128 0xb
+ 286 004c 3B       		.uleb128 0x3b
+ 287 004d 0B       		.uleb128 0xb
+ 288 004e 27       		.uleb128 0x27
+ 289 004f 19       		.uleb128 0x19
+ 290 0050 11       		.uleb128 0x11
+ 291 0051 01       		.uleb128 0x1
+ 292 0052 12       		.uleb128 0x12
+ 293 0053 06       		.uleb128 0x6
+ 294 0054 40       		.uleb128 0x40
+ 295 0055 18       		.uleb128 0x18
+ 296 0056 9742     		.uleb128 0x2117
+ 297 0058 19       		.uleb128 0x19
+ 298 0059 01       		.uleb128 0x1
+ 299 005a 13       		.uleb128 0x13
+ 300 005b 00       		.byte	0
+ 301 005c 00       		.byte	0
+ 302 005d 07       		.uleb128 0x7
+ 303 005e 05       		.uleb128 0x5
+ 304 005f 00       		.byte	0
+ 305 0060 03       		.uleb128 0x3
+ 306 0061 08       		.uleb128 0x8
+ 307 0062 3A       		.uleb128 0x3a
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccaatwIM.s 			page 7
+
+
+ 308 0063 0B       		.uleb128 0xb
+ 309 0064 3B       		.uleb128 0x3b
+ 310 0065 0B       		.uleb128 0xb
+ 311 0066 49       		.uleb128 0x49
+ 312 0067 13       		.uleb128 0x13
+ 313 0068 02       		.uleb128 0x2
+ 314 0069 17       		.uleb128 0x17
+ 315 006a 00       		.byte	0
+ 316 006b 00       		.byte	0
+ 317 006c 08       		.uleb128 0x8
+ 318 006d 34       		.uleb128 0x34
+ 319 006e 00       		.byte	0
+ 320 006f 03       		.uleb128 0x3
+ 321 0070 08       		.uleb128 0x8
+ 322 0071 3A       		.uleb128 0x3a
+ 323 0072 0B       		.uleb128 0xb
+ 324 0073 3B       		.uleb128 0x3b
+ 325 0074 0B       		.uleb128 0xb
+ 326 0075 49       		.uleb128 0x49
+ 327 0076 13       		.uleb128 0x13
+ 328 0077 02       		.uleb128 0x2
+ 329 0078 17       		.uleb128 0x17
+ 330 0079 00       		.byte	0
+ 331 007a 00       		.byte	0
+ 332 007b 09       		.uleb128 0x9
+ 333 007c 898201   		.uleb128 0x4109
+ 334 007f 00       		.byte	0
+ 335 0080 11       		.uleb128 0x11
+ 336 0081 01       		.uleb128 0x1
+ 337 0082 31       		.uleb128 0x31
+ 338 0083 13       		.uleb128 0x13
+ 339 0084 00       		.byte	0
+ 340 0085 00       		.byte	0
+ 341 0086 0A       		.uleb128 0xa
+ 342 0087 0F       		.uleb128 0xf
+ 343 0088 00       		.byte	0
+ 344 0089 0B       		.uleb128 0xb
+ 345 008a 0B       		.uleb128 0xb
+ 346 008b 49       		.uleb128 0x49
+ 347 008c 13       		.uleb128 0x13
+ 348 008d 00       		.byte	0
+ 349 008e 00       		.byte	0
+ 350 008f 0B       		.uleb128 0xb
+ 351 0090 34       		.uleb128 0x34
+ 352 0091 00       		.byte	0
+ 353 0092 03       		.uleb128 0x3
+ 354 0093 0E       		.uleb128 0xe
+ 355 0094 3A       		.uleb128 0x3a
+ 356 0095 0B       		.uleb128 0xb
+ 357 0096 3B       		.uleb128 0x3b
+ 358 0097 0B       		.uleb128 0xb
+ 359 0098 49       		.uleb128 0x49
+ 360 0099 13       		.uleb128 0x13
+ 361 009a 3F       		.uleb128 0x3f
+ 362 009b 19       		.uleb128 0x19
+ 363 009c 3C       		.uleb128 0x3c
+ 364 009d 19       		.uleb128 0x19
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccaatwIM.s 			page 8
+
+
+ 365 009e 00       		.byte	0
+ 366 009f 00       		.byte	0
+ 367 00a0 0C       		.uleb128 0xc
+ 368 00a1 2E       		.uleb128 0x2e
+ 369 00a2 01       		.byte	0x1
+ 370 00a3 3F       		.uleb128 0x3f
+ 371 00a4 19       		.uleb128 0x19
+ 372 00a5 03       		.uleb128 0x3
+ 373 00a6 0E       		.uleb128 0xe
+ 374 00a7 3A       		.uleb128 0x3a
+ 375 00a8 0B       		.uleb128 0xb
+ 376 00a9 3B       		.uleb128 0x3b
+ 377 00aa 05       		.uleb128 0x5
+ 378 00ab 27       		.uleb128 0x27
+ 379 00ac 19       		.uleb128 0x19
+ 380 00ad 3C       		.uleb128 0x3c
+ 381 00ae 19       		.uleb128 0x19
+ 382 00af 00       		.byte	0
+ 383 00b0 00       		.byte	0
+ 384 00b1 0D       		.uleb128 0xd
+ 385 00b2 05       		.uleb128 0x5
+ 386 00b3 00       		.byte	0
+ 387 00b4 49       		.uleb128 0x49
+ 388 00b5 13       		.uleb128 0x13
+ 389 00b6 00       		.byte	0
+ 390 00b7 00       		.byte	0
+ 391 00b8 00       		.byte	0
+ 392              		.section	.debug_loc,"",%progbits
+ 393              	.Ldebug_loc0:
+ 394              	.LLST0:
+ 395 0000 00000000 		.4byte	.LVL0
+ 396 0004 0A000000 		.4byte	.LVL1
+ 397 0008 0100     		.2byte	0x1
+ 398 000a 50       		.byte	0x50
+ 399 000b 0A000000 		.4byte	.LVL1
+ 400 000f 21000000 		.4byte	.LVL2-1
+ 401 0013 0100     		.2byte	0x1
+ 402 0015 52       		.byte	0x52
+ 403 0016 21000000 		.4byte	.LVL2-1
+ 404 001a 28000000 		.4byte	.LFE63
+ 405 001e 0400     		.2byte	0x4
+ 406 0020 F3       		.byte	0xf3
+ 407 0021 01       		.uleb128 0x1
+ 408 0022 50       		.byte	0x50
+ 409 0023 9F       		.byte	0x9f
+ 410 0024 00000000 		.4byte	0
+ 411 0028 00000000 		.4byte	0
+ 412              		.section	.debug_aranges,"",%progbits
+ 413 0000 1C000000 		.4byte	0x1c
+ 414 0004 0200     		.2byte	0x2
+ 415 0006 00000000 		.4byte	.Ldebug_info0
+ 416 000a 04       		.byte	0x4
+ 417 000b 00       		.byte	0
+ 418 000c 0000     		.2byte	0
+ 419 000e 0000     		.2byte	0
+ 420 0010 00000000 		.4byte	.LFB63
+ 421 0014 28000000 		.4byte	.LFE63-.LFB63
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccaatwIM.s 			page 9
+
+
+ 422 0018 00000000 		.4byte	0
+ 423 001c 00000000 		.4byte	0
+ 424              		.section	.debug_ranges,"",%progbits
+ 425              	.Ldebug_ranges0:
+ 426 0000 00000000 		.4byte	.LFB63
+ 427 0004 28000000 		.4byte	.LFE63
+ 428 0008 00000000 		.4byte	0
+ 429 000c 00000000 		.4byte	0
+ 430              		.section	.debug_line,"",%progbits
+ 431              	.Ldebug_line0:
+ 432 0000 71010000 		.section	.debug_str,"MS",%progbits,1
+ 432      02005501 
+ 432      00000201 
+ 432      FB0E0D00 
+ 432      01010101 
+ 433              	.LASF6:
+ 434 0000 6C6F6E67 		.ascii	"long long int\000"
+ 434      206C6F6E 
+ 434      6720696E 
+ 434      7400
+ 435              	.LASF12:
+ 436 000e 75696E74 		.ascii	"uint32\000"
+ 436      333200
+ 437              	.LASF21:
+ 438 0015 53657453 		.ascii	"SetSysRTCTime\000"
+ 438      79735254 
+ 438      4354696D 
+ 438      6500
+ 439              	.LASF8:
+ 440 0023 756E7369 		.ascii	"unsigned int\000"
+ 440      676E6564 
+ 440      20696E74 
+ 440      00
+ 441              	.LASF11:
+ 442 0030 75696E74 		.ascii	"uint8\000"
+ 442      3800
+ 443              	.LASF22:
+ 444 0036 6375725F 		.ascii	"cur_time\000"
+ 444      74696D65 
+ 444      00
+ 445              	.LASF18:
+ 446 003f 474E5520 		.ascii	"GNU C 4.9.3 20150303 (release) [ARM/embedded-4_9-br"
+ 446      4320342E 
+ 446      392E3320 
+ 446      32303135 
+ 446      30333033 
+ 447 0072 616E6368 		.ascii	"anch revision 221220] -mcpu=cortex-m0 -mthumb -g -O"
+ 447      20726576 
+ 447      6973696F 
+ 447      6E203232 
+ 447      31323230 
+ 448 00a5 73202D66 		.ascii	"s -ffunction-sections -ffat-lto-objects\000"
+ 448      66756E63 
+ 448      74696F6E 
+ 448      2D736563 
+ 448      74696F6E 
+ 449              	.LASF5:
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccaatwIM.s 			page 10
+
+
+ 450 00cd 6C6F6E67 		.ascii	"long unsigned int\000"
+ 450      20756E73 
+ 450      69676E65 
+ 450      6420696E 
+ 450      7400
+ 451              	.LASF7:
+ 452 00df 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 452      206C6F6E 
+ 452      6720756E 
+ 452      7369676E 
+ 452      65642069 
+ 453              	.LASF9:
+ 454 00f6 5F5F7569 		.ascii	"__uint8_t\000"
+ 454      6E74385F 
+ 454      7400
+ 455              	.LASF19:
+ 456 0100 436F6465 		.ascii	"Code\\Device\\RTC\\UserRTC.c\000"
+ 456      5C446576 
+ 456      6963655C 
+ 456      5254435C 
+ 456      55736572 
+ 457              	.LASF20:
+ 458 011a 433A5C55 		.ascii	"C:\\Users\\zhiantec\\Documents\\Tencent Files\\1241"
+ 458      73657273 
+ 458      5C7A6869 
+ 458      616E7465 
+ 458      635C446F 
+ 459 0148 39333938 		.ascii	"939835\\FileRecv\\MobileFile\\second_images[4-8]\\E"
+ 459      33355C46 
+ 459      696C6552 
+ 459      6563765C 
+ 459      4D6F6269 
+ 460 0177 6E747261 		.ascii	"ntranceGuard_171019-12.50\\EntranceGuard.cydsn\000"
+ 460      6E636547 
+ 460      75617264 
+ 460      5F313731 
+ 460      3031392D 
+ 461              	.LASF10:
+ 462 01a5 75696E74 		.ascii	"uint8_t\000"
+ 462      385F7400 
+ 463              	.LASF1:
+ 464 01ad 756E7369 		.ascii	"unsigned char\000"
+ 464      676E6564 
+ 464      20636861 
+ 464      7200
+ 465              	.LASF16:
+ 466 01bb 63686172 		.ascii	"char\000"
+ 466      00
+ 467              	.LASF4:
+ 468 01c0 6C6F6E67 		.ascii	"long int\000"
+ 468      20696E74 
+ 468      00
+ 469              	.LASF14:
+ 470 01c9 646F7562 		.ascii	"double\000"
+ 470      6C6500
+ 471              	.LASF23:
+ 472 01d0 5254435F 		.ascii	"RTC_SetUnixTime\000"
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccaatwIM.s 			page 11
+
+
+ 472      53657455 
+ 472      6E697854 
+ 472      696D6500 
+ 473              	.LASF3:
+ 474 01e0 73686F72 		.ascii	"short unsigned int\000"
+ 474      7420756E 
+ 474      7369676E 
+ 474      65642069 
+ 474      6E7400
+ 475              	.LASF0:
+ 476 01f3 7369676E 		.ascii	"signed char\000"
+ 476      65642063 
+ 476      68617200 
+ 477              	.LASF13:
+ 478 01ff 666C6F61 		.ascii	"float\000"
+ 478      7400
+ 479              	.LASF15:
+ 480 0205 75696E74 		.ascii	"uint64\000"
+ 480      363400
+ 481              	.LASF2:
+ 482 020c 73686F72 		.ascii	"short int\000"
+ 482      7420696E 
+ 482      7400
+ 483              	.LASF17:
+ 484 0216 73697A65 		.ascii	"sizetype\000"
+ 484      74797065 
+ 484      00
+ 485              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.9.3 20150303 (release) [ARM/embedded-4_9-br

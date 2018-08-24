@@ -1,0 +1,862 @@
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccVg3TNm.s 			page 1
+
+
+   1              		.cpu cortex-m0
+   2              		.fpu softvfp
+   3              		.eabi_attribute 20, 1
+   4              		.eabi_attribute 21, 1
+   5              		.eabi_attribute 23, 3
+   6              		.eabi_attribute 24, 1
+   7              		.eabi_attribute 25, 1
+   8              		.eabi_attribute 26, 1
+   9              		.eabi_attribute 30, 4
+  10              		.eabi_attribute 34, 0
+  11              		.eabi_attribute 18, 4
+  12              		.code	16
+  13              		.file	"Timer_100ms_PM.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.Timer_100ms_SaveConfig,"ax",%progbits
+  18              		.align	1
+  19              		.global	Timer_100ms_SaveConfig
+  20              		.code	16
+  21              		.thumb_func
+  22              		.type	Timer_100ms_SaveConfig, %function
+  23              	Timer_100ms_SaveConfig:
+  24              	.LFB2:
+  25              		.file 1 "Generated_Source\\PSoC4\\Timer_100ms_PM.c"
+   1:Generated_Source\PSoC4/Timer_100ms_PM.c **** /*******************************************************************************
+   2:Generated_Source\PSoC4/Timer_100ms_PM.c **** * File Name: Timer_100ms_PM.c
+   3:Generated_Source\PSoC4/Timer_100ms_PM.c **** * Version 2.10
+   4:Generated_Source\PSoC4/Timer_100ms_PM.c **** *
+   5:Generated_Source\PSoC4/Timer_100ms_PM.c **** * Description:
+   6:Generated_Source\PSoC4/Timer_100ms_PM.c **** *  This file contains the setup, control, and status commands to support
+   7:Generated_Source\PSoC4/Timer_100ms_PM.c **** *  the component operations in the low power mode.
+   8:Generated_Source\PSoC4/Timer_100ms_PM.c **** *
+   9:Generated_Source\PSoC4/Timer_100ms_PM.c **** * Note:
+  10:Generated_Source\PSoC4/Timer_100ms_PM.c **** *  None
+  11:Generated_Source\PSoC4/Timer_100ms_PM.c **** *
+  12:Generated_Source\PSoC4/Timer_100ms_PM.c **** ********************************************************************************
+  13:Generated_Source\PSoC4/Timer_100ms_PM.c **** * Copyright 2013-2015, Cypress Semiconductor Corporation.  All rights reserved.
+  14:Generated_Source\PSoC4/Timer_100ms_PM.c **** * You may use this file only in accordance with the license, terms, conditions,
+  15:Generated_Source\PSoC4/Timer_100ms_PM.c **** * disclaimers, and limitations in the end user license agreement accompanying
+  16:Generated_Source\PSoC4/Timer_100ms_PM.c **** * the software package with which this file was provided.
+  17:Generated_Source\PSoC4/Timer_100ms_PM.c **** *******************************************************************************/
+  18:Generated_Source\PSoC4/Timer_100ms_PM.c **** 
+  19:Generated_Source\PSoC4/Timer_100ms_PM.c **** #include "Timer_100ms.h"
+  20:Generated_Source\PSoC4/Timer_100ms_PM.c **** 
+  21:Generated_Source\PSoC4/Timer_100ms_PM.c **** static Timer_100ms_BACKUP_STRUCT Timer_100ms_backup;
+  22:Generated_Source\PSoC4/Timer_100ms_PM.c **** 
+  23:Generated_Source\PSoC4/Timer_100ms_PM.c **** 
+  24:Generated_Source\PSoC4/Timer_100ms_PM.c **** /*******************************************************************************
+  25:Generated_Source\PSoC4/Timer_100ms_PM.c **** * Function Name: Timer_100ms_SaveConfig
+  26:Generated_Source\PSoC4/Timer_100ms_PM.c **** ********************************************************************************
+  27:Generated_Source\PSoC4/Timer_100ms_PM.c **** *
+  28:Generated_Source\PSoC4/Timer_100ms_PM.c **** * Summary:
+  29:Generated_Source\PSoC4/Timer_100ms_PM.c **** *  All configuration registers are retention. Nothing to save here.
+  30:Generated_Source\PSoC4/Timer_100ms_PM.c **** *
+  31:Generated_Source\PSoC4/Timer_100ms_PM.c **** * Parameters:
+  32:Generated_Source\PSoC4/Timer_100ms_PM.c **** *  None
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccVg3TNm.s 			page 2
+
+
+  33:Generated_Source\PSoC4/Timer_100ms_PM.c **** *
+  34:Generated_Source\PSoC4/Timer_100ms_PM.c **** * Return:
+  35:Generated_Source\PSoC4/Timer_100ms_PM.c **** *  None
+  36:Generated_Source\PSoC4/Timer_100ms_PM.c **** *
+  37:Generated_Source\PSoC4/Timer_100ms_PM.c **** *******************************************************************************/
+  38:Generated_Source\PSoC4/Timer_100ms_PM.c **** void Timer_100ms_SaveConfig(void)
+  39:Generated_Source\PSoC4/Timer_100ms_PM.c **** {
+  26              		.loc 1 39 0
+  27              		.cfi_startproc
+  40:Generated_Source\PSoC4/Timer_100ms_PM.c **** 
+  41:Generated_Source\PSoC4/Timer_100ms_PM.c **** }
+  28              		.loc 1 41 0
+  29              		@ sp needed
+  30 0000 7047     		bx	lr
+  31              		.cfi_endproc
+  32              	.LFE2:
+  33              		.size	Timer_100ms_SaveConfig, .-Timer_100ms_SaveConfig
+  34              		.section	.text.Timer_100ms_Sleep,"ax",%progbits
+  35              		.align	1
+  36              		.global	Timer_100ms_Sleep
+  37              		.code	16
+  38              		.thumb_func
+  39              		.type	Timer_100ms_Sleep, %function
+  40              	Timer_100ms_Sleep:
+  41              	.LFB3:
+  42:Generated_Source\PSoC4/Timer_100ms_PM.c **** 
+  43:Generated_Source\PSoC4/Timer_100ms_PM.c **** 
+  44:Generated_Source\PSoC4/Timer_100ms_PM.c **** /*******************************************************************************
+  45:Generated_Source\PSoC4/Timer_100ms_PM.c **** * Function Name: Timer_100ms_Sleep
+  46:Generated_Source\PSoC4/Timer_100ms_PM.c **** ********************************************************************************
+  47:Generated_Source\PSoC4/Timer_100ms_PM.c **** *
+  48:Generated_Source\PSoC4/Timer_100ms_PM.c **** * Summary:
+  49:Generated_Source\PSoC4/Timer_100ms_PM.c **** *  Stops the component operation and saves the user configuration.
+  50:Generated_Source\PSoC4/Timer_100ms_PM.c **** *
+  51:Generated_Source\PSoC4/Timer_100ms_PM.c **** * Parameters:
+  52:Generated_Source\PSoC4/Timer_100ms_PM.c **** *  None
+  53:Generated_Source\PSoC4/Timer_100ms_PM.c **** *
+  54:Generated_Source\PSoC4/Timer_100ms_PM.c **** * Return:
+  55:Generated_Source\PSoC4/Timer_100ms_PM.c **** *  None
+  56:Generated_Source\PSoC4/Timer_100ms_PM.c **** *
+  57:Generated_Source\PSoC4/Timer_100ms_PM.c **** *******************************************************************************/
+  58:Generated_Source\PSoC4/Timer_100ms_PM.c **** void Timer_100ms_Sleep(void)
+  59:Generated_Source\PSoC4/Timer_100ms_PM.c **** {
+  42              		.loc 1 59 0
+  43              		.cfi_startproc
+  44 0000 08B5     		push	{r3, lr}
+  45              		.cfi_def_cfa_offset 8
+  46              		.cfi_offset 3, -8
+  47              		.cfi_offset 14, -4
+  60:Generated_Source\PSoC4/Timer_100ms_PM.c ****     if(0u != (Timer_100ms_BLOCK_CONTROL_REG & Timer_100ms_MASK))
+  48              		.loc 1 60 0
+  49 0002 054B     		ldr	r3, .L6
+  50 0004 1A68     		ldr	r2, [r3]
+  51 0006 0223     		mov	r3, #2
+  52 0008 1340     		and	r3, r2
+  53 000a 044A     		ldr	r2, .L6+4
+  54 000c 00D0     		beq	.L3
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccVg3TNm.s 			page 3
+
+
+  61:Generated_Source\PSoC4/Timer_100ms_PM.c ****     {
+  62:Generated_Source\PSoC4/Timer_100ms_PM.c ****         Timer_100ms_backup.enableState = 1u;
+  55              		.loc 1 62 0
+  56 000e 0123     		mov	r3, #1
+  57              	.L3:
+  63:Generated_Source\PSoC4/Timer_100ms_PM.c ****     }
+  64:Generated_Source\PSoC4/Timer_100ms_PM.c ****     else
+  65:Generated_Source\PSoC4/Timer_100ms_PM.c ****     {
+  66:Generated_Source\PSoC4/Timer_100ms_PM.c ****         Timer_100ms_backup.enableState = 0u;
+  58              		.loc 1 66 0
+  59 0010 1370     		strb	r3, [r2]
+  67:Generated_Source\PSoC4/Timer_100ms_PM.c ****     }
+  68:Generated_Source\PSoC4/Timer_100ms_PM.c **** 
+  69:Generated_Source\PSoC4/Timer_100ms_PM.c ****     Timer_100ms_Stop();
+  70:Generated_Source\PSoC4/Timer_100ms_PM.c ****     Timer_100ms_SaveConfig();
+  71:Generated_Source\PSoC4/Timer_100ms_PM.c **** }
+  60              		.loc 1 71 0
+  61              		@ sp needed
+  69:Generated_Source\PSoC4/Timer_100ms_PM.c ****     Timer_100ms_SaveConfig();
+  62              		.loc 1 69 0
+  63 0012 FFF7FEFF 		bl	Timer_100ms_Stop
+  64              	.LVL0:
+  65              		.loc 1 71 0
+  66 0016 08BD     		pop	{r3, pc}
+  67              	.L7:
+  68              		.align	2
+  69              	.L6:
+  70 0018 00002040 		.word	1075838976
+  71 001c 00000000 		.word	.LANCHOR0
+  72              		.cfi_endproc
+  73              	.LFE3:
+  74              		.size	Timer_100ms_Sleep, .-Timer_100ms_Sleep
+  75              		.section	.text.Timer_100ms_RestoreConfig,"ax",%progbits
+  76              		.align	1
+  77              		.global	Timer_100ms_RestoreConfig
+  78              		.code	16
+  79              		.thumb_func
+  80              		.type	Timer_100ms_RestoreConfig, %function
+  81              	Timer_100ms_RestoreConfig:
+  82              	.LFB4:
+  72:Generated_Source\PSoC4/Timer_100ms_PM.c **** 
+  73:Generated_Source\PSoC4/Timer_100ms_PM.c **** 
+  74:Generated_Source\PSoC4/Timer_100ms_PM.c **** /*******************************************************************************
+  75:Generated_Source\PSoC4/Timer_100ms_PM.c **** * Function Name: Timer_100ms_RestoreConfig
+  76:Generated_Source\PSoC4/Timer_100ms_PM.c **** ********************************************************************************
+  77:Generated_Source\PSoC4/Timer_100ms_PM.c **** *
+  78:Generated_Source\PSoC4/Timer_100ms_PM.c **** * Summary:
+  79:Generated_Source\PSoC4/Timer_100ms_PM.c **** *  All configuration registers are retention. Nothing to restore here.
+  80:Generated_Source\PSoC4/Timer_100ms_PM.c **** *
+  81:Generated_Source\PSoC4/Timer_100ms_PM.c **** * Parameters:
+  82:Generated_Source\PSoC4/Timer_100ms_PM.c **** *  None
+  83:Generated_Source\PSoC4/Timer_100ms_PM.c **** *
+  84:Generated_Source\PSoC4/Timer_100ms_PM.c **** * Return:
+  85:Generated_Source\PSoC4/Timer_100ms_PM.c **** *  None
+  86:Generated_Source\PSoC4/Timer_100ms_PM.c **** *
+  87:Generated_Source\PSoC4/Timer_100ms_PM.c **** *******************************************************************************/
+  88:Generated_Source\PSoC4/Timer_100ms_PM.c **** void Timer_100ms_RestoreConfig(void)
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccVg3TNm.s 			page 4
+
+
+  89:Generated_Source\PSoC4/Timer_100ms_PM.c **** {
+  83              		.loc 1 89 0
+  84              		.cfi_startproc
+  90:Generated_Source\PSoC4/Timer_100ms_PM.c **** 
+  91:Generated_Source\PSoC4/Timer_100ms_PM.c **** }
+  85              		.loc 1 91 0
+  86              		@ sp needed
+  87 0000 7047     		bx	lr
+  88              		.cfi_endproc
+  89              	.LFE4:
+  90              		.size	Timer_100ms_RestoreConfig, .-Timer_100ms_RestoreConfig
+  91              		.section	.text.Timer_100ms_Wakeup,"ax",%progbits
+  92              		.align	1
+  93              		.global	Timer_100ms_Wakeup
+  94              		.code	16
+  95              		.thumb_func
+  96              		.type	Timer_100ms_Wakeup, %function
+  97              	Timer_100ms_Wakeup:
+  98              	.LFB5:
+  92:Generated_Source\PSoC4/Timer_100ms_PM.c **** 
+  93:Generated_Source\PSoC4/Timer_100ms_PM.c **** 
+  94:Generated_Source\PSoC4/Timer_100ms_PM.c **** /*******************************************************************************
+  95:Generated_Source\PSoC4/Timer_100ms_PM.c **** * Function Name: Timer_100ms_Wakeup
+  96:Generated_Source\PSoC4/Timer_100ms_PM.c **** ********************************************************************************
+  97:Generated_Source\PSoC4/Timer_100ms_PM.c **** *
+  98:Generated_Source\PSoC4/Timer_100ms_PM.c **** * Summary:
+  99:Generated_Source\PSoC4/Timer_100ms_PM.c **** *  Restores the user configuration and restores the enable state.
+ 100:Generated_Source\PSoC4/Timer_100ms_PM.c **** *
+ 101:Generated_Source\PSoC4/Timer_100ms_PM.c **** * Parameters:
+ 102:Generated_Source\PSoC4/Timer_100ms_PM.c **** *  None
+ 103:Generated_Source\PSoC4/Timer_100ms_PM.c **** *
+ 104:Generated_Source\PSoC4/Timer_100ms_PM.c **** * Return:
+ 105:Generated_Source\PSoC4/Timer_100ms_PM.c **** *  None
+ 106:Generated_Source\PSoC4/Timer_100ms_PM.c **** *
+ 107:Generated_Source\PSoC4/Timer_100ms_PM.c **** *******************************************************************************/
+ 108:Generated_Source\PSoC4/Timer_100ms_PM.c **** void Timer_100ms_Wakeup(void)
+ 109:Generated_Source\PSoC4/Timer_100ms_PM.c **** {
+  99              		.loc 1 109 0
+ 100              		.cfi_startproc
+ 101 0000 08B5     		push	{r3, lr}
+ 102              		.cfi_def_cfa_offset 8
+ 103              		.cfi_offset 3, -8
+ 104              		.cfi_offset 14, -4
+ 110:Generated_Source\PSoC4/Timer_100ms_PM.c ****     Timer_100ms_RestoreConfig();
+ 111:Generated_Source\PSoC4/Timer_100ms_PM.c **** 
+ 112:Generated_Source\PSoC4/Timer_100ms_PM.c ****     if(0u != Timer_100ms_backup.enableState)
+ 105              		.loc 1 112 0
+ 106 0002 034B     		ldr	r3, .L14
+ 107 0004 1B78     		ldrb	r3, [r3]
+ 108 0006 002B     		cmp	r3, #0
+ 109 0008 01D0     		beq	.L9
+ 113:Generated_Source\PSoC4/Timer_100ms_PM.c ****     {
+ 114:Generated_Source\PSoC4/Timer_100ms_PM.c ****         Timer_100ms_Enable();
+ 110              		.loc 1 114 0
+ 111 000a FFF7FEFF 		bl	Timer_100ms_Enable
+ 112              	.LVL1:
+ 113              	.L9:
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccVg3TNm.s 			page 5
+
+
+ 115:Generated_Source\PSoC4/Timer_100ms_PM.c ****     }
+ 116:Generated_Source\PSoC4/Timer_100ms_PM.c **** }
+ 114              		.loc 1 116 0
+ 115              		@ sp needed
+ 116 000e 08BD     		pop	{r3, pc}
+ 117              	.L15:
+ 118              		.align	2
+ 119              	.L14:
+ 120 0010 00000000 		.word	.LANCHOR0
+ 121              		.cfi_endproc
+ 122              	.LFE5:
+ 123              		.size	Timer_100ms_Wakeup, .-Timer_100ms_Wakeup
+ 124              		.bss
+ 125              		.set	.LANCHOR0,. + 0
+ 126              		.type	Timer_100ms_backup, %object
+ 127              		.size	Timer_100ms_backup, 1
+ 128              	Timer_100ms_backup:
+ 129 0000 00       		.space	1
+ 130              		.text
+ 131              	.Letext0:
+ 132              		.file 2 "Generated_Source\\PSoC4\\cytypes.h"
+ 133              		.file 3 "Generated_Source\\PSoC4\\Timer_100ms.h"
+ 134              		.section	.debug_info,"",%progbits
+ 135              	.Ldebug_info0:
+ 136 0000 5A010000 		.4byte	0x15a
+ 137 0004 0400     		.2byte	0x4
+ 138 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 139 000a 04       		.byte	0x4
+ 140 000b 01       		.uleb128 0x1
+ 141 000c 0E010000 		.4byte	.LASF23
+ 142 0010 01       		.byte	0x1
+ 143 0011 E6000000 		.4byte	.LASF24
+ 144 0015 5B000000 		.4byte	.LASF25
+ 145 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 146 001d 00000000 		.4byte	0
+ 147 0021 00000000 		.4byte	.Ldebug_line0
+ 148 0025 02       		.uleb128 0x2
+ 149 0026 01       		.byte	0x1
+ 150 0027 06       		.byte	0x6
+ 151 0028 43020000 		.4byte	.LASF0
+ 152 002c 02       		.uleb128 0x2
+ 153 002d 01       		.byte	0x1
+ 154 002e 08       		.byte	0x8
+ 155 002f EB010000 		.4byte	.LASF1
+ 156 0033 02       		.uleb128 0x2
+ 157 0034 02       		.byte	0x2
+ 158 0035 05       		.byte	0x5
+ 159 0036 93020000 		.4byte	.LASF2
+ 160 003a 02       		.uleb128 0x2
+ 161 003b 02       		.byte	0x2
+ 162 003c 07       		.byte	0x7
+ 163 003d C5010000 		.4byte	.LASF3
+ 164 0041 02       		.uleb128 0x2
+ 165 0042 04       		.byte	0x4
+ 166 0043 05       		.byte	0x5
+ 167 0044 15020000 		.4byte	.LASF4
+ 168 0048 02       		.uleb128 0x2
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccVg3TNm.s 			page 6
+
+
+ 169 0049 04       		.byte	0x4
+ 170 004a 07       		.byte	0x7
+ 171 004b 9C010000 		.4byte	.LASF5
+ 172 004f 02       		.uleb128 0x2
+ 173 0050 08       		.byte	0x8
+ 174 0051 05       		.byte	0x5
+ 175 0052 00000000 		.4byte	.LASF6
+ 176 0056 02       		.uleb128 0x2
+ 177 0057 08       		.byte	0x8
+ 178 0058 07       		.byte	0x7
+ 179 0059 AE010000 		.4byte	.LASF7
+ 180 005d 03       		.uleb128 0x3
+ 181 005e 04       		.byte	0x4
+ 182 005f 05       		.byte	0x5
+ 183 0060 696E7400 		.ascii	"int\000"
+ 184 0064 02       		.uleb128 0x2
+ 185 0065 04       		.byte	0x4
+ 186 0066 07       		.byte	0x7
+ 187 0067 21000000 		.4byte	.LASF8
+ 188 006b 04       		.uleb128 0x4
+ 189 006c 3D020000 		.4byte	.LASF9
+ 190 0070 02       		.byte	0x2
+ 191 0071 B901     		.2byte	0x1b9
+ 192 0073 2C000000 		.4byte	0x2c
+ 193 0077 04       		.uleb128 0x4
+ 194 0078 0E000000 		.4byte	.LASF10
+ 195 007c 02       		.byte	0x2
+ 196 007d BB01     		.2byte	0x1bb
+ 197 007f 48000000 		.4byte	0x48
+ 198 0083 02       		.uleb128 0x2
+ 199 0084 04       		.byte	0x4
+ 200 0085 04       		.byte	0x4
+ 201 0086 73020000 		.4byte	.LASF11
+ 202 008a 02       		.uleb128 0x2
+ 203 008b 08       		.byte	0x8
+ 204 008c 04       		.byte	0x4
+ 205 008d 30020000 		.4byte	.LASF12
+ 206 0091 02       		.uleb128 0x2
+ 207 0092 01       		.byte	0x1
+ 208 0093 08       		.byte	0x8
+ 209 0094 10020000 		.4byte	.LASF13
+ 210 0098 04       		.uleb128 0x4
+ 211 0099 37020000 		.4byte	.LASF14
+ 212 009d 02       		.byte	0x2
+ 213 009e 6502     		.2byte	0x265
+ 214 00a0 A4000000 		.4byte	0xa4
+ 215 00a4 05       		.uleb128 0x5
+ 216 00a5 77000000 		.4byte	0x77
+ 217 00a9 02       		.uleb128 0x2
+ 218 00aa 04       		.byte	0x4
+ 219 00ab 07       		.byte	0x7
+ 220 00ac 9D020000 		.4byte	.LASF15
+ 221 00b0 06       		.uleb128 0x6
+ 222 00b1 01       		.byte	0x1
+ 223 00b2 03       		.byte	0x3
+ 224 00b3 21       		.byte	0x21
+ 225 00b4 C5000000 		.4byte	0xc5
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccVg3TNm.s 			page 7
+
+
+ 226 00b8 07       		.uleb128 0x7
+ 227 00b9 15000000 		.4byte	.LASF26
+ 228 00bd 03       		.byte	0x3
+ 229 00be 23       		.byte	0x23
+ 230 00bf 6B000000 		.4byte	0x6b
+ 231 00c3 00       		.byte	0
+ 232 00c4 00       		.byte	0
+ 233 00c5 08       		.uleb128 0x8
+ 234 00c6 79020000 		.4byte	.LASF16
+ 235 00ca 03       		.byte	0x3
+ 236 00cb 24       		.byte	0x24
+ 237 00cc B0000000 		.4byte	0xb0
+ 238 00d0 09       		.uleb128 0x9
+ 239 00d1 F9010000 		.4byte	.LASF17
+ 240 00d5 01       		.byte	0x1
+ 241 00d6 26       		.byte	0x26
+ 242 00d7 01       		.byte	0x1
+ 243 00d8 09       		.uleb128 0x9
+ 244 00d9 2E000000 		.4byte	.LASF18
+ 245 00dd 01       		.byte	0x1
+ 246 00de 58       		.byte	0x58
+ 247 00df 01       		.byte	0x1
+ 248 00e0 0A       		.uleb128 0xa
+ 249 00e1 D0000000 		.4byte	0xd0
+ 250 00e5 00000000 		.4byte	.LFB2
+ 251 00e9 02000000 		.4byte	.LFE2-.LFB2
+ 252 00ed 01       		.uleb128 0x1
+ 253 00ee 9C       		.byte	0x9c
+ 254 00ef 0B       		.uleb128 0xb
+ 255 00f0 1E020000 		.4byte	.LASF19
+ 256 00f4 01       		.byte	0x1
+ 257 00f5 3A       		.byte	0x3a
+ 258 00f6 00000000 		.4byte	.LFB3
+ 259 00fa 20000000 		.4byte	.LFE3-.LFB3
+ 260 00fe 01       		.uleb128 0x1
+ 261 00ff 9C       		.byte	0x9c
+ 262 0100 0E010000 		.4byte	0x10e
+ 263 0104 0C       		.uleb128 0xc
+ 264 0105 16000000 		.4byte	.LVL0
+ 265 0109 4D010000 		.4byte	0x14d
+ 266 010d 00       		.byte	0
+ 267 010e 0A       		.uleb128 0xa
+ 268 010f D8000000 		.4byte	0xd8
+ 269 0113 00000000 		.4byte	.LFB4
+ 270 0117 02000000 		.4byte	.LFE4-.LFB4
+ 271 011b 01       		.uleb128 0x1
+ 272 011c 9C       		.byte	0x9c
+ 273 011d 0B       		.uleb128 0xb
+ 274 011e 4F020000 		.4byte	.LASF20
+ 275 0122 01       		.byte	0x1
+ 276 0123 6C       		.byte	0x6c
+ 277 0124 00000000 		.4byte	.LFB5
+ 278 0128 14000000 		.4byte	.LFE5-.LFB5
+ 279 012c 01       		.uleb128 0x1
+ 280 012d 9C       		.byte	0x9c
+ 281 012e 3C010000 		.4byte	0x13c
+ 282 0132 0C       		.uleb128 0xc
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccVg3TNm.s 			page 8
+
+
+ 283 0133 0E000000 		.4byte	.LVL1
+ 284 0137 55010000 		.4byte	0x155
+ 285 013b 00       		.byte	0
+ 286 013c 0D       		.uleb128 0xd
+ 287 013d 48000000 		.4byte	.LASF27
+ 288 0141 01       		.byte	0x1
+ 289 0142 15       		.byte	0x15
+ 290 0143 C5000000 		.4byte	0xc5
+ 291 0147 05       		.uleb128 0x5
+ 292 0148 03       		.byte	0x3
+ 293 0149 00000000 		.4byte	Timer_100ms_backup
+ 294 014d 0E       		.uleb128 0xe
+ 295 014e 62020000 		.4byte	.LASF21
+ 296 0152 03       		.byte	0x3
+ 297 0153 3301     		.2byte	0x133
+ 298 0155 0E       		.uleb128 0xe
+ 299 0156 D8010000 		.4byte	.LASF22
+ 300 015a 03       		.byte	0x3
+ 301 015b 3101     		.2byte	0x131
+ 302 015d 00       		.byte	0
+ 303              		.section	.debug_abbrev,"",%progbits
+ 304              	.Ldebug_abbrev0:
+ 305 0000 01       		.uleb128 0x1
+ 306 0001 11       		.uleb128 0x11
+ 307 0002 01       		.byte	0x1
+ 308 0003 25       		.uleb128 0x25
+ 309 0004 0E       		.uleb128 0xe
+ 310 0005 13       		.uleb128 0x13
+ 311 0006 0B       		.uleb128 0xb
+ 312 0007 03       		.uleb128 0x3
+ 313 0008 0E       		.uleb128 0xe
+ 314 0009 1B       		.uleb128 0x1b
+ 315 000a 0E       		.uleb128 0xe
+ 316 000b 55       		.uleb128 0x55
+ 317 000c 17       		.uleb128 0x17
+ 318 000d 11       		.uleb128 0x11
+ 319 000e 01       		.uleb128 0x1
+ 320 000f 10       		.uleb128 0x10
+ 321 0010 17       		.uleb128 0x17
+ 322 0011 00       		.byte	0
+ 323 0012 00       		.byte	0
+ 324 0013 02       		.uleb128 0x2
+ 325 0014 24       		.uleb128 0x24
+ 326 0015 00       		.byte	0
+ 327 0016 0B       		.uleb128 0xb
+ 328 0017 0B       		.uleb128 0xb
+ 329 0018 3E       		.uleb128 0x3e
+ 330 0019 0B       		.uleb128 0xb
+ 331 001a 03       		.uleb128 0x3
+ 332 001b 0E       		.uleb128 0xe
+ 333 001c 00       		.byte	0
+ 334 001d 00       		.byte	0
+ 335 001e 03       		.uleb128 0x3
+ 336 001f 24       		.uleb128 0x24
+ 337 0020 00       		.byte	0
+ 338 0021 0B       		.uleb128 0xb
+ 339 0022 0B       		.uleb128 0xb
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccVg3TNm.s 			page 9
+
+
+ 340 0023 3E       		.uleb128 0x3e
+ 341 0024 0B       		.uleb128 0xb
+ 342 0025 03       		.uleb128 0x3
+ 343 0026 08       		.uleb128 0x8
+ 344 0027 00       		.byte	0
+ 345 0028 00       		.byte	0
+ 346 0029 04       		.uleb128 0x4
+ 347 002a 16       		.uleb128 0x16
+ 348 002b 00       		.byte	0
+ 349 002c 03       		.uleb128 0x3
+ 350 002d 0E       		.uleb128 0xe
+ 351 002e 3A       		.uleb128 0x3a
+ 352 002f 0B       		.uleb128 0xb
+ 353 0030 3B       		.uleb128 0x3b
+ 354 0031 05       		.uleb128 0x5
+ 355 0032 49       		.uleb128 0x49
+ 356 0033 13       		.uleb128 0x13
+ 357 0034 00       		.byte	0
+ 358 0035 00       		.byte	0
+ 359 0036 05       		.uleb128 0x5
+ 360 0037 35       		.uleb128 0x35
+ 361 0038 00       		.byte	0
+ 362 0039 49       		.uleb128 0x49
+ 363 003a 13       		.uleb128 0x13
+ 364 003b 00       		.byte	0
+ 365 003c 00       		.byte	0
+ 366 003d 06       		.uleb128 0x6
+ 367 003e 13       		.uleb128 0x13
+ 368 003f 01       		.byte	0x1
+ 369 0040 0B       		.uleb128 0xb
+ 370 0041 0B       		.uleb128 0xb
+ 371 0042 3A       		.uleb128 0x3a
+ 372 0043 0B       		.uleb128 0xb
+ 373 0044 3B       		.uleb128 0x3b
+ 374 0045 0B       		.uleb128 0xb
+ 375 0046 01       		.uleb128 0x1
+ 376 0047 13       		.uleb128 0x13
+ 377 0048 00       		.byte	0
+ 378 0049 00       		.byte	0
+ 379 004a 07       		.uleb128 0x7
+ 380 004b 0D       		.uleb128 0xd
+ 381 004c 00       		.byte	0
+ 382 004d 03       		.uleb128 0x3
+ 383 004e 0E       		.uleb128 0xe
+ 384 004f 3A       		.uleb128 0x3a
+ 385 0050 0B       		.uleb128 0xb
+ 386 0051 3B       		.uleb128 0x3b
+ 387 0052 0B       		.uleb128 0xb
+ 388 0053 49       		.uleb128 0x49
+ 389 0054 13       		.uleb128 0x13
+ 390 0055 38       		.uleb128 0x38
+ 391 0056 0B       		.uleb128 0xb
+ 392 0057 00       		.byte	0
+ 393 0058 00       		.byte	0
+ 394 0059 08       		.uleb128 0x8
+ 395 005a 16       		.uleb128 0x16
+ 396 005b 00       		.byte	0
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccVg3TNm.s 			page 10
+
+
+ 397 005c 03       		.uleb128 0x3
+ 398 005d 0E       		.uleb128 0xe
+ 399 005e 3A       		.uleb128 0x3a
+ 400 005f 0B       		.uleb128 0xb
+ 401 0060 3B       		.uleb128 0x3b
+ 402 0061 0B       		.uleb128 0xb
+ 403 0062 49       		.uleb128 0x49
+ 404 0063 13       		.uleb128 0x13
+ 405 0064 00       		.byte	0
+ 406 0065 00       		.byte	0
+ 407 0066 09       		.uleb128 0x9
+ 408 0067 2E       		.uleb128 0x2e
+ 409 0068 00       		.byte	0
+ 410 0069 3F       		.uleb128 0x3f
+ 411 006a 19       		.uleb128 0x19
+ 412 006b 03       		.uleb128 0x3
+ 413 006c 0E       		.uleb128 0xe
+ 414 006d 3A       		.uleb128 0x3a
+ 415 006e 0B       		.uleb128 0xb
+ 416 006f 3B       		.uleb128 0x3b
+ 417 0070 0B       		.uleb128 0xb
+ 418 0071 27       		.uleb128 0x27
+ 419 0072 19       		.uleb128 0x19
+ 420 0073 20       		.uleb128 0x20
+ 421 0074 0B       		.uleb128 0xb
+ 422 0075 00       		.byte	0
+ 423 0076 00       		.byte	0
+ 424 0077 0A       		.uleb128 0xa
+ 425 0078 2E       		.uleb128 0x2e
+ 426 0079 00       		.byte	0
+ 427 007a 31       		.uleb128 0x31
+ 428 007b 13       		.uleb128 0x13
+ 429 007c 11       		.uleb128 0x11
+ 430 007d 01       		.uleb128 0x1
+ 431 007e 12       		.uleb128 0x12
+ 432 007f 06       		.uleb128 0x6
+ 433 0080 40       		.uleb128 0x40
+ 434 0081 18       		.uleb128 0x18
+ 435 0082 9742     		.uleb128 0x2117
+ 436 0084 19       		.uleb128 0x19
+ 437 0085 00       		.byte	0
+ 438 0086 00       		.byte	0
+ 439 0087 0B       		.uleb128 0xb
+ 440 0088 2E       		.uleb128 0x2e
+ 441 0089 01       		.byte	0x1
+ 442 008a 3F       		.uleb128 0x3f
+ 443 008b 19       		.uleb128 0x19
+ 444 008c 03       		.uleb128 0x3
+ 445 008d 0E       		.uleb128 0xe
+ 446 008e 3A       		.uleb128 0x3a
+ 447 008f 0B       		.uleb128 0xb
+ 448 0090 3B       		.uleb128 0x3b
+ 449 0091 0B       		.uleb128 0xb
+ 450 0092 27       		.uleb128 0x27
+ 451 0093 19       		.uleb128 0x19
+ 452 0094 11       		.uleb128 0x11
+ 453 0095 01       		.uleb128 0x1
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccVg3TNm.s 			page 11
+
+
+ 454 0096 12       		.uleb128 0x12
+ 455 0097 06       		.uleb128 0x6
+ 456 0098 40       		.uleb128 0x40
+ 457 0099 18       		.uleb128 0x18
+ 458 009a 9742     		.uleb128 0x2117
+ 459 009c 19       		.uleb128 0x19
+ 460 009d 01       		.uleb128 0x1
+ 461 009e 13       		.uleb128 0x13
+ 462 009f 00       		.byte	0
+ 463 00a0 00       		.byte	0
+ 464 00a1 0C       		.uleb128 0xc
+ 465 00a2 898201   		.uleb128 0x4109
+ 466 00a5 00       		.byte	0
+ 467 00a6 11       		.uleb128 0x11
+ 468 00a7 01       		.uleb128 0x1
+ 469 00a8 31       		.uleb128 0x31
+ 470 00a9 13       		.uleb128 0x13
+ 471 00aa 00       		.byte	0
+ 472 00ab 00       		.byte	0
+ 473 00ac 0D       		.uleb128 0xd
+ 474 00ad 34       		.uleb128 0x34
+ 475 00ae 00       		.byte	0
+ 476 00af 03       		.uleb128 0x3
+ 477 00b0 0E       		.uleb128 0xe
+ 478 00b1 3A       		.uleb128 0x3a
+ 479 00b2 0B       		.uleb128 0xb
+ 480 00b3 3B       		.uleb128 0x3b
+ 481 00b4 0B       		.uleb128 0xb
+ 482 00b5 49       		.uleb128 0x49
+ 483 00b6 13       		.uleb128 0x13
+ 484 00b7 02       		.uleb128 0x2
+ 485 00b8 18       		.uleb128 0x18
+ 486 00b9 00       		.byte	0
+ 487 00ba 00       		.byte	0
+ 488 00bb 0E       		.uleb128 0xe
+ 489 00bc 2E       		.uleb128 0x2e
+ 490 00bd 00       		.byte	0
+ 491 00be 3F       		.uleb128 0x3f
+ 492 00bf 19       		.uleb128 0x19
+ 493 00c0 03       		.uleb128 0x3
+ 494 00c1 0E       		.uleb128 0xe
+ 495 00c2 3A       		.uleb128 0x3a
+ 496 00c3 0B       		.uleb128 0xb
+ 497 00c4 3B       		.uleb128 0x3b
+ 498 00c5 05       		.uleb128 0x5
+ 499 00c6 27       		.uleb128 0x27
+ 500 00c7 19       		.uleb128 0x19
+ 501 00c8 3C       		.uleb128 0x3c
+ 502 00c9 19       		.uleb128 0x19
+ 503 00ca 00       		.byte	0
+ 504 00cb 00       		.byte	0
+ 505 00cc 00       		.byte	0
+ 506              		.section	.debug_aranges,"",%progbits
+ 507 0000 34000000 		.4byte	0x34
+ 508 0004 0200     		.2byte	0x2
+ 509 0006 00000000 		.4byte	.Ldebug_info0
+ 510 000a 04       		.byte	0x4
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccVg3TNm.s 			page 12
+
+
+ 511 000b 00       		.byte	0
+ 512 000c 0000     		.2byte	0
+ 513 000e 0000     		.2byte	0
+ 514 0010 00000000 		.4byte	.LFB2
+ 515 0014 02000000 		.4byte	.LFE2-.LFB2
+ 516 0018 00000000 		.4byte	.LFB3
+ 517 001c 20000000 		.4byte	.LFE3-.LFB3
+ 518 0020 00000000 		.4byte	.LFB4
+ 519 0024 02000000 		.4byte	.LFE4-.LFB4
+ 520 0028 00000000 		.4byte	.LFB5
+ 521 002c 14000000 		.4byte	.LFE5-.LFB5
+ 522 0030 00000000 		.4byte	0
+ 523 0034 00000000 		.4byte	0
+ 524              		.section	.debug_ranges,"",%progbits
+ 525              	.Ldebug_ranges0:
+ 526 0000 00000000 		.4byte	.LFB2
+ 527 0004 02000000 		.4byte	.LFE2
+ 528 0008 00000000 		.4byte	.LFB3
+ 529 000c 20000000 		.4byte	.LFE3
+ 530 0010 00000000 		.4byte	.LFB4
+ 531 0014 02000000 		.4byte	.LFE4
+ 532 0018 00000000 		.4byte	.LFB5
+ 533 001c 14000000 		.4byte	.LFE5
+ 534 0020 00000000 		.4byte	0
+ 535 0024 00000000 		.4byte	0
+ 536              		.section	.debug_line,"",%progbits
+ 537              	.Ldebug_line0:
+ 538 0000 AB000000 		.section	.debug_str,"MS",%progbits,1
+ 538      02005C00 
+ 538      00000201 
+ 538      FB0E0D00 
+ 538      01010101 
+ 539              	.LASF6:
+ 540 0000 6C6F6E67 		.ascii	"long long int\000"
+ 540      206C6F6E 
+ 540      6720696E 
+ 540      7400
+ 541              	.LASF10:
+ 542 000e 75696E74 		.ascii	"uint32\000"
+ 542      333200
+ 543              	.LASF26:
+ 544 0015 656E6162 		.ascii	"enableState\000"
+ 544      6C655374 
+ 544      61746500 
+ 545              	.LASF8:
+ 546 0021 756E7369 		.ascii	"unsigned int\000"
+ 546      676E6564 
+ 546      20696E74 
+ 546      00
+ 547              	.LASF18:
+ 548 002e 54696D65 		.ascii	"Timer_100ms_RestoreConfig\000"
+ 548      725F3130 
+ 548      306D735F 
+ 548      52657374 
+ 548      6F726543 
+ 549              	.LASF27:
+ 550 0048 54696D65 		.ascii	"Timer_100ms_backup\000"
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccVg3TNm.s 			page 13
+
+
+ 550      725F3130 
+ 550      306D735F 
+ 550      6261636B 
+ 550      757000
+ 551              	.LASF25:
+ 552 005b 433A5C55 		.ascii	"C:\\Users\\zhiantec\\Documents\\Tencent Files\\1241"
+ 552      73657273 
+ 552      5C7A6869 
+ 552      616E7465 
+ 552      635C446F 
+ 553 0089 39333938 		.ascii	"939835\\FileRecv\\MobileFile\\second_images[4-8]\\E"
+ 553      33355C46 
+ 553      696C6552 
+ 553      6563765C 
+ 553      4D6F6269 
+ 554 00b8 6E747261 		.ascii	"ntranceGuard_171019-12.50\\EntranceGuard.cydsn\000"
+ 554      6E636547 
+ 554      75617264 
+ 554      5F313731 
+ 554      3031392D 
+ 555              	.LASF24:
+ 556 00e6 47656E65 		.ascii	"Generated_Source\\PSoC4\\Timer_100ms_PM.c\000"
+ 556      72617465 
+ 556      645F536F 
+ 556      75726365 
+ 556      5C50536F 
+ 557              	.LASF23:
+ 558 010e 474E5520 		.ascii	"GNU C 4.9.3 20150303 (release) [ARM/embedded-4_9-br"
+ 558      4320342E 
+ 558      392E3320 
+ 558      32303135 
+ 558      30333033 
+ 559 0141 616E6368 		.ascii	"anch revision 221220] -mcpu=cortex-m0 -mthumb -g -O"
+ 559      20726576 
+ 559      6973696F 
+ 559      6E203232 
+ 559      31323230 
+ 560 0174 73202D66 		.ascii	"s -ffunction-sections -ffat-lto-objects\000"
+ 560      66756E63 
+ 560      74696F6E 
+ 560      2D736563 
+ 560      74696F6E 
+ 561              	.LASF5:
+ 562 019c 6C6F6E67 		.ascii	"long unsigned int\000"
+ 562      20756E73 
+ 562      69676E65 
+ 562      6420696E 
+ 562      7400
+ 563              	.LASF7:
+ 564 01ae 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 564      206C6F6E 
+ 564      6720756E 
+ 564      7369676E 
+ 564      65642069 
+ 565              	.LASF3:
+ 566 01c5 73686F72 		.ascii	"short unsigned int\000"
+ 566      7420756E 
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccVg3TNm.s 			page 14
+
+
+ 566      7369676E 
+ 566      65642069 
+ 566      6E7400
+ 567              	.LASF22:
+ 568 01d8 54696D65 		.ascii	"Timer_100ms_Enable\000"
+ 568      725F3130 
+ 568      306D735F 
+ 568      456E6162 
+ 568      6C6500
+ 569              	.LASF1:
+ 570 01eb 756E7369 		.ascii	"unsigned char\000"
+ 570      676E6564 
+ 570      20636861 
+ 570      7200
+ 571              	.LASF17:
+ 572 01f9 54696D65 		.ascii	"Timer_100ms_SaveConfig\000"
+ 572      725F3130 
+ 572      306D735F 
+ 572      53617665 
+ 572      436F6E66 
+ 573              	.LASF13:
+ 574 0210 63686172 		.ascii	"char\000"
+ 574      00
+ 575              	.LASF4:
+ 576 0215 6C6F6E67 		.ascii	"long int\000"
+ 576      20696E74 
+ 576      00
+ 577              	.LASF19:
+ 578 021e 54696D65 		.ascii	"Timer_100ms_Sleep\000"
+ 578      725F3130 
+ 578      306D735F 
+ 578      536C6565 
+ 578      7000
+ 579              	.LASF12:
+ 580 0230 646F7562 		.ascii	"double\000"
+ 580      6C6500
+ 581              	.LASF14:
+ 582 0237 72656733 		.ascii	"reg32\000"
+ 582      3200
+ 583              	.LASF9:
+ 584 023d 75696E74 		.ascii	"uint8\000"
+ 584      3800
+ 585              	.LASF0:
+ 586 0243 7369676E 		.ascii	"signed char\000"
+ 586      65642063 
+ 586      68617200 
+ 587              	.LASF20:
+ 588 024f 54696D65 		.ascii	"Timer_100ms_Wakeup\000"
+ 588      725F3130 
+ 588      306D735F 
+ 588      57616B65 
+ 588      757000
+ 589              	.LASF21:
+ 590 0262 54696D65 		.ascii	"Timer_100ms_Stop\000"
+ 590      725F3130 
+ 590      306D735F 
+ 590      53746F70 
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccVg3TNm.s 			page 15
+
+
+ 590      00
+ 591              	.LASF11:
+ 592 0273 666C6F61 		.ascii	"float\000"
+ 592      7400
+ 593              	.LASF16:
+ 594 0279 54696D65 		.ascii	"Timer_100ms_BACKUP_STRUCT\000"
+ 594      725F3130 
+ 594      306D735F 
+ 594      4241434B 
+ 594      55505F53 
+ 595              	.LASF2:
+ 596 0293 73686F72 		.ascii	"short int\000"
+ 596      7420696E 
+ 596      7400
+ 597              	.LASF15:
+ 598 029d 73697A65 		.ascii	"sizetype\000"
+ 598      74797065 
+ 598      00
+ 599              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.9.3 20150303 (release) [ARM/embedded-4_9-br

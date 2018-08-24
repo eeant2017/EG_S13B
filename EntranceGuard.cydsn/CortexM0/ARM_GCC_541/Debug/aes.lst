@@ -1,0 +1,4821 @@
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m0
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"aes.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.KeyExpansion,"ax",%progbits
+  20              		.align	1
+  21              		.code	16
+  22              		.thumb_func
+  23              		.type	KeyExpansion, %function
+  24              	KeyExpansion:
+  25              	.LFB65:
+  26              		.file 1 "Code\\Common\\crypt\\aes.c"
+   1:Code\Common\crypt/aes.c **** /*
+   2:Code\Common\crypt/aes.c **** 
+   3:Code\Common\crypt/aes.c **** This is an implementation of the AES128 algorithm, specifically ECB.
+   4:Code\Common\crypt/aes.c **** 
+   5:Code\Common\crypt/aes.c **** The implementation is verified against the test vectors in:
+   6:Code\Common\crypt/aes.c ****   National Institute of Standards and Technology Special Publication 800-38A 2001 ED
+   7:Code\Common\crypt/aes.c **** 
+   8:Code\Common\crypt/aes.c **** ECB-AES128
+   9:Code\Common\crypt/aes.c **** ----------
+  10:Code\Common\crypt/aes.c **** 
+  11:Code\Common\crypt/aes.c ****   plain-text:
+  12:Code\Common\crypt/aes.c ****     6bc1bee22e409f96e93d7e117393172a
+  13:Code\Common\crypt/aes.c ****     ae2d8a571e03ac9c9eb76fac45af8e51
+  14:Code\Common\crypt/aes.c ****     30c81c46a35ce411e5fbc1191a0a52ef
+  15:Code\Common\crypt/aes.c ****     f69f2445df4f9b17ad2b417be66c3710
+  16:Code\Common\crypt/aes.c **** 
+  17:Code\Common\crypt/aes.c ****   key:
+  18:Code\Common\crypt/aes.c ****     2b7e151628aed2a6abf7158809cf4f3c
+  19:Code\Common\crypt/aes.c **** 
+  20:Code\Common\crypt/aes.c ****   resulting cipher
+  21:Code\Common\crypt/aes.c ****     3ad77bb40d7a3660a89ecaf32466ef97 
+  22:Code\Common\crypt/aes.c ****     f5d3d58503b9699de785895a96fdbaaf 
+  23:Code\Common\crypt/aes.c ****     43b1cd7f598ece23881b00e3ed030688 
+  24:Code\Common\crypt/aes.c ****     7b0c785e27e8ad3f8223207104725dd4 
+  25:Code\Common\crypt/aes.c **** 
+  26:Code\Common\crypt/aes.c **** 
+  27:Code\Common\crypt/aes.c **** NOTE:   String length must be evenly divisible by 16byte (str_len % 16 == 0)
+  28:Code\Common\crypt/aes.c ****         You should pad the end of the string with zeros if this is not the case.
+  29:Code\Common\crypt/aes.c **** 
+  30:Code\Common\crypt/aes.c **** */
+  31:Code\Common\crypt/aes.c **** 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 2
+
+
+  32:Code\Common\crypt/aes.c **** 
+  33:Code\Common\crypt/aes.c **** /*****************************************************************************/
+  34:Code\Common\crypt/aes.c **** /* Includes:                                                                 */
+  35:Code\Common\crypt/aes.c **** /*****************************************************************************/
+  36:Code\Common\crypt/aes.c **** //#include "aes.h"
+  37:Code\Common\crypt/aes.c **** #include <string.h>
+  38:Code\Common\crypt/aes.c **** #include <project.h>
+  39:Code\Common\crypt/aes.c **** #include "common.h"
+  40:Code\Common\crypt/aes.c **** 
+  41:Code\Common\crypt/aes.c **** 
+  42:Code\Common\crypt/aes.c **** /*****************************************************************************/
+  43:Code\Common\crypt/aes.c **** /* Defines:                                                                  */
+  44:Code\Common\crypt/aes.c **** /*****************************************************************************/
+  45:Code\Common\crypt/aes.c **** // The number of columns comprising a state in AES. This is a constant in AES. Value=4
+  46:Code\Common\crypt/aes.c **** #define Nb 		4
+  47:Code\Common\crypt/aes.c **** // The number of 32 bit words in a key.
+  48:Code\Common\crypt/aes.c **** #define Nk 		4
+  49:Code\Common\crypt/aes.c **** // Key length in bytes [128 bit]
+  50:Code\Common\crypt/aes.c **** #define KEYLEN 	16
+  51:Code\Common\crypt/aes.c **** // The number of rounds in AES Cipher.
+  52:Code\Common\crypt/aes.c **** #define Nr 		10
+  53:Code\Common\crypt/aes.c **** 
+  54:Code\Common\crypt/aes.c **** // jcallan@github points out that declaring Multiply as a function 
+  55:Code\Common\crypt/aes.c **** // reduces code size considerably with the Keil ARM compiler.
+  56:Code\Common\crypt/aes.c **** // See this link for more information: https://github.com/kokke/tiny-AES128-C/pull/3
+  57:Code\Common\crypt/aes.c **** #ifndef MULTIPLY_AS_A_FUNCTION
+  58:Code\Common\crypt/aes.c ****   #define MULTIPLY_AS_A_FUNCTION 0
+  59:Code\Common\crypt/aes.c **** #endif
+  60:Code\Common\crypt/aes.c **** 
+  61:Code\Common\crypt/aes.c **** 
+  62:Code\Common\crypt/aes.c **** /*****************************************************************************/
+  63:Code\Common\crypt/aes.c **** /* Private variables:                                                        */
+  64:Code\Common\crypt/aes.c **** /*****************************************************************************/
+  65:Code\Common\crypt/aes.c **** // state - array holding the intermediate results during decryption.
+  66:Code\Common\crypt/aes.c **** typedef uint8_t state_t[4][4];
+  67:Code\Common\crypt/aes.c **** static state_t* state;
+  68:Code\Common\crypt/aes.c **** 
+  69:Code\Common\crypt/aes.c **** // The array that stores the round keys.
+  70:Code\Common\crypt/aes.c **** static uint8_t RoundKey[176];
+  71:Code\Common\crypt/aes.c **** 
+  72:Code\Common\crypt/aes.c **** // The Key input to the AES Program
+  73:Code\Common\crypt/aes.c **** static const uint8_t* Key;
+  74:Code\Common\crypt/aes.c **** 
+  75:Code\Common\crypt/aes.c **** // The lookup-tables are marked const so they can be placed in read-only storage instead of RAM
+  76:Code\Common\crypt/aes.c **** // The numbers below can be computed dynamically trading ROM for RAM - 
+  77:Code\Common\crypt/aes.c **** // This can be useful in (embedded) bootloader applications, where ROM is often limited.
+  78:Code\Common\crypt/aes.c **** static const uint8_t sbox[256] =   {
+  79:Code\Common\crypt/aes.c ****   //0     1    2      3     4    5     6     7      8    9     A      B    C     D     E     F
+  80:Code\Common\crypt/aes.c ****   0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76,
+  81:Code\Common\crypt/aes.c ****   0xca, 0x82, 0xc9, 0x7d, 0xfa, 0x59, 0x47, 0xf0, 0xad, 0xd4, 0xa2, 0xaf, 0x9c, 0xa4, 0x72, 0xc0,
+  82:Code\Common\crypt/aes.c ****   0xb7, 0xfd, 0x93, 0x26, 0x36, 0x3f, 0xf7, 0xcc, 0x34, 0xa5, 0xe5, 0xf1, 0x71, 0xd8, 0x31, 0x15,
+  83:Code\Common\crypt/aes.c ****   0x04, 0xc7, 0x23, 0xc3, 0x18, 0x96, 0x05, 0x9a, 0x07, 0x12, 0x80, 0xe2, 0xeb, 0x27, 0xb2, 0x75,
+  84:Code\Common\crypt/aes.c ****   0x09, 0x83, 0x2c, 0x1a, 0x1b, 0x6e, 0x5a, 0xa0, 0x52, 0x3b, 0xd6, 0xb3, 0x29, 0xe3, 0x2f, 0x84,
+  85:Code\Common\crypt/aes.c ****   0x53, 0xd1, 0x00, 0xed, 0x20, 0xfc, 0xb1, 0x5b, 0x6a, 0xcb, 0xbe, 0x39, 0x4a, 0x4c, 0x58, 0xcf,
+  86:Code\Common\crypt/aes.c ****   0xd0, 0xef, 0xaa, 0xfb, 0x43, 0x4d, 0x33, 0x85, 0x45, 0xf9, 0x02, 0x7f, 0x50, 0x3c, 0x9f, 0xa8,
+  87:Code\Common\crypt/aes.c ****   0x51, 0xa3, 0x40, 0x8f, 0x92, 0x9d, 0x38, 0xf5, 0xbc, 0xb6, 0xda, 0x21, 0x10, 0xff, 0xf3, 0xd2,
+  88:Code\Common\crypt/aes.c ****   0xcd, 0x0c, 0x13, 0xec, 0x5f, 0x97, 0x44, 0x17, 0xc4, 0xa7, 0x7e, 0x3d, 0x64, 0x5d, 0x19, 0x73,
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 3
+
+
+  89:Code\Common\crypt/aes.c ****   0x60, 0x81, 0x4f, 0xdc, 0x22, 0x2a, 0x90, 0x88, 0x46, 0xee, 0xb8, 0x14, 0xde, 0x5e, 0x0b, 0xdb,
+  90:Code\Common\crypt/aes.c ****   0xe0, 0x32, 0x3a, 0x0a, 0x49, 0x06, 0x24, 0x5c, 0xc2, 0xd3, 0xac, 0x62, 0x91, 0x95, 0xe4, 0x79,
+  91:Code\Common\crypt/aes.c ****   0xe7, 0xc8, 0x37, 0x6d, 0x8d, 0xd5, 0x4e, 0xa9, 0x6c, 0x56, 0xf4, 0xea, 0x65, 0x7a, 0xae, 0x08,
+  92:Code\Common\crypt/aes.c ****   0xba, 0x78, 0x25, 0x2e, 0x1c, 0xa6, 0xb4, 0xc6, 0xe8, 0xdd, 0x74, 0x1f, 0x4b, 0xbd, 0x8b, 0x8a,
+  93:Code\Common\crypt/aes.c ****   0x70, 0x3e, 0xb5, 0x66, 0x48, 0x03, 0xf6, 0x0e, 0x61, 0x35, 0x57, 0xb9, 0x86, 0xc1, 0x1d, 0x9e,
+  94:Code\Common\crypt/aes.c ****   0xe1, 0xf8, 0x98, 0x11, 0x69, 0xd9, 0x8e, 0x94, 0x9b, 0x1e, 0x87, 0xe9, 0xce, 0x55, 0x28, 0xdf,
+  95:Code\Common\crypt/aes.c ****   0x8c, 0xa1, 0x89, 0x0d, 0xbf, 0xe6, 0x42, 0x68, 0x41, 0x99, 0x2d, 0x0f, 0xb0, 0x54, 0xbb, 0x16 };
+  96:Code\Common\crypt/aes.c **** 
+  97:Code\Common\crypt/aes.c **** static const uint8_t rsbox[256] =
+  98:Code\Common\crypt/aes.c **** { 0x52, 0x09, 0x6a, 0xd5, 0x30, 0x36, 0xa5, 0x38, 0xbf, 0x40, 0xa3, 0x9e, 0x81, 0xf3, 0xd7, 0xfb,
+  99:Code\Common\crypt/aes.c ****   0x7c, 0xe3, 0x39, 0x82, 0x9b, 0x2f, 0xff, 0x87, 0x34, 0x8e, 0x43, 0x44, 0xc4, 0xde, 0xe9, 0xcb,
+ 100:Code\Common\crypt/aes.c ****   0x54, 0x7b, 0x94, 0x32, 0xa6, 0xc2, 0x23, 0x3d, 0xee, 0x4c, 0x95, 0x0b, 0x42, 0xfa, 0xc3, 0x4e,
+ 101:Code\Common\crypt/aes.c ****   0x08, 0x2e, 0xa1, 0x66, 0x28, 0xd9, 0x24, 0xb2, 0x76, 0x5b, 0xa2, 0x49, 0x6d, 0x8b, 0xd1, 0x25,
+ 102:Code\Common\crypt/aes.c ****   0x72, 0xf8, 0xf6, 0x64, 0x86, 0x68, 0x98, 0x16, 0xd4, 0xa4, 0x5c, 0xcc, 0x5d, 0x65, 0xb6, 0x92,
+ 103:Code\Common\crypt/aes.c ****   0x6c, 0x70, 0x48, 0x50, 0xfd, 0xed, 0xb9, 0xda, 0x5e, 0x15, 0x46, 0x57, 0xa7, 0x8d, 0x9d, 0x84,
+ 104:Code\Common\crypt/aes.c ****   0x90, 0xd8, 0xab, 0x00, 0x8c, 0xbc, 0xd3, 0x0a, 0xf7, 0xe4, 0x58, 0x05, 0xb8, 0xb3, 0x45, 0x06,
+ 105:Code\Common\crypt/aes.c ****   0xd0, 0x2c, 0x1e, 0x8f, 0xca, 0x3f, 0x0f, 0x02, 0xc1, 0xaf, 0xbd, 0x03, 0x01, 0x13, 0x8a, 0x6b,
+ 106:Code\Common\crypt/aes.c ****   0x3a, 0x91, 0x11, 0x41, 0x4f, 0x67, 0xdc, 0xea, 0x97, 0xf2, 0xcf, 0xce, 0xf0, 0xb4, 0xe6, 0x73,
+ 107:Code\Common\crypt/aes.c ****   0x96, 0xac, 0x74, 0x22, 0xe7, 0xad, 0x35, 0x85, 0xe2, 0xf9, 0x37, 0xe8, 0x1c, 0x75, 0xdf, 0x6e,
+ 108:Code\Common\crypt/aes.c ****   0x47, 0xf1, 0x1a, 0x71, 0x1d, 0x29, 0xc5, 0x89, 0x6f, 0xb7, 0x62, 0x0e, 0xaa, 0x18, 0xbe, 0x1b,
+ 109:Code\Common\crypt/aes.c ****   0xfc, 0x56, 0x3e, 0x4b, 0xc6, 0xd2, 0x79, 0x20, 0x9a, 0xdb, 0xc0, 0xfe, 0x78, 0xcd, 0x5a, 0xf4,
+ 110:Code\Common\crypt/aes.c ****   0x1f, 0xdd, 0xa8, 0x33, 0x88, 0x07, 0xc7, 0x31, 0xb1, 0x12, 0x10, 0x59, 0x27, 0x80, 0xec, 0x5f,
+ 111:Code\Common\crypt/aes.c ****   0x60, 0x51, 0x7f, 0xa9, 0x19, 0xb5, 0x4a, 0x0d, 0x2d, 0xe5, 0x7a, 0x9f, 0x93, 0xc9, 0x9c, 0xef,
+ 112:Code\Common\crypt/aes.c ****   0xa0, 0xe0, 0x3b, 0x4d, 0xae, 0x2a, 0xf5, 0xb0, 0xc8, 0xeb, 0xbb, 0x3c, 0x83, 0x53, 0x99, 0x61,
+ 113:Code\Common\crypt/aes.c ****   0x17, 0x2b, 0x04, 0x7e, 0xba, 0x77, 0xd6, 0x26, 0xe1, 0x69, 0x14, 0x63, 0x55, 0x21, 0x0c, 0x7d };
+ 114:Code\Common\crypt/aes.c **** 
+ 115:Code\Common\crypt/aes.c **** 
+ 116:Code\Common\crypt/aes.c **** // The round constant word array, Rcon[i], contains the values given by 
+ 117:Code\Common\crypt/aes.c **** // x to th e power (i-1) being powers of x (x is denoted as {02}) in the field GF(2^8)
+ 118:Code\Common\crypt/aes.c **** // Note that i starts at 1, not 0).
+ 119:Code\Common\crypt/aes.c **** #if 0
+ 120:Code\Common\crypt/aes.c **** static const uint8_t Rcon[255] = {
+ 121:Code\Common\crypt/aes.c ****   0x8d, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36, 0x6c, 0xd8, 0xab, 0x4d, 0x9a, 
+ 122:Code\Common\crypt/aes.c ****   0x2f, 0x5e, 0xbc, 0x63, 0xc6, 0x97, 0x35, 0x6a, 0xd4, 0xb3, 0x7d, 0xfa, 0xef, 0xc5, 0x91, 0x39, 
+ 123:Code\Common\crypt/aes.c ****   0x72, 0xe4, 0xd3, 0xbd, 0x61, 0xc2, 0x9f, 0x25, 0x4a, 0x94, 0x33, 0x66, 0xcc, 0x83, 0x1d, 0x3a, 
+ 124:Code\Common\crypt/aes.c ****   0x74, 0xe8, 0xcb, 0x8d, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36, 0x6c, 0xd8, 
+ 125:Code\Common\crypt/aes.c ****   0xab, 0x4d, 0x9a, 0x2f, 0x5e, 0xbc, 0x63, 0xc6, 0x97, 0x35, 0x6a, 0xd4, 0xb3, 0x7d, 0xfa, 0xef, 
+ 126:Code\Common\crypt/aes.c ****   0xc5, 0x91, 0x39, 0x72, 0xe4, 0xd3, 0xbd, 0x61, 0xc2, 0x9f, 0x25, 0x4a, 0x94, 0x33, 0x66, 0xcc, 
+ 127:Code\Common\crypt/aes.c ****   0x83, 0x1d, 0x3a, 0x74, 0xe8, 0xcb, 0x8d, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 
+ 128:Code\Common\crypt/aes.c ****   0x36, 0x6c, 0xd8, 0xab, 0x4d, 0x9a, 0x2f, 0x5e, 0xbc, 0x63, 0xc6, 0x97, 0x35, 0x6a, 0xd4, 0xb3, 
+ 129:Code\Common\crypt/aes.c ****   0x7d, 0xfa, 0xef, 0xc5, 0x91, 0x39, 0x72, 0xe4, 0xd3, 0xbd, 0x61, 0xc2, 0x9f, 0x25, 0x4a, 0x94, 
+ 130:Code\Common\crypt/aes.c ****   0x33, 0x66, 0xcc, 0x83, 0x1d, 0x3a, 0x74, 0xe8, 0xcb, 0x8d, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 
+ 131:Code\Common\crypt/aes.c ****   0x40, 0x80, 0x1b, 0x36, 0x6c, 0xd8, 0xab, 0x4d, 0x9a, 0x2f, 0x5e, 0xbc, 0x63, 0xc6, 0x97, 0x35, 
+ 132:Code\Common\crypt/aes.c ****   0x6a, 0xd4, 0xb3, 0x7d, 0xfa, 0xef, 0xc5, 0x91, 0x39, 0x72, 0xe4, 0xd3, 0xbd, 0x61, 0xc2, 0x9f, 
+ 133:Code\Common\crypt/aes.c ****   0x25, 0x4a, 0x94, 0x33, 0x66, 0xcc, 0x83, 0x1d, 0x3a, 0x74, 0xe8, 0xcb, 0x8d, 0x01, 0x02, 0x04, 
+ 134:Code\Common\crypt/aes.c ****   0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36, 0x6c, 0xd8, 0xab, 0x4d, 0x9a, 0x2f, 0x5e, 0xbc, 0x63, 
+ 135:Code\Common\crypt/aes.c ****   0xc6, 0x97, 0x35, 0x6a, 0xd4, 0xb3, 0x7d, 0xfa, 0xef, 0xc5, 0x91, 0x39, 0x72, 0xe4, 0xd3, 0xbd, 
+ 136:Code\Common\crypt/aes.c ****   0x61, 0xc2, 0x9f, 0x25, 0x4a, 0x94, 0x33, 0x66, 0xcc, 0x83, 0x1d, 0x3a, 0x74, 0xe8, 0xcb  
+ 137:Code\Common\crypt/aes.c **** };
+ 138:Code\Common\crypt/aes.c **** #endif
+ 139:Code\Common\crypt/aes.c **** 
+ 140:Code\Common\crypt/aes.c **** #if 1
+ 141:Code\Common\crypt/aes.c **** static const uint8 Rcon[16] =     
+ 142:Code\Common\crypt/aes.c **** { 0xef, 0x3a, 0x19,  0x3d, 0xca, 0x0b, 0x36, 0x89, 0xa8, 0x61, 0xf6, 0x6c, 0xd8, 0xab, 0x4d, 0x9a};
+ 143:Code\Common\crypt/aes.c **** #endif
+ 144:Code\Common\crypt/aes.c **** 
+ 145:Code\Common\crypt/aes.c **** 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 4
+
+
+ 146:Code\Common\crypt/aes.c **** /*****************************************************************************/
+ 147:Code\Common\crypt/aes.c **** /* Private functions:                                                        */
+ 148:Code\Common\crypt/aes.c **** /*****************************************************************************/
+ 149:Code\Common\crypt/aes.c **** static uint8_t getSBoxValue(uint8_t num)
+ 150:Code\Common\crypt/aes.c **** {
+ 151:Code\Common\crypt/aes.c ****   return sbox[num];
+ 152:Code\Common\crypt/aes.c **** }
+ 153:Code\Common\crypt/aes.c **** 
+ 154:Code\Common\crypt/aes.c **** static uint8_t getSBoxInvert(uint8_t num)
+ 155:Code\Common\crypt/aes.c **** {
+ 156:Code\Common\crypt/aes.c ****   return rsbox[num];
+ 157:Code\Common\crypt/aes.c **** }
+ 158:Code\Common\crypt/aes.c **** 
+ 159:Code\Common\crypt/aes.c **** // This function produces Nb(Nr+1) round keys. The round keys are used in each round to decrypt the
+ 160:Code\Common\crypt/aes.c **** static void KeyExpansion(void)
+ 161:Code\Common\crypt/aes.c **** {
+  27              		.loc 1 161 0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 8
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31              	.LVL0:
+ 162:Code\Common\crypt/aes.c ****   uint32_t i, j, k;
+ 163:Code\Common\crypt/aes.c ****   uint8_t tempa[4]; // Used for the column/row operations
+ 164:Code\Common\crypt/aes.c ****   
+ 165:Code\Common\crypt/aes.c ****   // The first round key is the key itself.
+ 166:Code\Common\crypt/aes.c ****   for (i = 0; i < Nk; ++i)
+ 167:Code\Common\crypt/aes.c ****   {
+ 168:Code\Common\crypt/aes.c ****     RoundKey[(i * 4) + 0] = Key[(i * 4) + 0];
+  32              		.loc 1 168 0
+  33 0000 234B     		ldr	r3, .L10
+ 161:Code\Common\crypt/aes.c ****   uint32_t i, j, k;
+  34              		.loc 1 161 0
+  35 0002 F7B5     		push	{r0, r1, r2, r4, r5, r6, r7, lr}
+  36              		.cfi_def_cfa_offset 32
+  37              		.cfi_offset 0, -32
+  38              		.cfi_offset 1, -28
+  39              		.cfi_offset 2, -24
+  40              		.cfi_offset 4, -20
+  41              		.cfi_offset 5, -16
+  42              		.cfi_offset 6, -12
+  43              		.cfi_offset 7, -8
+  44              		.cfi_offset 14, -4
+  45              		.loc 1 168 0
+  46 0004 1A68     		ldr	r2, [r3]
+  47 0006 0533     		adds	r3, r3, #5
+  48 0008 1000     		movs	r0, r2
+  49 000a 1900     		movs	r1, r3
+  50 000c 1030     		adds	r0, r0, #16
+  51              	.LVL1:
+  52              	.L2:
+  53              		.loc 1 168 0 is_stmt 0 discriminator 3
+  54 000e 1578     		ldrb	r5, [r2]
+  55 0010 4C1E     		subs	r4, r1, #1
+  56 0012 2570     		strb	r5, [r4]
+ 169:Code\Common\crypt/aes.c ****     RoundKey[(i * 4) + 1] = Key[(i * 4) + 1];
+  57              		.loc 1 169 0 is_stmt 1 discriminator 3
+  58 0014 5478     		ldrb	r4, [r2, #1]
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 5
+
+
+  59 0016 0C70     		strb	r4, [r1]
+ 170:Code\Common\crypt/aes.c ****     RoundKey[(i * 4) + 2] = Key[(i * 4) + 2];
+  60              		.loc 1 170 0 discriminator 3
+  61 0018 9478     		ldrb	r4, [r2, #2]
+  62 001a 4C70     		strb	r4, [r1, #1]
+ 171:Code\Common\crypt/aes.c ****     RoundKey[(i * 4) + 3] = Key[(i * 4) + 3];
+  63              		.loc 1 171 0 discriminator 3
+  64 001c D478     		ldrb	r4, [r2, #3]
+  65 001e 0432     		adds	r2, r2, #4
+  66 0020 8C70     		strb	r4, [r1, #2]
+  67 0022 0431     		adds	r1, r1, #4
+ 166:Code\Common\crypt/aes.c ****   {
+  68              		.loc 1 166 0 discriminator 3
+  69 0024 8242     		cmp	r2, r0
+  70 0026 F2D1     		bne	.L2
+  71 0028 0421     		movs	r1, #4
+  72              	.LBB14:
+  73              	.LBB15:
+ 151:Code\Common\crypt/aes.c **** }
+  74              		.loc 1 151 0
+  75 002a 1A48     		ldr	r0, .L10+4
+  76              	.LBE15:
+  77              	.LBE14:
+ 172:Code\Common\crypt/aes.c ****   }
+ 173:Code\Common\crypt/aes.c **** 
+ 174:Code\Common\crypt/aes.c ****   // All other round keys are found from the previous round keys.
+ 175:Code\Common\crypt/aes.c ****   for (; (i < (Nb * (Nr + 1))); ++i)
+ 176:Code\Common\crypt/aes.c ****   {
+ 177:Code\Common\crypt/aes.c ****     for (j = 0; j < 4; ++j)
+ 178:Code\Common\crypt/aes.c ****     {
+ 179:Code\Common\crypt/aes.c ****       tempa[j] = RoundKey[(i-1) * 4 + j];
+  78              		.loc 1 179 0
+  79 002c 01AA     		add	r2, sp, #4
+  80              	.L3:
+  81              	.LVL2:
+  82 002e 1E00     		movs	r6, r3
+ 168:Code\Common\crypt/aes.c ****     RoundKey[(i * 4) + 1] = Key[(i * 4) + 1];
+  83              		.loc 1 168 0
+  84 0030 0025     		movs	r5, #0
+  85              		.loc 1 179 0
+  86 0032 0B36     		adds	r6, r6, #11
+  87              	.LVL3:
+  88              	.L4:
+  89              		.loc 1 179 0 is_stmt 0 discriminator 3
+  90 0034 775D     		ldrb	r7, [r6, r5]
+  91 0036 AF54     		strb	r7, [r5, r2]
+ 177:Code\Common\crypt/aes.c ****     {
+  92              		.loc 1 177 0 is_stmt 1 discriminator 3
+  93 0038 0135     		adds	r5, r5, #1
+  94              	.LVL4:
+  95 003a 042D     		cmp	r5, #4
+  96 003c FAD1     		bne	.L4
+ 180:Code\Common\crypt/aes.c ****     }
+ 181:Code\Common\crypt/aes.c ****     if (i % Nk == 0)
+  97              		.loc 1 181 0
+  98 003e 013D     		subs	r5, r5, #1
+  99              	.LVL5:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 6
+
+
+ 100 0040 2942     		tst	r1, r5
+ 101 0042 0FD1     		bne	.L5
+ 102              	.LBB18:
+ 103              	.LBB19:
+ 151:Code\Common\crypt/aes.c **** }
+ 104              		.loc 1 151 0
+ 105 0044 9478     		ldrb	r4, [r2, #2]
+ 106              	.LBE19:
+ 107              	.LBE18:
+ 182:Code\Common\crypt/aes.c ****     {
+ 183:Code\Common\crypt/aes.c ****       // This function rotates the 4 bytes in a word to the left once.
+ 184:Code\Common\crypt/aes.c ****       // [a0,a1,a2,a3] becomes [a1,a2,a3,a0]
+ 185:Code\Common\crypt/aes.c **** 
+ 186:Code\Common\crypt/aes.c ****       // Function RotWord()
+ 187:Code\Common\crypt/aes.c ****       {
+ 188:Code\Common\crypt/aes.c ****         k = tempa[0];
+ 108              		.loc 1 188 0
+ 109 0046 1678     		ldrb	r6, [r2]
+ 110              	.LVL6:
+ 189:Code\Common\crypt/aes.c ****         tempa[0] = tempa[1];
+ 190:Code\Common\crypt/aes.c ****         tempa[1] = tempa[2];
+ 191:Code\Common\crypt/aes.c ****         tempa[2] = tempa[3];
+ 192:Code\Common\crypt/aes.c ****         tempa[3] = k;
+ 193:Code\Common\crypt/aes.c ****       }
+ 194:Code\Common\crypt/aes.c **** 
+ 195:Code\Common\crypt/aes.c ****       // SubWord() is a function that takes a four-byte input word and 
+ 196:Code\Common\crypt/aes.c ****       // applies the S-box to each of the four bytes to produce an output word.
+ 197:Code\Common\crypt/aes.c **** 
+ 198:Code\Common\crypt/aes.c ****       // Function Subword()
+ 199:Code\Common\crypt/aes.c ****       {
+ 200:Code\Common\crypt/aes.c ****         tempa[0] = getSBoxValue(tempa[0]);
+ 201:Code\Common\crypt/aes.c ****         tempa[1] = getSBoxValue(tempa[1]);
+ 111              		.loc 1 201 0
+ 112 0048 045D     		ldrb	r4, [r0, r4]
+ 202:Code\Common\crypt/aes.c ****         tempa[2] = getSBoxValue(tempa[2]);
+ 203:Code\Common\crypt/aes.c ****         tempa[3] = getSBoxValue(tempa[3]);
+ 113              		.loc 1 203 0
+ 114 004a 865D     		ldrb	r6, [r0, r6]
+ 115              	.LVL7:
+ 116              	.LBB20:
+ 117              	.LBB16:
+ 151:Code\Common\crypt/aes.c **** }
+ 118              		.loc 1 151 0
+ 119 004c 5578     		ldrb	r5, [r2, #1]
+ 120              	.LVL8:
+ 121              	.LBE16:
+ 122              	.LBE20:
+ 201:Code\Common\crypt/aes.c ****         tempa[2] = getSBoxValue(tempa[2]);
+ 123              		.loc 1 201 0
+ 124 004e 5470     		strb	r4, [r2, #1]
+ 204:Code\Common\crypt/aes.c ****       }
+ 205:Code\Common\crypt/aes.c **** 
+ 206:Code\Common\crypt/aes.c ****       tempa[0] =  tempa[0] ^ Rcon[i/Nk];
+ 125              		.loc 1 206 0
+ 126 0050 114C     		ldr	r4, .L10+8
+ 191:Code\Common\crypt/aes.c ****         tempa[3] = k;
+ 127              		.loc 1 191 0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 7
+
+
+ 128 0052 D778     		ldrb	r7, [r2, #3]
+ 203:Code\Common\crypt/aes.c ****       }
+ 129              		.loc 1 203 0
+ 130 0054 D670     		strb	r6, [r2, #3]
+ 131              		.loc 1 206 0
+ 132 0056 8E08     		lsrs	r6, r1, #2
+ 133              	.LBB21:
+ 134              	.LBB17:
+ 151:Code\Common\crypt/aes.c **** }
+ 135              		.loc 1 151 0
+ 136 0058 455D     		ldrb	r5, [r0, r5]
+ 137              	.LBE17:
+ 138              	.LBE21:
+ 139              		.loc 1 206 0
+ 140 005a A65D     		ldrb	r6, [r4, r6]
+ 202:Code\Common\crypt/aes.c ****         tempa[3] = getSBoxValue(tempa[3]);
+ 141              		.loc 1 202 0
+ 142 005c C75D     		ldrb	r7, [r0, r7]
+ 143              		.loc 1 206 0
+ 144 005e 7540     		eors	r5, r6
+ 202:Code\Common\crypt/aes.c ****         tempa[3] = getSBoxValue(tempa[3]);
+ 145              		.loc 1 202 0
+ 146 0060 9770     		strb	r7, [r2, #2]
+ 147              		.loc 1 206 0
+ 148 0062 1570     		strb	r5, [r2]
+ 149              	.LVL9:
+ 150              	.L5:
+ 207:Code\Common\crypt/aes.c ****     }
+ 208:Code\Common\crypt/aes.c ****     else if (Nk > 6 && i % Nk == 4)
+ 209:Code\Common\crypt/aes.c ****     {
+ 210:Code\Common\crypt/aes.c ****       // Function Subword()
+ 211:Code\Common\crypt/aes.c ****       {
+ 212:Code\Common\crypt/aes.c ****         tempa[0] = getSBoxValue(tempa[0]);
+ 213:Code\Common\crypt/aes.c ****         tempa[1] = getSBoxValue(tempa[1]);
+ 214:Code\Common\crypt/aes.c ****         tempa[2] = getSBoxValue(tempa[2]);
+ 215:Code\Common\crypt/aes.c ****         tempa[3] = getSBoxValue(tempa[3]);
+ 216:Code\Common\crypt/aes.c ****       }
+ 217:Code\Common\crypt/aes.c ****     }
+ 218:Code\Common\crypt/aes.c ****     RoundKey[i * 4 + 0] = RoundKey[(i - Nk) * 4 + 0] ^ tempa[0];
+ 151              		.loc 1 218 0
+ 152 0064 5D1E     		subs	r5, r3, #1
+ 153 0066 2E78     		ldrb	r6, [r5]
+ 154 0068 1578     		ldrb	r5, [r2]
+ 175:Code\Common\crypt/aes.c ****   {
+ 155              		.loc 1 175 0
+ 156 006a 0131     		adds	r1, r1, #1
+ 157              	.LVL10:
+ 158              		.loc 1 218 0
+ 159 006c 7540     		eors	r5, r6
+ 160 006e DD73     		strb	r5, [r3, #15]
+ 219:Code\Common\crypt/aes.c ****     RoundKey[i * 4 + 1] = RoundKey[(i - Nk) * 4 + 1] ^ tempa[1];
+ 161              		.loc 1 219 0
+ 162 0070 5578     		ldrb	r5, [r2, #1]
+ 163 0072 1E78     		ldrb	r6, [r3]
+ 164 0074 7540     		eors	r5, r6
+ 165 0076 1D74     		strb	r5, [r3, #16]
+ 220:Code\Common\crypt/aes.c ****     RoundKey[i * 4 + 2] = RoundKey[(i - Nk) * 4 + 2] ^ tempa[2];
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 8
+
+
+ 166              		.loc 1 220 0
+ 167 0078 5E78     		ldrb	r6, [r3, #1]
+ 168 007a 9578     		ldrb	r5, [r2, #2]
+ 169 007c 7540     		eors	r5, r6
+ 170 007e 5D74     		strb	r5, [r3, #17]
+ 221:Code\Common\crypt/aes.c ****     RoundKey[i * 4 + 3] = RoundKey[(i - Nk) * 4 + 3] ^ tempa[3];
+ 171              		.loc 1 221 0
+ 172 0080 9E78     		ldrb	r6, [r3, #2]
+ 173 0082 D578     		ldrb	r5, [r2, #3]
+ 174 0084 0433     		adds	r3, r3, #4
+ 175 0086 7540     		eors	r5, r6
+ 176 0088 9D73     		strb	r5, [r3, #14]
+ 175:Code\Common\crypt/aes.c ****   {
+ 177              		.loc 1 175 0
+ 178 008a 2C29     		cmp	r1, #44
+ 179 008c CFD1     		bne	.L3
+ 222:Code\Common\crypt/aes.c ****   }
+ 223:Code\Common\crypt/aes.c **** }
+ 180              		.loc 1 223 0
+ 181              		@ sp needed
+ 182 008e F7BD     		pop	{r0, r1, r2, r4, r5, r6, r7, pc}
+ 183              	.L11:
+ 184              		.align	2
+ 185              	.L10:
+ 186 0090 00000000 		.word	.LANCHOR0
+ 187 0094 00000000 		.word	.LANCHOR1
+ 188 0098 00010000 		.word	.LANCHOR2
+ 189              		.cfi_endproc
+ 190              	.LFE65:
+ 191              		.size	KeyExpansion, .-KeyExpansion
+ 192              		.section	.text.AddRoundKey,"ax",%progbits
+ 193              		.align	1
+ 194              		.code	16
+ 195              		.thumb_func
+ 196              		.type	AddRoundKey, %function
+ 197              	AddRoundKey:
+ 198              	.LFB66:
+ 224:Code\Common\crypt/aes.c **** 
+ 225:Code\Common\crypt/aes.c **** // This function adds the round key to state.
+ 226:Code\Common\crypt/aes.c **** // The round key is added to the state by an XOR function.
+ 227:Code\Common\crypt/aes.c **** static void AddRoundKey(uint8_t round)
+ 228:Code\Common\crypt/aes.c **** {
+ 199              		.loc 1 228 0
+ 200              		.cfi_startproc
+ 201              		@ args = 0, pretend = 0, frame = 8
+ 202              		@ frame_needed = 0, uses_anonymous_args = 0
+ 203              	.LVL11:
+ 204 0000 F7B5     		push	{r0, r1, r2, r4, r5, r6, r7, lr}
+ 205              		.cfi_def_cfa_offset 32
+ 206              		.cfi_offset 0, -32
+ 207              		.cfi_offset 1, -28
+ 208              		.cfi_offset 2, -24
+ 209              		.cfi_offset 4, -20
+ 210              		.cfi_offset 5, -16
+ 211              		.cfi_offset 6, -12
+ 212              		.cfi_offset 7, -8
+ 213              		.cfi_offset 14, -4
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 9
+
+
+ 229:Code\Common\crypt/aes.c ****   uint8_t i,j;
+ 230:Code\Common\crypt/aes.c ****   for(i=0;i<4;++i)
+ 231:Code\Common\crypt/aes.c ****   {
+ 232:Code\Common\crypt/aes.c ****     for(j = 0; j < 4; ++j)
+ 233:Code\Common\crypt/aes.c ****     {
+ 234:Code\Common\crypt/aes.c ****       (*state)[i][j] ^= RoundKey[round * Nb * 4 + i * Nb + j];
+ 214              		.loc 1 234 0
+ 215 0002 0022     		movs	r2, #0
+ 216 0004 0B4B     		ldr	r3, .L17
+ 217 0006 0C4D     		ldr	r5, .L17+4
+ 218 0008 5E6B     		ldr	r6, [r3, #52]
+ 219 000a 2B1D     		adds	r3, r5, #4
+ 220 000c 0001     		lsls	r0, r0, #4
+ 221              	.LVL12:
+ 222 000e 0193     		str	r3, [sp, #4]
+ 223              	.LVL13:
+ 224              	.L13:
+ 225 0010 019B     		ldr	r3, [sp, #4]
+ 226 0012 1118     		adds	r1, r2, r0
+ 227 0014 5918     		adds	r1, r3, r1
+ 228:Code\Common\crypt/aes.c ****   uint8_t i,j;
+ 228              		.loc 1 228 0
+ 229 0016 0023     		movs	r3, #0
+ 230              	.LVL14:
+ 231              	.L14:
+ 232 0018 B718     		adds	r7, r6, r2
+ 233              		.loc 1 234 0 discriminator 3
+ 234 001a FC5C     		ldrb	r4, [r7, r3]
+ 235 001c A446     		mov	ip, r4
+ 236 001e 6546     		mov	r5, ip
+ 237 0020 CC5C     		ldrb	r4, [r1, r3]
+ 238 0022 6C40     		eors	r4, r5
+ 239 0024 FC54     		strb	r4, [r7, r3]
+ 240              	.LVL15:
+ 241 0026 0133     		adds	r3, r3, #1
+ 242              	.LVL16:
+ 232:Code\Common\crypt/aes.c ****     {
+ 243              		.loc 1 232 0 discriminator 3
+ 244 0028 042B     		cmp	r3, #4
+ 245 002a F5D1     		bne	.L14
+ 246 002c 0432     		adds	r2, r2, #4
+ 230:Code\Common\crypt/aes.c ****   {
+ 247              		.loc 1 230 0 discriminator 2
+ 248 002e 102A     		cmp	r2, #16
+ 249 0030 EED1     		bne	.L13
+ 235:Code\Common\crypt/aes.c ****     }
+ 236:Code\Common\crypt/aes.c ****   }
+ 237:Code\Common\crypt/aes.c **** }
+ 250              		.loc 1 237 0
+ 251              		@ sp needed
+ 252 0032 F7BD     		pop	{r0, r1, r2, r4, r5, r6, r7, pc}
+ 253              	.L18:
+ 254              		.align	2
+ 255              	.L17:
+ 256 0034 80000000 		.word	.LANCHOR3
+ 257 0038 00000000 		.word	.LANCHOR0
+ 258              		.cfi_endproc
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 10
+
+
+ 259              	.LFE66:
+ 260              		.size	AddRoundKey, .-AddRoundKey
+ 261              		.section	.text.SubBytes,"ax",%progbits
+ 262              		.align	1
+ 263              		.code	16
+ 264              		.thumb_func
+ 265              		.type	SubBytes, %function
+ 266              	SubBytes:
+ 267              	.LFB67:
+ 238:Code\Common\crypt/aes.c **** 
+ 239:Code\Common\crypt/aes.c **** // The SubBytes Function Substitutes the values in the
+ 240:Code\Common\crypt/aes.c **** // state matrix with values in an S-box.
+ 241:Code\Common\crypt/aes.c **** static void SubBytes(void)
+ 242:Code\Common\crypt/aes.c **** {
+ 268              		.loc 1 242 0
+ 269              		.cfi_startproc
+ 270              		@ args = 0, pretend = 0, frame = 0
+ 271              		@ frame_needed = 0, uses_anonymous_args = 0
+ 272              	.LVL17:
+ 243:Code\Common\crypt/aes.c ****   uint8_t i, j;
+ 244:Code\Common\crypt/aes.c ****   for(i = 0; i < 4; ++i)
+ 245:Code\Common\crypt/aes.c ****   {
+ 246:Code\Common\crypt/aes.c ****     for(j = 0; j < 4; ++j)
+ 247:Code\Common\crypt/aes.c ****     {
+ 248:Code\Common\crypt/aes.c ****       (*state)[j][i] = getSBoxValue((*state)[j][i]);
+ 273              		.loc 1 248 0
+ 274 0000 074B     		ldr	r3, .L24
+ 242:Code\Common\crypt/aes.c ****   uint8_t i, j;
+ 275              		.loc 1 242 0
+ 276 0002 10B5     		push	{r4, lr}
+ 277              		.cfi_def_cfa_offset 8
+ 278              		.cfi_offset 4, -8
+ 279              		.cfi_offset 14, -4
+ 280              		.loc 1 248 0
+ 281 0004 5B6B     		ldr	r3, [r3, #52]
+ 282              	.LBB22:
+ 283              	.LBB23:
+ 151:Code\Common\crypt/aes.c **** }
+ 284              		.loc 1 151 0
+ 285 0006 0748     		ldr	r0, .L24+4
+ 286 0008 191D     		adds	r1, r3, #4
+ 287              	.LVL18:
+ 288              	.L20:
+ 289              	.LBE23:
+ 290              	.LBE22:
+ 242:Code\Common\crypt/aes.c ****   uint8_t i, j;
+ 291              		.loc 1 242 0
+ 292 000a 0022     		movs	r2, #0
+ 293              	.LVL19:
+ 294              	.L21:
+ 295              	.LBB25:
+ 296              	.LBB24:
+ 151:Code\Common\crypt/aes.c **** }
+ 297              		.loc 1 151 0 discriminator 3
+ 298 000c 9C5C     		ldrb	r4, [r3, r2]
+ 299              	.LBE24:
+ 300              	.LBE25:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 11
+
+
+ 301              		.loc 1 248 0 discriminator 3
+ 302 000e 045D     		ldrb	r4, [r0, r4]
+ 303 0010 9C54     		strb	r4, [r3, r2]
+ 304 0012 0432     		adds	r2, r2, #4
+ 246:Code\Common\crypt/aes.c ****     {
+ 305              		.loc 1 246 0 discriminator 3
+ 306 0014 102A     		cmp	r2, #16
+ 307 0016 F9D1     		bne	.L21
+ 308              	.LVL20:
+ 309 0018 0133     		adds	r3, r3, #1
+ 310              	.LVL21:
+ 244:Code\Common\crypt/aes.c ****   {
+ 311              		.loc 1 244 0 discriminator 2
+ 312 001a 9942     		cmp	r1, r3
+ 313 001c F5D1     		bne	.L20
+ 249:Code\Common\crypt/aes.c ****     }
+ 250:Code\Common\crypt/aes.c ****   }
+ 251:Code\Common\crypt/aes.c **** }
+ 314              		.loc 1 251 0
+ 315              		@ sp needed
+ 316 001e 10BD     		pop	{r4, pc}
+ 317              	.L25:
+ 318              		.align	2
+ 319              	.L24:
+ 320 0020 80000000 		.word	.LANCHOR3
+ 321 0024 00000000 		.word	.LANCHOR1
+ 322              		.cfi_endproc
+ 323              	.LFE67:
+ 324              		.size	SubBytes, .-SubBytes
+ 325              		.section	.text.ShiftRows,"ax",%progbits
+ 326              		.align	1
+ 327              		.code	16
+ 328              		.thumb_func
+ 329              		.type	ShiftRows, %function
+ 330              	ShiftRows:
+ 331              	.LFB68:
+ 252:Code\Common\crypt/aes.c **** 
+ 253:Code\Common\crypt/aes.c **** // The ShiftRows() function shifts the rows in the state to the left.
+ 254:Code\Common\crypt/aes.c **** // Each row is shifted with different offset.
+ 255:Code\Common\crypt/aes.c **** // Offset = Row number. So the first row is not shifted.
+ 256:Code\Common\crypt/aes.c **** static void ShiftRows(void)
+ 257:Code\Common\crypt/aes.c **** {
+ 332              		.loc 1 257 0
+ 333              		.cfi_startproc
+ 334              		@ args = 0, pretend = 0, frame = 0
+ 335              		@ frame_needed = 0, uses_anonymous_args = 0
+ 336              		@ link register save eliminated.
+ 258:Code\Common\crypt/aes.c ****   uint8_t temp;
+ 259:Code\Common\crypt/aes.c **** 
+ 260:Code\Common\crypt/aes.c ****   // Rotate first row 1 columns to left  
+ 261:Code\Common\crypt/aes.c ****   temp           = (*state)[0][1];
+ 337              		.loc 1 261 0
+ 338 0000 0D4B     		ldr	r3, .L27
+ 262:Code\Common\crypt/aes.c ****   (*state)[0][1] = (*state)[1][1];
+ 263:Code\Common\crypt/aes.c ****   (*state)[1][1] = (*state)[2][1];
+ 264:Code\Common\crypt/aes.c ****   (*state)[2][1] = (*state)[3][1];
+ 265:Code\Common\crypt/aes.c ****   (*state)[3][1] = temp;
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 12
+
+
+ 266:Code\Common\crypt/aes.c **** 
+ 267:Code\Common\crypt/aes.c ****   // Rotate second row 2 columns to left  
+ 268:Code\Common\crypt/aes.c ****   temp           = (*state)[0][2];
+ 269:Code\Common\crypt/aes.c ****   (*state)[0][2] = (*state)[2][2];
+ 270:Code\Common\crypt/aes.c ****   (*state)[2][2] = temp;
+ 271:Code\Common\crypt/aes.c **** 
+ 272:Code\Common\crypt/aes.c ****   temp       = (*state)[1][2];
+ 273:Code\Common\crypt/aes.c ****   (*state)[1][2] = (*state)[3][2];
+ 274:Code\Common\crypt/aes.c ****   (*state)[3][2] = temp;
+ 275:Code\Common\crypt/aes.c **** 
+ 276:Code\Common\crypt/aes.c ****   // Rotate third row 3 columns to left
+ 277:Code\Common\crypt/aes.c ****   temp       = (*state)[0][3];
+ 278:Code\Common\crypt/aes.c ****   (*state)[0][3] = (*state)[3][3];
+ 279:Code\Common\crypt/aes.c ****   (*state)[3][3] = (*state)[2][3];
+ 280:Code\Common\crypt/aes.c ****   (*state)[2][3] = (*state)[1][3];
+ 281:Code\Common\crypt/aes.c ****   (*state)[1][3] = temp;
+ 282:Code\Common\crypt/aes.c **** }
+ 339              		.loc 1 282 0
+ 340              		@ sp needed
+ 261:Code\Common\crypt/aes.c ****   (*state)[0][1] = (*state)[1][1];
+ 341              		.loc 1 261 0
+ 342 0002 5B6B     		ldr	r3, [r3, #52]
+ 262:Code\Common\crypt/aes.c ****   (*state)[0][1] = (*state)[1][1];
+ 343              		.loc 1 262 0
+ 344 0004 5979     		ldrb	r1, [r3, #5]
+ 261:Code\Common\crypt/aes.c ****   (*state)[0][1] = (*state)[1][1];
+ 345              		.loc 1 261 0
+ 346 0006 5A78     		ldrb	r2, [r3, #1]
+ 347              	.LVL22:
+ 262:Code\Common\crypt/aes.c ****   (*state)[0][1] = (*state)[1][1];
+ 348              		.loc 1 262 0
+ 349 0008 5970     		strb	r1, [r3, #1]
+ 263:Code\Common\crypt/aes.c ****   (*state)[2][1] = (*state)[3][1];
+ 350              		.loc 1 263 0
+ 351 000a 597A     		ldrb	r1, [r3, #9]
+ 352 000c 5971     		strb	r1, [r3, #5]
+ 264:Code\Common\crypt/aes.c ****   (*state)[3][1] = temp;
+ 353              		.loc 1 264 0
+ 354 000e 597B     		ldrb	r1, [r3, #13]
+ 265:Code\Common\crypt/aes.c **** 
+ 355              		.loc 1 265 0
+ 356 0010 5A73     		strb	r2, [r3, #13]
+ 264:Code\Common\crypt/aes.c ****   (*state)[3][1] = temp;
+ 357              		.loc 1 264 0
+ 358 0012 5972     		strb	r1, [r3, #9]
+ 269:Code\Common\crypt/aes.c ****   (*state)[2][2] = temp;
+ 359              		.loc 1 269 0
+ 360 0014 997A     		ldrb	r1, [r3, #10]
+ 268:Code\Common\crypt/aes.c ****   (*state)[0][2] = (*state)[2][2];
+ 361              		.loc 1 268 0
+ 362 0016 9A78     		ldrb	r2, [r3, #2]
+ 363              	.LVL23:
+ 269:Code\Common\crypt/aes.c ****   (*state)[2][2] = temp;
+ 364              		.loc 1 269 0
+ 365 0018 9970     		strb	r1, [r3, #2]
+ 273:Code\Common\crypt/aes.c ****   (*state)[3][2] = temp;
+ 366              		.loc 1 273 0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 13
+
+
+ 367 001a 997B     		ldrb	r1, [r3, #14]
+ 270:Code\Common\crypt/aes.c **** 
+ 368              		.loc 1 270 0
+ 369 001c 9A72     		strb	r2, [r3, #10]
+ 272:Code\Common\crypt/aes.c ****   (*state)[1][2] = (*state)[3][2];
+ 370              		.loc 1 272 0
+ 371 001e 9A79     		ldrb	r2, [r3, #6]
+ 372              	.LVL24:
+ 273:Code\Common\crypt/aes.c ****   (*state)[3][2] = temp;
+ 373              		.loc 1 273 0
+ 374 0020 9971     		strb	r1, [r3, #6]
+ 278:Code\Common\crypt/aes.c ****   (*state)[3][3] = (*state)[2][3];
+ 375              		.loc 1 278 0
+ 376 0022 D97B     		ldrb	r1, [r3, #15]
+ 274:Code\Common\crypt/aes.c **** 
+ 377              		.loc 1 274 0
+ 378 0024 9A73     		strb	r2, [r3, #14]
+ 277:Code\Common\crypt/aes.c ****   (*state)[0][3] = (*state)[3][3];
+ 379              		.loc 1 277 0
+ 380 0026 DA78     		ldrb	r2, [r3, #3]
+ 381              	.LVL25:
+ 278:Code\Common\crypt/aes.c ****   (*state)[3][3] = (*state)[2][3];
+ 382              		.loc 1 278 0
+ 383 0028 D970     		strb	r1, [r3, #3]
+ 279:Code\Common\crypt/aes.c ****   (*state)[2][3] = (*state)[1][3];
+ 384              		.loc 1 279 0
+ 385 002a D97A     		ldrb	r1, [r3, #11]
+ 386 002c D973     		strb	r1, [r3, #15]
+ 280:Code\Common\crypt/aes.c ****   (*state)[1][3] = temp;
+ 387              		.loc 1 280 0
+ 388 002e D979     		ldrb	r1, [r3, #7]
+ 281:Code\Common\crypt/aes.c **** }
+ 389              		.loc 1 281 0
+ 390 0030 DA71     		strb	r2, [r3, #7]
+ 280:Code\Common\crypt/aes.c ****   (*state)[1][3] = temp;
+ 391              		.loc 1 280 0
+ 392 0032 D972     		strb	r1, [r3, #11]
+ 393              		.loc 1 282 0
+ 394 0034 7047     		bx	lr
+ 395              	.L28:
+ 396 0036 C046     		.align	2
+ 397              	.L27:
+ 398 0038 80000000 		.word	.LANCHOR3
+ 399              		.cfi_endproc
+ 400              	.LFE68:
+ 401              		.size	ShiftRows, .-ShiftRows
+ 402              		.section	.text.xtime,"ax",%progbits
+ 403              		.align	1
+ 404              		.code	16
+ 405              		.thumb_func
+ 406              		.type	xtime, %function
+ 407              	xtime:
+ 408              	.LFB69:
+ 283:Code\Common\crypt/aes.c **** 
+ 284:Code\Common\crypt/aes.c **** static uint8_t xtime(uint8_t x)
+ 285:Code\Common\crypt/aes.c **** {
+ 409              		.loc 1 285 0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 14
+
+
+ 410              		.cfi_startproc
+ 411              		@ args = 0, pretend = 0, frame = 0
+ 412              		@ frame_needed = 0, uses_anonymous_args = 0
+ 413              		@ link register save eliminated.
+ 414              	.LVL26:
+ 286:Code\Common\crypt/aes.c ****   return ((x<<1) ^ (((x>>7) & 1) * 0x1b));
+ 415              		.loc 1 286 0
+ 416 0000 1B23     		movs	r3, #27
+ 417 0002 C209     		lsrs	r2, r0, #7
+ 418 0004 5343     		muls	r3, r2
+ 419 0006 4000     		lsls	r0, r0, #1
+ 420              	.LVL27:
+ 421 0008 5840     		eors	r0, r3
+ 422 000a C0B2     		uxtb	r0, r0
+ 287:Code\Common\crypt/aes.c **** }
+ 423              		.loc 1 287 0
+ 424              		@ sp needed
+ 425 000c 7047     		bx	lr
+ 426              		.cfi_endproc
+ 427              	.LFE69:
+ 428              		.size	xtime, .-xtime
+ 429              		.section	.text.InvSubBytes,"ax",%progbits
+ 430              		.align	1
+ 431              		.code	16
+ 432              		.thumb_func
+ 433              		.type	InvSubBytes, %function
+ 434              	InvSubBytes:
+ 435              	.LFB72:
+ 288:Code\Common\crypt/aes.c **** 
+ 289:Code\Common\crypt/aes.c **** // MixColumns function mixes the columns of the state matrix
+ 290:Code\Common\crypt/aes.c **** static void MixColumns(void)
+ 291:Code\Common\crypt/aes.c **** {
+ 292:Code\Common\crypt/aes.c ****   uint8_t i;
+ 293:Code\Common\crypt/aes.c ****   uint8_t Tmp,Tm,t;
+ 294:Code\Common\crypt/aes.c ****   for(i = 0; i < 4; ++i)
+ 295:Code\Common\crypt/aes.c ****   {  
+ 296:Code\Common\crypt/aes.c ****     t   = (*state)[i][0];
+ 297:Code\Common\crypt/aes.c ****     Tmp = (*state)[i][0] ^ (*state)[i][1] ^ (*state)[i][2] ^ (*state)[i][3] ;
+ 298:Code\Common\crypt/aes.c ****     Tm  = (*state)[i][0] ^ (*state)[i][1] ; Tm = xtime(Tm);  (*state)[i][0] ^= Tm ^ Tmp ;
+ 299:Code\Common\crypt/aes.c ****     Tm  = (*state)[i][1] ^ (*state)[i][2] ; Tm = xtime(Tm);  (*state)[i][1] ^= Tm ^ Tmp ;
+ 300:Code\Common\crypt/aes.c ****     Tm  = (*state)[i][2] ^ (*state)[i][3] ; Tm = xtime(Tm);  (*state)[i][2] ^= Tm ^ Tmp ;
+ 301:Code\Common\crypt/aes.c ****     Tm  = (*state)[i][3] ^ t ;        Tm = xtime(Tm);  (*state)[i][3] ^= Tm ^ Tmp ;
+ 302:Code\Common\crypt/aes.c ****   }
+ 303:Code\Common\crypt/aes.c **** }
+ 304:Code\Common\crypt/aes.c **** 
+ 305:Code\Common\crypt/aes.c **** // Multiply is used to multiply numbers in the field GF(2^8)
+ 306:Code\Common\crypt/aes.c **** #if MULTIPLY_AS_A_FUNCTION
+ 307:Code\Common\crypt/aes.c **** static uint8_t Multiply(uint8_t x, uint8_t y)
+ 308:Code\Common\crypt/aes.c **** {
+ 309:Code\Common\crypt/aes.c ****   return (((y & 1) * x) ^
+ 310:Code\Common\crypt/aes.c ****        ((y>>1 & 1) * xtime(x)) ^
+ 311:Code\Common\crypt/aes.c ****        ((y>>2 & 1) * xtime(xtime(x))) ^
+ 312:Code\Common\crypt/aes.c ****        ((y>>3 & 1) * xtime(xtime(xtime(x)))) ^
+ 313:Code\Common\crypt/aes.c ****        ((y>>4 & 1) * xtime(xtime(xtime(xtime(x))))));
+ 314:Code\Common\crypt/aes.c ****   }
+ 315:Code\Common\crypt/aes.c **** #else
+ 316:Code\Common\crypt/aes.c **** #define Multiply(x, y)                                \
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 15
+
+
+ 317:Code\Common\crypt/aes.c ****       (  ((y & 1) * x) ^                              \
+ 318:Code\Common\crypt/aes.c ****       ((y>>1 & 1) * xtime(x)) ^                       \
+ 319:Code\Common\crypt/aes.c ****       ((y>>2 & 1) * xtime(xtime(x))) ^                \
+ 320:Code\Common\crypt/aes.c ****       ((y>>3 & 1) * xtime(xtime(xtime(x)))) ^         \
+ 321:Code\Common\crypt/aes.c ****       ((y>>4 & 1) * xtime(xtime(xtime(xtime(x))))))   \
+ 322:Code\Common\crypt/aes.c **** 
+ 323:Code\Common\crypt/aes.c **** #endif
+ 324:Code\Common\crypt/aes.c **** 
+ 325:Code\Common\crypt/aes.c **** // MixColumns function mixes the columns of the state matrix.
+ 326:Code\Common\crypt/aes.c **** // The method used to multiply may be difficult to understand for the inexperienced.
+ 327:Code\Common\crypt/aes.c **** // Please use the references to gain more information.
+ 328:Code\Common\crypt/aes.c **** static void InvMixColumns(void)
+ 329:Code\Common\crypt/aes.c **** {
+ 330:Code\Common\crypt/aes.c ****   int i;
+ 331:Code\Common\crypt/aes.c ****   uint8_t a,b,c,d;
+ 332:Code\Common\crypt/aes.c ****   for(i=0;i<4;++i)
+ 333:Code\Common\crypt/aes.c ****   { 
+ 334:Code\Common\crypt/aes.c ****     a = (*state)[i][0];
+ 335:Code\Common\crypt/aes.c ****     b = (*state)[i][1];
+ 336:Code\Common\crypt/aes.c ****     c = (*state)[i][2];
+ 337:Code\Common\crypt/aes.c ****     d = (*state)[i][3];
+ 338:Code\Common\crypt/aes.c **** 
+ 339:Code\Common\crypt/aes.c ****     (*state)[i][0] = Multiply(a, 0x0e) ^ Multiply(b, 0x0b) ^ Multiply(c, 0x0d) ^ Multiply(d, 0x09);
+ 340:Code\Common\crypt/aes.c ****     (*state)[i][1] = Multiply(a, 0x09) ^ Multiply(b, 0x0e) ^ Multiply(c, 0x0b) ^ Multiply(d, 0x0d);
+ 341:Code\Common\crypt/aes.c ****     (*state)[i][2] = Multiply(a, 0x0d) ^ Multiply(b, 0x09) ^ Multiply(c, 0x0e) ^ Multiply(d, 0x0b);
+ 342:Code\Common\crypt/aes.c ****     (*state)[i][3] = Multiply(a, 0x0b) ^ Multiply(b, 0x0d) ^ Multiply(c, 0x09) ^ Multiply(d, 0x0e);
+ 343:Code\Common\crypt/aes.c ****   }
+ 344:Code\Common\crypt/aes.c **** }
+ 345:Code\Common\crypt/aes.c **** 
+ 346:Code\Common\crypt/aes.c **** 
+ 347:Code\Common\crypt/aes.c **** // The SubBytes Function Substitutes the values in the
+ 348:Code\Common\crypt/aes.c **** // state matrix with values in an S-box.
+ 349:Code\Common\crypt/aes.c **** static void InvSubBytes(void)
+ 350:Code\Common\crypt/aes.c **** {
+ 436              		.loc 1 350 0
+ 437              		.cfi_startproc
+ 438              		@ args = 0, pretend = 0, frame = 0
+ 439              		@ frame_needed = 0, uses_anonymous_args = 0
+ 440              	.LVL28:
+ 351:Code\Common\crypt/aes.c ****   uint8_t i,j;
+ 352:Code\Common\crypt/aes.c ****   for(i=0;i<4;++i)
+ 353:Code\Common\crypt/aes.c ****   {
+ 354:Code\Common\crypt/aes.c ****     for(j=0;j<4;++j)
+ 355:Code\Common\crypt/aes.c ****     {
+ 356:Code\Common\crypt/aes.c ****       (*state)[j][i] = getSBoxInvert((*state)[j][i]);
+ 441              		.loc 1 356 0
+ 442 0000 084B     		ldr	r3, .L35
+ 350:Code\Common\crypt/aes.c ****   uint8_t i,j;
+ 443              		.loc 1 350 0
+ 444 0002 10B5     		push	{r4, lr}
+ 445              		.cfi_def_cfa_offset 8
+ 446              		.cfi_offset 4, -8
+ 447              		.cfi_offset 14, -4
+ 448              		.loc 1 356 0
+ 449 0004 5B6B     		ldr	r3, [r3, #52]
+ 450              	.LBB26:
+ 451              	.LBB27:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 16
+
+
+ 156:Code\Common\crypt/aes.c **** }
+ 452              		.loc 1 156 0
+ 453 0006 084C     		ldr	r4, .L35+4
+ 454 0008 181D     		adds	r0, r3, #4
+ 455              	.LVL29:
+ 456              	.L31:
+ 457              	.LBE27:
+ 458              	.LBE26:
+ 350:Code\Common\crypt/aes.c ****   uint8_t i,j;
+ 459              		.loc 1 350 0
+ 460 000a 0022     		movs	r2, #0
+ 461              	.LVL30:
+ 462              	.L32:
+ 463              	.LBB29:
+ 464              	.LBB28:
+ 156:Code\Common\crypt/aes.c **** }
+ 465              		.loc 1 156 0 discriminator 3
+ 466 000c 995C     		ldrb	r1, [r3, r2]
+ 467 000e 6118     		adds	r1, r4, r1
+ 468              	.LBE28:
+ 469              	.LBE29:
+ 470              		.loc 1 356 0 discriminator 3
+ 471 0010 097C     		ldrb	r1, [r1, #16]
+ 472 0012 9954     		strb	r1, [r3, r2]
+ 473 0014 0432     		adds	r2, r2, #4
+ 354:Code\Common\crypt/aes.c ****     {
+ 474              		.loc 1 354 0 discriminator 3
+ 475 0016 102A     		cmp	r2, #16
+ 476 0018 F8D1     		bne	.L32
+ 477              	.LVL31:
+ 478 001a 0133     		adds	r3, r3, #1
+ 479              	.LVL32:
+ 352:Code\Common\crypt/aes.c ****   {
+ 480              		.loc 1 352 0 discriminator 2
+ 481 001c 9842     		cmp	r0, r3
+ 482 001e F4D1     		bne	.L31
+ 357:Code\Common\crypt/aes.c ****     }
+ 358:Code\Common\crypt/aes.c ****   }
+ 359:Code\Common\crypt/aes.c **** }
+ 483              		.loc 1 359 0
+ 484              		@ sp needed
+ 485 0020 10BD     		pop	{r4, pc}
+ 486              	.L36:
+ 487 0022 C046     		.align	2
+ 488              	.L35:
+ 489 0024 80000000 		.word	.LANCHOR3
+ 490 0028 00010000 		.word	.LANCHOR2
+ 491              		.cfi_endproc
+ 492              	.LFE72:
+ 493              		.size	InvSubBytes, .-InvSubBytes
+ 494              		.section	.text.InvShiftRows,"ax",%progbits
+ 495              		.align	1
+ 496              		.code	16
+ 497              		.thumb_func
+ 498              		.type	InvShiftRows, %function
+ 499              	InvShiftRows:
+ 500              	.LFB73:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 17
+
+
+ 360:Code\Common\crypt/aes.c **** 
+ 361:Code\Common\crypt/aes.c **** static void InvShiftRows(void)
+ 362:Code\Common\crypt/aes.c **** {
+ 501              		.loc 1 362 0
+ 502              		.cfi_startproc
+ 503              		@ args = 0, pretend = 0, frame = 0
+ 504              		@ frame_needed = 0, uses_anonymous_args = 0
+ 505              		@ link register save eliminated.
+ 363:Code\Common\crypt/aes.c ****   uint8_t temp;
+ 364:Code\Common\crypt/aes.c **** 
+ 365:Code\Common\crypt/aes.c ****   // Rotate first row 1 columns to right  
+ 366:Code\Common\crypt/aes.c ****   temp=(*state)[3][1];
+ 506              		.loc 1 366 0
+ 507 0000 0D4B     		ldr	r3, .L38
+ 367:Code\Common\crypt/aes.c ****   (*state)[3][1]=(*state)[2][1];
+ 368:Code\Common\crypt/aes.c ****   (*state)[2][1]=(*state)[1][1];
+ 369:Code\Common\crypt/aes.c ****   (*state)[1][1]=(*state)[0][1];
+ 370:Code\Common\crypt/aes.c ****   (*state)[0][1]=temp;
+ 371:Code\Common\crypt/aes.c **** 
+ 372:Code\Common\crypt/aes.c ****   // Rotate second row 2 columns to right 
+ 373:Code\Common\crypt/aes.c ****   temp=(*state)[0][2];
+ 374:Code\Common\crypt/aes.c ****   (*state)[0][2]=(*state)[2][2];
+ 375:Code\Common\crypt/aes.c ****   (*state)[2][2]=temp;
+ 376:Code\Common\crypt/aes.c **** 
+ 377:Code\Common\crypt/aes.c ****   temp=(*state)[1][2];
+ 378:Code\Common\crypt/aes.c ****   (*state)[1][2]=(*state)[3][2];
+ 379:Code\Common\crypt/aes.c ****   (*state)[3][2]=temp;
+ 380:Code\Common\crypt/aes.c **** 
+ 381:Code\Common\crypt/aes.c ****   // Rotate third row 3 columns to right
+ 382:Code\Common\crypt/aes.c ****   temp=(*state)[0][3];
+ 383:Code\Common\crypt/aes.c ****   (*state)[0][3]=(*state)[1][3];
+ 384:Code\Common\crypt/aes.c ****   (*state)[1][3]=(*state)[2][3];
+ 385:Code\Common\crypt/aes.c ****   (*state)[2][3]=(*state)[3][3];
+ 386:Code\Common\crypt/aes.c ****   (*state)[3][3]=temp;
+ 387:Code\Common\crypt/aes.c **** }
+ 508              		.loc 1 387 0
+ 509              		@ sp needed
+ 366:Code\Common\crypt/aes.c ****   (*state)[3][1]=(*state)[2][1];
+ 510              		.loc 1 366 0
+ 511 0002 5B6B     		ldr	r3, [r3, #52]
+ 367:Code\Common\crypt/aes.c ****   (*state)[3][1]=(*state)[2][1];
+ 512              		.loc 1 367 0
+ 513 0004 597A     		ldrb	r1, [r3, #9]
+ 366:Code\Common\crypt/aes.c ****   (*state)[3][1]=(*state)[2][1];
+ 514              		.loc 1 366 0
+ 515 0006 5A7B     		ldrb	r2, [r3, #13]
+ 516              	.LVL33:
+ 367:Code\Common\crypt/aes.c ****   (*state)[3][1]=(*state)[2][1];
+ 517              		.loc 1 367 0
+ 518 0008 5973     		strb	r1, [r3, #13]
+ 368:Code\Common\crypt/aes.c ****   (*state)[1][1]=(*state)[0][1];
+ 519              		.loc 1 368 0
+ 520 000a 5979     		ldrb	r1, [r3, #5]
+ 521 000c 5972     		strb	r1, [r3, #9]
+ 369:Code\Common\crypt/aes.c ****   (*state)[0][1]=temp;
+ 522              		.loc 1 369 0
+ 523 000e 5978     		ldrb	r1, [r3, #1]
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 18
+
+
+ 370:Code\Common\crypt/aes.c **** 
+ 524              		.loc 1 370 0
+ 525 0010 5A70     		strb	r2, [r3, #1]
+ 369:Code\Common\crypt/aes.c ****   (*state)[0][1]=temp;
+ 526              		.loc 1 369 0
+ 527 0012 5971     		strb	r1, [r3, #5]
+ 374:Code\Common\crypt/aes.c ****   (*state)[2][2]=temp;
+ 528              		.loc 1 374 0
+ 529 0014 997A     		ldrb	r1, [r3, #10]
+ 373:Code\Common\crypt/aes.c ****   (*state)[0][2]=(*state)[2][2];
+ 530              		.loc 1 373 0
+ 531 0016 9A78     		ldrb	r2, [r3, #2]
+ 532              	.LVL34:
+ 374:Code\Common\crypt/aes.c ****   (*state)[2][2]=temp;
+ 533              		.loc 1 374 0
+ 534 0018 9970     		strb	r1, [r3, #2]
+ 378:Code\Common\crypt/aes.c ****   (*state)[3][2]=temp;
+ 535              		.loc 1 378 0
+ 536 001a 997B     		ldrb	r1, [r3, #14]
+ 375:Code\Common\crypt/aes.c **** 
+ 537              		.loc 1 375 0
+ 538 001c 9A72     		strb	r2, [r3, #10]
+ 377:Code\Common\crypt/aes.c ****   (*state)[1][2]=(*state)[3][2];
+ 539              		.loc 1 377 0
+ 540 001e 9A79     		ldrb	r2, [r3, #6]
+ 541              	.LVL35:
+ 378:Code\Common\crypt/aes.c ****   (*state)[3][2]=temp;
+ 542              		.loc 1 378 0
+ 543 0020 9971     		strb	r1, [r3, #6]
+ 383:Code\Common\crypt/aes.c ****   (*state)[1][3]=(*state)[2][3];
+ 544              		.loc 1 383 0
+ 545 0022 D979     		ldrb	r1, [r3, #7]
+ 379:Code\Common\crypt/aes.c **** 
+ 546              		.loc 1 379 0
+ 547 0024 9A73     		strb	r2, [r3, #14]
+ 382:Code\Common\crypt/aes.c ****   (*state)[0][3]=(*state)[1][3];
+ 548              		.loc 1 382 0
+ 549 0026 DA78     		ldrb	r2, [r3, #3]
+ 550              	.LVL36:
+ 383:Code\Common\crypt/aes.c ****   (*state)[1][3]=(*state)[2][3];
+ 551              		.loc 1 383 0
+ 552 0028 D970     		strb	r1, [r3, #3]
+ 384:Code\Common\crypt/aes.c ****   (*state)[2][3]=(*state)[3][3];
+ 553              		.loc 1 384 0
+ 554 002a D97A     		ldrb	r1, [r3, #11]
+ 555 002c D971     		strb	r1, [r3, #7]
+ 385:Code\Common\crypt/aes.c ****   (*state)[3][3]=temp;
+ 556              		.loc 1 385 0
+ 557 002e D97B     		ldrb	r1, [r3, #15]
+ 386:Code\Common\crypt/aes.c **** }
+ 558              		.loc 1 386 0
+ 559 0030 DA73     		strb	r2, [r3, #15]
+ 385:Code\Common\crypt/aes.c ****   (*state)[3][3]=temp;
+ 560              		.loc 1 385 0
+ 561 0032 D972     		strb	r1, [r3, #11]
+ 562              		.loc 1 387 0
+ 563 0034 7047     		bx	lr
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 19
+
+
+ 564              	.L39:
+ 565 0036 C046     		.align	2
+ 566              	.L38:
+ 567 0038 80000000 		.word	.LANCHOR3
+ 568              		.cfi_endproc
+ 569              	.LFE73:
+ 570              		.size	InvShiftRows, .-InvShiftRows
+ 571              		.section	.text.AES128_ECB_encrypt,"ax",%progbits
+ 572              		.align	1
+ 573              		.global	AES128_ECB_encrypt
+ 574              		.code	16
+ 575              		.thumb_func
+ 576              		.type	AES128_ECB_encrypt, %function
+ 577              	AES128_ECB_encrypt:
+ 578              	.LFB77:
+ 388:Code\Common\crypt/aes.c **** 
+ 389:Code\Common\crypt/aes.c **** 
+ 390:Code\Common\crypt/aes.c **** // Cipher is the main function that encrypts the PlainText.
+ 391:Code\Common\crypt/aes.c **** static void Cipher(void)
+ 392:Code\Common\crypt/aes.c **** {
+ 393:Code\Common\crypt/aes.c ****   uint8_t round = 0;
+ 394:Code\Common\crypt/aes.c **** 
+ 395:Code\Common\crypt/aes.c ****   // Add the First round key to the state before starting the rounds.
+ 396:Code\Common\crypt/aes.c ****   AddRoundKey(0); 
+ 397:Code\Common\crypt/aes.c ****   
+ 398:Code\Common\crypt/aes.c ****   // There will be Nr rounds.
+ 399:Code\Common\crypt/aes.c ****   // The first Nr-1 rounds are identical.
+ 400:Code\Common\crypt/aes.c ****   // These Nr-1 rounds are executed in the loop below.
+ 401:Code\Common\crypt/aes.c ****   for(round = 1; round < Nr; ++round)
+ 402:Code\Common\crypt/aes.c ****   {
+ 403:Code\Common\crypt/aes.c ****     SubBytes();
+ 404:Code\Common\crypt/aes.c ****     ShiftRows();
+ 405:Code\Common\crypt/aes.c ****     MixColumns();
+ 406:Code\Common\crypt/aes.c ****     AddRoundKey(round);
+ 407:Code\Common\crypt/aes.c ****   }
+ 408:Code\Common\crypt/aes.c ****   
+ 409:Code\Common\crypt/aes.c ****   // The last round is given below.
+ 410:Code\Common\crypt/aes.c ****   // The MixColumns function is not here in the last round.
+ 411:Code\Common\crypt/aes.c ****   SubBytes();
+ 412:Code\Common\crypt/aes.c ****   ShiftRows();
+ 413:Code\Common\crypt/aes.c ****   AddRoundKey(Nr);
+ 414:Code\Common\crypt/aes.c **** }
+ 415:Code\Common\crypt/aes.c **** 
+ 416:Code\Common\crypt/aes.c **** static void InvCipher(void)
+ 417:Code\Common\crypt/aes.c **** {
+ 418:Code\Common\crypt/aes.c ****   uint8_t round=0;
+ 419:Code\Common\crypt/aes.c **** 
+ 420:Code\Common\crypt/aes.c ****   // Add the First round key to the state before starting the rounds.
+ 421:Code\Common\crypt/aes.c ****   AddRoundKey(Nr); 
+ 422:Code\Common\crypt/aes.c **** 
+ 423:Code\Common\crypt/aes.c ****   // There will be Nr rounds.
+ 424:Code\Common\crypt/aes.c ****   // The first Nr-1 rounds are identical.
+ 425:Code\Common\crypt/aes.c ****   // These Nr-1 rounds are executed in the loop below.
+ 426:Code\Common\crypt/aes.c ****   for(round=Nr-1;round>0;round--)
+ 427:Code\Common\crypt/aes.c ****   {
+ 428:Code\Common\crypt/aes.c ****     InvShiftRows();
+ 429:Code\Common\crypt/aes.c ****     InvSubBytes();
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 20
+
+
+ 430:Code\Common\crypt/aes.c ****     AddRoundKey(round);
+ 431:Code\Common\crypt/aes.c ****     InvMixColumns();
+ 432:Code\Common\crypt/aes.c ****   }
+ 433:Code\Common\crypt/aes.c ****   
+ 434:Code\Common\crypt/aes.c ****   // The last round is given below.
+ 435:Code\Common\crypt/aes.c ****   // The MixColumns function is not here in the last round.
+ 436:Code\Common\crypt/aes.c ****   InvShiftRows();
+ 437:Code\Common\crypt/aes.c ****   InvSubBytes();
+ 438:Code\Common\crypt/aes.c ****   AddRoundKey(0);
+ 439:Code\Common\crypt/aes.c **** }
+ 440:Code\Common\crypt/aes.c **** 
+ 441:Code\Common\crypt/aes.c **** static void BlockCopy(uint8_t* output, uint8_t* input)
+ 442:Code\Common\crypt/aes.c **** {
+ 443:Code\Common\crypt/aes.c ****   uint8_t i;
+ 444:Code\Common\crypt/aes.c ****   for (i = 0; i < KEYLEN; ++i)
+ 445:Code\Common\crypt/aes.c ****   {
+ 446:Code\Common\crypt/aes.c ****     output[i] = input[i];
+ 447:Code\Common\crypt/aes.c ****   }
+ 448:Code\Common\crypt/aes.c **** }
+ 449:Code\Common\crypt/aes.c **** 
+ 450:Code\Common\crypt/aes.c **** /*****************************************************************************/
+ 451:Code\Common\crypt/aes.c **** /* Public functions:                                                         */
+ 452:Code\Common\crypt/aes.c **** /*****************************************************************************/
+ 453:Code\Common\crypt/aes.c **** void AES128_ECB_encrypt(uint8_t* input, const uint8_t* key)
+ 454:Code\Common\crypt/aes.c **** {
+ 579              		.loc 1 454 0
+ 580              		.cfi_startproc
+ 581              		@ args = 0, pretend = 0, frame = 24
+ 582              		@ frame_needed = 0, uses_anonymous_args = 0
+ 583              	.LVL37:
+ 584 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 585              		.cfi_def_cfa_offset 20
+ 586              		.cfi_offset 4, -20
+ 587              		.cfi_offset 5, -16
+ 588              		.cfi_offset 6, -12
+ 589              		.cfi_offset 7, -8
+ 590              		.cfi_offset 14, -4
+ 455:Code\Common\crypt/aes.c ****   // Copy input to output, and work in-memory on output
+ 456:Code\Common\crypt/aes.c **** //BlockCopy(output, input);
+ 457:Code\Common\crypt/aes.c ****   state = (state_t*)input;
+ 591              		.loc 1 457 0
+ 592 0002 2B4B     		ldr	r3, .L45
+ 454:Code\Common\crypt/aes.c ****   // Copy input to output, and work in-memory on output
+ 593              		.loc 1 454 0
+ 594 0004 87B0     		sub	sp, sp, #28
+ 595              		.cfi_def_cfa_offset 48
+ 596              		.loc 1 457 0
+ 597 0006 5863     		str	r0, [r3, #52]
+ 458:Code\Common\crypt/aes.c **** 
+ 459:Code\Common\crypt/aes.c ****   Key = key;
+ 598              		.loc 1 459 0
+ 599 0008 2A4B     		ldr	r3, .L45+4
+ 454:Code\Common\crypt/aes.c ****   // Copy input to output, and work in-memory on output
+ 600              		.loc 1 454 0
+ 601 000a 0700     		movs	r7, r0
+ 602              		.loc 1 459 0
+ 603 000c 1960     		str	r1, [r3]
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 21
+
+
+ 460:Code\Common\crypt/aes.c ****   KeyExpansion();
+ 604              		.loc 1 460 0
+ 605 000e FFF7FEFF 		bl	KeyExpansion
+ 606              	.LVL38:
+ 607              	.LBB34:
+ 608              	.LBB35:
+ 396:Code\Common\crypt/aes.c ****   
+ 609              		.loc 1 396 0
+ 610 0012 0020     		movs	r0, #0
+ 611 0014 FFF7FEFF 		bl	AddRoundKey
+ 612              	.LVL39:
+ 401:Code\Common\crypt/aes.c ****   {
+ 613              		.loc 1 401 0
+ 614 0018 0125     		movs	r5, #1
+ 615              	.LVL40:
+ 616              	.L42:
+ 403:Code\Common\crypt/aes.c ****     ShiftRows();
+ 617              		.loc 1 403 0
+ 618 001a FFF7FEFF 		bl	SubBytes
+ 619              	.LVL41:
+ 404:Code\Common\crypt/aes.c ****     MixColumns();
+ 620              		.loc 1 404 0
+ 621 001e FFF7FEFF 		bl	ShiftRows
+ 622              	.LVL42:
+ 623 0022 3B00     		movs	r3, r7
+ 624 0024 3C00     		movs	r4, r7
+ 625 0026 1033     		adds	r3, r3, #16
+ 626 0028 0593     		str	r3, [sp, #20]
+ 627              	.LVL43:
+ 628              	.L41:
+ 629              	.LBB36:
+ 630              	.LBB37:
+ 296:Code\Common\crypt/aes.c ****     Tmp = (*state)[i][0] ^ (*state)[i][1] ^ (*state)[i][2] ^ (*state)[i][3] ;
+ 631              		.loc 1 296 0
+ 632 002a 2378     		ldrb	r3, [r4]
+ 633 002c 0093     		str	r3, [sp]
+ 634              	.LVL44:
+ 297:Code\Common\crypt/aes.c ****     Tm  = (*state)[i][0] ^ (*state)[i][1] ; Tm = xtime(Tm);  (*state)[i][0] ^= Tm ^ Tmp ;
+ 635              		.loc 1 297 0
+ 636 002e 0098     		ldr	r0, [sp]
+ 637 0030 6378     		ldrb	r3, [r4, #1]
+ 638 0032 5840     		eors	r0, r3
+ 639 0034 0193     		str	r3, [sp, #4]
+ 640 0036 A378     		ldrb	r3, [r4, #2]
+ 641 0038 0293     		str	r3, [sp, #8]
+ 642 003a E378     		ldrb	r3, [r4, #3]
+ 643 003c 0393     		str	r3, [sp, #12]
+ 644 003e 039A     		ldr	r2, [sp, #12]
+ 645 0040 029B     		ldr	r3, [sp, #8]
+ 646 0042 5340     		eors	r3, r2
+ 647 0044 1E00     		movs	r6, r3
+ 648 0046 0493     		str	r3, [sp, #16]
+ 649 0048 4640     		eors	r6, r0
+ 650              	.LVL45:
+ 298:Code\Common\crypt/aes.c ****     Tm  = (*state)[i][1] ^ (*state)[i][2] ; Tm = xtime(Tm);  (*state)[i][1] ^= Tm ^ Tmp ;
+ 651              		.loc 1 298 0
+ 652 004a FFF7FEFF 		bl	xtime
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 22
+
+
+ 653              	.LVL46:
+ 654 004e 009B     		ldr	r3, [sp]
+ 655 0050 5840     		eors	r0, r3
+ 656              	.LVL47:
+ 657 0052 7040     		eors	r0, r6
+ 658 0054 2070     		strb	r0, [r4]
+ 299:Code\Common\crypt/aes.c ****     Tm  = (*state)[i][2] ^ (*state)[i][3] ; Tm = xtime(Tm);  (*state)[i][2] ^= Tm ^ Tmp ;
+ 659              		.loc 1 299 0
+ 660 0056 029B     		ldr	r3, [sp, #8]
+ 661 0058 0198     		ldr	r0, [sp, #4]
+ 662 005a 5840     		eors	r0, r3
+ 663              	.LVL48:
+ 664 005c FFF7FEFF 		bl	xtime
+ 665              	.LVL49:
+ 666 0060 019B     		ldr	r3, [sp, #4]
+ 667 0062 5840     		eors	r0, r3
+ 668              	.LVL50:
+ 669 0064 7040     		eors	r0, r6
+ 670 0066 6070     		strb	r0, [r4, #1]
+ 671              	.LVL51:
+ 300:Code\Common\crypt/aes.c ****     Tm  = (*state)[i][3] ^ t ;        Tm = xtime(Tm);  (*state)[i][3] ^= Tm ^ Tmp ;
+ 672              		.loc 1 300 0
+ 673 0068 0498     		ldr	r0, [sp, #16]
+ 674 006a FFF7FEFF 		bl	xtime
+ 675              	.LVL52:
+ 676 006e 029B     		ldr	r3, [sp, #8]
+ 677 0070 5840     		eors	r0, r3
+ 678              	.LVL53:
+ 679 0072 7040     		eors	r0, r6
+ 680 0074 A070     		strb	r0, [r4, #2]
+ 301:Code\Common\crypt/aes.c ****   }
+ 681              		.loc 1 301 0
+ 682 0076 039B     		ldr	r3, [sp, #12]
+ 683 0078 0098     		ldr	r0, [sp]
+ 684 007a 5840     		eors	r0, r3
+ 685              	.LVL54:
+ 686 007c FFF7FEFF 		bl	xtime
+ 687              	.LVL55:
+ 688 0080 039B     		ldr	r3, [sp, #12]
+ 689 0082 5840     		eors	r0, r3
+ 690              	.LVL56:
+ 691 0084 4640     		eors	r6, r0
+ 692              	.LVL57:
+ 294:Code\Common\crypt/aes.c ****   {  
+ 693              		.loc 1 294 0
+ 694 0086 059B     		ldr	r3, [sp, #20]
+ 301:Code\Common\crypt/aes.c ****   }
+ 695              		.loc 1 301 0
+ 696 0088 E670     		strb	r6, [r4, #3]
+ 697 008a 0434     		adds	r4, r4, #4
+ 294:Code\Common\crypt/aes.c ****   {  
+ 698              		.loc 1 294 0
+ 699 008c 9C42     		cmp	r4, r3
+ 700 008e CCD1     		bne	.L41
+ 701              	.LVL58:
+ 702              	.LBE37:
+ 703              	.LBE36:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 23
+
+
+ 406:Code\Common\crypt/aes.c ****   }
+ 704              		.loc 1 406 0
+ 705 0090 2800     		movs	r0, r5
+ 401:Code\Common\crypt/aes.c ****   {
+ 706              		.loc 1 401 0
+ 707 0092 0135     		adds	r5, r5, #1
+ 708              	.LVL59:
+ 709 0094 EDB2     		uxtb	r5, r5
+ 406:Code\Common\crypt/aes.c ****   }
+ 710              		.loc 1 406 0
+ 711 0096 FFF7FEFF 		bl	AddRoundKey
+ 712              	.LVL60:
+ 401:Code\Common\crypt/aes.c ****   {
+ 713              		.loc 1 401 0
+ 714 009a 0A2D     		cmp	r5, #10
+ 715 009c BDD1     		bne	.L42
+ 411:Code\Common\crypt/aes.c ****   ShiftRows();
+ 716              		.loc 1 411 0
+ 717 009e FFF7FEFF 		bl	SubBytes
+ 718              	.LVL61:
+ 412:Code\Common\crypt/aes.c ****   AddRoundKey(Nr);
+ 719              		.loc 1 412 0
+ 720 00a2 FFF7FEFF 		bl	ShiftRows
+ 721              	.LVL62:
+ 413:Code\Common\crypt/aes.c **** }
+ 722              		.loc 1 413 0
+ 723 00a6 2800     		movs	r0, r5
+ 724 00a8 FFF7FEFF 		bl	AddRoundKey
+ 725              	.LVL63:
+ 726              	.LBE35:
+ 727              	.LBE34:
+ 461:Code\Common\crypt/aes.c **** 
+ 462:Code\Common\crypt/aes.c ****   // The next function call encrypts the PlainText with the Key using AES algorithm.
+ 463:Code\Common\crypt/aes.c ****   Cipher();
+ 464:Code\Common\crypt/aes.c **** }
+ 728              		.loc 1 464 0
+ 729 00ac 07B0     		add	sp, sp, #28
+ 730              		@ sp needed
+ 731              	.LVL64:
+ 732 00ae F0BD     		pop	{r4, r5, r6, r7, pc}
+ 733              	.L46:
+ 734              		.align	2
+ 735              	.L45:
+ 736 00b0 80000000 		.word	.LANCHOR3
+ 737 00b4 00000000 		.word	.LANCHOR0
+ 738              		.cfi_endproc
+ 739              	.LFE77:
+ 740              		.size	AES128_ECB_encrypt, .-AES128_ECB_encrypt
+ 741              		.section	.text.AES128_ECB_decrypt,"ax",%progbits
+ 742              		.align	1
+ 743              		.global	AES128_ECB_decrypt
+ 744              		.code	16
+ 745              		.thumb_func
+ 746              		.type	AES128_ECB_decrypt, %function
+ 747              	AES128_ECB_decrypt:
+ 748              	.LFB78:
+ 465:Code\Common\crypt/aes.c **** 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 24
+
+
+ 466:Code\Common\crypt/aes.c **** void AES128_ECB_decrypt(uint8_t* input, const uint8_t* key, uint8_t *output)
+ 467:Code\Common\crypt/aes.c **** {
+ 749              		.loc 1 467 0
+ 750              		.cfi_startproc
+ 751              		@ args = 0, pretend = 0, frame = 64
+ 752              		@ frame_needed = 0, uses_anonymous_args = 0
+ 753              	.LVL65:
+ 754 0000 0023     		movs	r3, #0
+ 755 0002 F0B5     		push	{r4, r5, r6, r7, lr}
+ 756              		.cfi_def_cfa_offset 20
+ 757              		.cfi_offset 4, -20
+ 758              		.cfi_offset 5, -16
+ 759              		.cfi_offset 6, -12
+ 760              		.cfi_offset 7, -8
+ 761              		.cfi_offset 14, -4
+ 762 0004 91B0     		sub	sp, sp, #68
+ 763              		.cfi_def_cfa_offset 88
+ 764              	.LVL66:
+ 765              		.loc 1 467 0
+ 766 0006 0392     		str	r2, [sp, #12]
+ 767              	.LVL67:
+ 768              	.L48:
+ 769              	.LBB44:
+ 770              	.LBB45:
+ 446:Code\Common\crypt/aes.c ****   }
+ 771              		.loc 1 446 0
+ 772 0008 C25C     		ldrb	r2, [r0, r3]
+ 773 000a 039C     		ldr	r4, [sp, #12]
+ 774 000c E254     		strb	r2, [r4, r3]
+ 775              	.LVL68:
+ 776 000e 0133     		adds	r3, r3, #1
+ 777              	.LVL69:
+ 444:Code\Common\crypt/aes.c ****   {
+ 778              		.loc 1 444 0
+ 779 0010 102B     		cmp	r3, #16
+ 780 0012 F9D1     		bne	.L48
+ 781              	.LVL70:
+ 782              	.LBE45:
+ 783              	.LBE44:
+ 468:Code\Common\crypt/aes.c ****   // Copy input to output, and work in-memory on output
+ 469:Code\Common\crypt/aes.c ****   BlockCopy(output, input);
+ 470:Code\Common\crypt/aes.c ****   state = (state_t*)output;
+ 784              		.loc 1 470 0
+ 785 0014 514B     		ldr	r3, .L54
+ 786 0016 5C63     		str	r4, [r3, #52]
+ 471:Code\Common\crypt/aes.c **** 
+ 472:Code\Common\crypt/aes.c ****   // The KeyExpansion routine must be called before encryption.
+ 473:Code\Common\crypt/aes.c ****   Key = key;
+ 787              		.loc 1 473 0
+ 788 0018 514B     		ldr	r3, .L54+4
+ 789              	.LBB46:
+ 790              	.LBB47:
+ 426:Code\Common\crypt/aes.c ****   {
+ 791              		.loc 1 426 0
+ 792 001a 0924     		movs	r4, #9
+ 793              	.LBE47:
+ 794              	.LBE46:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 25
+
+
+ 795              		.loc 1 473 0
+ 796 001c 1960     		str	r1, [r3]
+ 474:Code\Common\crypt/aes.c ****   KeyExpansion();
+ 797              		.loc 1 474 0
+ 798 001e FFF7FEFF 		bl	KeyExpansion
+ 799              	.LVL71:
+ 800              	.LBB51:
+ 801              	.LBB50:
+ 421:Code\Common\crypt/aes.c **** 
+ 802              		.loc 1 421 0
+ 803 0022 0A20     		movs	r0, #10
+ 804 0024 FFF7FEFF 		bl	AddRoundKey
+ 805              	.LVL72:
+ 806              	.L50:
+ 428:Code\Common\crypt/aes.c ****     InvSubBytes();
+ 807              		.loc 1 428 0
+ 808 0028 FFF7FEFF 		bl	InvShiftRows
+ 809              	.LVL73:
+ 429:Code\Common\crypt/aes.c ****     AddRoundKey(round);
+ 810              		.loc 1 429 0
+ 811 002c FFF7FEFF 		bl	InvSubBytes
+ 812              	.LVL74:
+ 430:Code\Common\crypt/aes.c ****     InvMixColumns();
+ 813              		.loc 1 430 0
+ 814 0030 2000     		movs	r0, r4
+ 815 0032 FFF7FEFF 		bl	AddRoundKey
+ 816              	.LVL75:
+ 817 0036 039D     		ldr	r5, [sp, #12]
+ 818 0038 2B00     		movs	r3, r5
+ 819 003a 1033     		adds	r3, r3, #16
+ 820 003c 0F93     		str	r3, [sp, #60]
+ 821              	.LVL76:
+ 822              	.L49:
+ 823              	.LBB48:
+ 824              	.LBB49:
+ 334:Code\Common\crypt/aes.c ****     b = (*state)[i][1];
+ 825              		.loc 1 334 0
+ 826 003e 2B78     		ldrb	r3, [r5]
+ 827 0040 0793     		str	r3, [sp, #28]
+ 828              	.LVL77:
+ 335:Code\Common\crypt/aes.c ****     c = (*state)[i][2];
+ 829              		.loc 1 335 0
+ 830 0042 6B78     		ldrb	r3, [r5, #1]
+ 339:Code\Common\crypt/aes.c ****     (*state)[i][1] = Multiply(a, 0x09) ^ Multiply(b, 0x0e) ^ Multiply(c, 0x0b) ^ Multiply(d, 0x0d);
+ 831              		.loc 1 339 0
+ 832 0044 0798     		ldr	r0, [sp, #28]
+ 335:Code\Common\crypt/aes.c ****     c = (*state)[i][2];
+ 833              		.loc 1 335 0
+ 834 0046 0893     		str	r3, [sp, #32]
+ 835              	.LVL78:
+ 336:Code\Common\crypt/aes.c ****     d = (*state)[i][3];
+ 836              		.loc 1 336 0
+ 837 0048 AB78     		ldrb	r3, [r5, #2]
+ 838 004a 0193     		str	r3, [sp, #4]
+ 839              	.LVL79:
+ 337:Code\Common\crypt/aes.c **** 
+ 840              		.loc 1 337 0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 26
+
+
+ 841 004c EB78     		ldrb	r3, [r5, #3]
+ 842 004e 0293     		str	r3, [sp, #8]
+ 843              	.LVL80:
+ 339:Code\Common\crypt/aes.c ****     (*state)[i][1] = Multiply(a, 0x09) ^ Multiply(b, 0x0e) ^ Multiply(c, 0x0b) ^ Multiply(d, 0x0d);
+ 844              		.loc 1 339 0
+ 845 0050 FFF7FEFF 		bl	xtime
+ 846              	.LVL81:
+ 847 0054 0990     		str	r0, [sp, #36]
+ 848 0056 FFF7FEFF 		bl	xtime
+ 849              	.LVL82:
+ 850 005a 0A90     		str	r0, [sp, #40]
+ 851 005c FFF7FEFF 		bl	xtime
+ 852              	.LVL83:
+ 853 0060 0490     		str	r0, [sp, #16]
+ 854 0062 0898     		ldr	r0, [sp, #32]
+ 855 0064 FFF7FEFF 		bl	xtime
+ 856              	.LVL84:
+ 857 0068 0B90     		str	r0, [sp, #44]
+ 858 006a FFF7FEFF 		bl	xtime
+ 859              	.LVL85:
+ 860 006e 0C90     		str	r0, [sp, #48]
+ 861 0070 FFF7FEFF 		bl	xtime
+ 862              	.LVL86:
+ 863 0074 0590     		str	r0, [sp, #20]
+ 864 0076 0198     		ldr	r0, [sp, #4]
+ 865 0078 FFF7FEFF 		bl	xtime
+ 866              	.LVL87:
+ 867 007c 0700     		movs	r7, r0
+ 868 007e FFF7FEFF 		bl	xtime
+ 869              	.LVL88:
+ 870 0082 0600     		movs	r6, r0
+ 871 0084 FFF7FEFF 		bl	xtime
+ 872              	.LVL89:
+ 873 0088 0690     		str	r0, [sp, #24]
+ 874 008a 0298     		ldr	r0, [sp, #8]
+ 875 008c FFF7FEFF 		bl	xtime
+ 876              	.LVL90:
+ 877 0090 0D90     		str	r0, [sp, #52]
+ 878 0092 FFF7FEFF 		bl	xtime
+ 879              	.LVL91:
+ 880 0096 0E90     		str	r0, [sp, #56]
+ 881 0098 FFF7FEFF 		bl	xtime
+ 882              	.LVL92:
+ 883 009c 0A9A     		ldr	r2, [sp, #40]
+ 884 009e 099B     		ldr	r3, [sp, #36]
+ 885 00a0 5340     		eors	r3, r2
+ 886 00a2 049A     		ldr	r2, [sp, #16]
+ 887 00a4 5340     		eors	r3, r2
+ 888 00a6 0B9A     		ldr	r2, [sp, #44]
+ 889 00a8 5340     		eors	r3, r2
+ 890 00aa 059A     		ldr	r2, [sp, #20]
+ 891 00ac 5340     		eors	r3, r2
+ 892 00ae 069A     		ldr	r2, [sp, #24]
+ 893 00b0 7340     		eors	r3, r6
+ 894 00b2 5340     		eors	r3, r2
+ 895 00b4 089A     		ldr	r2, [sp, #32]
+ 896 00b6 4340     		eors	r3, r0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 27
+
+
+ 897 00b8 5340     		eors	r3, r2
+ 898 00ba 019A     		ldr	r2, [sp, #4]
+ 899 00bc 5340     		eors	r3, r2
+ 900 00be 029A     		ldr	r2, [sp, #8]
+ 901 00c0 5340     		eors	r3, r2
+ 902 00c2 2B70     		strb	r3, [r5]
+ 340:Code\Common\crypt/aes.c ****     (*state)[i][2] = Multiply(a, 0x0d) ^ Multiply(b, 0x09) ^ Multiply(c, 0x0e) ^ Multiply(d, 0x0b);
+ 903              		.loc 1 340 0
+ 904 00c4 049A     		ldr	r2, [sp, #16]
+ 905 00c6 0B9B     		ldr	r3, [sp, #44]
+ 906 00c8 5340     		eors	r3, r2
+ 907 00ca 0C9A     		ldr	r2, [sp, #48]
+ 341:Code\Common\crypt/aes.c ****     (*state)[i][3] = Multiply(a, 0x0b) ^ Multiply(b, 0x0d) ^ Multiply(c, 0x09) ^ Multiply(d, 0x0e);
+ 908              		.loc 1 341 0
+ 909 00cc 0499     		ldr	r1, [sp, #16]
+ 340:Code\Common\crypt/aes.c ****     (*state)[i][2] = Multiply(a, 0x0d) ^ Multiply(b, 0x09) ^ Multiply(c, 0x0e) ^ Multiply(d, 0x0b);
+ 910              		.loc 1 340 0
+ 911 00ce 5340     		eors	r3, r2
+ 912 00d0 059A     		ldr	r2, [sp, #20]
+ 913 00d2 5340     		eors	r3, r2
+ 914 00d4 069A     		ldr	r2, [sp, #24]
+ 915 00d6 7B40     		eors	r3, r7
+ 916 00d8 5340     		eors	r3, r2
+ 917 00da 0E9A     		ldr	r2, [sp, #56]
+ 918 00dc 5340     		eors	r3, r2
+ 919 00de 079A     		ldr	r2, [sp, #28]
+ 920 00e0 4340     		eors	r3, r0
+ 921 00e2 5340     		eors	r3, r2
+ 922 00e4 019A     		ldr	r2, [sp, #4]
+ 923 00e6 5340     		eors	r3, r2
+ 924 00e8 029A     		ldr	r2, [sp, #8]
+ 925 00ea 5340     		eors	r3, r2
+ 926 00ec 6B70     		strb	r3, [r5, #1]
+ 927 00ee 089A     		ldr	r2, [sp, #32]
+ 928 00f0 079B     		ldr	r3, [sp, #28]
+ 929 00f2 5A40     		eors	r2, r3
+ 341:Code\Common\crypt/aes.c ****     (*state)[i][3] = Multiply(a, 0x0b) ^ Multiply(b, 0x0d) ^ Multiply(c, 0x09) ^ Multiply(d, 0x0e);
+ 930              		.loc 1 341 0
+ 931 00f4 0A9B     		ldr	r3, [sp, #40]
+ 932 00f6 4B40     		eors	r3, r1
+ 933 00f8 0599     		ldr	r1, [sp, #20]
+ 934 00fa 4B40     		eors	r3, r1
+ 935 00fc 5F40     		eors	r7, r3
+ 936 00fe 069B     		ldr	r3, [sp, #24]
+ 937 0100 7E40     		eors	r6, r7
+ 938 0102 5E40     		eors	r6, r3
+ 939 0104 0D9B     		ldr	r3, [sp, #52]
+ 342:Code\Common\crypt/aes.c ****   }
+ 940              		.loc 1 342 0
+ 941 0106 0499     		ldr	r1, [sp, #16]
+ 341:Code\Common\crypt/aes.c ****     (*state)[i][3] = Multiply(a, 0x0b) ^ Multiply(b, 0x0d) ^ Multiply(c, 0x09) ^ Multiply(d, 0x0e);
+ 942              		.loc 1 341 0
+ 943 0108 5E40     		eors	r6, r3
+ 944 010a 029B     		ldr	r3, [sp, #8]
+ 945 010c 4640     		eors	r6, r0
+ 946 010e 5E40     		eors	r6, r3
+ 342:Code\Common\crypt/aes.c ****   }
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 28
+
+
+ 947              		.loc 1 342 0
+ 948 0110 099B     		ldr	r3, [sp, #36]
+ 341:Code\Common\crypt/aes.c ****     (*state)[i][3] = Multiply(a, 0x0b) ^ Multiply(b, 0x0d) ^ Multiply(c, 0x09) ^ Multiply(d, 0x0e);
+ 949              		.loc 1 341 0
+ 950 0112 5640     		eors	r6, r2
+ 342:Code\Common\crypt/aes.c ****   }
+ 951              		.loc 1 342 0
+ 952 0114 4B40     		eors	r3, r1
+ 953 0116 0C99     		ldr	r1, [sp, #48]
+ 341:Code\Common\crypt/aes.c ****     (*state)[i][3] = Multiply(a, 0x0b) ^ Multiply(b, 0x0d) ^ Multiply(c, 0x09) ^ Multiply(d, 0x0e);
+ 954              		.loc 1 341 0
+ 955 0118 AE70     		strb	r6, [r5, #2]
+ 342:Code\Common\crypt/aes.c ****   }
+ 956              		.loc 1 342 0
+ 957 011a 4B40     		eors	r3, r1
+ 958 011c 0599     		ldr	r1, [sp, #20]
+ 959 011e 4B40     		eors	r3, r1
+ 960 0120 0699     		ldr	r1, [sp, #24]
+ 961 0122 4B40     		eors	r3, r1
+ 962 0124 0D99     		ldr	r1, [sp, #52]
+ 963 0126 4B40     		eors	r3, r1
+ 964 0128 0E99     		ldr	r1, [sp, #56]
+ 965 012a 4B40     		eors	r3, r1
+ 966 012c 5840     		eors	r0, r3
+ 967 012e 019B     		ldr	r3, [sp, #4]
+ 968 0130 5840     		eors	r0, r3
+ 969 0132 5040     		eors	r0, r2
+ 332:Code\Common\crypt/aes.c ****   { 
+ 970              		.loc 1 332 0
+ 971 0134 0F9B     		ldr	r3, [sp, #60]
+ 342:Code\Common\crypt/aes.c ****   }
+ 972              		.loc 1 342 0
+ 973 0136 E870     		strb	r0, [r5, #3]
+ 974 0138 0435     		adds	r5, r5, #4
+ 332:Code\Common\crypt/aes.c ****   { 
+ 975              		.loc 1 332 0
+ 976 013a AB42     		cmp	r3, r5
+ 977 013c 00D0     		beq	.LCB832
+ 978 013e 7EE7     		b	.L49	@long jump
+ 979              	.LCB832:
+ 980              	.LVL93:
+ 981              	.LBE49:
+ 982              	.LBE48:
+ 426:Code\Common\crypt/aes.c ****   {
+ 983              		.loc 1 426 0
+ 984 0140 631E     		subs	r3, r4, #1
+ 985 0142 DCB2     		uxtb	r4, r3
+ 986              	.LVL94:
+ 987 0144 002C     		cmp	r4, #0
+ 988 0146 00D0     		beq	.LCB845
+ 989 0148 6EE7     		b	.L50	@long jump
+ 990              	.LCB845:
+ 436:Code\Common\crypt/aes.c ****   InvSubBytes();
+ 991              		.loc 1 436 0
+ 992 014a FFF7FEFF 		bl	InvShiftRows
+ 993              	.LVL95:
+ 437:Code\Common\crypt/aes.c ****   AddRoundKey(0);
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 29
+
+
+ 994              		.loc 1 437 0
+ 995 014e FFF7FEFF 		bl	InvSubBytes
+ 996              	.LVL96:
+ 438:Code\Common\crypt/aes.c **** }
+ 997              		.loc 1 438 0
+ 998 0152 2000     		movs	r0, r4
+ 999 0154 FFF7FEFF 		bl	AddRoundKey
+ 1000              	.LVL97:
+ 1001              	.LBE50:
+ 1002              	.LBE51:
+ 475:Code\Common\crypt/aes.c **** 
+ 476:Code\Common\crypt/aes.c ****   InvCipher();
+ 477:Code\Common\crypt/aes.c **** }
+ 1003              		.loc 1 477 0
+ 1004 0158 11B0     		add	sp, sp, #68
+ 1005              		@ sp needed
+ 1006 015a F0BD     		pop	{r4, r5, r6, r7, pc}
+ 1007              	.L55:
+ 1008              		.align	2
+ 1009              	.L54:
+ 1010 015c 80000000 		.word	.LANCHOR3
+ 1011 0160 00000000 		.word	.LANCHOR0
+ 1012              		.cfi_endproc
+ 1013              	.LFE78:
+ 1014              		.size	AES128_ECB_decrypt, .-AES128_ECB_decrypt
+ 1015              		.section	.rodata
+ 1016              		.set	.LANCHOR1,. + 0
+ 1017              		.set	.LANCHOR2,. + 256
+ 1018              		.type	sbox, %object
+ 1019              		.size	sbox, 256
+ 1020              	sbox:
+ 1021 0000 63       		.byte	99
+ 1022 0001 7C       		.byte	124
+ 1023 0002 77       		.byte	119
+ 1024 0003 7B       		.byte	123
+ 1025 0004 F2       		.byte	-14
+ 1026 0005 6B       		.byte	107
+ 1027 0006 6F       		.byte	111
+ 1028 0007 C5       		.byte	-59
+ 1029 0008 30       		.byte	48
+ 1030 0009 01       		.byte	1
+ 1031 000a 67       		.byte	103
+ 1032 000b 2B       		.byte	43
+ 1033 000c FE       		.byte	-2
+ 1034 000d D7       		.byte	-41
+ 1035 000e AB       		.byte	-85
+ 1036 000f 76       		.byte	118
+ 1037 0010 CA       		.byte	-54
+ 1038 0011 82       		.byte	-126
+ 1039 0012 C9       		.byte	-55
+ 1040 0013 7D       		.byte	125
+ 1041 0014 FA       		.byte	-6
+ 1042 0015 59       		.byte	89
+ 1043 0016 47       		.byte	71
+ 1044 0017 F0       		.byte	-16
+ 1045 0018 AD       		.byte	-83
+ 1046 0019 D4       		.byte	-44
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 30
+
+
+ 1047 001a A2       		.byte	-94
+ 1048 001b AF       		.byte	-81
+ 1049 001c 9C       		.byte	-100
+ 1050 001d A4       		.byte	-92
+ 1051 001e 72       		.byte	114
+ 1052 001f C0       		.byte	-64
+ 1053 0020 B7       		.byte	-73
+ 1054 0021 FD       		.byte	-3
+ 1055 0022 93       		.byte	-109
+ 1056 0023 26       		.byte	38
+ 1057 0024 36       		.byte	54
+ 1058 0025 3F       		.byte	63
+ 1059 0026 F7       		.byte	-9
+ 1060 0027 CC       		.byte	-52
+ 1061 0028 34       		.byte	52
+ 1062 0029 A5       		.byte	-91
+ 1063 002a E5       		.byte	-27
+ 1064 002b F1       		.byte	-15
+ 1065 002c 71       		.byte	113
+ 1066 002d D8       		.byte	-40
+ 1067 002e 31       		.byte	49
+ 1068 002f 15       		.byte	21
+ 1069 0030 04       		.byte	4
+ 1070 0031 C7       		.byte	-57
+ 1071 0032 23       		.byte	35
+ 1072 0033 C3       		.byte	-61
+ 1073 0034 18       		.byte	24
+ 1074 0035 96       		.byte	-106
+ 1075 0036 05       		.byte	5
+ 1076 0037 9A       		.byte	-102
+ 1077 0038 07       		.byte	7
+ 1078 0039 12       		.byte	18
+ 1079 003a 80       		.byte	-128
+ 1080 003b E2       		.byte	-30
+ 1081 003c EB       		.byte	-21
+ 1082 003d 27       		.byte	39
+ 1083 003e B2       		.byte	-78
+ 1084 003f 75       		.byte	117
+ 1085 0040 09       		.byte	9
+ 1086 0041 83       		.byte	-125
+ 1087 0042 2C       		.byte	44
+ 1088 0043 1A       		.byte	26
+ 1089 0044 1B       		.byte	27
+ 1090 0045 6E       		.byte	110
+ 1091 0046 5A       		.byte	90
+ 1092 0047 A0       		.byte	-96
+ 1093 0048 52       		.byte	82
+ 1094 0049 3B       		.byte	59
+ 1095 004a D6       		.byte	-42
+ 1096 004b B3       		.byte	-77
+ 1097 004c 29       		.byte	41
+ 1098 004d E3       		.byte	-29
+ 1099 004e 2F       		.byte	47
+ 1100 004f 84       		.byte	-124
+ 1101 0050 53       		.byte	83
+ 1102 0051 D1       		.byte	-47
+ 1103 0052 00       		.byte	0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 31
+
+
+ 1104 0053 ED       		.byte	-19
+ 1105 0054 20       		.byte	32
+ 1106 0055 FC       		.byte	-4
+ 1107 0056 B1       		.byte	-79
+ 1108 0057 5B       		.byte	91
+ 1109 0058 6A       		.byte	106
+ 1110 0059 CB       		.byte	-53
+ 1111 005a BE       		.byte	-66
+ 1112 005b 39       		.byte	57
+ 1113 005c 4A       		.byte	74
+ 1114 005d 4C       		.byte	76
+ 1115 005e 58       		.byte	88
+ 1116 005f CF       		.byte	-49
+ 1117 0060 D0       		.byte	-48
+ 1118 0061 EF       		.byte	-17
+ 1119 0062 AA       		.byte	-86
+ 1120 0063 FB       		.byte	-5
+ 1121 0064 43       		.byte	67
+ 1122 0065 4D       		.byte	77
+ 1123 0066 33       		.byte	51
+ 1124 0067 85       		.byte	-123
+ 1125 0068 45       		.byte	69
+ 1126 0069 F9       		.byte	-7
+ 1127 006a 02       		.byte	2
+ 1128 006b 7F       		.byte	127
+ 1129 006c 50       		.byte	80
+ 1130 006d 3C       		.byte	60
+ 1131 006e 9F       		.byte	-97
+ 1132 006f A8       		.byte	-88
+ 1133 0070 51       		.byte	81
+ 1134 0071 A3       		.byte	-93
+ 1135 0072 40       		.byte	64
+ 1136 0073 8F       		.byte	-113
+ 1137 0074 92       		.byte	-110
+ 1138 0075 9D       		.byte	-99
+ 1139 0076 38       		.byte	56
+ 1140 0077 F5       		.byte	-11
+ 1141 0078 BC       		.byte	-68
+ 1142 0079 B6       		.byte	-74
+ 1143 007a DA       		.byte	-38
+ 1144 007b 21       		.byte	33
+ 1145 007c 10       		.byte	16
+ 1146 007d FF       		.byte	-1
+ 1147 007e F3       		.byte	-13
+ 1148 007f D2       		.byte	-46
+ 1149 0080 CD       		.byte	-51
+ 1150 0081 0C       		.byte	12
+ 1151 0082 13       		.byte	19
+ 1152 0083 EC       		.byte	-20
+ 1153 0084 5F       		.byte	95
+ 1154 0085 97       		.byte	-105
+ 1155 0086 44       		.byte	68
+ 1156 0087 17       		.byte	23
+ 1157 0088 C4       		.byte	-60
+ 1158 0089 A7       		.byte	-89
+ 1159 008a 7E       		.byte	126
+ 1160 008b 3D       		.byte	61
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 32
+
+
+ 1161 008c 64       		.byte	100
+ 1162 008d 5D       		.byte	93
+ 1163 008e 19       		.byte	25
+ 1164 008f 73       		.byte	115
+ 1165 0090 60       		.byte	96
+ 1166 0091 81       		.byte	-127
+ 1167 0092 4F       		.byte	79
+ 1168 0093 DC       		.byte	-36
+ 1169 0094 22       		.byte	34
+ 1170 0095 2A       		.byte	42
+ 1171 0096 90       		.byte	-112
+ 1172 0097 88       		.byte	-120
+ 1173 0098 46       		.byte	70
+ 1174 0099 EE       		.byte	-18
+ 1175 009a B8       		.byte	-72
+ 1176 009b 14       		.byte	20
+ 1177 009c DE       		.byte	-34
+ 1178 009d 5E       		.byte	94
+ 1179 009e 0B       		.byte	11
+ 1180 009f DB       		.byte	-37
+ 1181 00a0 E0       		.byte	-32
+ 1182 00a1 32       		.byte	50
+ 1183 00a2 3A       		.byte	58
+ 1184 00a3 0A       		.byte	10
+ 1185 00a4 49       		.byte	73
+ 1186 00a5 06       		.byte	6
+ 1187 00a6 24       		.byte	36
+ 1188 00a7 5C       		.byte	92
+ 1189 00a8 C2       		.byte	-62
+ 1190 00a9 D3       		.byte	-45
+ 1191 00aa AC       		.byte	-84
+ 1192 00ab 62       		.byte	98
+ 1193 00ac 91       		.byte	-111
+ 1194 00ad 95       		.byte	-107
+ 1195 00ae E4       		.byte	-28
+ 1196 00af 79       		.byte	121
+ 1197 00b0 E7       		.byte	-25
+ 1198 00b1 C8       		.byte	-56
+ 1199 00b2 37       		.byte	55
+ 1200 00b3 6D       		.byte	109
+ 1201 00b4 8D       		.byte	-115
+ 1202 00b5 D5       		.byte	-43
+ 1203 00b6 4E       		.byte	78
+ 1204 00b7 A9       		.byte	-87
+ 1205 00b8 6C       		.byte	108
+ 1206 00b9 56       		.byte	86
+ 1207 00ba F4       		.byte	-12
+ 1208 00bb EA       		.byte	-22
+ 1209 00bc 65       		.byte	101
+ 1210 00bd 7A       		.byte	122
+ 1211 00be AE       		.byte	-82
+ 1212 00bf 08       		.byte	8
+ 1213 00c0 BA       		.byte	-70
+ 1214 00c1 78       		.byte	120
+ 1215 00c2 25       		.byte	37
+ 1216 00c3 2E       		.byte	46
+ 1217 00c4 1C       		.byte	28
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 33
+
+
+ 1218 00c5 A6       		.byte	-90
+ 1219 00c6 B4       		.byte	-76
+ 1220 00c7 C6       		.byte	-58
+ 1221 00c8 E8       		.byte	-24
+ 1222 00c9 DD       		.byte	-35
+ 1223 00ca 74       		.byte	116
+ 1224 00cb 1F       		.byte	31
+ 1225 00cc 4B       		.byte	75
+ 1226 00cd BD       		.byte	-67
+ 1227 00ce 8B       		.byte	-117
+ 1228 00cf 8A       		.byte	-118
+ 1229 00d0 70       		.byte	112
+ 1230 00d1 3E       		.byte	62
+ 1231 00d2 B5       		.byte	-75
+ 1232 00d3 66       		.byte	102
+ 1233 00d4 48       		.byte	72
+ 1234 00d5 03       		.byte	3
+ 1235 00d6 F6       		.byte	-10
+ 1236 00d7 0E       		.byte	14
+ 1237 00d8 61       		.byte	97
+ 1238 00d9 35       		.byte	53
+ 1239 00da 57       		.byte	87
+ 1240 00db B9       		.byte	-71
+ 1241 00dc 86       		.byte	-122
+ 1242 00dd C1       		.byte	-63
+ 1243 00de 1D       		.byte	29
+ 1244 00df 9E       		.byte	-98
+ 1245 00e0 E1       		.byte	-31
+ 1246 00e1 F8       		.byte	-8
+ 1247 00e2 98       		.byte	-104
+ 1248 00e3 11       		.byte	17
+ 1249 00e4 69       		.byte	105
+ 1250 00e5 D9       		.byte	-39
+ 1251 00e6 8E       		.byte	-114
+ 1252 00e7 94       		.byte	-108
+ 1253 00e8 9B       		.byte	-101
+ 1254 00e9 1E       		.byte	30
+ 1255 00ea 87       		.byte	-121
+ 1256 00eb E9       		.byte	-23
+ 1257 00ec CE       		.byte	-50
+ 1258 00ed 55       		.byte	85
+ 1259 00ee 28       		.byte	40
+ 1260 00ef DF       		.byte	-33
+ 1261 00f0 8C       		.byte	-116
+ 1262 00f1 A1       		.byte	-95
+ 1263 00f2 89       		.byte	-119
+ 1264 00f3 0D       		.byte	13
+ 1265 00f4 BF       		.byte	-65
+ 1266 00f5 E6       		.byte	-26
+ 1267 00f6 42       		.byte	66
+ 1268 00f7 68       		.byte	104
+ 1269 00f8 41       		.byte	65
+ 1270 00f9 99       		.byte	-103
+ 1271 00fa 2D       		.byte	45
+ 1272 00fb 0F       		.byte	15
+ 1273 00fc B0       		.byte	-80
+ 1274 00fd 54       		.byte	84
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 34
+
+
+ 1275 00fe BB       		.byte	-69
+ 1276 00ff 16       		.byte	22
+ 1277              		.type	Rcon, %object
+ 1278              		.size	Rcon, 16
+ 1279              	Rcon:
+ 1280 0100 EF       		.byte	-17
+ 1281 0101 3A       		.byte	58
+ 1282 0102 19       		.byte	25
+ 1283 0103 3D       		.byte	61
+ 1284 0104 CA       		.byte	-54
+ 1285 0105 0B       		.byte	11
+ 1286 0106 36       		.byte	54
+ 1287 0107 89       		.byte	-119
+ 1288 0108 A8       		.byte	-88
+ 1289 0109 61       		.byte	97
+ 1290 010a F6       		.byte	-10
+ 1291 010b 6C       		.byte	108
+ 1292 010c D8       		.byte	-40
+ 1293 010d AB       		.byte	-85
+ 1294 010e 4D       		.byte	77
+ 1295 010f 9A       		.byte	-102
+ 1296              		.type	rsbox, %object
+ 1297              		.size	rsbox, 256
+ 1298              	rsbox:
+ 1299 0110 52       		.byte	82
+ 1300 0111 09       		.byte	9
+ 1301 0112 6A       		.byte	106
+ 1302 0113 D5       		.byte	-43
+ 1303 0114 30       		.byte	48
+ 1304 0115 36       		.byte	54
+ 1305 0116 A5       		.byte	-91
+ 1306 0117 38       		.byte	56
+ 1307 0118 BF       		.byte	-65
+ 1308 0119 40       		.byte	64
+ 1309 011a A3       		.byte	-93
+ 1310 011b 9E       		.byte	-98
+ 1311 011c 81       		.byte	-127
+ 1312 011d F3       		.byte	-13
+ 1313 011e D7       		.byte	-41
+ 1314 011f FB       		.byte	-5
+ 1315 0120 7C       		.byte	124
+ 1316 0121 E3       		.byte	-29
+ 1317 0122 39       		.byte	57
+ 1318 0123 82       		.byte	-126
+ 1319 0124 9B       		.byte	-101
+ 1320 0125 2F       		.byte	47
+ 1321 0126 FF       		.byte	-1
+ 1322 0127 87       		.byte	-121
+ 1323 0128 34       		.byte	52
+ 1324 0129 8E       		.byte	-114
+ 1325 012a 43       		.byte	67
+ 1326 012b 44       		.byte	68
+ 1327 012c C4       		.byte	-60
+ 1328 012d DE       		.byte	-34
+ 1329 012e E9       		.byte	-23
+ 1330 012f CB       		.byte	-53
+ 1331 0130 54       		.byte	84
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 35
+
+
+ 1332 0131 7B       		.byte	123
+ 1333 0132 94       		.byte	-108
+ 1334 0133 32       		.byte	50
+ 1335 0134 A6       		.byte	-90
+ 1336 0135 C2       		.byte	-62
+ 1337 0136 23       		.byte	35
+ 1338 0137 3D       		.byte	61
+ 1339 0138 EE       		.byte	-18
+ 1340 0139 4C       		.byte	76
+ 1341 013a 95       		.byte	-107
+ 1342 013b 0B       		.byte	11
+ 1343 013c 42       		.byte	66
+ 1344 013d FA       		.byte	-6
+ 1345 013e C3       		.byte	-61
+ 1346 013f 4E       		.byte	78
+ 1347 0140 08       		.byte	8
+ 1348 0141 2E       		.byte	46
+ 1349 0142 A1       		.byte	-95
+ 1350 0143 66       		.byte	102
+ 1351 0144 28       		.byte	40
+ 1352 0145 D9       		.byte	-39
+ 1353 0146 24       		.byte	36
+ 1354 0147 B2       		.byte	-78
+ 1355 0148 76       		.byte	118
+ 1356 0149 5B       		.byte	91
+ 1357 014a A2       		.byte	-94
+ 1358 014b 49       		.byte	73
+ 1359 014c 6D       		.byte	109
+ 1360 014d 8B       		.byte	-117
+ 1361 014e D1       		.byte	-47
+ 1362 014f 25       		.byte	37
+ 1363 0150 72       		.byte	114
+ 1364 0151 F8       		.byte	-8
+ 1365 0152 F6       		.byte	-10
+ 1366 0153 64       		.byte	100
+ 1367 0154 86       		.byte	-122
+ 1368 0155 68       		.byte	104
+ 1369 0156 98       		.byte	-104
+ 1370 0157 16       		.byte	22
+ 1371 0158 D4       		.byte	-44
+ 1372 0159 A4       		.byte	-92
+ 1373 015a 5C       		.byte	92
+ 1374 015b CC       		.byte	-52
+ 1375 015c 5D       		.byte	93
+ 1376 015d 65       		.byte	101
+ 1377 015e B6       		.byte	-74
+ 1378 015f 92       		.byte	-110
+ 1379 0160 6C       		.byte	108
+ 1380 0161 70       		.byte	112
+ 1381 0162 48       		.byte	72
+ 1382 0163 50       		.byte	80
+ 1383 0164 FD       		.byte	-3
+ 1384 0165 ED       		.byte	-19
+ 1385 0166 B9       		.byte	-71
+ 1386 0167 DA       		.byte	-38
+ 1387 0168 5E       		.byte	94
+ 1388 0169 15       		.byte	21
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 36
+
+
+ 1389 016a 46       		.byte	70
+ 1390 016b 57       		.byte	87
+ 1391 016c A7       		.byte	-89
+ 1392 016d 8D       		.byte	-115
+ 1393 016e 9D       		.byte	-99
+ 1394 016f 84       		.byte	-124
+ 1395 0170 90       		.byte	-112
+ 1396 0171 D8       		.byte	-40
+ 1397 0172 AB       		.byte	-85
+ 1398 0173 00       		.byte	0
+ 1399 0174 8C       		.byte	-116
+ 1400 0175 BC       		.byte	-68
+ 1401 0176 D3       		.byte	-45
+ 1402 0177 0A       		.byte	10
+ 1403 0178 F7       		.byte	-9
+ 1404 0179 E4       		.byte	-28
+ 1405 017a 58       		.byte	88
+ 1406 017b 05       		.byte	5
+ 1407 017c B8       		.byte	-72
+ 1408 017d B3       		.byte	-77
+ 1409 017e 45       		.byte	69
+ 1410 017f 06       		.byte	6
+ 1411 0180 D0       		.byte	-48
+ 1412 0181 2C       		.byte	44
+ 1413 0182 1E       		.byte	30
+ 1414 0183 8F       		.byte	-113
+ 1415 0184 CA       		.byte	-54
+ 1416 0185 3F       		.byte	63
+ 1417 0186 0F       		.byte	15
+ 1418 0187 02       		.byte	2
+ 1419 0188 C1       		.byte	-63
+ 1420 0189 AF       		.byte	-81
+ 1421 018a BD       		.byte	-67
+ 1422 018b 03       		.byte	3
+ 1423 018c 01       		.byte	1
+ 1424 018d 13       		.byte	19
+ 1425 018e 8A       		.byte	-118
+ 1426 018f 6B       		.byte	107
+ 1427 0190 3A       		.byte	58
+ 1428 0191 91       		.byte	-111
+ 1429 0192 11       		.byte	17
+ 1430 0193 41       		.byte	65
+ 1431 0194 4F       		.byte	79
+ 1432 0195 67       		.byte	103
+ 1433 0196 DC       		.byte	-36
+ 1434 0197 EA       		.byte	-22
+ 1435 0198 97       		.byte	-105
+ 1436 0199 F2       		.byte	-14
+ 1437 019a CF       		.byte	-49
+ 1438 019b CE       		.byte	-50
+ 1439 019c F0       		.byte	-16
+ 1440 019d B4       		.byte	-76
+ 1441 019e E6       		.byte	-26
+ 1442 019f 73       		.byte	115
+ 1443 01a0 96       		.byte	-106
+ 1444 01a1 AC       		.byte	-84
+ 1445 01a2 74       		.byte	116
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 37
+
+
+ 1446 01a3 22       		.byte	34
+ 1447 01a4 E7       		.byte	-25
+ 1448 01a5 AD       		.byte	-83
+ 1449 01a6 35       		.byte	53
+ 1450 01a7 85       		.byte	-123
+ 1451 01a8 E2       		.byte	-30
+ 1452 01a9 F9       		.byte	-7
+ 1453 01aa 37       		.byte	55
+ 1454 01ab E8       		.byte	-24
+ 1455 01ac 1C       		.byte	28
+ 1456 01ad 75       		.byte	117
+ 1457 01ae DF       		.byte	-33
+ 1458 01af 6E       		.byte	110
+ 1459 01b0 47       		.byte	71
+ 1460 01b1 F1       		.byte	-15
+ 1461 01b2 1A       		.byte	26
+ 1462 01b3 71       		.byte	113
+ 1463 01b4 1D       		.byte	29
+ 1464 01b5 29       		.byte	41
+ 1465 01b6 C5       		.byte	-59
+ 1466 01b7 89       		.byte	-119
+ 1467 01b8 6F       		.byte	111
+ 1468 01b9 B7       		.byte	-73
+ 1469 01ba 62       		.byte	98
+ 1470 01bb 0E       		.byte	14
+ 1471 01bc AA       		.byte	-86
+ 1472 01bd 18       		.byte	24
+ 1473 01be BE       		.byte	-66
+ 1474 01bf 1B       		.byte	27
+ 1475 01c0 FC       		.byte	-4
+ 1476 01c1 56       		.byte	86
+ 1477 01c2 3E       		.byte	62
+ 1478 01c3 4B       		.byte	75
+ 1479 01c4 C6       		.byte	-58
+ 1480 01c5 D2       		.byte	-46
+ 1481 01c6 79       		.byte	121
+ 1482 01c7 20       		.byte	32
+ 1483 01c8 9A       		.byte	-102
+ 1484 01c9 DB       		.byte	-37
+ 1485 01ca C0       		.byte	-64
+ 1486 01cb FE       		.byte	-2
+ 1487 01cc 78       		.byte	120
+ 1488 01cd CD       		.byte	-51
+ 1489 01ce 5A       		.byte	90
+ 1490 01cf F4       		.byte	-12
+ 1491 01d0 1F       		.byte	31
+ 1492 01d1 DD       		.byte	-35
+ 1493 01d2 A8       		.byte	-88
+ 1494 01d3 33       		.byte	51
+ 1495 01d4 88       		.byte	-120
+ 1496 01d5 07       		.byte	7
+ 1497 01d6 C7       		.byte	-57
+ 1498 01d7 31       		.byte	49
+ 1499 01d8 B1       		.byte	-79
+ 1500 01d9 12       		.byte	18
+ 1501 01da 10       		.byte	16
+ 1502 01db 59       		.byte	89
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 38
+
+
+ 1503 01dc 27       		.byte	39
+ 1504 01dd 80       		.byte	-128
+ 1505 01de EC       		.byte	-20
+ 1506 01df 5F       		.byte	95
+ 1507 01e0 60       		.byte	96
+ 1508 01e1 51       		.byte	81
+ 1509 01e2 7F       		.byte	127
+ 1510 01e3 A9       		.byte	-87
+ 1511 01e4 19       		.byte	25
+ 1512 01e5 B5       		.byte	-75
+ 1513 01e6 4A       		.byte	74
+ 1514 01e7 0D       		.byte	13
+ 1515 01e8 2D       		.byte	45
+ 1516 01e9 E5       		.byte	-27
+ 1517 01ea 7A       		.byte	122
+ 1518 01eb 9F       		.byte	-97
+ 1519 01ec 93       		.byte	-109
+ 1520 01ed C9       		.byte	-55
+ 1521 01ee 9C       		.byte	-100
+ 1522 01ef EF       		.byte	-17
+ 1523 01f0 A0       		.byte	-96
+ 1524 01f1 E0       		.byte	-32
+ 1525 01f2 3B       		.byte	59
+ 1526 01f3 4D       		.byte	77
+ 1527 01f4 AE       		.byte	-82
+ 1528 01f5 2A       		.byte	42
+ 1529 01f6 F5       		.byte	-11
+ 1530 01f7 B0       		.byte	-80
+ 1531 01f8 C8       		.byte	-56
+ 1532 01f9 EB       		.byte	-21
+ 1533 01fa BB       		.byte	-69
+ 1534 01fb 3C       		.byte	60
+ 1535 01fc 83       		.byte	-125
+ 1536 01fd 53       		.byte	83
+ 1537 01fe 99       		.byte	-103
+ 1538 01ff 61       		.byte	97
+ 1539 0200 17       		.byte	23
+ 1540 0201 2B       		.byte	43
+ 1541 0202 04       		.byte	4
+ 1542 0203 7E       		.byte	126
+ 1543 0204 BA       		.byte	-70
+ 1544 0205 77       		.byte	119
+ 1545 0206 D6       		.byte	-42
+ 1546 0207 26       		.byte	38
+ 1547 0208 E1       		.byte	-31
+ 1548 0209 69       		.byte	105
+ 1549 020a 14       		.byte	20
+ 1550 020b 63       		.byte	99
+ 1551 020c 55       		.byte	85
+ 1552 020d 21       		.byte	33
+ 1553 020e 0C       		.byte	12
+ 1554 020f 7D       		.byte	125
+ 1555              		.bss
+ 1556              		.align	2
+ 1557              		.set	.LANCHOR0,. + 0
+ 1558              		.set	.LANCHOR3,. + 128
+ 1559              		.type	Key, %object
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 39
+
+
+ 1560              		.size	Key, 4
+ 1561              	Key:
+ 1562 0000 00000000 		.space	4
+ 1563              		.type	RoundKey, %object
+ 1564              		.size	RoundKey, 176
+ 1565              	RoundKey:
+ 1566 0004 00000000 		.space	176
+ 1566      00000000 
+ 1566      00000000 
+ 1566      00000000 
+ 1566      00000000 
+ 1567              		.type	state, %object
+ 1568              		.size	state, 4
+ 1569              	state:
+ 1570 00b4 00000000 		.space	4
+ 1571              		.text
+ 1572              	.Letext0:
+ 1573              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.1\\psoc creator\\import\\gnu\\arm\\5.4.
+ 1574              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.1\\psoc creator\\import\\gnu\\arm\\5.4.
+ 1575              		.file 4 "Generated_Source\\PSoC4/cytypes.h"
+ 1576              		.file 5 "Generated_Source\\PSoC4/RTC.h"
+ 1577              		.section	.debug_info,"",%progbits
+ 1578              	.Ldebug_info0:
+ 1579 0000 64080000 		.4byte	0x864
+ 1580 0004 0400     		.2byte	0x4
+ 1581 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 1582 000a 04       		.byte	0x4
+ 1583 000b 01       		.uleb128 0x1
+ 1584 000c 4B020000 		.4byte	.LASF46
+ 1585 0010 0C       		.byte	0xc
+ 1586 0011 88000000 		.4byte	.LASF47
+ 1587 0015 E8000000 		.4byte	.LASF48
+ 1588 0019 68000000 		.4byte	.Ldebug_ranges0+0x68
+ 1589 001d 00000000 		.4byte	0
+ 1590 0021 00000000 		.4byte	.Ldebug_line0
+ 1591 0025 02       		.uleb128 0x2
+ 1592 0026 04       		.byte	0x4
+ 1593 0027 05       		.byte	0x5
+ 1594 0028 696E7400 		.ascii	"int\000"
+ 1595 002c 03       		.uleb128 0x3
+ 1596 002d 04       		.byte	0x4
+ 1597 002e 07       		.byte	0x7
+ 1598 002f A8010000 		.4byte	.LASF0
+ 1599 0033 03       		.uleb128 0x3
+ 1600 0034 08       		.byte	0x8
+ 1601 0035 05       		.byte	0x5
+ 1602 0036 C3000000 		.4byte	.LASF1
+ 1603 003a 03       		.uleb128 0x3
+ 1604 003b 08       		.byte	0x8
+ 1605 003c 04       		.byte	0x4
+ 1606 003d 63000000 		.4byte	.LASF2
+ 1607 0041 03       		.uleb128 0x3
+ 1608 0042 01       		.byte	0x1
+ 1609 0043 06       		.byte	0x6
+ 1610 0044 6E010000 		.4byte	.LASF3
+ 1611 0048 04       		.uleb128 0x4
+ 1612 0049 DE000000 		.4byte	.LASF8
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 40
+
+
+ 1613 004d 02       		.byte	0x2
+ 1614 004e 1D       		.byte	0x1d
+ 1615 004f 53000000 		.4byte	0x53
+ 1616 0053 03       		.uleb128 0x3
+ 1617 0054 01       		.byte	0x1
+ 1618 0055 08       		.byte	0x8
+ 1619 0056 5A010000 		.4byte	.LASF4
+ 1620 005a 03       		.uleb128 0x3
+ 1621 005b 02       		.byte	0x2
+ 1622 005c 05       		.byte	0x5
+ 1623 005d 20000000 		.4byte	.LASF5
+ 1624 0061 03       		.uleb128 0x3
+ 1625 0062 02       		.byte	0x2
+ 1626 0063 07       		.byte	0x7
+ 1627 0064 D4010000 		.4byte	.LASF6
+ 1628 0068 03       		.uleb128 0x3
+ 1629 0069 04       		.byte	0x4
+ 1630 006a 05       		.byte	0x5
+ 1631 006b F6010000 		.4byte	.LASF7
+ 1632 006f 04       		.uleb128 0x4
+ 1633 0070 6F000000 		.4byte	.LASF9
+ 1634 0074 02       		.byte	0x2
+ 1635 0075 41       		.byte	0x41
+ 1636 0076 7A000000 		.4byte	0x7a
+ 1637 007a 03       		.uleb128 0x3
+ 1638 007b 04       		.byte	0x4
+ 1639 007c 07       		.byte	0x7
+ 1640 007d 0F020000 		.4byte	.LASF10
+ 1641 0081 03       		.uleb128 0x3
+ 1642 0082 08       		.byte	0x8
+ 1643 0083 07       		.byte	0x7
+ 1644 0084 83010000 		.4byte	.LASF11
+ 1645 0088 03       		.uleb128 0x3
+ 1646 0089 04       		.byte	0x4
+ 1647 008a 07       		.byte	0x7
+ 1648 008b 30000000 		.4byte	.LASF12
+ 1649 008f 03       		.uleb128 0x3
+ 1650 0090 01       		.byte	0x1
+ 1651 0091 08       		.byte	0x8
+ 1652 0092 F1010000 		.4byte	.LASF13
+ 1653 0096 04       		.uleb128 0x4
+ 1654 0097 A7000000 		.4byte	.LASF14
+ 1655 009b 03       		.byte	0x3
+ 1656 009c 18       		.byte	0x18
+ 1657 009d 48000000 		.4byte	0x48
+ 1658 00a1 04       		.uleb128 0x4
+ 1659 00a2 9F010000 		.4byte	.LASF15
+ 1660 00a6 03       		.byte	0x3
+ 1661 00a7 30       		.byte	0x30
+ 1662 00a8 6F000000 		.4byte	0x6f
+ 1663 00ac 05       		.uleb128 0x5
+ 1664 00ad AF000000 		.4byte	.LASF16
+ 1665 00b1 04       		.byte	0x4
+ 1666 00b2 D201     		.2byte	0x1d2
+ 1667 00b4 53000000 		.4byte	0x53
+ 1668 00b8 05       		.uleb128 0x5
+ 1669 00b9 A0000000 		.4byte	.LASF17
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 41
+
+
+ 1670 00bd 04       		.byte	0x4
+ 1671 00be D301     		.2byte	0x1d3
+ 1672 00c0 61000000 		.4byte	0x61
+ 1673 00c4 03       		.uleb128 0x3
+ 1674 00c5 04       		.byte	0x4
+ 1675 00c6 04       		.byte	0x4
+ 1676 00c7 B5000000 		.4byte	.LASF18
+ 1677 00cb 03       		.uleb128 0x3
+ 1678 00cc 08       		.byte	0x8
+ 1679 00cd 04       		.byte	0x4
+ 1680 00ce 21020000 		.4byte	.LASF19
+ 1681 00d2 04       		.uleb128 0x4
+ 1682 00d3 BB000000 		.4byte	.LASF20
+ 1683 00d7 01       		.byte	0x1
+ 1684 00d8 42       		.byte	0x42
+ 1685 00d9 DD000000 		.4byte	0xdd
+ 1686 00dd 06       		.uleb128 0x6
+ 1687 00de 96000000 		.4byte	0x96
+ 1688 00e2 F3000000 		.4byte	0xf3
+ 1689 00e6 07       		.uleb128 0x7
+ 1690 00e7 88000000 		.4byte	0x88
+ 1691 00eb 03       		.byte	0x3
+ 1692 00ec 07       		.uleb128 0x7
+ 1693 00ed 88000000 		.4byte	0x88
+ 1694 00f1 03       		.byte	0x3
+ 1695 00f2 00       		.byte	0
+ 1696 00f3 08       		.uleb128 0x8
+ 1697 00f4 3F000000 		.4byte	.LASF21
+ 1698 00f8 01       		.byte	0x1
+ 1699 00f9 95       		.byte	0x95
+ 1700 00fa 96000000 		.4byte	0x96
+ 1701 00fe 01       		.byte	0x1
+ 1702 00ff 0F010000 		.4byte	0x10f
+ 1703 0103 09       		.uleb128 0x9
+ 1704 0104 6E756D00 		.ascii	"num\000"
+ 1705 0108 01       		.byte	0x1
+ 1706 0109 95       		.byte	0x95
+ 1707 010a 96000000 		.4byte	0x96
+ 1708 010e 00       		.byte	0
+ 1709 010f 08       		.uleb128 0x8
+ 1710 0110 7A000000 		.4byte	.LASF22
+ 1711 0114 01       		.byte	0x1
+ 1712 0115 9A       		.byte	0x9a
+ 1713 0116 96000000 		.4byte	0x96
+ 1714 011a 01       		.byte	0x1
+ 1715 011b 2B010000 		.4byte	0x12b
+ 1716 011f 09       		.uleb128 0x9
+ 1717 0120 6E756D00 		.ascii	"num\000"
+ 1718 0124 01       		.byte	0x1
+ 1719 0125 9A       		.byte	0x9a
+ 1720 0126 96000000 		.4byte	0x96
+ 1721 012a 00       		.byte	0
+ 1722 012b 0A       		.uleb128 0xa
+ 1723 012c 28020000 		.4byte	.LASF24
+ 1724 0130 01       		.byte	0x1
+ 1725 0131 A0       		.byte	0xa0
+ 1726 0132 00000000 		.4byte	.LFB65
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 42
+
+
+ 1727 0136 9C000000 		.4byte	.LFE65-.LFB65
+ 1728 013a 01       		.uleb128 0x1
+ 1729 013b 9C       		.byte	0x9c
+ 1730 013c A4010000 		.4byte	0x1a4
+ 1731 0140 0B       		.uleb128 0xb
+ 1732 0141 6900     		.ascii	"i\000"
+ 1733 0143 01       		.byte	0x1
+ 1734 0144 A2       		.byte	0xa2
+ 1735 0145 A1000000 		.4byte	0xa1
+ 1736 0149 00000000 		.4byte	.LLST0
+ 1737 014d 0B       		.uleb128 0xb
+ 1738 014e 6A00     		.ascii	"j\000"
+ 1739 0150 01       		.byte	0x1
+ 1740 0151 A2       		.byte	0xa2
+ 1741 0152 A1000000 		.4byte	0xa1
+ 1742 0156 1F000000 		.4byte	.LLST1
+ 1743 015a 0B       		.uleb128 0xb
+ 1744 015b 6B00     		.ascii	"k\000"
+ 1745 015d 01       		.byte	0x1
+ 1746 015e A2       		.byte	0xa2
+ 1747 015f A1000000 		.4byte	0xa1
+ 1748 0163 4B000000 		.4byte	.LLST2
+ 1749 0167 0C       		.uleb128 0xc
+ 1750 0168 0F000000 		.4byte	.LASF23
+ 1751 016c 01       		.byte	0x1
+ 1752 016d A3       		.byte	0xa3
+ 1753 016e A4010000 		.4byte	0x1a4
+ 1754 0172 02       		.uleb128 0x2
+ 1755 0173 91       		.byte	0x91
+ 1756 0174 64       		.sleb128 -28
+ 1757 0175 0D       		.uleb128 0xd
+ 1758 0176 F3000000 		.4byte	0xf3
+ 1759 017a 2A000000 		.4byte	.LBB14
+ 1760 017e 00000000 		.4byte	.Ldebug_ranges0+0
+ 1761 0182 01       		.byte	0x1
+ 1762 0183 C8       		.byte	0xc8
+ 1763 0184 8E010000 		.4byte	0x18e
+ 1764 0188 0E       		.uleb128 0xe
+ 1765 0189 03010000 		.4byte	0x103
+ 1766 018d 00       		.byte	0
+ 1767 018e 0F       		.uleb128 0xf
+ 1768 018f F3000000 		.4byte	0xf3
+ 1769 0193 44000000 		.4byte	.LBB18
+ 1770 0197 02000000 		.4byte	.LBE18-.LBB18
+ 1771 019b 01       		.byte	0x1
+ 1772 019c C9       		.byte	0xc9
+ 1773 019d 0E       		.uleb128 0xe
+ 1774 019e 03010000 		.4byte	0x103
+ 1775 01a2 00       		.byte	0
+ 1776 01a3 00       		.byte	0
+ 1777 01a4 06       		.uleb128 0x6
+ 1778 01a5 96000000 		.4byte	0x96
+ 1779 01a9 B4010000 		.4byte	0x1b4
+ 1780 01ad 07       		.uleb128 0x7
+ 1781 01ae 88000000 		.4byte	0x88
+ 1782 01b2 03       		.byte	0x3
+ 1783 01b3 00       		.byte	0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 43
+
+
+ 1784 01b4 0A       		.uleb128 0xa
+ 1785 01b5 4E010000 		.4byte	.LASF25
+ 1786 01b9 01       		.byte	0x1
+ 1787 01ba E3       		.byte	0xe3
+ 1788 01bb 00000000 		.4byte	.LFB66
+ 1789 01bf 3C000000 		.4byte	.LFE66-.LFB66
+ 1790 01c3 01       		.uleb128 0x1
+ 1791 01c4 9C       		.byte	0x9c
+ 1792 01c5 F3010000 		.4byte	0x1f3
+ 1793 01c9 10       		.uleb128 0x10
+ 1794 01ca 68010000 		.4byte	.LASF29
+ 1795 01ce 01       		.byte	0x1
+ 1796 01cf E3       		.byte	0xe3
+ 1797 01d0 96000000 		.4byte	0x96
+ 1798 01d4 75000000 		.4byte	.LLST3
+ 1799 01d8 0B       		.uleb128 0xb
+ 1800 01d9 6900     		.ascii	"i\000"
+ 1801 01db 01       		.byte	0x1
+ 1802 01dc E5       		.byte	0xe5
+ 1803 01dd 96000000 		.4byte	0x96
+ 1804 01e1 96000000 		.4byte	.LLST4
+ 1805 01e5 0B       		.uleb128 0xb
+ 1806 01e6 6A00     		.ascii	"j\000"
+ 1807 01e8 01       		.byte	0x1
+ 1808 01e9 E5       		.byte	0xe5
+ 1809 01ea 96000000 		.4byte	0x96
+ 1810 01ee AA000000 		.4byte	.LLST5
+ 1811 01f2 00       		.byte	0
+ 1812 01f3 0A       		.uleb128 0xa
+ 1813 01f4 00000000 		.4byte	.LASF26
+ 1814 01f8 01       		.byte	0x1
+ 1815 01f9 F1       		.byte	0xf1
+ 1816 01fa 00000000 		.4byte	.LFB67
+ 1817 01fe 28000000 		.4byte	.LFE67-.LFB67
+ 1818 0202 01       		.uleb128 0x1
+ 1819 0203 9C       		.byte	0x9c
+ 1820 0204 38020000 		.4byte	0x238
+ 1821 0208 0B       		.uleb128 0xb
+ 1822 0209 6900     		.ascii	"i\000"
+ 1823 020b 01       		.byte	0x1
+ 1824 020c F3       		.byte	0xf3
+ 1825 020d 96000000 		.4byte	0x96
+ 1826 0211 D6000000 		.4byte	.LLST6
+ 1827 0215 0B       		.uleb128 0xb
+ 1828 0216 6A00     		.ascii	"j\000"
+ 1829 0218 01       		.byte	0x1
+ 1830 0219 F3       		.byte	0xf3
+ 1831 021a 96000000 		.4byte	0x96
+ 1832 021e 16010000 		.4byte	.LLST7
+ 1833 0222 11       		.uleb128 0x11
+ 1834 0223 F3000000 		.4byte	0xf3
+ 1835 0227 06000000 		.4byte	.LBB22
+ 1836 022b 20000000 		.4byte	.Ldebug_ranges0+0x20
+ 1837 022f 01       		.byte	0x1
+ 1838 0230 F8       		.byte	0xf8
+ 1839 0231 0E       		.uleb128 0xe
+ 1840 0232 03010000 		.4byte	0x103
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 44
+
+
+ 1841 0236 00       		.byte	0
+ 1842 0237 00       		.byte	0
+ 1843 0238 12       		.uleb128 0x12
+ 1844 0239 E7010000 		.4byte	.LASF27
+ 1845 023d 01       		.byte	0x1
+ 1846 023e 0001     		.2byte	0x100
+ 1847 0240 00000000 		.4byte	.LFB68
+ 1848 0244 3C000000 		.4byte	.LFE68-.LFB68
+ 1849 0248 01       		.uleb128 0x1
+ 1850 0249 9C       		.byte	0x9c
+ 1851 024a 5D020000 		.4byte	0x25d
+ 1852 024e 13       		.uleb128 0x13
+ 1853 024f 1B000000 		.4byte	.LASF28
+ 1854 0253 01       		.byte	0x1
+ 1855 0254 0201     		.2byte	0x102
+ 1856 0256 96000000 		.4byte	0x96
+ 1857 025a 01       		.uleb128 0x1
+ 1858 025b 52       		.byte	0x52
+ 1859 025c 00       		.byte	0
+ 1860 025d 14       		.uleb128 0x14
+ 1861 025e 09000000 		.4byte	.LASF49
+ 1862 0262 01       		.byte	0x1
+ 1863 0263 1C01     		.2byte	0x11c
+ 1864 0265 96000000 		.4byte	0x96
+ 1865 0269 00000000 		.4byte	.LFB69
+ 1866 026d 0E000000 		.4byte	.LFE69-.LFB69
+ 1867 0271 01       		.uleb128 0x1
+ 1868 0272 9C       		.byte	0x9c
+ 1869 0273 86020000 		.4byte	0x286
+ 1870 0277 15       		.uleb128 0x15
+ 1871 0278 7800     		.ascii	"x\000"
+ 1872 027a 01       		.byte	0x1
+ 1873 027b 1C01     		.2byte	0x11c
+ 1874 027d 96000000 		.4byte	0x96
+ 1875 0281 2A010000 		.4byte	.LLST8
+ 1876 0285 00       		.byte	0
+ 1877 0286 12       		.uleb128 0x12
+ 1878 0287 3F020000 		.4byte	.LASF30
+ 1879 028b 01       		.byte	0x1
+ 1880 028c 5D01     		.2byte	0x15d
+ 1881 028e 00000000 		.4byte	.LFB72
+ 1882 0292 2C000000 		.4byte	.LFE72-.LFB72
+ 1883 0296 01       		.uleb128 0x1
+ 1884 0297 9C       		.byte	0x9c
+ 1885 0298 CF020000 		.4byte	0x2cf
+ 1886 029c 16       		.uleb128 0x16
+ 1887 029d 6900     		.ascii	"i\000"
+ 1888 029f 01       		.byte	0x1
+ 1889 02a0 5F01     		.2byte	0x15f
+ 1890 02a2 96000000 		.4byte	0x96
+ 1891 02a6 4B010000 		.4byte	.LLST9
+ 1892 02aa 16       		.uleb128 0x16
+ 1893 02ab 6A00     		.ascii	"j\000"
+ 1894 02ad 01       		.byte	0x1
+ 1895 02ae 5F01     		.2byte	0x15f
+ 1896 02b0 96000000 		.4byte	0x96
+ 1897 02b4 8B010000 		.4byte	.LLST10
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 45
+
+
+ 1898 02b8 17       		.uleb128 0x17
+ 1899 02b9 0F010000 		.4byte	0x10f
+ 1900 02bd 06000000 		.4byte	.LBB26
+ 1901 02c1 38000000 		.4byte	.Ldebug_ranges0+0x38
+ 1902 02c5 01       		.byte	0x1
+ 1903 02c6 6401     		.2byte	0x164
+ 1904 02c8 0E       		.uleb128 0xe
+ 1905 02c9 1F010000 		.4byte	0x11f
+ 1906 02cd 00       		.byte	0
+ 1907 02ce 00       		.byte	0
+ 1908 02cf 12       		.uleb128 0x12
+ 1909 02d0 D1000000 		.4byte	.LASF31
+ 1910 02d4 01       		.byte	0x1
+ 1911 02d5 6901     		.2byte	0x169
+ 1912 02d7 00000000 		.4byte	.LFB73
+ 1913 02db 3C000000 		.4byte	.LFE73-.LFB73
+ 1914 02df 01       		.uleb128 0x1
+ 1915 02e0 9C       		.byte	0x9c
+ 1916 02e1 F4020000 		.4byte	0x2f4
+ 1917 02e5 13       		.uleb128 0x13
+ 1918 02e6 1B000000 		.4byte	.LASF28
+ 1919 02ea 01       		.byte	0x1
+ 1920 02eb 6B01     		.2byte	0x16b
+ 1921 02ed 96000000 		.4byte	0x96
+ 1922 02f1 01       		.uleb128 0x1
+ 1923 02f2 52       		.byte	0x52
+ 1924 02f3 00       		.byte	0
+ 1925 02f4 18       		.uleb128 0x18
+ 1926 02f5 BF010000 		.4byte	.LASF32
+ 1927 02f9 01       		.byte	0x1
+ 1928 02fa 8701     		.2byte	0x187
+ 1929 02fc 01       		.byte	0x1
+ 1930 02fd 0E030000 		.4byte	0x30e
+ 1931 0301 19       		.uleb128 0x19
+ 1932 0302 68010000 		.4byte	.LASF29
+ 1933 0306 01       		.byte	0x1
+ 1934 0307 8901     		.2byte	0x189
+ 1935 0309 96000000 		.4byte	0x96
+ 1936 030d 00       		.byte	0
+ 1937 030e 18       		.uleb128 0x18
+ 1938 030f FF010000 		.4byte	.LASF33
+ 1939 0313 01       		.byte	0x1
+ 1940 0314 2201     		.2byte	0x122
+ 1941 0316 01       		.byte	0x1
+ 1942 0317 47030000 		.4byte	0x347
+ 1943 031b 1A       		.uleb128 0x1a
+ 1944 031c 6900     		.ascii	"i\000"
+ 1945 031e 01       		.byte	0x1
+ 1946 031f 2401     		.2byte	0x124
+ 1947 0321 96000000 		.4byte	0x96
+ 1948 0325 1A       		.uleb128 0x1a
+ 1949 0326 546D7000 		.ascii	"Tmp\000"
+ 1950 032a 01       		.byte	0x1
+ 1951 032b 2501     		.2byte	0x125
+ 1952 032d 96000000 		.4byte	0x96
+ 1953 0331 1A       		.uleb128 0x1a
+ 1954 0332 546D00   		.ascii	"Tm\000"
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 46
+
+
+ 1955 0335 01       		.byte	0x1
+ 1956 0336 2501     		.2byte	0x125
+ 1957 0338 96000000 		.4byte	0x96
+ 1958 033c 1A       		.uleb128 0x1a
+ 1959 033d 7400     		.ascii	"t\000"
+ 1960 033f 01       		.byte	0x1
+ 1961 0340 2501     		.2byte	0x125
+ 1962 0342 96000000 		.4byte	0x96
+ 1963 0346 00       		.byte	0
+ 1964 0347 1B       		.uleb128 0x1b
+ 1965 0348 E0020000 		.4byte	.LASF39
+ 1966 034c 01       		.byte	0x1
+ 1967 034d C501     		.2byte	0x1c5
+ 1968 034f 00000000 		.4byte	.LFB77
+ 1969 0353 B8000000 		.4byte	.LFE77-.LFB77
+ 1970 0357 01       		.uleb128 0x1
+ 1971 0358 9C       		.byte	0x9c
+ 1972 0359 9F040000 		.4byte	0x49f
+ 1973 035d 1C       		.uleb128 0x1c
+ 1974 035e 2A000000 		.4byte	.LASF34
+ 1975 0362 01       		.byte	0x1
+ 1976 0363 C501     		.2byte	0x1c5
+ 1977 0365 9F040000 		.4byte	0x49f
+ 1978 0369 9F010000 		.4byte	.LLST11
+ 1979 036d 15       		.uleb128 0x15
+ 1980 036e 6B657900 		.ascii	"key\000"
+ 1981 0372 01       		.byte	0x1
+ 1982 0373 C501     		.2byte	0x1c5
+ 1983 0375 A5040000 		.4byte	0x4a5
+ 1984 0379 CD010000 		.4byte	.LLST12
+ 1985 037d 1D       		.uleb128 0x1d
+ 1986 037e F4020000 		.4byte	0x2f4
+ 1987 0382 12000000 		.4byte	.LBB34
+ 1988 0386 9A000000 		.4byte	.LBE34-.LBB34
+ 1989 038a 01       		.byte	0x1
+ 1990 038b CF01     		.2byte	0x1cf
+ 1991 038d 95040000 		.4byte	0x495
+ 1992 0391 1E       		.uleb128 0x1e
+ 1993 0392 12000000 		.4byte	.LBB35
+ 1994 0396 9A000000 		.4byte	.LBE35-.LBB35
+ 1995 039a 1F       		.uleb128 0x1f
+ 1996 039b 01030000 		.4byte	0x301
+ 1997 039f EE010000 		.4byte	.LLST13
+ 1998 03a3 1D       		.uleb128 0x1d
+ 1999 03a4 0E030000 		.4byte	0x30e
+ 2000 03a8 2A000000 		.4byte	.LBB36
+ 2001 03ac 66000000 		.4byte	.LBE36-.LBB36
+ 2002 03b0 01       		.byte	0x1
+ 2003 03b1 9501     		.2byte	0x195
+ 2004 03b3 43040000 		.4byte	0x443
+ 2005 03b7 1E       		.uleb128 0x1e
+ 2006 03b8 2A000000 		.4byte	.LBB37
+ 2007 03bc 66000000 		.4byte	.LBE37-.LBB37
+ 2008 03c0 1F       		.uleb128 0x1f
+ 2009 03c1 1B030000 		.4byte	0x31b
+ 2010 03c5 24020000 		.4byte	.LLST14
+ 2011 03c9 1F       		.uleb128 0x1f
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 47
+
+
+ 2012 03ca 25030000 		.4byte	0x325
+ 2013 03ce 38020000 		.4byte	.LLST15
+ 2014 03d2 1F       		.uleb128 0x1f
+ 2015 03d3 31030000 		.4byte	0x331
+ 2016 03d7 61020000 		.4byte	.LLST16
+ 2017 03db 1F       		.uleb128 0x1f
+ 2018 03dc 3C030000 		.4byte	0x33c
+ 2019 03e0 F8020000 		.4byte	.LLST17
+ 2020 03e4 20       		.uleb128 0x20
+ 2021 03e5 4E000000 		.4byte	.LVL46
+ 2022 03e9 5D020000 		.4byte	0x25d
+ 2023 03ed FD030000 		.4byte	0x3fd
+ 2024 03f1 21       		.uleb128 0x21
+ 2025 03f2 01       		.uleb128 0x1
+ 2026 03f3 50       		.byte	0x50
+ 2027 03f4 07       		.uleb128 0x7
+ 2028 03f5 7D       		.byte	0x7d
+ 2029 03f6 00       		.sleb128 0
+ 2030 03f7 06       		.byte	0x6
+ 2031 03f8 91       		.byte	0x91
+ 2032 03f9 54       		.sleb128 -44
+ 2033 03fa 06       		.byte	0x6
+ 2034 03fb 27       		.byte	0x27
+ 2035 03fc 00       		.byte	0
+ 2036 03fd 20       		.uleb128 0x20
+ 2037 03fe 60000000 		.4byte	.LVL49
+ 2038 0402 5D020000 		.4byte	0x25d
+ 2039 0406 16040000 		.4byte	0x416
+ 2040 040a 21       		.uleb128 0x21
+ 2041 040b 01       		.uleb128 0x1
+ 2042 040c 50       		.byte	0x50
+ 2043 040d 07       		.uleb128 0x7
+ 2044 040e 91       		.byte	0x91
+ 2045 040f 54       		.sleb128 -44
+ 2046 0410 06       		.byte	0x6
+ 2047 0411 91       		.byte	0x91
+ 2048 0412 58       		.sleb128 -40
+ 2049 0413 06       		.byte	0x6
+ 2050 0414 27       		.byte	0x27
+ 2051 0415 00       		.byte	0
+ 2052 0416 20       		.uleb128 0x20
+ 2053 0417 6E000000 		.4byte	.LVL52
+ 2054 041b 5D020000 		.4byte	0x25d
+ 2055 041f 2C040000 		.4byte	0x42c
+ 2056 0423 21       		.uleb128 0x21
+ 2057 0424 01       		.uleb128 0x1
+ 2058 0425 50       		.byte	0x50
+ 2059 0426 04       		.uleb128 0x4
+ 2060 0427 91       		.byte	0x91
+ 2061 0428 60       		.sleb128 -32
+ 2062 0429 94       		.byte	0x94
+ 2063 042a 01       		.byte	0x1
+ 2064 042b 00       		.byte	0
+ 2065 042c 22       		.uleb128 0x22
+ 2066 042d 80000000 		.4byte	.LVL55
+ 2067 0431 5D020000 		.4byte	0x25d
+ 2068 0435 21       		.uleb128 0x21
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 48
+
+
+ 2069 0436 01       		.uleb128 0x1
+ 2070 0437 50       		.byte	0x50
+ 2071 0438 07       		.uleb128 0x7
+ 2072 0439 7D       		.byte	0x7d
+ 2073 043a 00       		.sleb128 0
+ 2074 043b 06       		.byte	0x6
+ 2075 043c 91       		.byte	0x91
+ 2076 043d 5C       		.sleb128 -36
+ 2077 043e 06       		.byte	0x6
+ 2078 043f 27       		.byte	0x27
+ 2079 0440 00       		.byte	0
+ 2080 0441 00       		.byte	0
+ 2081 0442 00       		.byte	0
+ 2082 0443 20       		.uleb128 0x20
+ 2083 0444 18000000 		.4byte	.LVL39
+ 2084 0448 B4010000 		.4byte	0x1b4
+ 2085 044c 56040000 		.4byte	0x456
+ 2086 0450 21       		.uleb128 0x21
+ 2087 0451 01       		.uleb128 0x1
+ 2088 0452 50       		.byte	0x50
+ 2089 0453 01       		.uleb128 0x1
+ 2090 0454 30       		.byte	0x30
+ 2091 0455 00       		.byte	0
+ 2092 0456 23       		.uleb128 0x23
+ 2093 0457 1E000000 		.4byte	.LVL41
+ 2094 045b F3010000 		.4byte	0x1f3
+ 2095 045f 23       		.uleb128 0x23
+ 2096 0460 22000000 		.4byte	.LVL42
+ 2097 0464 38020000 		.4byte	0x238
+ 2098 0468 23       		.uleb128 0x23
+ 2099 0469 9A000000 		.4byte	.LVL60
+ 2100 046d B4010000 		.4byte	0x1b4
+ 2101 0471 23       		.uleb128 0x23
+ 2102 0472 A2000000 		.4byte	.LVL61
+ 2103 0476 F3010000 		.4byte	0x1f3
+ 2104 047a 23       		.uleb128 0x23
+ 2105 047b A6000000 		.4byte	.LVL62
+ 2106 047f 38020000 		.4byte	0x238
+ 2107 0483 22       		.uleb128 0x22
+ 2108 0484 AC000000 		.4byte	.LVL63
+ 2109 0488 B4010000 		.4byte	0x1b4
+ 2110 048c 21       		.uleb128 0x21
+ 2111 048d 01       		.uleb128 0x1
+ 2112 048e 50       		.byte	0x50
+ 2113 048f 02       		.uleb128 0x2
+ 2114 0490 75       		.byte	0x75
+ 2115 0491 00       		.sleb128 0
+ 2116 0492 00       		.byte	0
+ 2117 0493 00       		.byte	0
+ 2118 0494 00       		.byte	0
+ 2119 0495 23       		.uleb128 0x23
+ 2120 0496 12000000 		.4byte	.LVL38
+ 2121 049a 2B010000 		.4byte	0x12b
+ 2122 049e 00       		.byte	0
+ 2123 049f 24       		.uleb128 0x24
+ 2124 04a0 04       		.byte	0x4
+ 2125 04a1 96000000 		.4byte	0x96
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 49
+
+
+ 2126 04a5 24       		.uleb128 0x24
+ 2127 04a6 04       		.byte	0x4
+ 2128 04a7 AB040000 		.4byte	0x4ab
+ 2129 04ab 25       		.uleb128 0x25
+ 2130 04ac 96000000 		.4byte	0x96
+ 2131 04b0 18       		.uleb128 0x18
+ 2132 04b1 35020000 		.4byte	.LASF35
+ 2133 04b5 01       		.byte	0x1
+ 2134 04b6 A001     		.2byte	0x1a0
+ 2135 04b8 01       		.byte	0x1
+ 2136 04b9 CA040000 		.4byte	0x4ca
+ 2137 04bd 19       		.uleb128 0x19
+ 2138 04be 68010000 		.4byte	.LASF29
+ 2139 04c2 01       		.byte	0x1
+ 2140 04c3 A201     		.2byte	0x1a2
+ 2141 04c5 96000000 		.4byte	0x96
+ 2142 04c9 00       		.byte	0
+ 2143 04ca 18       		.uleb128 0x18
+ 2144 04cb B5010000 		.4byte	.LASF36
+ 2145 04cf 01       		.byte	0x1
+ 2146 04d0 B901     		.2byte	0x1b9
+ 2147 04d2 01       		.byte	0x1
+ 2148 04d3 FA040000 		.4byte	0x4fa
+ 2149 04d7 26       		.uleb128 0x26
+ 2150 04d8 D9020000 		.4byte	.LASF37
+ 2151 04dc 01       		.byte	0x1
+ 2152 04dd B901     		.2byte	0x1b9
+ 2153 04df 9F040000 		.4byte	0x49f
+ 2154 04e3 26       		.uleb128 0x26
+ 2155 04e4 2A000000 		.4byte	.LASF34
+ 2156 04e8 01       		.byte	0x1
+ 2157 04e9 B901     		.2byte	0x1b9
+ 2158 04eb 9F040000 		.4byte	0x49f
+ 2159 04ef 1A       		.uleb128 0x1a
+ 2160 04f0 6900     		.ascii	"i\000"
+ 2161 04f2 01       		.byte	0x1
+ 2162 04f3 BB01     		.2byte	0x1bb
+ 2163 04f5 96000000 		.4byte	0x96
+ 2164 04f9 00       		.byte	0
+ 2165 04fa 18       		.uleb128 0x18
+ 2166 04fb C6010000 		.4byte	.LASF38
+ 2167 04ff 01       		.byte	0x1
+ 2168 0500 4801     		.2byte	0x148
+ 2169 0502 01       		.byte	0x1
+ 2170 0503 3A050000 		.4byte	0x53a
+ 2171 0507 1A       		.uleb128 0x1a
+ 2172 0508 6900     		.ascii	"i\000"
+ 2173 050a 01       		.byte	0x1
+ 2174 050b 4A01     		.2byte	0x14a
+ 2175 050d 25000000 		.4byte	0x25
+ 2176 0511 1A       		.uleb128 0x1a
+ 2177 0512 6100     		.ascii	"a\000"
+ 2178 0514 01       		.byte	0x1
+ 2179 0515 4B01     		.2byte	0x14b
+ 2180 0517 96000000 		.4byte	0x96
+ 2181 051b 1A       		.uleb128 0x1a
+ 2182 051c 6200     		.ascii	"b\000"
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 50
+
+
+ 2183 051e 01       		.byte	0x1
+ 2184 051f 4B01     		.2byte	0x14b
+ 2185 0521 96000000 		.4byte	0x96
+ 2186 0525 1A       		.uleb128 0x1a
+ 2187 0526 6300     		.ascii	"c\000"
+ 2188 0528 01       		.byte	0x1
+ 2189 0529 4B01     		.2byte	0x14b
+ 2190 052b 96000000 		.4byte	0x96
+ 2191 052f 1A       		.uleb128 0x1a
+ 2192 0530 6400     		.ascii	"d\000"
+ 2193 0532 01       		.byte	0x1
+ 2194 0533 4B01     		.2byte	0x14b
+ 2195 0535 96000000 		.4byte	0x96
+ 2196 0539 00       		.byte	0
+ 2197 053a 1B       		.uleb128 0x1b
+ 2198 053b 3B010000 		.4byte	.LASF40
+ 2199 053f 01       		.byte	0x1
+ 2200 0540 D201     		.2byte	0x1d2
+ 2201 0542 00000000 		.4byte	.LFB78
+ 2202 0546 64010000 		.4byte	.LFE78-.LFB78
+ 2203 054a 01       		.uleb128 0x1
+ 2204 054b 9C       		.byte	0x9c
+ 2205 054c 91070000 		.4byte	0x791
+ 2206 0550 1C       		.uleb128 0x1c
+ 2207 0551 2A000000 		.4byte	.LASF34
+ 2208 0555 01       		.byte	0x1
+ 2209 0556 D201     		.2byte	0x1d2
+ 2210 0558 9F040000 		.4byte	0x49f
+ 2211 055c 0C030000 		.4byte	.LLST18
+ 2212 0560 15       		.uleb128 0x15
+ 2213 0561 6B657900 		.ascii	"key\000"
+ 2214 0565 01       		.byte	0x1
+ 2215 0566 D201     		.2byte	0x1d2
+ 2216 0568 A5040000 		.4byte	0x4a5
+ 2217 056c 2D030000 		.4byte	.LLST19
+ 2218 0570 1C       		.uleb128 0x1c
+ 2219 0571 D9020000 		.4byte	.LASF37
+ 2220 0575 01       		.byte	0x1
+ 2221 0576 D201     		.2byte	0x1d2
+ 2222 0578 9F040000 		.4byte	0x49f
+ 2223 057c 4E030000 		.4byte	.LLST20
+ 2224 0580 1D       		.uleb128 0x1d
+ 2225 0581 CA040000 		.4byte	0x4ca
+ 2226 0585 08000000 		.4byte	.LBB44
+ 2227 0589 0C000000 		.4byte	.LBE44-.LBB44
+ 2228 058d 01       		.byte	0x1
+ 2229 058e D501     		.2byte	0x1d5
+ 2230 0590 BA050000 		.4byte	0x5ba
+ 2231 0594 27       		.uleb128 0x27
+ 2232 0595 E3040000 		.4byte	0x4e3
+ 2233 0599 6E030000 		.4byte	.LLST21
+ 2234 059d 27       		.uleb128 0x27
+ 2235 059e D7040000 		.4byte	0x4d7
+ 2236 05a2 81030000 		.4byte	.LLST22
+ 2237 05a6 1E       		.uleb128 0x1e
+ 2238 05a7 08000000 		.4byte	.LBB45
+ 2239 05ab 0C000000 		.4byte	.LBE45-.LBB45
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 51
+
+
+ 2240 05af 1F       		.uleb128 0x1f
+ 2241 05b0 EF040000 		.4byte	0x4ef
+ 2242 05b4 96030000 		.4byte	.LLST23
+ 2243 05b8 00       		.byte	0
+ 2244 05b9 00       		.byte	0
+ 2245 05ba 28       		.uleb128 0x28
+ 2246 05bb B0040000 		.4byte	0x4b0
+ 2247 05bf 1A000000 		.4byte	.LBB46
+ 2248 05c3 50000000 		.4byte	.Ldebug_ranges0+0x50
+ 2249 05c7 01       		.byte	0x1
+ 2250 05c8 DC01     		.2byte	0x1dc
+ 2251 05ca 87070000 		.4byte	0x787
+ 2252 05ce 29       		.uleb128 0x29
+ 2253 05cf 50000000 		.4byte	.Ldebug_ranges0+0x50
+ 2254 05d3 1F       		.uleb128 0x1f
+ 2255 05d4 BD040000 		.4byte	0x4bd
+ 2256 05d8 C2030000 		.4byte	.LLST24
+ 2257 05dc 1D       		.uleb128 0x1d
+ 2258 05dd FA040000 		.4byte	0x4fa
+ 2259 05e1 3E000000 		.4byte	.LBB48
+ 2260 05e5 02010000 		.4byte	.LBE48-.LBB48
+ 2261 05e9 01       		.byte	0x1
+ 2262 05ea AF01     		.2byte	0x1af
+ 2263 05ec 2A070000 		.4byte	0x72a
+ 2264 05f0 1E       		.uleb128 0x1e
+ 2265 05f1 3E000000 		.4byte	.LBB49
+ 2266 05f5 02010000 		.4byte	.LBE49-.LBB49
+ 2267 05f9 1F       		.uleb128 0x1f
+ 2268 05fa 07050000 		.4byte	0x507
+ 2269 05fe E1030000 		.4byte	.LLST25
+ 2270 0602 1F       		.uleb128 0x1f
+ 2271 0603 11050000 		.4byte	0x511
+ 2272 0607 F5030000 		.4byte	.LLST26
+ 2273 060b 1F       		.uleb128 0x1f
+ 2274 060c 1B050000 		.4byte	0x51b
+ 2275 0610 09040000 		.4byte	.LLST27
+ 2276 0614 1F       		.uleb128 0x1f
+ 2277 0615 25050000 		.4byte	0x525
+ 2278 0619 1D040000 		.4byte	.LLST28
+ 2279 061d 1F       		.uleb128 0x1f
+ 2280 061e 2F050000 		.4byte	0x52f
+ 2281 0622 32040000 		.4byte	.LLST29
+ 2282 0626 20       		.uleb128 0x20
+ 2283 0627 54000000 		.4byte	.LVL81
+ 2284 062b 5D020000 		.4byte	0x25d
+ 2285 062f 3C060000 		.4byte	0x63c
+ 2286 0633 21       		.uleb128 0x21
+ 2287 0634 01       		.uleb128 0x1
+ 2288 0635 50       		.byte	0x50
+ 2289 0636 04       		.uleb128 0x4
+ 2290 0637 91       		.byte	0x91
+ 2291 0638 44       		.sleb128 -60
+ 2292 0639 94       		.byte	0x94
+ 2293 063a 01       		.byte	0x1
+ 2294 063b 00       		.byte	0
+ 2295 063c 20       		.uleb128 0x20
+ 2296 063d 5A000000 		.4byte	.LVL82
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 52
+
+
+ 2297 0641 5D020000 		.4byte	0x25d
+ 2298 0645 52060000 		.4byte	0x652
+ 2299 0649 21       		.uleb128 0x21
+ 2300 064a 01       		.uleb128 0x1
+ 2301 064b 50       		.byte	0x50
+ 2302 064c 04       		.uleb128 0x4
+ 2303 064d 91       		.byte	0x91
+ 2304 064e 4C       		.sleb128 -52
+ 2305 064f 94       		.byte	0x94
+ 2306 0650 01       		.byte	0x1
+ 2307 0651 00       		.byte	0
+ 2308 0652 20       		.uleb128 0x20
+ 2309 0653 60000000 		.4byte	.LVL83
+ 2310 0657 5D020000 		.4byte	0x25d
+ 2311 065b 68060000 		.4byte	0x668
+ 2312 065f 21       		.uleb128 0x21
+ 2313 0660 01       		.uleb128 0x1
+ 2314 0661 50       		.byte	0x50
+ 2315 0662 04       		.uleb128 0x4
+ 2316 0663 91       		.byte	0x91
+ 2317 0664 50       		.sleb128 -48
+ 2318 0665 94       		.byte	0x94
+ 2319 0666 01       		.byte	0x1
+ 2320 0667 00       		.byte	0
+ 2321 0668 20       		.uleb128 0x20
+ 2322 0669 68000000 		.4byte	.LVL84
+ 2323 066d 5D020000 		.4byte	0x25d
+ 2324 0671 7E060000 		.4byte	0x67e
+ 2325 0675 21       		.uleb128 0x21
+ 2326 0676 01       		.uleb128 0x1
+ 2327 0677 50       		.byte	0x50
+ 2328 0678 04       		.uleb128 0x4
+ 2329 0679 91       		.byte	0x91
+ 2330 067a 48       		.sleb128 -56
+ 2331 067b 94       		.byte	0x94
+ 2332 067c 01       		.byte	0x1
+ 2333 067d 00       		.byte	0
+ 2334 067e 20       		.uleb128 0x20
+ 2335 067f 6E000000 		.4byte	.LVL85
+ 2336 0683 5D020000 		.4byte	0x25d
+ 2337 0687 94060000 		.4byte	0x694
+ 2338 068b 21       		.uleb128 0x21
+ 2339 068c 01       		.uleb128 0x1
+ 2340 068d 50       		.byte	0x50
+ 2341 068e 04       		.uleb128 0x4
+ 2342 068f 91       		.byte	0x91
+ 2343 0690 54       		.sleb128 -44
+ 2344 0691 94       		.byte	0x94
+ 2345 0692 01       		.byte	0x1
+ 2346 0693 00       		.byte	0
+ 2347 0694 20       		.uleb128 0x20
+ 2348 0695 74000000 		.4byte	.LVL86
+ 2349 0699 5D020000 		.4byte	0x25d
+ 2350 069d AA060000 		.4byte	0x6aa
+ 2351 06a1 21       		.uleb128 0x21
+ 2352 06a2 01       		.uleb128 0x1
+ 2353 06a3 50       		.byte	0x50
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 53
+
+
+ 2354 06a4 04       		.uleb128 0x4
+ 2355 06a5 91       		.byte	0x91
+ 2356 06a6 58       		.sleb128 -40
+ 2357 06a7 94       		.byte	0x94
+ 2358 06a8 01       		.byte	0x1
+ 2359 06a9 00       		.byte	0
+ 2360 06aa 20       		.uleb128 0x20
+ 2361 06ab 7C000000 		.4byte	.LVL87
+ 2362 06af 5D020000 		.4byte	0x25d
+ 2363 06b3 C1060000 		.4byte	0x6c1
+ 2364 06b7 21       		.uleb128 0x21
+ 2365 06b8 01       		.uleb128 0x1
+ 2366 06b9 50       		.byte	0x50
+ 2367 06ba 05       		.uleb128 0x5
+ 2368 06bb 91       		.byte	0x91
+ 2369 06bc AC7F     		.sleb128 -84
+ 2370 06be 94       		.byte	0x94
+ 2371 06bf 01       		.byte	0x1
+ 2372 06c0 00       		.byte	0
+ 2373 06c1 20       		.uleb128 0x20
+ 2374 06c2 82000000 		.4byte	.LVL88
+ 2375 06c6 5D020000 		.4byte	0x25d
+ 2376 06ca D5060000 		.4byte	0x6d5
+ 2377 06ce 21       		.uleb128 0x21
+ 2378 06cf 01       		.uleb128 0x1
+ 2379 06d0 50       		.byte	0x50
+ 2380 06d1 02       		.uleb128 0x2
+ 2381 06d2 77       		.byte	0x77
+ 2382 06d3 00       		.sleb128 0
+ 2383 06d4 00       		.byte	0
+ 2384 06d5 20       		.uleb128 0x20
+ 2385 06d6 88000000 		.4byte	.LVL89
+ 2386 06da 5D020000 		.4byte	0x25d
+ 2387 06de E9060000 		.4byte	0x6e9
+ 2388 06e2 21       		.uleb128 0x21
+ 2389 06e3 01       		.uleb128 0x1
+ 2390 06e4 50       		.byte	0x50
+ 2391 06e5 02       		.uleb128 0x2
+ 2392 06e6 76       		.byte	0x76
+ 2393 06e7 00       		.sleb128 0
+ 2394 06e8 00       		.byte	0
+ 2395 06e9 20       		.uleb128 0x20
+ 2396 06ea 90000000 		.4byte	.LVL90
+ 2397 06ee 5D020000 		.4byte	0x25d
+ 2398 06f2 00070000 		.4byte	0x700
+ 2399 06f6 21       		.uleb128 0x21
+ 2400 06f7 01       		.uleb128 0x1
+ 2401 06f8 50       		.byte	0x50
+ 2402 06f9 05       		.uleb128 0x5
+ 2403 06fa 91       		.byte	0x91
+ 2404 06fb B07F     		.sleb128 -80
+ 2405 06fd 94       		.byte	0x94
+ 2406 06fe 01       		.byte	0x1
+ 2407 06ff 00       		.byte	0
+ 2408 0700 20       		.uleb128 0x20
+ 2409 0701 96000000 		.4byte	.LVL91
+ 2410 0705 5D020000 		.4byte	0x25d
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 54
+
+
+ 2411 0709 16070000 		.4byte	0x716
+ 2412 070d 21       		.uleb128 0x21
+ 2413 070e 01       		.uleb128 0x1
+ 2414 070f 50       		.byte	0x50
+ 2415 0710 04       		.uleb128 0x4
+ 2416 0711 91       		.byte	0x91
+ 2417 0712 5C       		.sleb128 -36
+ 2418 0713 94       		.byte	0x94
+ 2419 0714 01       		.byte	0x1
+ 2420 0715 00       		.byte	0
+ 2421 0716 22       		.uleb128 0x22
+ 2422 0717 9C000000 		.4byte	.LVL92
+ 2423 071b 5D020000 		.4byte	0x25d
+ 2424 071f 21       		.uleb128 0x21
+ 2425 0720 01       		.uleb128 0x1
+ 2426 0721 50       		.byte	0x50
+ 2427 0722 04       		.uleb128 0x4
+ 2428 0723 91       		.byte	0x91
+ 2429 0724 60       		.sleb128 -32
+ 2430 0725 94       		.byte	0x94
+ 2431 0726 01       		.byte	0x1
+ 2432 0727 00       		.byte	0
+ 2433 0728 00       		.byte	0
+ 2434 0729 00       		.byte	0
+ 2435 072a 20       		.uleb128 0x20
+ 2436 072b 28000000 		.4byte	.LVL72
+ 2437 072f B4010000 		.4byte	0x1b4
+ 2438 0733 3D070000 		.4byte	0x73d
+ 2439 0737 21       		.uleb128 0x21
+ 2440 0738 01       		.uleb128 0x1
+ 2441 0739 50       		.byte	0x50
+ 2442 073a 01       		.uleb128 0x1
+ 2443 073b 3A       		.byte	0x3a
+ 2444 073c 00       		.byte	0
+ 2445 073d 23       		.uleb128 0x23
+ 2446 073e 2C000000 		.4byte	.LVL73
+ 2447 0742 CF020000 		.4byte	0x2cf
+ 2448 0746 23       		.uleb128 0x23
+ 2449 0747 30000000 		.4byte	.LVL74
+ 2450 074b 86020000 		.4byte	0x286
+ 2451 074f 20       		.uleb128 0x20
+ 2452 0750 36000000 		.4byte	.LVL75
+ 2453 0754 B4010000 		.4byte	0x1b4
+ 2454 0758 63070000 		.4byte	0x763
+ 2455 075c 21       		.uleb128 0x21
+ 2456 075d 01       		.uleb128 0x1
+ 2457 075e 50       		.byte	0x50
+ 2458 075f 02       		.uleb128 0x2
+ 2459 0760 74       		.byte	0x74
+ 2460 0761 00       		.sleb128 0
+ 2461 0762 00       		.byte	0
+ 2462 0763 23       		.uleb128 0x23
+ 2463 0764 4E010000 		.4byte	.LVL95
+ 2464 0768 CF020000 		.4byte	0x2cf
+ 2465 076c 23       		.uleb128 0x23
+ 2466 076d 52010000 		.4byte	.LVL96
+ 2467 0771 86020000 		.4byte	0x286
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 55
+
+
+ 2468 0775 22       		.uleb128 0x22
+ 2469 0776 58010000 		.4byte	.LVL97
+ 2470 077a B4010000 		.4byte	0x1b4
+ 2471 077e 21       		.uleb128 0x21
+ 2472 077f 01       		.uleb128 0x1
+ 2473 0780 50       		.byte	0x50
+ 2474 0781 02       		.uleb128 0x2
+ 2475 0782 74       		.byte	0x74
+ 2476 0783 00       		.sleb128 0
+ 2477 0784 00       		.byte	0
+ 2478 0785 00       		.byte	0
+ 2479 0786 00       		.byte	0
+ 2480 0787 23       		.uleb128 0x23
+ 2481 0788 22000000 		.4byte	.LVL71
+ 2482 078c 2B010000 		.4byte	0x12b
+ 2483 0790 00       		.byte	0
+ 2484 0791 0C       		.uleb128 0xc
+ 2485 0792 15000000 		.4byte	.LASF41
+ 2486 0796 01       		.byte	0x1
+ 2487 0797 43       		.byte	0x43
+ 2488 0798 A2070000 		.4byte	0x7a2
+ 2489 079c 05       		.uleb128 0x5
+ 2490 079d 03       		.byte	0x3
+ 2491 079e B4000000 		.4byte	state
+ 2492 07a2 24       		.uleb128 0x24
+ 2493 07a3 04       		.byte	0x4
+ 2494 07a4 D2000000 		.4byte	0xd2
+ 2495 07a8 06       		.uleb128 0x6
+ 2496 07a9 96000000 		.4byte	0x96
+ 2497 07ad B8070000 		.4byte	0x7b8
+ 2498 07b1 07       		.uleb128 0x7
+ 2499 07b2 88000000 		.4byte	0x88
+ 2500 07b6 AF       		.byte	0xaf
+ 2501 07b7 00       		.byte	0
+ 2502 07b8 0C       		.uleb128 0xc
+ 2503 07b9 7A010000 		.4byte	.LASF42
+ 2504 07bd 01       		.byte	0x1
+ 2505 07be 46       		.byte	0x46
+ 2506 07bf A8070000 		.4byte	0x7a8
+ 2507 07c3 05       		.uleb128 0x5
+ 2508 07c4 03       		.byte	0x3
+ 2509 07c5 04000000 		.4byte	RoundKey
+ 2510 07c9 2A       		.uleb128 0x2a
+ 2511 07ca 4B657900 		.ascii	"Key\000"
+ 2512 07ce 01       		.byte	0x1
+ 2513 07cf 49       		.byte	0x49
+ 2514 07d0 A5040000 		.4byte	0x4a5
+ 2515 07d4 05       		.uleb128 0x5
+ 2516 07d5 03       		.byte	0x3
+ 2517 07d6 00000000 		.4byte	Key
+ 2518 07da 06       		.uleb128 0x6
+ 2519 07db AB040000 		.4byte	0x4ab
+ 2520 07df EA070000 		.4byte	0x7ea
+ 2521 07e3 07       		.uleb128 0x7
+ 2522 07e4 88000000 		.4byte	0x88
+ 2523 07e8 FF       		.byte	0xff
+ 2524 07e9 00       		.byte	0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 56
+
+
+ 2525 07ea 0C       		.uleb128 0xc
+ 2526 07eb 0A020000 		.4byte	.LASF43
+ 2527 07ef 01       		.byte	0x1
+ 2528 07f0 4E       		.byte	0x4e
+ 2529 07f1 FB070000 		.4byte	0x7fb
+ 2530 07f5 05       		.uleb128 0x5
+ 2531 07f6 03       		.byte	0x3
+ 2532 07f7 00000000 		.4byte	sbox
+ 2533 07fb 25       		.uleb128 0x25
+ 2534 07fc DA070000 		.4byte	0x7da
+ 2535 0800 0C       		.uleb128 0xc
+ 2536 0801 39000000 		.4byte	.LASF44
+ 2537 0805 01       		.byte	0x1
+ 2538 0806 61       		.byte	0x61
+ 2539 0807 11080000 		.4byte	0x811
+ 2540 080b 05       		.uleb128 0x5
+ 2541 080c 03       		.byte	0x3
+ 2542 080d 10010000 		.4byte	rsbox
+ 2543 0811 25       		.uleb128 0x25
+ 2544 0812 DA070000 		.4byte	0x7da
+ 2545 0816 06       		.uleb128 0x6
+ 2546 0817 26080000 		.4byte	0x826
+ 2547 081b 26080000 		.4byte	0x826
+ 2548 081f 07       		.uleb128 0x7
+ 2549 0820 88000000 		.4byte	0x88
+ 2550 0824 0F       		.byte	0xf
+ 2551 0825 00       		.byte	0
+ 2552 0826 25       		.uleb128 0x25
+ 2553 0827 AC000000 		.4byte	0xac
+ 2554 082b 0C       		.uleb128 0xc
+ 2555 082c 9A010000 		.4byte	.LASF45
+ 2556 0830 01       		.byte	0x1
+ 2557 0831 8D       		.byte	0x8d
+ 2558 0832 3C080000 		.4byte	0x83c
+ 2559 0836 05       		.uleb128 0x5
+ 2560 0837 03       		.byte	0x3
+ 2561 0838 00010000 		.4byte	Rcon
+ 2562 083c 25       		.uleb128 0x25
+ 2563 083d 16080000 		.4byte	0x816
+ 2564 0841 06       		.uleb128 0x6
+ 2565 0842 51080000 		.4byte	0x851
+ 2566 0846 51080000 		.4byte	0x851
+ 2567 084a 07       		.uleb128 0x7
+ 2568 084b 88000000 		.4byte	0x88
+ 2569 084f 0B       		.byte	0xb
+ 2570 0850 00       		.byte	0
+ 2571 0851 25       		.uleb128 0x25
+ 2572 0852 B8000000 		.4byte	0xb8
+ 2573 0856 2B       		.uleb128 0x2b
+ 2574 0857 4C000000 		.4byte	.LASF50
+ 2575 085b 05       		.byte	0x5
+ 2576 085c E001     		.2byte	0x1e0
+ 2577 085e 62080000 		.4byte	0x862
+ 2578 0862 25       		.uleb128 0x25
+ 2579 0863 41080000 		.4byte	0x841
+ 2580 0867 00       		.byte	0
+ 2581              		.section	.debug_abbrev,"",%progbits
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 57
+
+
+ 2582              	.Ldebug_abbrev0:
+ 2583 0000 01       		.uleb128 0x1
+ 2584 0001 11       		.uleb128 0x11
+ 2585 0002 01       		.byte	0x1
+ 2586 0003 25       		.uleb128 0x25
+ 2587 0004 0E       		.uleb128 0xe
+ 2588 0005 13       		.uleb128 0x13
+ 2589 0006 0B       		.uleb128 0xb
+ 2590 0007 03       		.uleb128 0x3
+ 2591 0008 0E       		.uleb128 0xe
+ 2592 0009 1B       		.uleb128 0x1b
+ 2593 000a 0E       		.uleb128 0xe
+ 2594 000b 55       		.uleb128 0x55
+ 2595 000c 17       		.uleb128 0x17
+ 2596 000d 11       		.uleb128 0x11
+ 2597 000e 01       		.uleb128 0x1
+ 2598 000f 10       		.uleb128 0x10
+ 2599 0010 17       		.uleb128 0x17
+ 2600 0011 00       		.byte	0
+ 2601 0012 00       		.byte	0
+ 2602 0013 02       		.uleb128 0x2
+ 2603 0014 24       		.uleb128 0x24
+ 2604 0015 00       		.byte	0
+ 2605 0016 0B       		.uleb128 0xb
+ 2606 0017 0B       		.uleb128 0xb
+ 2607 0018 3E       		.uleb128 0x3e
+ 2608 0019 0B       		.uleb128 0xb
+ 2609 001a 03       		.uleb128 0x3
+ 2610 001b 08       		.uleb128 0x8
+ 2611 001c 00       		.byte	0
+ 2612 001d 00       		.byte	0
+ 2613 001e 03       		.uleb128 0x3
+ 2614 001f 24       		.uleb128 0x24
+ 2615 0020 00       		.byte	0
+ 2616 0021 0B       		.uleb128 0xb
+ 2617 0022 0B       		.uleb128 0xb
+ 2618 0023 3E       		.uleb128 0x3e
+ 2619 0024 0B       		.uleb128 0xb
+ 2620 0025 03       		.uleb128 0x3
+ 2621 0026 0E       		.uleb128 0xe
+ 2622 0027 00       		.byte	0
+ 2623 0028 00       		.byte	0
+ 2624 0029 04       		.uleb128 0x4
+ 2625 002a 16       		.uleb128 0x16
+ 2626 002b 00       		.byte	0
+ 2627 002c 03       		.uleb128 0x3
+ 2628 002d 0E       		.uleb128 0xe
+ 2629 002e 3A       		.uleb128 0x3a
+ 2630 002f 0B       		.uleb128 0xb
+ 2631 0030 3B       		.uleb128 0x3b
+ 2632 0031 0B       		.uleb128 0xb
+ 2633 0032 49       		.uleb128 0x49
+ 2634 0033 13       		.uleb128 0x13
+ 2635 0034 00       		.byte	0
+ 2636 0035 00       		.byte	0
+ 2637 0036 05       		.uleb128 0x5
+ 2638 0037 16       		.uleb128 0x16
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 58
+
+
+ 2639 0038 00       		.byte	0
+ 2640 0039 03       		.uleb128 0x3
+ 2641 003a 0E       		.uleb128 0xe
+ 2642 003b 3A       		.uleb128 0x3a
+ 2643 003c 0B       		.uleb128 0xb
+ 2644 003d 3B       		.uleb128 0x3b
+ 2645 003e 05       		.uleb128 0x5
+ 2646 003f 49       		.uleb128 0x49
+ 2647 0040 13       		.uleb128 0x13
+ 2648 0041 00       		.byte	0
+ 2649 0042 00       		.byte	0
+ 2650 0043 06       		.uleb128 0x6
+ 2651 0044 01       		.uleb128 0x1
+ 2652 0045 01       		.byte	0x1
+ 2653 0046 49       		.uleb128 0x49
+ 2654 0047 13       		.uleb128 0x13
+ 2655 0048 01       		.uleb128 0x1
+ 2656 0049 13       		.uleb128 0x13
+ 2657 004a 00       		.byte	0
+ 2658 004b 00       		.byte	0
+ 2659 004c 07       		.uleb128 0x7
+ 2660 004d 21       		.uleb128 0x21
+ 2661 004e 00       		.byte	0
+ 2662 004f 49       		.uleb128 0x49
+ 2663 0050 13       		.uleb128 0x13
+ 2664 0051 2F       		.uleb128 0x2f
+ 2665 0052 0B       		.uleb128 0xb
+ 2666 0053 00       		.byte	0
+ 2667 0054 00       		.byte	0
+ 2668 0055 08       		.uleb128 0x8
+ 2669 0056 2E       		.uleb128 0x2e
+ 2670 0057 01       		.byte	0x1
+ 2671 0058 03       		.uleb128 0x3
+ 2672 0059 0E       		.uleb128 0xe
+ 2673 005a 3A       		.uleb128 0x3a
+ 2674 005b 0B       		.uleb128 0xb
+ 2675 005c 3B       		.uleb128 0x3b
+ 2676 005d 0B       		.uleb128 0xb
+ 2677 005e 27       		.uleb128 0x27
+ 2678 005f 19       		.uleb128 0x19
+ 2679 0060 49       		.uleb128 0x49
+ 2680 0061 13       		.uleb128 0x13
+ 2681 0062 20       		.uleb128 0x20
+ 2682 0063 0B       		.uleb128 0xb
+ 2683 0064 01       		.uleb128 0x1
+ 2684 0065 13       		.uleb128 0x13
+ 2685 0066 00       		.byte	0
+ 2686 0067 00       		.byte	0
+ 2687 0068 09       		.uleb128 0x9
+ 2688 0069 05       		.uleb128 0x5
+ 2689 006a 00       		.byte	0
+ 2690 006b 03       		.uleb128 0x3
+ 2691 006c 08       		.uleb128 0x8
+ 2692 006d 3A       		.uleb128 0x3a
+ 2693 006e 0B       		.uleb128 0xb
+ 2694 006f 3B       		.uleb128 0x3b
+ 2695 0070 0B       		.uleb128 0xb
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 59
+
+
+ 2696 0071 49       		.uleb128 0x49
+ 2697 0072 13       		.uleb128 0x13
+ 2698 0073 00       		.byte	0
+ 2699 0074 00       		.byte	0
+ 2700 0075 0A       		.uleb128 0xa
+ 2701 0076 2E       		.uleb128 0x2e
+ 2702 0077 01       		.byte	0x1
+ 2703 0078 03       		.uleb128 0x3
+ 2704 0079 0E       		.uleb128 0xe
+ 2705 007a 3A       		.uleb128 0x3a
+ 2706 007b 0B       		.uleb128 0xb
+ 2707 007c 3B       		.uleb128 0x3b
+ 2708 007d 0B       		.uleb128 0xb
+ 2709 007e 27       		.uleb128 0x27
+ 2710 007f 19       		.uleb128 0x19
+ 2711 0080 11       		.uleb128 0x11
+ 2712 0081 01       		.uleb128 0x1
+ 2713 0082 12       		.uleb128 0x12
+ 2714 0083 06       		.uleb128 0x6
+ 2715 0084 40       		.uleb128 0x40
+ 2716 0085 18       		.uleb128 0x18
+ 2717 0086 9742     		.uleb128 0x2117
+ 2718 0088 19       		.uleb128 0x19
+ 2719 0089 01       		.uleb128 0x1
+ 2720 008a 13       		.uleb128 0x13
+ 2721 008b 00       		.byte	0
+ 2722 008c 00       		.byte	0
+ 2723 008d 0B       		.uleb128 0xb
+ 2724 008e 34       		.uleb128 0x34
+ 2725 008f 00       		.byte	0
+ 2726 0090 03       		.uleb128 0x3
+ 2727 0091 08       		.uleb128 0x8
+ 2728 0092 3A       		.uleb128 0x3a
+ 2729 0093 0B       		.uleb128 0xb
+ 2730 0094 3B       		.uleb128 0x3b
+ 2731 0095 0B       		.uleb128 0xb
+ 2732 0096 49       		.uleb128 0x49
+ 2733 0097 13       		.uleb128 0x13
+ 2734 0098 02       		.uleb128 0x2
+ 2735 0099 17       		.uleb128 0x17
+ 2736 009a 00       		.byte	0
+ 2737 009b 00       		.byte	0
+ 2738 009c 0C       		.uleb128 0xc
+ 2739 009d 34       		.uleb128 0x34
+ 2740 009e 00       		.byte	0
+ 2741 009f 03       		.uleb128 0x3
+ 2742 00a0 0E       		.uleb128 0xe
+ 2743 00a1 3A       		.uleb128 0x3a
+ 2744 00a2 0B       		.uleb128 0xb
+ 2745 00a3 3B       		.uleb128 0x3b
+ 2746 00a4 0B       		.uleb128 0xb
+ 2747 00a5 49       		.uleb128 0x49
+ 2748 00a6 13       		.uleb128 0x13
+ 2749 00a7 02       		.uleb128 0x2
+ 2750 00a8 18       		.uleb128 0x18
+ 2751 00a9 00       		.byte	0
+ 2752 00aa 00       		.byte	0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 60
+
+
+ 2753 00ab 0D       		.uleb128 0xd
+ 2754 00ac 1D       		.uleb128 0x1d
+ 2755 00ad 01       		.byte	0x1
+ 2756 00ae 31       		.uleb128 0x31
+ 2757 00af 13       		.uleb128 0x13
+ 2758 00b0 52       		.uleb128 0x52
+ 2759 00b1 01       		.uleb128 0x1
+ 2760 00b2 55       		.uleb128 0x55
+ 2761 00b3 17       		.uleb128 0x17
+ 2762 00b4 58       		.uleb128 0x58
+ 2763 00b5 0B       		.uleb128 0xb
+ 2764 00b6 59       		.uleb128 0x59
+ 2765 00b7 0B       		.uleb128 0xb
+ 2766 00b8 01       		.uleb128 0x1
+ 2767 00b9 13       		.uleb128 0x13
+ 2768 00ba 00       		.byte	0
+ 2769 00bb 00       		.byte	0
+ 2770 00bc 0E       		.uleb128 0xe
+ 2771 00bd 05       		.uleb128 0x5
+ 2772 00be 00       		.byte	0
+ 2773 00bf 31       		.uleb128 0x31
+ 2774 00c0 13       		.uleb128 0x13
+ 2775 00c1 00       		.byte	0
+ 2776 00c2 00       		.byte	0
+ 2777 00c3 0F       		.uleb128 0xf
+ 2778 00c4 1D       		.uleb128 0x1d
+ 2779 00c5 01       		.byte	0x1
+ 2780 00c6 31       		.uleb128 0x31
+ 2781 00c7 13       		.uleb128 0x13
+ 2782 00c8 11       		.uleb128 0x11
+ 2783 00c9 01       		.uleb128 0x1
+ 2784 00ca 12       		.uleb128 0x12
+ 2785 00cb 06       		.uleb128 0x6
+ 2786 00cc 58       		.uleb128 0x58
+ 2787 00cd 0B       		.uleb128 0xb
+ 2788 00ce 59       		.uleb128 0x59
+ 2789 00cf 0B       		.uleb128 0xb
+ 2790 00d0 00       		.byte	0
+ 2791 00d1 00       		.byte	0
+ 2792 00d2 10       		.uleb128 0x10
+ 2793 00d3 05       		.uleb128 0x5
+ 2794 00d4 00       		.byte	0
+ 2795 00d5 03       		.uleb128 0x3
+ 2796 00d6 0E       		.uleb128 0xe
+ 2797 00d7 3A       		.uleb128 0x3a
+ 2798 00d8 0B       		.uleb128 0xb
+ 2799 00d9 3B       		.uleb128 0x3b
+ 2800 00da 0B       		.uleb128 0xb
+ 2801 00db 49       		.uleb128 0x49
+ 2802 00dc 13       		.uleb128 0x13
+ 2803 00dd 02       		.uleb128 0x2
+ 2804 00de 17       		.uleb128 0x17
+ 2805 00df 00       		.byte	0
+ 2806 00e0 00       		.byte	0
+ 2807 00e1 11       		.uleb128 0x11
+ 2808 00e2 1D       		.uleb128 0x1d
+ 2809 00e3 01       		.byte	0x1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 61
+
+
+ 2810 00e4 31       		.uleb128 0x31
+ 2811 00e5 13       		.uleb128 0x13
+ 2812 00e6 52       		.uleb128 0x52
+ 2813 00e7 01       		.uleb128 0x1
+ 2814 00e8 55       		.uleb128 0x55
+ 2815 00e9 17       		.uleb128 0x17
+ 2816 00ea 58       		.uleb128 0x58
+ 2817 00eb 0B       		.uleb128 0xb
+ 2818 00ec 59       		.uleb128 0x59
+ 2819 00ed 0B       		.uleb128 0xb
+ 2820 00ee 00       		.byte	0
+ 2821 00ef 00       		.byte	0
+ 2822 00f0 12       		.uleb128 0x12
+ 2823 00f1 2E       		.uleb128 0x2e
+ 2824 00f2 01       		.byte	0x1
+ 2825 00f3 03       		.uleb128 0x3
+ 2826 00f4 0E       		.uleb128 0xe
+ 2827 00f5 3A       		.uleb128 0x3a
+ 2828 00f6 0B       		.uleb128 0xb
+ 2829 00f7 3B       		.uleb128 0x3b
+ 2830 00f8 05       		.uleb128 0x5
+ 2831 00f9 27       		.uleb128 0x27
+ 2832 00fa 19       		.uleb128 0x19
+ 2833 00fb 11       		.uleb128 0x11
+ 2834 00fc 01       		.uleb128 0x1
+ 2835 00fd 12       		.uleb128 0x12
+ 2836 00fe 06       		.uleb128 0x6
+ 2837 00ff 40       		.uleb128 0x40
+ 2838 0100 18       		.uleb128 0x18
+ 2839 0101 9742     		.uleb128 0x2117
+ 2840 0103 19       		.uleb128 0x19
+ 2841 0104 01       		.uleb128 0x1
+ 2842 0105 13       		.uleb128 0x13
+ 2843 0106 00       		.byte	0
+ 2844 0107 00       		.byte	0
+ 2845 0108 13       		.uleb128 0x13
+ 2846 0109 34       		.uleb128 0x34
+ 2847 010a 00       		.byte	0
+ 2848 010b 03       		.uleb128 0x3
+ 2849 010c 0E       		.uleb128 0xe
+ 2850 010d 3A       		.uleb128 0x3a
+ 2851 010e 0B       		.uleb128 0xb
+ 2852 010f 3B       		.uleb128 0x3b
+ 2853 0110 05       		.uleb128 0x5
+ 2854 0111 49       		.uleb128 0x49
+ 2855 0112 13       		.uleb128 0x13
+ 2856 0113 02       		.uleb128 0x2
+ 2857 0114 18       		.uleb128 0x18
+ 2858 0115 00       		.byte	0
+ 2859 0116 00       		.byte	0
+ 2860 0117 14       		.uleb128 0x14
+ 2861 0118 2E       		.uleb128 0x2e
+ 2862 0119 01       		.byte	0x1
+ 2863 011a 03       		.uleb128 0x3
+ 2864 011b 0E       		.uleb128 0xe
+ 2865 011c 3A       		.uleb128 0x3a
+ 2866 011d 0B       		.uleb128 0xb
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 62
+
+
+ 2867 011e 3B       		.uleb128 0x3b
+ 2868 011f 05       		.uleb128 0x5
+ 2869 0120 27       		.uleb128 0x27
+ 2870 0121 19       		.uleb128 0x19
+ 2871 0122 49       		.uleb128 0x49
+ 2872 0123 13       		.uleb128 0x13
+ 2873 0124 11       		.uleb128 0x11
+ 2874 0125 01       		.uleb128 0x1
+ 2875 0126 12       		.uleb128 0x12
+ 2876 0127 06       		.uleb128 0x6
+ 2877 0128 40       		.uleb128 0x40
+ 2878 0129 18       		.uleb128 0x18
+ 2879 012a 9742     		.uleb128 0x2117
+ 2880 012c 19       		.uleb128 0x19
+ 2881 012d 01       		.uleb128 0x1
+ 2882 012e 13       		.uleb128 0x13
+ 2883 012f 00       		.byte	0
+ 2884 0130 00       		.byte	0
+ 2885 0131 15       		.uleb128 0x15
+ 2886 0132 05       		.uleb128 0x5
+ 2887 0133 00       		.byte	0
+ 2888 0134 03       		.uleb128 0x3
+ 2889 0135 08       		.uleb128 0x8
+ 2890 0136 3A       		.uleb128 0x3a
+ 2891 0137 0B       		.uleb128 0xb
+ 2892 0138 3B       		.uleb128 0x3b
+ 2893 0139 05       		.uleb128 0x5
+ 2894 013a 49       		.uleb128 0x49
+ 2895 013b 13       		.uleb128 0x13
+ 2896 013c 02       		.uleb128 0x2
+ 2897 013d 17       		.uleb128 0x17
+ 2898 013e 00       		.byte	0
+ 2899 013f 00       		.byte	0
+ 2900 0140 16       		.uleb128 0x16
+ 2901 0141 34       		.uleb128 0x34
+ 2902 0142 00       		.byte	0
+ 2903 0143 03       		.uleb128 0x3
+ 2904 0144 08       		.uleb128 0x8
+ 2905 0145 3A       		.uleb128 0x3a
+ 2906 0146 0B       		.uleb128 0xb
+ 2907 0147 3B       		.uleb128 0x3b
+ 2908 0148 05       		.uleb128 0x5
+ 2909 0149 49       		.uleb128 0x49
+ 2910 014a 13       		.uleb128 0x13
+ 2911 014b 02       		.uleb128 0x2
+ 2912 014c 17       		.uleb128 0x17
+ 2913 014d 00       		.byte	0
+ 2914 014e 00       		.byte	0
+ 2915 014f 17       		.uleb128 0x17
+ 2916 0150 1D       		.uleb128 0x1d
+ 2917 0151 01       		.byte	0x1
+ 2918 0152 31       		.uleb128 0x31
+ 2919 0153 13       		.uleb128 0x13
+ 2920 0154 52       		.uleb128 0x52
+ 2921 0155 01       		.uleb128 0x1
+ 2922 0156 55       		.uleb128 0x55
+ 2923 0157 17       		.uleb128 0x17
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 63
+
+
+ 2924 0158 58       		.uleb128 0x58
+ 2925 0159 0B       		.uleb128 0xb
+ 2926 015a 59       		.uleb128 0x59
+ 2927 015b 05       		.uleb128 0x5
+ 2928 015c 00       		.byte	0
+ 2929 015d 00       		.byte	0
+ 2930 015e 18       		.uleb128 0x18
+ 2931 015f 2E       		.uleb128 0x2e
+ 2932 0160 01       		.byte	0x1
+ 2933 0161 03       		.uleb128 0x3
+ 2934 0162 0E       		.uleb128 0xe
+ 2935 0163 3A       		.uleb128 0x3a
+ 2936 0164 0B       		.uleb128 0xb
+ 2937 0165 3B       		.uleb128 0x3b
+ 2938 0166 05       		.uleb128 0x5
+ 2939 0167 27       		.uleb128 0x27
+ 2940 0168 19       		.uleb128 0x19
+ 2941 0169 20       		.uleb128 0x20
+ 2942 016a 0B       		.uleb128 0xb
+ 2943 016b 01       		.uleb128 0x1
+ 2944 016c 13       		.uleb128 0x13
+ 2945 016d 00       		.byte	0
+ 2946 016e 00       		.byte	0
+ 2947 016f 19       		.uleb128 0x19
+ 2948 0170 34       		.uleb128 0x34
+ 2949 0171 00       		.byte	0
+ 2950 0172 03       		.uleb128 0x3
+ 2951 0173 0E       		.uleb128 0xe
+ 2952 0174 3A       		.uleb128 0x3a
+ 2953 0175 0B       		.uleb128 0xb
+ 2954 0176 3B       		.uleb128 0x3b
+ 2955 0177 05       		.uleb128 0x5
+ 2956 0178 49       		.uleb128 0x49
+ 2957 0179 13       		.uleb128 0x13
+ 2958 017a 00       		.byte	0
+ 2959 017b 00       		.byte	0
+ 2960 017c 1A       		.uleb128 0x1a
+ 2961 017d 34       		.uleb128 0x34
+ 2962 017e 00       		.byte	0
+ 2963 017f 03       		.uleb128 0x3
+ 2964 0180 08       		.uleb128 0x8
+ 2965 0181 3A       		.uleb128 0x3a
+ 2966 0182 0B       		.uleb128 0xb
+ 2967 0183 3B       		.uleb128 0x3b
+ 2968 0184 05       		.uleb128 0x5
+ 2969 0185 49       		.uleb128 0x49
+ 2970 0186 13       		.uleb128 0x13
+ 2971 0187 00       		.byte	0
+ 2972 0188 00       		.byte	0
+ 2973 0189 1B       		.uleb128 0x1b
+ 2974 018a 2E       		.uleb128 0x2e
+ 2975 018b 01       		.byte	0x1
+ 2976 018c 3F       		.uleb128 0x3f
+ 2977 018d 19       		.uleb128 0x19
+ 2978 018e 03       		.uleb128 0x3
+ 2979 018f 0E       		.uleb128 0xe
+ 2980 0190 3A       		.uleb128 0x3a
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 64
+
+
+ 2981 0191 0B       		.uleb128 0xb
+ 2982 0192 3B       		.uleb128 0x3b
+ 2983 0193 05       		.uleb128 0x5
+ 2984 0194 27       		.uleb128 0x27
+ 2985 0195 19       		.uleb128 0x19
+ 2986 0196 11       		.uleb128 0x11
+ 2987 0197 01       		.uleb128 0x1
+ 2988 0198 12       		.uleb128 0x12
+ 2989 0199 06       		.uleb128 0x6
+ 2990 019a 40       		.uleb128 0x40
+ 2991 019b 18       		.uleb128 0x18
+ 2992 019c 9742     		.uleb128 0x2117
+ 2993 019e 19       		.uleb128 0x19
+ 2994 019f 01       		.uleb128 0x1
+ 2995 01a0 13       		.uleb128 0x13
+ 2996 01a1 00       		.byte	0
+ 2997 01a2 00       		.byte	0
+ 2998 01a3 1C       		.uleb128 0x1c
+ 2999 01a4 05       		.uleb128 0x5
+ 3000 01a5 00       		.byte	0
+ 3001 01a6 03       		.uleb128 0x3
+ 3002 01a7 0E       		.uleb128 0xe
+ 3003 01a8 3A       		.uleb128 0x3a
+ 3004 01a9 0B       		.uleb128 0xb
+ 3005 01aa 3B       		.uleb128 0x3b
+ 3006 01ab 05       		.uleb128 0x5
+ 3007 01ac 49       		.uleb128 0x49
+ 3008 01ad 13       		.uleb128 0x13
+ 3009 01ae 02       		.uleb128 0x2
+ 3010 01af 17       		.uleb128 0x17
+ 3011 01b0 00       		.byte	0
+ 3012 01b1 00       		.byte	0
+ 3013 01b2 1D       		.uleb128 0x1d
+ 3014 01b3 1D       		.uleb128 0x1d
+ 3015 01b4 01       		.byte	0x1
+ 3016 01b5 31       		.uleb128 0x31
+ 3017 01b6 13       		.uleb128 0x13
+ 3018 01b7 11       		.uleb128 0x11
+ 3019 01b8 01       		.uleb128 0x1
+ 3020 01b9 12       		.uleb128 0x12
+ 3021 01ba 06       		.uleb128 0x6
+ 3022 01bb 58       		.uleb128 0x58
+ 3023 01bc 0B       		.uleb128 0xb
+ 3024 01bd 59       		.uleb128 0x59
+ 3025 01be 05       		.uleb128 0x5
+ 3026 01bf 01       		.uleb128 0x1
+ 3027 01c0 13       		.uleb128 0x13
+ 3028 01c1 00       		.byte	0
+ 3029 01c2 00       		.byte	0
+ 3030 01c3 1E       		.uleb128 0x1e
+ 3031 01c4 0B       		.uleb128 0xb
+ 3032 01c5 01       		.byte	0x1
+ 3033 01c6 11       		.uleb128 0x11
+ 3034 01c7 01       		.uleb128 0x1
+ 3035 01c8 12       		.uleb128 0x12
+ 3036 01c9 06       		.uleb128 0x6
+ 3037 01ca 00       		.byte	0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 65
+
+
+ 3038 01cb 00       		.byte	0
+ 3039 01cc 1F       		.uleb128 0x1f
+ 3040 01cd 34       		.uleb128 0x34
+ 3041 01ce 00       		.byte	0
+ 3042 01cf 31       		.uleb128 0x31
+ 3043 01d0 13       		.uleb128 0x13
+ 3044 01d1 02       		.uleb128 0x2
+ 3045 01d2 17       		.uleb128 0x17
+ 3046 01d3 00       		.byte	0
+ 3047 01d4 00       		.byte	0
+ 3048 01d5 20       		.uleb128 0x20
+ 3049 01d6 898201   		.uleb128 0x4109
+ 3050 01d9 01       		.byte	0x1
+ 3051 01da 11       		.uleb128 0x11
+ 3052 01db 01       		.uleb128 0x1
+ 3053 01dc 31       		.uleb128 0x31
+ 3054 01dd 13       		.uleb128 0x13
+ 3055 01de 01       		.uleb128 0x1
+ 3056 01df 13       		.uleb128 0x13
+ 3057 01e0 00       		.byte	0
+ 3058 01e1 00       		.byte	0
+ 3059 01e2 21       		.uleb128 0x21
+ 3060 01e3 8A8201   		.uleb128 0x410a
+ 3061 01e6 00       		.byte	0
+ 3062 01e7 02       		.uleb128 0x2
+ 3063 01e8 18       		.uleb128 0x18
+ 3064 01e9 9142     		.uleb128 0x2111
+ 3065 01eb 18       		.uleb128 0x18
+ 3066 01ec 00       		.byte	0
+ 3067 01ed 00       		.byte	0
+ 3068 01ee 22       		.uleb128 0x22
+ 3069 01ef 898201   		.uleb128 0x4109
+ 3070 01f2 01       		.byte	0x1
+ 3071 01f3 11       		.uleb128 0x11
+ 3072 01f4 01       		.uleb128 0x1
+ 3073 01f5 31       		.uleb128 0x31
+ 3074 01f6 13       		.uleb128 0x13
+ 3075 01f7 00       		.byte	0
+ 3076 01f8 00       		.byte	0
+ 3077 01f9 23       		.uleb128 0x23
+ 3078 01fa 898201   		.uleb128 0x4109
+ 3079 01fd 00       		.byte	0
+ 3080 01fe 11       		.uleb128 0x11
+ 3081 01ff 01       		.uleb128 0x1
+ 3082 0200 31       		.uleb128 0x31
+ 3083 0201 13       		.uleb128 0x13
+ 3084 0202 00       		.byte	0
+ 3085 0203 00       		.byte	0
+ 3086 0204 24       		.uleb128 0x24
+ 3087 0205 0F       		.uleb128 0xf
+ 3088 0206 00       		.byte	0
+ 3089 0207 0B       		.uleb128 0xb
+ 3090 0208 0B       		.uleb128 0xb
+ 3091 0209 49       		.uleb128 0x49
+ 3092 020a 13       		.uleb128 0x13
+ 3093 020b 00       		.byte	0
+ 3094 020c 00       		.byte	0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 66
+
+
+ 3095 020d 25       		.uleb128 0x25
+ 3096 020e 26       		.uleb128 0x26
+ 3097 020f 00       		.byte	0
+ 3098 0210 49       		.uleb128 0x49
+ 3099 0211 13       		.uleb128 0x13
+ 3100 0212 00       		.byte	0
+ 3101 0213 00       		.byte	0
+ 3102 0214 26       		.uleb128 0x26
+ 3103 0215 05       		.uleb128 0x5
+ 3104 0216 00       		.byte	0
+ 3105 0217 03       		.uleb128 0x3
+ 3106 0218 0E       		.uleb128 0xe
+ 3107 0219 3A       		.uleb128 0x3a
+ 3108 021a 0B       		.uleb128 0xb
+ 3109 021b 3B       		.uleb128 0x3b
+ 3110 021c 05       		.uleb128 0x5
+ 3111 021d 49       		.uleb128 0x49
+ 3112 021e 13       		.uleb128 0x13
+ 3113 021f 00       		.byte	0
+ 3114 0220 00       		.byte	0
+ 3115 0221 27       		.uleb128 0x27
+ 3116 0222 05       		.uleb128 0x5
+ 3117 0223 00       		.byte	0
+ 3118 0224 31       		.uleb128 0x31
+ 3119 0225 13       		.uleb128 0x13
+ 3120 0226 02       		.uleb128 0x2
+ 3121 0227 17       		.uleb128 0x17
+ 3122 0228 00       		.byte	0
+ 3123 0229 00       		.byte	0
+ 3124 022a 28       		.uleb128 0x28
+ 3125 022b 1D       		.uleb128 0x1d
+ 3126 022c 01       		.byte	0x1
+ 3127 022d 31       		.uleb128 0x31
+ 3128 022e 13       		.uleb128 0x13
+ 3129 022f 52       		.uleb128 0x52
+ 3130 0230 01       		.uleb128 0x1
+ 3131 0231 55       		.uleb128 0x55
+ 3132 0232 17       		.uleb128 0x17
+ 3133 0233 58       		.uleb128 0x58
+ 3134 0234 0B       		.uleb128 0xb
+ 3135 0235 59       		.uleb128 0x59
+ 3136 0236 05       		.uleb128 0x5
+ 3137 0237 01       		.uleb128 0x1
+ 3138 0238 13       		.uleb128 0x13
+ 3139 0239 00       		.byte	0
+ 3140 023a 00       		.byte	0
+ 3141 023b 29       		.uleb128 0x29
+ 3142 023c 0B       		.uleb128 0xb
+ 3143 023d 01       		.byte	0x1
+ 3144 023e 55       		.uleb128 0x55
+ 3145 023f 17       		.uleb128 0x17
+ 3146 0240 00       		.byte	0
+ 3147 0241 00       		.byte	0
+ 3148 0242 2A       		.uleb128 0x2a
+ 3149 0243 34       		.uleb128 0x34
+ 3150 0244 00       		.byte	0
+ 3151 0245 03       		.uleb128 0x3
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 67
+
+
+ 3152 0246 08       		.uleb128 0x8
+ 3153 0247 3A       		.uleb128 0x3a
+ 3154 0248 0B       		.uleb128 0xb
+ 3155 0249 3B       		.uleb128 0x3b
+ 3156 024a 0B       		.uleb128 0xb
+ 3157 024b 49       		.uleb128 0x49
+ 3158 024c 13       		.uleb128 0x13
+ 3159 024d 02       		.uleb128 0x2
+ 3160 024e 18       		.uleb128 0x18
+ 3161 024f 00       		.byte	0
+ 3162 0250 00       		.byte	0
+ 3163 0251 2B       		.uleb128 0x2b
+ 3164 0252 34       		.uleb128 0x34
+ 3165 0253 00       		.byte	0
+ 3166 0254 03       		.uleb128 0x3
+ 3167 0255 0E       		.uleb128 0xe
+ 3168 0256 3A       		.uleb128 0x3a
+ 3169 0257 0B       		.uleb128 0xb
+ 3170 0258 3B       		.uleb128 0x3b
+ 3171 0259 05       		.uleb128 0x5
+ 3172 025a 49       		.uleb128 0x49
+ 3173 025b 13       		.uleb128 0x13
+ 3174 025c 3F       		.uleb128 0x3f
+ 3175 025d 19       		.uleb128 0x19
+ 3176 025e 3C       		.uleb128 0x3c
+ 3177 025f 19       		.uleb128 0x19
+ 3178 0260 00       		.byte	0
+ 3179 0261 00       		.byte	0
+ 3180 0262 00       		.byte	0
+ 3181              		.section	.debug_loc,"",%progbits
+ 3182              	.Ldebug_loc0:
+ 3183              	.LLST0:
+ 3184 0000 00000000 		.4byte	.LVL0
+ 3185 0004 0E000000 		.4byte	.LVL1
+ 3186 0008 0200     		.2byte	0x2
+ 3187 000a 30       		.byte	0x30
+ 3188 000b 9F       		.byte	0x9f
+ 3189 000c 2E000000 		.4byte	.LVL2
+ 3190 0010 9C000000 		.4byte	.LFE65
+ 3191 0014 0100     		.2byte	0x1
+ 3192 0016 51       		.byte	0x51
+ 3193 0017 00000000 		.4byte	0
+ 3194 001b 00000000 		.4byte	0
+ 3195              	.LLST1:
+ 3196 001f 2E000000 		.4byte	.LVL2
+ 3197 0023 34000000 		.4byte	.LVL3
+ 3198 0027 0200     		.2byte	0x2
+ 3199 0029 30       		.byte	0x30
+ 3200 002a 9F       		.byte	0x9f
+ 3201 002b 34000000 		.4byte	.LVL3
+ 3202 002f 40000000 		.4byte	.LVL5
+ 3203 0033 0100     		.2byte	0x1
+ 3204 0035 55       		.byte	0x55
+ 3205 0036 40000000 		.4byte	.LVL5
+ 3206 003a 4E000000 		.4byte	.LVL8
+ 3207 003e 0300     		.2byte	0x3
+ 3208 0040 75       		.byte	0x75
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 68
+
+
+ 3209 0041 01       		.sleb128 1
+ 3210 0042 9F       		.byte	0x9f
+ 3211 0043 00000000 		.4byte	0
+ 3212 0047 00000000 		.4byte	0
+ 3213              	.LLST2:
+ 3214 004b 48000000 		.4byte	.LVL6
+ 3215 004f 4C000000 		.4byte	.LVL7
+ 3216 0053 0600     		.2byte	0x6
+ 3217 0055 76       		.byte	0x76
+ 3218 0056 00       		.sleb128 0
+ 3219 0057 08       		.byte	0x8
+ 3220 0058 FF       		.byte	0xff
+ 3221 0059 1A       		.byte	0x1a
+ 3222 005a 9F       		.byte	0x9f
+ 3223 005b 4C000000 		.4byte	.LVL7
+ 3224 005f 64000000 		.4byte	.LVL9
+ 3225 0063 0800     		.2byte	0x8
+ 3226 0065 72       		.byte	0x72
+ 3227 0066 00       		.sleb128 0
+ 3228 0067 94       		.byte	0x94
+ 3229 0068 01       		.byte	0x1
+ 3230 0069 08       		.byte	0x8
+ 3231 006a FF       		.byte	0xff
+ 3232 006b 1A       		.byte	0x1a
+ 3233 006c 9F       		.byte	0x9f
+ 3234 006d 00000000 		.4byte	0
+ 3235 0071 00000000 		.4byte	0
+ 3236              	.LLST3:
+ 3237 0075 00000000 		.4byte	.LVL11
+ 3238 0079 0E000000 		.4byte	.LVL12
+ 3239 007d 0100     		.2byte	0x1
+ 3240 007f 50       		.byte	0x50
+ 3241 0080 0E000000 		.4byte	.LVL12
+ 3242 0084 3C000000 		.4byte	.LFE66
+ 3243 0088 0400     		.2byte	0x4
+ 3244 008a F3       		.byte	0xf3
+ 3245 008b 01       		.uleb128 0x1
+ 3246 008c 50       		.byte	0x50
+ 3247 008d 9F       		.byte	0x9f
+ 3248 008e 00000000 		.4byte	0
+ 3249 0092 00000000 		.4byte	0
+ 3250              	.LLST4:
+ 3251 0096 00000000 		.4byte	.LVL11
+ 3252 009a 10000000 		.4byte	.LVL13
+ 3253 009e 0200     		.2byte	0x2
+ 3254 00a0 30       		.byte	0x30
+ 3255 00a1 9F       		.byte	0x9f
+ 3256 00a2 00000000 		.4byte	0
+ 3257 00a6 00000000 		.4byte	0
+ 3258              	.LLST5:
+ 3259 00aa 10000000 		.4byte	.LVL13
+ 3260 00ae 18000000 		.4byte	.LVL14
+ 3261 00b2 0200     		.2byte	0x2
+ 3262 00b4 30       		.byte	0x30
+ 3263 00b5 9F       		.byte	0x9f
+ 3264 00b6 18000000 		.4byte	.LVL14
+ 3265 00ba 26000000 		.4byte	.LVL15
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 69
+
+
+ 3266 00be 0100     		.2byte	0x1
+ 3267 00c0 53       		.byte	0x53
+ 3268 00c1 26000000 		.4byte	.LVL15
+ 3269 00c5 28000000 		.4byte	.LVL16
+ 3270 00c9 0300     		.2byte	0x3
+ 3271 00cb 73       		.byte	0x73
+ 3272 00cc 01       		.sleb128 1
+ 3273 00cd 9F       		.byte	0x9f
+ 3274 00ce 00000000 		.4byte	0
+ 3275 00d2 00000000 		.4byte	0
+ 3276              	.LLST6:
+ 3277 00d6 00000000 		.4byte	.LVL17
+ 3278 00da 0A000000 		.4byte	.LVL18
+ 3279 00de 0200     		.2byte	0x2
+ 3280 00e0 30       		.byte	0x30
+ 3281 00e1 9F       		.byte	0x9f
+ 3282 00e2 0A000000 		.4byte	.LVL18
+ 3283 00e6 18000000 		.4byte	.LVL20
+ 3284 00ea 0B00     		.2byte	0xb
+ 3285 00ec 73       		.byte	0x73
+ 3286 00ed 00       		.sleb128 0
+ 3287 00ee 03       		.byte	0x3
+ 3288 00ef B4000000 		.4byte	state
+ 3289 00f3 94       		.byte	0x94
+ 3290 00f4 01       		.byte	0x1
+ 3291 00f5 1C       		.byte	0x1c
+ 3292 00f6 9F       		.byte	0x9f
+ 3293 00f7 18000000 		.4byte	.LVL20
+ 3294 00fb 1A000000 		.4byte	.LVL21
+ 3295 00ff 0D00     		.2byte	0xd
+ 3296 0101 73       		.byte	0x73
+ 3297 0102 00       		.sleb128 0
+ 3298 0103 03       		.byte	0x3
+ 3299 0104 B4000000 		.4byte	state
+ 3300 0108 94       		.byte	0x94
+ 3301 0109 01       		.byte	0x1
+ 3302 010a 1C       		.byte	0x1c
+ 3303 010b 23       		.byte	0x23
+ 3304 010c 01       		.uleb128 0x1
+ 3305 010d 9F       		.byte	0x9f
+ 3306 010e 00000000 		.4byte	0
+ 3307 0112 00000000 		.4byte	0
+ 3308              	.LLST7:
+ 3309 0116 0A000000 		.4byte	.LVL18
+ 3310 011a 0C000000 		.4byte	.LVL19
+ 3311 011e 0200     		.2byte	0x2
+ 3312 0120 30       		.byte	0x30
+ 3313 0121 9F       		.byte	0x9f
+ 3314 0122 00000000 		.4byte	0
+ 3315 0126 00000000 		.4byte	0
+ 3316              	.LLST8:
+ 3317 012a 00000000 		.4byte	.LVL26
+ 3318 012e 08000000 		.4byte	.LVL27
+ 3319 0132 0100     		.2byte	0x1
+ 3320 0134 50       		.byte	0x50
+ 3321 0135 08000000 		.4byte	.LVL27
+ 3322 0139 0E000000 		.4byte	.LFE69
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 70
+
+
+ 3323 013d 0400     		.2byte	0x4
+ 3324 013f F3       		.byte	0xf3
+ 3325 0140 01       		.uleb128 0x1
+ 3326 0141 50       		.byte	0x50
+ 3327 0142 9F       		.byte	0x9f
+ 3328 0143 00000000 		.4byte	0
+ 3329 0147 00000000 		.4byte	0
+ 3330              	.LLST9:
+ 3331 014b 00000000 		.4byte	.LVL28
+ 3332 014f 0A000000 		.4byte	.LVL29
+ 3333 0153 0200     		.2byte	0x2
+ 3334 0155 30       		.byte	0x30
+ 3335 0156 9F       		.byte	0x9f
+ 3336 0157 0A000000 		.4byte	.LVL29
+ 3337 015b 1A000000 		.4byte	.LVL31
+ 3338 015f 0B00     		.2byte	0xb
+ 3339 0161 73       		.byte	0x73
+ 3340 0162 00       		.sleb128 0
+ 3341 0163 03       		.byte	0x3
+ 3342 0164 B4000000 		.4byte	state
+ 3343 0168 94       		.byte	0x94
+ 3344 0169 01       		.byte	0x1
+ 3345 016a 1C       		.byte	0x1c
+ 3346 016b 9F       		.byte	0x9f
+ 3347 016c 1A000000 		.4byte	.LVL31
+ 3348 0170 1C000000 		.4byte	.LVL32
+ 3349 0174 0D00     		.2byte	0xd
+ 3350 0176 73       		.byte	0x73
+ 3351 0177 00       		.sleb128 0
+ 3352 0178 03       		.byte	0x3
+ 3353 0179 B4000000 		.4byte	state
+ 3354 017d 94       		.byte	0x94
+ 3355 017e 01       		.byte	0x1
+ 3356 017f 1C       		.byte	0x1c
+ 3357 0180 23       		.byte	0x23
+ 3358 0181 01       		.uleb128 0x1
+ 3359 0182 9F       		.byte	0x9f
+ 3360 0183 00000000 		.4byte	0
+ 3361 0187 00000000 		.4byte	0
+ 3362              	.LLST10:
+ 3363 018b 0A000000 		.4byte	.LVL29
+ 3364 018f 0C000000 		.4byte	.LVL30
+ 3365 0193 0200     		.2byte	0x2
+ 3366 0195 30       		.byte	0x30
+ 3367 0196 9F       		.byte	0x9f
+ 3368 0197 00000000 		.4byte	0
+ 3369 019b 00000000 		.4byte	0
+ 3370              	.LLST11:
+ 3371 019f 00000000 		.4byte	.LVL37
+ 3372 01a3 11000000 		.4byte	.LVL38-1
+ 3373 01a7 0100     		.2byte	0x1
+ 3374 01a9 50       		.byte	0x50
+ 3375 01aa 11000000 		.4byte	.LVL38-1
+ 3376 01ae AE000000 		.4byte	.LVL64
+ 3377 01b2 0100     		.2byte	0x1
+ 3378 01b4 57       		.byte	0x57
+ 3379 01b5 AE000000 		.4byte	.LVL64
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 71
+
+
+ 3380 01b9 B8000000 		.4byte	.LFE77
+ 3381 01bd 0600     		.2byte	0x6
+ 3382 01bf 91       		.byte	0x91
+ 3383 01c0 64       		.sleb128 -28
+ 3384 01c1 06       		.byte	0x6
+ 3385 01c2 40       		.byte	0x40
+ 3386 01c3 1C       		.byte	0x1c
+ 3387 01c4 9F       		.byte	0x9f
+ 3388 01c5 00000000 		.4byte	0
+ 3389 01c9 00000000 		.4byte	0
+ 3390              	.LLST12:
+ 3391 01cd 00000000 		.4byte	.LVL37
+ 3392 01d1 11000000 		.4byte	.LVL38-1
+ 3393 01d5 0100     		.2byte	0x1
+ 3394 01d7 51       		.byte	0x51
+ 3395 01d8 11000000 		.4byte	.LVL38-1
+ 3396 01dc B8000000 		.4byte	.LFE77
+ 3397 01e0 0400     		.2byte	0x4
+ 3398 01e2 F3       		.byte	0xf3
+ 3399 01e3 01       		.uleb128 0x1
+ 3400 01e4 51       		.byte	0x51
+ 3401 01e5 9F       		.byte	0x9f
+ 3402 01e6 00000000 		.4byte	0
+ 3403 01ea 00000000 		.4byte	0
+ 3404              	.LLST13:
+ 3405 01ee 12000000 		.4byte	.LVL38
+ 3406 01f2 18000000 		.4byte	.LVL39
+ 3407 01f6 0200     		.2byte	0x2
+ 3408 01f8 30       		.byte	0x30
+ 3409 01f9 9F       		.byte	0x9f
+ 3410 01fa 18000000 		.4byte	.LVL39
+ 3411 01fe 1A000000 		.4byte	.LVL40
+ 3412 0202 0200     		.2byte	0x2
+ 3413 0204 31       		.byte	0x31
+ 3414 0205 9F       		.byte	0x9f
+ 3415 0206 1A000000 		.4byte	.LVL40
+ 3416 020a 94000000 		.4byte	.LVL59
+ 3417 020e 0100     		.2byte	0x1
+ 3418 0210 55       		.byte	0x55
+ 3419 0211 9A000000 		.4byte	.LVL60
+ 3420 0215 AC000000 		.4byte	.LVL63
+ 3421 0219 0100     		.2byte	0x1
+ 3422 021b 55       		.byte	0x55
+ 3423 021c 00000000 		.4byte	0
+ 3424 0220 00000000 		.4byte	0
+ 3425              	.LLST14:
+ 3426 0224 22000000 		.4byte	.LVL42
+ 3427 0228 2A000000 		.4byte	.LVL43
+ 3428 022c 0200     		.2byte	0x2
+ 3429 022e 30       		.byte	0x30
+ 3430 022f 9F       		.byte	0x9f
+ 3431 0230 00000000 		.4byte	0
+ 3432 0234 00000000 		.4byte	0
+ 3433              	.LLST15:
+ 3434 0238 4A000000 		.4byte	.LVL45
+ 3435 023c 86000000 		.4byte	.LVL57
+ 3436 0240 0100     		.2byte	0x1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 72
+
+
+ 3437 0242 56       		.byte	0x56
+ 3438 0243 86000000 		.4byte	.LVL57
+ 3439 0247 90000000 		.4byte	.LVL58
+ 3440 024b 0C00     		.2byte	0xc
+ 3441 024d 7D       		.byte	0x7d
+ 3442 024e 00       		.sleb128 0
+ 3443 024f 06       		.byte	0x6
+ 3444 0250 91       		.byte	0x91
+ 3445 0251 54       		.sleb128 -44
+ 3446 0252 06       		.byte	0x6
+ 3447 0253 27       		.byte	0x27
+ 3448 0254 91       		.byte	0x91
+ 3449 0255 60       		.sleb128 -32
+ 3450 0256 06       		.byte	0x6
+ 3451 0257 27       		.byte	0x27
+ 3452 0258 9F       		.byte	0x9f
+ 3453 0259 00000000 		.4byte	0
+ 3454 025d 00000000 		.4byte	0
+ 3455              	.LLST16:
+ 3456 0261 4A000000 		.4byte	.LVL45
+ 3457 0265 4D000000 		.4byte	.LVL46-1
+ 3458 0269 0100     		.2byte	0x1
+ 3459 026b 50       		.byte	0x50
+ 3460 026c 4D000000 		.4byte	.LVL46-1
+ 3461 0270 4E000000 		.4byte	.LVL46
+ 3462 0274 0800     		.2byte	0x8
+ 3463 0276 7D       		.byte	0x7d
+ 3464 0277 00       		.sleb128 0
+ 3465 0278 06       		.byte	0x6
+ 3466 0279 91       		.byte	0x91
+ 3467 027a 54       		.sleb128 -44
+ 3468 027b 06       		.byte	0x6
+ 3469 027c 27       		.byte	0x27
+ 3470 027d 9F       		.byte	0x9f
+ 3471 027e 4E000000 		.4byte	.LVL46
+ 3472 0282 52000000 		.4byte	.LVL47
+ 3473 0286 0100     		.2byte	0x1
+ 3474 0288 50       		.byte	0x50
+ 3475 0289 5C000000 		.4byte	.LVL48
+ 3476 028d 5F000000 		.4byte	.LVL49-1
+ 3477 0291 0100     		.2byte	0x1
+ 3478 0293 50       		.byte	0x50
+ 3479 0294 5F000000 		.4byte	.LVL49-1
+ 3480 0298 60000000 		.4byte	.LVL49
+ 3481 029c 0800     		.2byte	0x8
+ 3482 029e 91       		.byte	0x91
+ 3483 029f 54       		.sleb128 -44
+ 3484 02a0 06       		.byte	0x6
+ 3485 02a1 91       		.byte	0x91
+ 3486 02a2 58       		.sleb128 -40
+ 3487 02a3 06       		.byte	0x6
+ 3488 02a4 27       		.byte	0x27
+ 3489 02a5 9F       		.byte	0x9f
+ 3490 02a6 60000000 		.4byte	.LVL49
+ 3491 02aa 64000000 		.4byte	.LVL50
+ 3492 02ae 0100     		.2byte	0x1
+ 3493 02b0 50       		.byte	0x50
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 73
+
+
+ 3494 02b1 68000000 		.4byte	.LVL51
+ 3495 02b5 6E000000 		.4byte	.LVL52
+ 3496 02b9 0200     		.2byte	0x2
+ 3497 02bb 91       		.byte	0x91
+ 3498 02bc 60       		.sleb128 -32
+ 3499 02bd 6E000000 		.4byte	.LVL52
+ 3500 02c1 72000000 		.4byte	.LVL53
+ 3501 02c5 0100     		.2byte	0x1
+ 3502 02c7 50       		.byte	0x50
+ 3503 02c8 7C000000 		.4byte	.LVL54
+ 3504 02cc 7F000000 		.4byte	.LVL55-1
+ 3505 02d0 0100     		.2byte	0x1
+ 3506 02d2 50       		.byte	0x50
+ 3507 02d3 7F000000 		.4byte	.LVL55-1
+ 3508 02d7 80000000 		.4byte	.LVL55
+ 3509 02db 0800     		.2byte	0x8
+ 3510 02dd 7D       		.byte	0x7d
+ 3511 02de 00       		.sleb128 0
+ 3512 02df 06       		.byte	0x6
+ 3513 02e0 91       		.byte	0x91
+ 3514 02e1 5C       		.sleb128 -36
+ 3515 02e2 06       		.byte	0x6
+ 3516 02e3 27       		.byte	0x27
+ 3517 02e4 9F       		.byte	0x9f
+ 3518 02e5 80000000 		.4byte	.LVL55
+ 3519 02e9 84000000 		.4byte	.LVL56
+ 3520 02ed 0100     		.2byte	0x1
+ 3521 02ef 50       		.byte	0x50
+ 3522 02f0 00000000 		.4byte	0
+ 3523 02f4 00000000 		.4byte	0
+ 3524              	.LLST17:
+ 3525 02f8 2E000000 		.4byte	.LVL44
+ 3526 02fc 90000000 		.4byte	.LVL58
+ 3527 0300 0200     		.2byte	0x2
+ 3528 0302 7D       		.byte	0x7d
+ 3529 0303 00       		.sleb128 0
+ 3530 0304 00000000 		.4byte	0
+ 3531 0308 00000000 		.4byte	0
+ 3532              	.LLST18:
+ 3533 030c 00000000 		.4byte	.LVL65
+ 3534 0310 21000000 		.4byte	.LVL71-1
+ 3535 0314 0100     		.2byte	0x1
+ 3536 0316 50       		.byte	0x50
+ 3537 0317 21000000 		.4byte	.LVL71-1
+ 3538 031b 64010000 		.4byte	.LFE78
+ 3539 031f 0400     		.2byte	0x4
+ 3540 0321 F3       		.byte	0xf3
+ 3541 0322 01       		.uleb128 0x1
+ 3542 0323 50       		.byte	0x50
+ 3543 0324 9F       		.byte	0x9f
+ 3544 0325 00000000 		.4byte	0
+ 3545 0329 00000000 		.4byte	0
+ 3546              	.LLST19:
+ 3547 032d 00000000 		.4byte	.LVL65
+ 3548 0331 21000000 		.4byte	.LVL71-1
+ 3549 0335 0100     		.2byte	0x1
+ 3550 0337 51       		.byte	0x51
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 74
+
+
+ 3551 0338 21000000 		.4byte	.LVL71-1
+ 3552 033c 64010000 		.4byte	.LFE78
+ 3553 0340 0400     		.2byte	0x4
+ 3554 0342 F3       		.byte	0xf3
+ 3555 0343 01       		.uleb128 0x1
+ 3556 0344 51       		.byte	0x51
+ 3557 0345 9F       		.byte	0x9f
+ 3558 0346 00000000 		.4byte	0
+ 3559 034a 00000000 		.4byte	0
+ 3560              	.LLST20:
+ 3561 034e 00000000 		.4byte	.LVL65
+ 3562 0352 08000000 		.4byte	.LVL67
+ 3563 0356 0100     		.2byte	0x1
+ 3564 0358 52       		.byte	0x52
+ 3565 0359 08000000 		.4byte	.LVL67
+ 3566 035d 64010000 		.4byte	.LFE78
+ 3567 0361 0300     		.2byte	0x3
+ 3568 0363 91       		.byte	0x91
+ 3569 0364 B47F     		.sleb128 -76
+ 3570 0366 00000000 		.4byte	0
+ 3571 036a 00000000 		.4byte	0
+ 3572              	.LLST21:
+ 3573 036e 06000000 		.4byte	.LVL66
+ 3574 0372 14000000 		.4byte	.LVL70
+ 3575 0376 0100     		.2byte	0x1
+ 3576 0378 50       		.byte	0x50
+ 3577 0379 00000000 		.4byte	0
+ 3578 037d 00000000 		.4byte	0
+ 3579              	.LLST22:
+ 3580 0381 06000000 		.4byte	.LVL66
+ 3581 0385 08000000 		.4byte	.LVL67
+ 3582 0389 0300     		.2byte	0x3
+ 3583 038b 91       		.byte	0x91
+ 3584 038c B47F     		.sleb128 -76
+ 3585 038e 00000000 		.4byte	0
+ 3586 0392 00000000 		.4byte	0
+ 3587              	.LLST23:
+ 3588 0396 06000000 		.4byte	.LVL66
+ 3589 039a 08000000 		.4byte	.LVL67
+ 3590 039e 0200     		.2byte	0x2
+ 3591 03a0 30       		.byte	0x30
+ 3592 03a1 9F       		.byte	0x9f
+ 3593 03a2 08000000 		.4byte	.LVL67
+ 3594 03a6 0E000000 		.4byte	.LVL68
+ 3595 03aa 0100     		.2byte	0x1
+ 3596 03ac 53       		.byte	0x53
+ 3597 03ad 0E000000 		.4byte	.LVL68
+ 3598 03b1 10000000 		.4byte	.LVL69
+ 3599 03b5 0300     		.2byte	0x3
+ 3600 03b7 73       		.byte	0x73
+ 3601 03b8 01       		.sleb128 1
+ 3602 03b9 9F       		.byte	0x9f
+ 3603 03ba 00000000 		.4byte	0
+ 3604 03be 00000000 		.4byte	0
+ 3605              	.LLST24:
+ 3606 03c2 22000000 		.4byte	.LVL71
+ 3607 03c6 28000000 		.4byte	.LVL72
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 75
+
+
+ 3608 03ca 0200     		.2byte	0x2
+ 3609 03cc 30       		.byte	0x30
+ 3610 03cd 9F       		.byte	0x9f
+ 3611 03ce 28000000 		.4byte	.LVL72
+ 3612 03d2 58010000 		.4byte	.LVL97
+ 3613 03d6 0100     		.2byte	0x1
+ 3614 03d8 54       		.byte	0x54
+ 3615 03d9 00000000 		.4byte	0
+ 3616 03dd 00000000 		.4byte	0
+ 3617              	.LLST25:
+ 3618 03e1 36000000 		.4byte	.LVL75
+ 3619 03e5 3E000000 		.4byte	.LVL76
+ 3620 03e9 0200     		.2byte	0x2
+ 3621 03eb 30       		.byte	0x30
+ 3622 03ec 9F       		.byte	0x9f
+ 3623 03ed 00000000 		.4byte	0
+ 3624 03f1 00000000 		.4byte	0
+ 3625              	.LLST26:
+ 3626 03f5 42000000 		.4byte	.LVL77
+ 3627 03f9 40010000 		.4byte	.LVL93
+ 3628 03fd 0200     		.2byte	0x2
+ 3629 03ff 91       		.byte	0x91
+ 3630 0400 44       		.sleb128 -60
+ 3631 0401 00000000 		.4byte	0
+ 3632 0405 00000000 		.4byte	0
+ 3633              	.LLST27:
+ 3634 0409 48000000 		.4byte	.LVL78
+ 3635 040d 40010000 		.4byte	.LVL93
+ 3636 0411 0200     		.2byte	0x2
+ 3637 0413 91       		.byte	0x91
+ 3638 0414 48       		.sleb128 -56
+ 3639 0415 00000000 		.4byte	0
+ 3640 0419 00000000 		.4byte	0
+ 3641              	.LLST28:
+ 3642 041d 4C000000 		.4byte	.LVL79
+ 3643 0421 40010000 		.4byte	.LVL93
+ 3644 0425 0300     		.2byte	0x3
+ 3645 0427 91       		.byte	0x91
+ 3646 0428 AC7F     		.sleb128 -84
+ 3647 042a 00000000 		.4byte	0
+ 3648 042e 00000000 		.4byte	0
+ 3649              	.LLST29:
+ 3650 0432 50000000 		.4byte	.LVL80
+ 3651 0436 40010000 		.4byte	.LVL93
+ 3652 043a 0300     		.2byte	0x3
+ 3653 043c 91       		.byte	0x91
+ 3654 043d B07F     		.sleb128 -80
+ 3655 043f 00000000 		.4byte	0
+ 3656 0443 00000000 		.4byte	0
+ 3657              		.section	.debug_aranges,"",%progbits
+ 3658 0000 5C000000 		.4byte	0x5c
+ 3659 0004 0200     		.2byte	0x2
+ 3660 0006 00000000 		.4byte	.Ldebug_info0
+ 3661 000a 04       		.byte	0x4
+ 3662 000b 00       		.byte	0
+ 3663 000c 0000     		.2byte	0
+ 3664 000e 0000     		.2byte	0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 76
+
+
+ 3665 0010 00000000 		.4byte	.LFB65
+ 3666 0014 9C000000 		.4byte	.LFE65-.LFB65
+ 3667 0018 00000000 		.4byte	.LFB66
+ 3668 001c 3C000000 		.4byte	.LFE66-.LFB66
+ 3669 0020 00000000 		.4byte	.LFB67
+ 3670 0024 28000000 		.4byte	.LFE67-.LFB67
+ 3671 0028 00000000 		.4byte	.LFB68
+ 3672 002c 3C000000 		.4byte	.LFE68-.LFB68
+ 3673 0030 00000000 		.4byte	.LFB69
+ 3674 0034 0E000000 		.4byte	.LFE69-.LFB69
+ 3675 0038 00000000 		.4byte	.LFB72
+ 3676 003c 2C000000 		.4byte	.LFE72-.LFB72
+ 3677 0040 00000000 		.4byte	.LFB73
+ 3678 0044 3C000000 		.4byte	.LFE73-.LFB73
+ 3679 0048 00000000 		.4byte	.LFB77
+ 3680 004c B8000000 		.4byte	.LFE77-.LFB77
+ 3681 0050 00000000 		.4byte	.LFB78
+ 3682 0054 64010000 		.4byte	.LFE78-.LFB78
+ 3683 0058 00000000 		.4byte	0
+ 3684 005c 00000000 		.4byte	0
+ 3685              		.section	.debug_ranges,"",%progbits
+ 3686              	.Ldebug_ranges0:
+ 3687 0000 2A000000 		.4byte	.LBB14
+ 3688 0004 2C000000 		.4byte	.LBE14
+ 3689 0008 4C000000 		.4byte	.LBB20
+ 3690 000c 4E000000 		.4byte	.LBE20
+ 3691 0010 58000000 		.4byte	.LBB21
+ 3692 0014 5A000000 		.4byte	.LBE21
+ 3693 0018 00000000 		.4byte	0
+ 3694 001c 00000000 		.4byte	0
+ 3695 0020 06000000 		.4byte	.LBB22
+ 3696 0024 0A000000 		.4byte	.LBE22
+ 3697 0028 0C000000 		.4byte	.LBB25
+ 3698 002c 0E000000 		.4byte	.LBE25
+ 3699 0030 00000000 		.4byte	0
+ 3700 0034 00000000 		.4byte	0
+ 3701 0038 06000000 		.4byte	.LBB26
+ 3702 003c 0A000000 		.4byte	.LBE26
+ 3703 0040 0C000000 		.4byte	.LBB29
+ 3704 0044 10000000 		.4byte	.LBE29
+ 3705 0048 00000000 		.4byte	0
+ 3706 004c 00000000 		.4byte	0
+ 3707 0050 1A000000 		.4byte	.LBB46
+ 3708 0054 1C000000 		.4byte	.LBE46
+ 3709 0058 22000000 		.4byte	.LBB51
+ 3710 005c 58010000 		.4byte	.LBE51
+ 3711 0060 00000000 		.4byte	0
+ 3712 0064 00000000 		.4byte	0
+ 3713 0068 00000000 		.4byte	.LFB65
+ 3714 006c 9C000000 		.4byte	.LFE65
+ 3715 0070 00000000 		.4byte	.LFB66
+ 3716 0074 3C000000 		.4byte	.LFE66
+ 3717 0078 00000000 		.4byte	.LFB67
+ 3718 007c 28000000 		.4byte	.LFE67
+ 3719 0080 00000000 		.4byte	.LFB68
+ 3720 0084 3C000000 		.4byte	.LFE68
+ 3721 0088 00000000 		.4byte	.LFB69
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 77
+
+
+ 3722 008c 0E000000 		.4byte	.LFE69
+ 3723 0090 00000000 		.4byte	.LFB72
+ 3724 0094 2C000000 		.4byte	.LFE72
+ 3725 0098 00000000 		.4byte	.LFB73
+ 3726 009c 3C000000 		.4byte	.LFE73
+ 3727 00a0 00000000 		.4byte	.LFB77
+ 3728 00a4 B8000000 		.4byte	.LFE77
+ 3729 00a8 00000000 		.4byte	.LFB78
+ 3730 00ac 64010000 		.4byte	.LFE78
+ 3731 00b0 00000000 		.4byte	0
+ 3732 00b4 00000000 		.4byte	0
+ 3733              		.section	.debug_line,"",%progbits
+ 3734              	.Ldebug_line0:
+ 3735 0000 6C030000 		.section	.debug_str,"MS",%progbits,1
+ 3735      02005801 
+ 3735      00000201 
+ 3735      FB0E0D00 
+ 3735      01010101 
+ 3736              	.LASF26:
+ 3737 0000 53756242 		.ascii	"SubBytes\000"
+ 3737      79746573 
+ 3737      00
+ 3738              	.LASF49:
+ 3739 0009 7874696D 		.ascii	"xtime\000"
+ 3739      6500
+ 3740              	.LASF23:
+ 3741 000f 74656D70 		.ascii	"tempa\000"
+ 3741      6100
+ 3742              	.LASF41:
+ 3743 0015 73746174 		.ascii	"state\000"
+ 3743      6500
+ 3744              	.LASF28:
+ 3745 001b 74656D70 		.ascii	"temp\000"
+ 3745      00
+ 3746              	.LASF5:
+ 3747 0020 73686F72 		.ascii	"short int\000"
+ 3747      7420696E 
+ 3747      7400
+ 3748              	.LASF34:
+ 3749 002a 696E7075 		.ascii	"input\000"
+ 3749      7400
+ 3750              	.LASF12:
+ 3751 0030 73697A65 		.ascii	"sizetype\000"
+ 3751      74797065 
+ 3751      00
+ 3752              	.LASF44:
+ 3753 0039 7273626F 		.ascii	"rsbox\000"
+ 3753      7800
+ 3754              	.LASF21:
+ 3755 003f 67657453 		.ascii	"getSBoxValue\000"
+ 3755      426F7856 
+ 3755      616C7565 
+ 3755      00
+ 3756              	.LASF50:
+ 3757 004c 5254435F 		.ascii	"RTC_daysBeforeMonthTbl\000"
+ 3757      64617973 
+ 3757      4265666F 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 78
+
+
+ 3757      72654D6F 
+ 3757      6E746854 
+ 3758              	.LASF2:
+ 3759 0063 6C6F6E67 		.ascii	"long double\000"
+ 3759      20646F75 
+ 3759      626C6500 
+ 3760              	.LASF9:
+ 3761 006f 5F5F7569 		.ascii	"__uint32_t\000"
+ 3761      6E743332 
+ 3761      5F7400
+ 3762              	.LASF22:
+ 3763 007a 67657453 		.ascii	"getSBoxInvert\000"
+ 3763      426F7849 
+ 3763      6E766572 
+ 3763      7400
+ 3764              	.LASF47:
+ 3765 0088 436F6465 		.ascii	"Code\\Common\\crypt\\aes.c\000"
+ 3765      5C436F6D 
+ 3765      6D6F6E5C 
+ 3765      63727970 
+ 3765      745C6165 
+ 3766              	.LASF17:
+ 3767 00a0 75696E74 		.ascii	"uint16\000"
+ 3767      313600
+ 3768              	.LASF14:
+ 3769 00a7 75696E74 		.ascii	"uint8_t\000"
+ 3769      385F7400 
+ 3770              	.LASF16:
+ 3771 00af 75696E74 		.ascii	"uint8\000"
+ 3771      3800
+ 3772              	.LASF18:
+ 3773 00b5 666C6F61 		.ascii	"float\000"
+ 3773      7400
+ 3774              	.LASF20:
+ 3775 00bb 73746174 		.ascii	"state_t\000"
+ 3775      655F7400 
+ 3776              	.LASF1:
+ 3777 00c3 6C6F6E67 		.ascii	"long long int\000"
+ 3777      206C6F6E 
+ 3777      6720696E 
+ 3777      7400
+ 3778              	.LASF31:
+ 3779 00d1 496E7653 		.ascii	"InvShiftRows\000"
+ 3779      68696674 
+ 3779      526F7773 
+ 3779      00
+ 3780              	.LASF8:
+ 3781 00de 5F5F7569 		.ascii	"__uint8_t\000"
+ 3781      6E74385F 
+ 3781      7400
+ 3782              	.LASF48:
+ 3783 00e8 473A5C50 		.ascii	"G:\\Psoc4_prj\\7.rental_house\\18-05-03\\EntranceGu"
+ 3783      736F6334 
+ 3783      5F70726A 
+ 3783      5C372E72 
+ 3783      656E7461 
+ 3784 0117 6172645F 		.ascii	"ard_180427-1654\\EntranceGuard.cydsn\000"
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 79
+
+
+ 3784      31383034 
+ 3784      32372D31 
+ 3784      3635345C 
+ 3784      456E7472 
+ 3785              	.LASF40:
+ 3786 013b 41455331 		.ascii	"AES128_ECB_decrypt\000"
+ 3786      32385F45 
+ 3786      43425F64 
+ 3786      65637279 
+ 3786      707400
+ 3787              	.LASF25:
+ 3788 014e 41646452 		.ascii	"AddRoundKey\000"
+ 3788      6F756E64 
+ 3788      4B657900 
+ 3789              	.LASF4:
+ 3790 015a 756E7369 		.ascii	"unsigned char\000"
+ 3790      676E6564 
+ 3790      20636861 
+ 3790      7200
+ 3791              	.LASF29:
+ 3792 0168 726F756E 		.ascii	"round\000"
+ 3792      6400
+ 3793              	.LASF3:
+ 3794 016e 7369676E 		.ascii	"signed char\000"
+ 3794      65642063 
+ 3794      68617200 
+ 3795              	.LASF42:
+ 3796 017a 526F756E 		.ascii	"RoundKey\000"
+ 3796      644B6579 
+ 3796      00
+ 3797              	.LASF11:
+ 3798 0183 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 3798      206C6F6E 
+ 3798      6720756E 
+ 3798      7369676E 
+ 3798      65642069 
+ 3799              	.LASF45:
+ 3800 019a 52636F6E 		.ascii	"Rcon\000"
+ 3800      00
+ 3801              	.LASF15:
+ 3802 019f 75696E74 		.ascii	"uint32_t\000"
+ 3802      33325F74 
+ 3802      00
+ 3803              	.LASF0:
+ 3804 01a8 756E7369 		.ascii	"unsigned int\000"
+ 3804      676E6564 
+ 3804      20696E74 
+ 3804      00
+ 3805              	.LASF36:
+ 3806 01b5 426C6F63 		.ascii	"BlockCopy\000"
+ 3806      6B436F70 
+ 3806      7900
+ 3807              	.LASF32:
+ 3808 01bf 43697068 		.ascii	"Cipher\000"
+ 3808      657200
+ 3809              	.LASF38:
+ 3810 01c6 496E764D 		.ascii	"InvMixColumns\000"
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 80
+
+
+ 3810      6978436F 
+ 3810      6C756D6E 
+ 3810      7300
+ 3811              	.LASF6:
+ 3812 01d4 73686F72 		.ascii	"short unsigned int\000"
+ 3812      7420756E 
+ 3812      7369676E 
+ 3812      65642069 
+ 3812      6E7400
+ 3813              	.LASF27:
+ 3814 01e7 53686966 		.ascii	"ShiftRows\000"
+ 3814      74526F77 
+ 3814      7300
+ 3815              	.LASF13:
+ 3816 01f1 63686172 		.ascii	"char\000"
+ 3816      00
+ 3817              	.LASF7:
+ 3818 01f6 6C6F6E67 		.ascii	"long int\000"
+ 3818      20696E74 
+ 3818      00
+ 3819              	.LASF33:
+ 3820 01ff 4D697843 		.ascii	"MixColumns\000"
+ 3820      6F6C756D 
+ 3820      6E7300
+ 3821              	.LASF43:
+ 3822 020a 73626F78 		.ascii	"sbox\000"
+ 3822      00
+ 3823              	.LASF10:
+ 3824 020f 6C6F6E67 		.ascii	"long unsigned int\000"
+ 3824      20756E73 
+ 3824      69676E65 
+ 3824      6420696E 
+ 3824      7400
+ 3825              	.LASF19:
+ 3826 0221 646F7562 		.ascii	"double\000"
+ 3826      6C6500
+ 3827              	.LASF24:
+ 3828 0228 4B657945 		.ascii	"KeyExpansion\000"
+ 3828      7870616E 
+ 3828      73696F6E 
+ 3828      00
+ 3829              	.LASF35:
+ 3830 0235 496E7643 		.ascii	"InvCipher\000"
+ 3830      69706865 
+ 3830      7200
+ 3831              	.LASF30:
+ 3832 023f 496E7653 		.ascii	"InvSubBytes\000"
+ 3832      75624279 
+ 3832      74657300 
+ 3833              	.LASF46:
+ 3834 024b 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 3834      43313120 
+ 3834      352E342E 
+ 3834      31203230 
+ 3834      31363036 
+ 3835 027e 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m0 -mthumb -g -O"
+ 3835      20726576 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccAZMG3P.s 			page 81
+
+
+ 3835      6973696F 
+ 3835      6E203233 
+ 3835      37373135 
+ 3836 02b1 73202D66 		.ascii	"s -ffunction-sections -ffat-lto-objects\000"
+ 3836      66756E63 
+ 3836      74696F6E 
+ 3836      2D736563 
+ 3836      74696F6E 
+ 3837              	.LASF37:
+ 3838 02d9 6F757470 		.ascii	"output\000"
+ 3838      757400
+ 3839              	.LASF39:
+ 3840 02e0 41455331 		.ascii	"AES128_ECB_encrypt\000"
+ 3840      32385F45 
+ 3840      43425F65 
+ 3840      6E637279 
+ 3840      707400
+ 3841              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

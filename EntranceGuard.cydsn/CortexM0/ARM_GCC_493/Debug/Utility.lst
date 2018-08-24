@@ -1,0 +1,910 @@
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccR3mdUI.s 			page 1
+
+
+   1              		.cpu cortex-m0
+   2              		.fpu softvfp
+   3              		.eabi_attribute 20, 1
+   4              		.eabi_attribute 21, 1
+   5              		.eabi_attribute 23, 3
+   6              		.eabi_attribute 24, 1
+   7              		.eabi_attribute 25, 1
+   8              		.eabi_attribute 26, 1
+   9              		.eabi_attribute 30, 4
+  10              		.eabi_attribute 34, 0
+  11              		.eabi_attribute 18, 4
+  12              		.code	16
+  13              		.file	"Utility.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.GetByteSum,"ax",%progbits
+  18              		.align	1
+  19              		.global	GetByteSum
+  20              		.code	16
+  21              		.thumb_func
+  22              		.type	GetByteSum, %function
+  23              	GetByteSum:
+  24              	.LFB2:
+  25              		.file 1 "Code\\Device\\FM175XX\\Utility\\Utility.c"
+   1:Code\Device\FM175XX\Utility/Utility.c **** /****************************************Copyright (c)*********************************************
+   2:Code\Device\FM175XX\Utility/Utility.c **** **                            Guangzhou ZLGMCU Technology Co., LTD
+   3:Code\Device\FM175XX\Utility/Utility.c **** **
+   4:Code\Device\FM175XX\Utility/Utility.c **** **                                 http://www.zlgmcu.com
+   5:Code\Device\FM175XX\Utility/Utility.c **** **
+   6:Code\Device\FM175XX\Utility/Utility.c **** **      ¹ãÖÝÖÜÁ¢¹¦µ¥Æ¬»ú¿Æ¼¼ÓÐÏÞ¹«Ë¾ËùÌá¹©µÄËùÓÐ·þÎñÄÚÈÝÖ¼ÔÚÐ­Öú¿Í»§¼ÓËÙ²úÆ·µÄÑÐ·¢½ø¶È£¬ÔÚ·þÎñ¹ý³ÌÖ
+   7:Code\Device\FM175XX\Utility/Utility.c **** **  µÄÈÎºÎ³ÌÐò¡¢ÎÄµµ¡¢²âÊÔ½á¹û¡¢·½°¸¡¢Ö§³ÖµÈ×ÊÁÏºÍÐÅÏ¢£¬¶¼½ö¹©²Î¿¼£¬¿Í»§ÓÐÈ¨²»Ê¹ÓÃ»ò×ÔÐÐ²Î¿¼ÐÞ¸Ä£¬±
+   8:Code\Device\FM175XX\Utility/Utility.c **** **  Ìá¹©ÈÎºÎµÄÍêÕûÐÔ¡¢¿É¿¿ÐÔµÈ±£Ö¤£¬ÈôÔÚ¿Í»§Ê¹ÓÃ¹ý³ÌÖÐÒòÈÎºÎÔ­ÒòÔì³ÉµÄÌØ±ðµÄ¡¢Å¼È»µÄ»ò¼ä½ÓµÄËðÊ§£¬±
+   9:Code\Device\FM175XX\Utility/Utility.c **** **  ³Ðµ£ÈÎºÎÔðÈÎ¡£
+  10:Code\Device\FM175XX\Utility/Utility.c **** **                                                                        ¡ª¡ª¹ãÖÝÖÜÁ¢¹¦µ¥Æ¬»ú¿Æ¼¼Ó
+  11:Code\Device\FM175XX\Utility/Utility.c **** **
+  12:Code\Device\FM175XX\Utility/Utility.c **** **--------------File Info--------------------------------------------------------------------------
+  13:Code\Device\FM175XX\Utility/Utility.c **** ** File name:           Utility.c
+  14:Code\Device\FM175XX\Utility/Utility.c **** ** Last modified Date:  2016-3-4
+  15:Code\Device\FM175XX\Utility/Utility.c **** ** Last Version:        V1.00
+  16:Code\Device\FM175XX\Utility/Utility.c **** ** Descriptions:        Ôö¼Ó¼ÆËã×Ö½ÚÒì»òÈ¡·´Ð£Ñéº¯Êý
+  17:Code\Device\FM175XX\Utility/Utility.c **** **
+  18:Code\Device\FM175XX\Utility/Utility.c **** **-------------------------------------------------------------------------------------------------
+  19:Code\Device\FM175XX\Utility/Utility.c **** */
+  20:Code\Device\FM175XX\Utility/Utility.c **** #include "Utility.h"
+  21:Code\Device\FM175XX\Utility/Utility.c **** 
+  22:Code\Device\FM175XX\Utility/Utility.c **** 
+  23:Code\Device\FM175XX\Utility/Utility.c **** /**************************************************************************************************
+  24:Code\Device\FM175XX\Utility/Utility.c **** ** Function name:        GetByteSum
+  25:Code\Device\FM175XX\Utility/Utility.c **** ** Descriptions:        ¼ÆÊý×ÜºÍ
+  26:Code\Device\FM175XX\Utility/Utility.c **** ** input parameters:    *p      -- ¼ÆËãµÄÊý¾Ý
+  27:Code\Device\FM175XX\Utility/Utility.c **** **                      nBytes  -- ×Ö½ÚÊý
+  28:Code\Device\FM175XX\Utility/Utility.c **** ** output parameters:   N/A
+  29:Code\Device\FM175XX\Utility/Utility.c **** ** Returned value:      ×Ö½ÚÀÛ¼ÓºÍ
+  30:Code\Device\FM175XX\Utility/Utility.c **** ***************************************************************************************************
+  31:Code\Device\FM175XX\Utility/Utility.c **** uint32_t GetByteSum(const void *p, uint32_t nBytes)
+  32:Code\Device\FM175XX\Utility/Utility.c **** {
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccR3mdUI.s 			page 2
+
+
+  26              		.loc 1 32 0
+  27              		.cfi_startproc
+  28              	.LVL0:
+  29 0000 031C     		mov	r3, r0
+  30 0002 4118     		add	r1, r0, r1
+  31              	.LVL1:
+  33:Code\Device\FM175XX\Utility/Utility.c ****     const uint8_t	*pBuf	= (const uint8_t *)p;
+  34:Code\Device\FM175XX\Utility/Utility.c ****     uint32_t		sum		= 0;
+  32              		.loc 1 34 0
+  33 0004 0020     		mov	r0, #0
+  34              	.LVL2:
+  35              	.L2:
+  35:Code\Device\FM175XX\Utility/Utility.c ****     while (nBytes--) {
+  36              		.loc 1 35 0
+  37 0006 8B42     		cmp	r3, r1
+  38 0008 03D0     		beq	.L5
+  39              	.LVL3:
+  36:Code\Device\FM175XX\Utility/Utility.c **** 		    sum += *pBuf++;
+  40              		.loc 1 36 0
+  41 000a 1A78     		ldrb	r2, [r3]
+  42 000c 0133     		add	r3, r3, #1
+  43              	.LVL4:
+  44 000e 8018     		add	r0, r0, r2
+  45              	.LVL5:
+  46 0010 F9E7     		b	.L2
+  47              	.LVL6:
+  48              	.L5:
+  37:Code\Device\FM175XX\Utility/Utility.c ****     }
+  38:Code\Device\FM175XX\Utility/Utility.c ****     return sum;
+  39:Code\Device\FM175XX\Utility/Utility.c **** }
+  49              		.loc 1 39 0
+  50              		@ sp needed
+  51 0012 7047     		bx	lr
+  52              		.cfi_endproc
+  53              	.LFE2:
+  54              		.size	GetByteSum, .-GetByteSum
+  55              		.section	.text.GetByteBCC,"ax",%progbits
+  56              		.align	1
+  57              		.global	GetByteBCC
+  58              		.code	16
+  59              		.thumb_func
+  60              		.type	GetByteBCC, %function
+  61              	GetByteBCC:
+  62              	.LFB3:
+  40:Code\Device\FM175XX\Utility/Utility.c **** 
+  41:Code\Device\FM175XX\Utility/Utility.c **** 
+  42:Code\Device\FM175XX\Utility/Utility.c **** /**************************************************************************************************
+  43:Code\Device\FM175XX\Utility/Utility.c **** ** Function name:        ¼ÆËã×Ö½ÚÒì»òÈ¡·´
+  44:Code\Device\FM175XX\Utility/Utility.c **** ** Descriptions:        ÑÓ³Ù£¨100usÎªµ¥Î»£© »ùÓÚLPC824,24MHz
+  45:Code\Device\FM175XX\Utility/Utility.c **** ** input parameters:    *p      -- ¼ÆËãµÄÊý¾Ý
+  46:Code\Device\FM175XX\Utility/Utility.c **** **                      nBytes  -- ×Ö½ÚÊý
+  47:Code\Device\FM175XX\Utility/Utility.c **** ** output parameters:   N/A
+  48:Code\Device\FM175XX\Utility/Utility.c **** ** Returned value:      ×Ö½ÚÒì»òÈ¡·´
+  49:Code\Device\FM175XX\Utility/Utility.c **** ***************************************************************************************************
+  50:Code\Device\FM175XX\Utility/Utility.c **** uint8_t GetByteBCC(const void *p, uint32_t nBytes)
+  51:Code\Device\FM175XX\Utility/Utility.c **** {
+  63              		.loc 1 51 0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccR3mdUI.s 			page 3
+
+
+  64              		.cfi_startproc
+  65              	.LVL7:
+  52:Code\Device\FM175XX\Utility/Utility.c ****     const uint8_t *pBuf = (const uint8_t *)p;
+  53:Code\Device\FM175XX\Utility/Utility.c ****     uint8_t		BCC = 0;
+  66              		.loc 1 53 0
+  67 0000 0023     		mov	r3, #0
+  68 0002 4118     		add	r1, r0, r1
+  69              	.LVL8:
+  70              	.L7:
+  54:Code\Device\FM175XX\Utility/Utility.c ****     uint32_t	i   = 0;
+  55:Code\Device\FM175XX\Utility/Utility.c **** 
+  56:Code\Device\FM175XX\Utility/Utility.c ****     for (i = 0; i < nBytes; i++) {
+  71              		.loc 1 56 0 discriminator 1
+  72 0004 8842     		cmp	r0, r1
+  73 0006 03D0     		beq	.L9
+  57:Code\Device\FM175XX\Utility/Utility.c ****         BCC ^= *(pBuf + i);
+  74              		.loc 1 57 0 discriminator 3
+  75 0008 0278     		ldrb	r2, [r0]
+  76 000a 0130     		add	r0, r0, #1
+  77              	.LVL9:
+  78 000c 5340     		eor	r3, r2
+  79              	.LVL10:
+  80 000e F9E7     		b	.L7
+  81              	.LVL11:
+  82              	.L9:
+  58:Code\Device\FM175XX\Utility/Utility.c ****     }
+  59:Code\Device\FM175XX\Utility/Utility.c ****     return ~BCC;
+  83              		.loc 1 59 0
+  84 0010 D843     		mvn	r0, r3
+  85              	.LVL12:
+  60:Code\Device\FM175XX\Utility/Utility.c **** }
+  86              		.loc 1 60 0
+  87              		@ sp needed
+  59:Code\Device\FM175XX\Utility/Utility.c **** }
+  88              		.loc 1 59 0
+  89 0012 C0B2     		uxtb	r0, r0
+  90              		.loc 1 60 0
+  91 0014 7047     		bx	lr
+  92              		.cfi_endproc
+  93              	.LFE3:
+  94              		.size	GetByteBCC, .-GetByteBCC
+  95              		.text
+  96              	.Letext0:
+  97              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+  98              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+  99              		.section	.debug_info,"",%progbits
+ 100              	.Ldebug_info0:
+ 101 0000 73010000 		.4byte	0x173
+ 102 0004 0400     		.2byte	0x4
+ 103 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 104 000a 04       		.byte	0x4
+ 105 000b 01       		.uleb128 0x1
+ 106 000c 4C000000 		.4byte	.LASF19
+ 107 0010 01       		.byte	0x1
+ 108 0011 1B000000 		.4byte	.LASF20
+ 109 0015 EC000000 		.4byte	.LASF21
+ 110 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccR3mdUI.s 			page 4
+
+
+ 111 001d 00000000 		.4byte	0
+ 112 0021 00000000 		.4byte	.Ldebug_line0
+ 113 0025 02       		.uleb128 0x2
+ 114 0026 01       		.byte	0x1
+ 115 0027 06       		.byte	0x6
+ 116 0028 C0010000 		.4byte	.LASF0
+ 117 002c 03       		.uleb128 0x3
+ 118 002d 6A010000 		.4byte	.LASF5
+ 119 0031 02       		.byte	0x2
+ 120 0032 1D       		.byte	0x1d
+ 121 0033 37000000 		.4byte	0x37
+ 122 0037 02       		.uleb128 0x2
+ 123 0038 01       		.byte	0x1
+ 124 0039 08       		.byte	0x8
+ 125 003a 81010000 		.4byte	.LASF1
+ 126 003e 02       		.uleb128 0x2
+ 127 003f 02       		.byte	0x2
+ 128 0040 05       		.byte	0x5
+ 129 0041 EF010000 		.4byte	.LASF2
+ 130 0045 02       		.uleb128 0x2
+ 131 0046 02       		.byte	0x2
+ 132 0047 07       		.byte	0x7
+ 133 0048 AD010000 		.4byte	.LASF3
+ 134 004c 02       		.uleb128 0x2
+ 135 004d 04       		.byte	0x4
+ 136 004e 05       		.byte	0x5
+ 137 004f 9D010000 		.4byte	.LASF4
+ 138 0053 03       		.uleb128 0x3
+ 139 0054 41000000 		.4byte	.LASF6
+ 140 0058 02       		.byte	0x2
+ 141 0059 41       		.byte	0x41
+ 142 005a 5E000000 		.4byte	0x5e
+ 143 005e 02       		.uleb128 0x2
+ 144 005f 04       		.byte	0x4
+ 145 0060 07       		.byte	0x7
+ 146 0061 DA000000 		.4byte	.LASF7
+ 147 0065 02       		.uleb128 0x2
+ 148 0066 08       		.byte	0x8
+ 149 0067 05       		.byte	0x5
+ 150 0068 00000000 		.4byte	.LASF8
+ 151 006c 02       		.uleb128 0x2
+ 152 006d 08       		.byte	0x8
+ 153 006e 07       		.byte	0x7
+ 154 006f 53010000 		.4byte	.LASF9
+ 155 0073 04       		.uleb128 0x4
+ 156 0074 04       		.byte	0x4
+ 157 0075 05       		.byte	0x5
+ 158 0076 696E7400 		.ascii	"int\000"
+ 159 007a 02       		.uleb128 0x2
+ 160 007b 04       		.byte	0x4
+ 161 007c 07       		.byte	0x7
+ 162 007d 0E000000 		.4byte	.LASF10
+ 163 0081 03       		.uleb128 0x3
+ 164 0082 79010000 		.4byte	.LASF11
+ 165 0086 03       		.byte	0x3
+ 166 0087 15       		.byte	0x15
+ 167 0088 2C000000 		.4byte	0x2c
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccR3mdUI.s 			page 5
+
+
+ 168 008c 03       		.uleb128 0x3
+ 169 008d 94010000 		.4byte	.LASF12
+ 170 0091 03       		.byte	0x3
+ 171 0092 2D       		.byte	0x2d
+ 172 0093 53000000 		.4byte	0x53
+ 173 0097 02       		.uleb128 0x2
+ 174 0098 04       		.byte	0x4
+ 175 0099 04       		.byte	0x4
+ 176 009a E2010000 		.4byte	.LASF13
+ 177 009e 02       		.uleb128 0x2
+ 178 009f 08       		.byte	0x8
+ 179 00a0 04       		.byte	0x4
+ 180 00a1 A6010000 		.4byte	.LASF14
+ 181 00a5 02       		.uleb128 0x2
+ 182 00a6 01       		.byte	0x1
+ 183 00a7 08       		.byte	0x8
+ 184 00a8 8F010000 		.4byte	.LASF15
+ 185 00ac 02       		.uleb128 0x2
+ 186 00ad 04       		.byte	0x4
+ 187 00ae 07       		.byte	0x7
+ 188 00af F9010000 		.4byte	.LASF16
+ 189 00b3 05       		.uleb128 0x5
+ 190 00b4 D7010000 		.4byte	.LASF22
+ 191 00b8 01       		.byte	0x1
+ 192 00b9 1F       		.byte	0x1f
+ 193 00ba 8C000000 		.4byte	0x8c
+ 194 00be 00000000 		.4byte	.LFB2
+ 195 00c2 14000000 		.4byte	.LFE2-.LFB2
+ 196 00c6 01       		.uleb128 0x1
+ 197 00c7 9C       		.byte	0x9c
+ 198 00c8 07010000 		.4byte	0x107
+ 199 00cc 06       		.uleb128 0x6
+ 200 00cd 7000     		.ascii	"p\000"
+ 201 00cf 01       		.byte	0x1
+ 202 00d0 1F       		.byte	0x1f
+ 203 00d1 07010000 		.4byte	0x107
+ 204 00d5 00000000 		.4byte	.LLST0
+ 205 00d9 07       		.uleb128 0x7
+ 206 00da E8010000 		.4byte	.LASF17
+ 207 00de 01       		.byte	0x1
+ 208 00df 1F       		.byte	0x1f
+ 209 00e0 8C000000 		.4byte	0x8c
+ 210 00e4 21000000 		.4byte	.LLST1
+ 211 00e8 08       		.uleb128 0x8
+ 212 00e9 74010000 		.4byte	.LASF18
+ 213 00ed 01       		.byte	0x1
+ 214 00ee 21       		.byte	0x21
+ 215 00ef 0E010000 		.4byte	0x10e
+ 216 00f3 83000000 		.4byte	.LLST2
+ 217 00f7 09       		.uleb128 0x9
+ 218 00f8 73756D00 		.ascii	"sum\000"
+ 219 00fc 01       		.byte	0x1
+ 220 00fd 22       		.byte	0x22
+ 221 00fe 8C000000 		.4byte	0x8c
+ 222 0102 B9000000 		.4byte	.LLST3
+ 223 0106 00       		.byte	0
+ 224 0107 0A       		.uleb128 0xa
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccR3mdUI.s 			page 6
+
+
+ 225 0108 04       		.byte	0x4
+ 226 0109 0D010000 		.4byte	0x10d
+ 227 010d 0B       		.uleb128 0xb
+ 228 010e 0A       		.uleb128 0xa
+ 229 010f 04       		.byte	0x4
+ 230 0110 14010000 		.4byte	0x114
+ 231 0114 0C       		.uleb128 0xc
+ 232 0115 81000000 		.4byte	0x81
+ 233 0119 0D       		.uleb128 0xd
+ 234 011a CC010000 		.4byte	.LASF23
+ 235 011e 01       		.byte	0x1
+ 236 011f 32       		.byte	0x32
+ 237 0120 81000000 		.4byte	0x81
+ 238 0124 00000000 		.4byte	.LFB3
+ 239 0128 16000000 		.4byte	.LFE3-.LFB3
+ 240 012c 01       		.uleb128 0x1
+ 241 012d 9C       		.byte	0x9c
+ 242 012e 06       		.uleb128 0x6
+ 243 012f 7000     		.ascii	"p\000"
+ 244 0131 01       		.byte	0x1
+ 245 0132 32       		.byte	0x32
+ 246 0133 07010000 		.4byte	0x107
+ 247 0137 D8000000 		.4byte	.LLST4
+ 248 013b 07       		.uleb128 0x7
+ 249 013c E8010000 		.4byte	.LASF17
+ 250 0140 01       		.byte	0x1
+ 251 0141 32       		.byte	0x32
+ 252 0142 8C000000 		.4byte	0x8c
+ 253 0146 F9000000 		.4byte	.LLST5
+ 254 014a 08       		.uleb128 0x8
+ 255 014b 74010000 		.4byte	.LASF18
+ 256 014f 01       		.byte	0x1
+ 257 0150 34       		.byte	0x34
+ 258 0151 0E010000 		.4byte	0x10e
+ 259 0155 D8000000 		.4byte	.LLST4
+ 260 0159 09       		.uleb128 0x9
+ 261 015a 42434300 		.ascii	"BCC\000"
+ 262 015e 01       		.byte	0x1
+ 263 015f 35       		.byte	0x35
+ 264 0160 81000000 		.4byte	0x81
+ 265 0164 1A010000 		.4byte	.LLST7
+ 266 0168 09       		.uleb128 0x9
+ 267 0169 6900     		.ascii	"i\000"
+ 268 016b 01       		.byte	0x1
+ 269 016c 36       		.byte	0x36
+ 270 016d 8C000000 		.4byte	0x8c
+ 271 0171 39010000 		.4byte	.LLST8
+ 272 0175 00       		.byte	0
+ 273 0176 00       		.byte	0
+ 274              		.section	.debug_abbrev,"",%progbits
+ 275              	.Ldebug_abbrev0:
+ 276 0000 01       		.uleb128 0x1
+ 277 0001 11       		.uleb128 0x11
+ 278 0002 01       		.byte	0x1
+ 279 0003 25       		.uleb128 0x25
+ 280 0004 0E       		.uleb128 0xe
+ 281 0005 13       		.uleb128 0x13
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccR3mdUI.s 			page 7
+
+
+ 282 0006 0B       		.uleb128 0xb
+ 283 0007 03       		.uleb128 0x3
+ 284 0008 0E       		.uleb128 0xe
+ 285 0009 1B       		.uleb128 0x1b
+ 286 000a 0E       		.uleb128 0xe
+ 287 000b 55       		.uleb128 0x55
+ 288 000c 17       		.uleb128 0x17
+ 289 000d 11       		.uleb128 0x11
+ 290 000e 01       		.uleb128 0x1
+ 291 000f 10       		.uleb128 0x10
+ 292 0010 17       		.uleb128 0x17
+ 293 0011 00       		.byte	0
+ 294 0012 00       		.byte	0
+ 295 0013 02       		.uleb128 0x2
+ 296 0014 24       		.uleb128 0x24
+ 297 0015 00       		.byte	0
+ 298 0016 0B       		.uleb128 0xb
+ 299 0017 0B       		.uleb128 0xb
+ 300 0018 3E       		.uleb128 0x3e
+ 301 0019 0B       		.uleb128 0xb
+ 302 001a 03       		.uleb128 0x3
+ 303 001b 0E       		.uleb128 0xe
+ 304 001c 00       		.byte	0
+ 305 001d 00       		.byte	0
+ 306 001e 03       		.uleb128 0x3
+ 307 001f 16       		.uleb128 0x16
+ 308 0020 00       		.byte	0
+ 309 0021 03       		.uleb128 0x3
+ 310 0022 0E       		.uleb128 0xe
+ 311 0023 3A       		.uleb128 0x3a
+ 312 0024 0B       		.uleb128 0xb
+ 313 0025 3B       		.uleb128 0x3b
+ 314 0026 0B       		.uleb128 0xb
+ 315 0027 49       		.uleb128 0x49
+ 316 0028 13       		.uleb128 0x13
+ 317 0029 00       		.byte	0
+ 318 002a 00       		.byte	0
+ 319 002b 04       		.uleb128 0x4
+ 320 002c 24       		.uleb128 0x24
+ 321 002d 00       		.byte	0
+ 322 002e 0B       		.uleb128 0xb
+ 323 002f 0B       		.uleb128 0xb
+ 324 0030 3E       		.uleb128 0x3e
+ 325 0031 0B       		.uleb128 0xb
+ 326 0032 03       		.uleb128 0x3
+ 327 0033 08       		.uleb128 0x8
+ 328 0034 00       		.byte	0
+ 329 0035 00       		.byte	0
+ 330 0036 05       		.uleb128 0x5
+ 331 0037 2E       		.uleb128 0x2e
+ 332 0038 01       		.byte	0x1
+ 333 0039 3F       		.uleb128 0x3f
+ 334 003a 19       		.uleb128 0x19
+ 335 003b 03       		.uleb128 0x3
+ 336 003c 0E       		.uleb128 0xe
+ 337 003d 3A       		.uleb128 0x3a
+ 338 003e 0B       		.uleb128 0xb
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccR3mdUI.s 			page 8
+
+
+ 339 003f 3B       		.uleb128 0x3b
+ 340 0040 0B       		.uleb128 0xb
+ 341 0041 27       		.uleb128 0x27
+ 342 0042 19       		.uleb128 0x19
+ 343 0043 49       		.uleb128 0x49
+ 344 0044 13       		.uleb128 0x13
+ 345 0045 11       		.uleb128 0x11
+ 346 0046 01       		.uleb128 0x1
+ 347 0047 12       		.uleb128 0x12
+ 348 0048 06       		.uleb128 0x6
+ 349 0049 40       		.uleb128 0x40
+ 350 004a 18       		.uleb128 0x18
+ 351 004b 9742     		.uleb128 0x2117
+ 352 004d 19       		.uleb128 0x19
+ 353 004e 01       		.uleb128 0x1
+ 354 004f 13       		.uleb128 0x13
+ 355 0050 00       		.byte	0
+ 356 0051 00       		.byte	0
+ 357 0052 06       		.uleb128 0x6
+ 358 0053 05       		.uleb128 0x5
+ 359 0054 00       		.byte	0
+ 360 0055 03       		.uleb128 0x3
+ 361 0056 08       		.uleb128 0x8
+ 362 0057 3A       		.uleb128 0x3a
+ 363 0058 0B       		.uleb128 0xb
+ 364 0059 3B       		.uleb128 0x3b
+ 365 005a 0B       		.uleb128 0xb
+ 366 005b 49       		.uleb128 0x49
+ 367 005c 13       		.uleb128 0x13
+ 368 005d 02       		.uleb128 0x2
+ 369 005e 17       		.uleb128 0x17
+ 370 005f 00       		.byte	0
+ 371 0060 00       		.byte	0
+ 372 0061 07       		.uleb128 0x7
+ 373 0062 05       		.uleb128 0x5
+ 374 0063 00       		.byte	0
+ 375 0064 03       		.uleb128 0x3
+ 376 0065 0E       		.uleb128 0xe
+ 377 0066 3A       		.uleb128 0x3a
+ 378 0067 0B       		.uleb128 0xb
+ 379 0068 3B       		.uleb128 0x3b
+ 380 0069 0B       		.uleb128 0xb
+ 381 006a 49       		.uleb128 0x49
+ 382 006b 13       		.uleb128 0x13
+ 383 006c 02       		.uleb128 0x2
+ 384 006d 17       		.uleb128 0x17
+ 385 006e 00       		.byte	0
+ 386 006f 00       		.byte	0
+ 387 0070 08       		.uleb128 0x8
+ 388 0071 34       		.uleb128 0x34
+ 389 0072 00       		.byte	0
+ 390 0073 03       		.uleb128 0x3
+ 391 0074 0E       		.uleb128 0xe
+ 392 0075 3A       		.uleb128 0x3a
+ 393 0076 0B       		.uleb128 0xb
+ 394 0077 3B       		.uleb128 0x3b
+ 395 0078 0B       		.uleb128 0xb
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccR3mdUI.s 			page 9
+
+
+ 396 0079 49       		.uleb128 0x49
+ 397 007a 13       		.uleb128 0x13
+ 398 007b 02       		.uleb128 0x2
+ 399 007c 17       		.uleb128 0x17
+ 400 007d 00       		.byte	0
+ 401 007e 00       		.byte	0
+ 402 007f 09       		.uleb128 0x9
+ 403 0080 34       		.uleb128 0x34
+ 404 0081 00       		.byte	0
+ 405 0082 03       		.uleb128 0x3
+ 406 0083 08       		.uleb128 0x8
+ 407 0084 3A       		.uleb128 0x3a
+ 408 0085 0B       		.uleb128 0xb
+ 409 0086 3B       		.uleb128 0x3b
+ 410 0087 0B       		.uleb128 0xb
+ 411 0088 49       		.uleb128 0x49
+ 412 0089 13       		.uleb128 0x13
+ 413 008a 02       		.uleb128 0x2
+ 414 008b 17       		.uleb128 0x17
+ 415 008c 00       		.byte	0
+ 416 008d 00       		.byte	0
+ 417 008e 0A       		.uleb128 0xa
+ 418 008f 0F       		.uleb128 0xf
+ 419 0090 00       		.byte	0
+ 420 0091 0B       		.uleb128 0xb
+ 421 0092 0B       		.uleb128 0xb
+ 422 0093 49       		.uleb128 0x49
+ 423 0094 13       		.uleb128 0x13
+ 424 0095 00       		.byte	0
+ 425 0096 00       		.byte	0
+ 426 0097 0B       		.uleb128 0xb
+ 427 0098 26       		.uleb128 0x26
+ 428 0099 00       		.byte	0
+ 429 009a 00       		.byte	0
+ 430 009b 00       		.byte	0
+ 431 009c 0C       		.uleb128 0xc
+ 432 009d 26       		.uleb128 0x26
+ 433 009e 00       		.byte	0
+ 434 009f 49       		.uleb128 0x49
+ 435 00a0 13       		.uleb128 0x13
+ 436 00a1 00       		.byte	0
+ 437 00a2 00       		.byte	0
+ 438 00a3 0D       		.uleb128 0xd
+ 439 00a4 2E       		.uleb128 0x2e
+ 440 00a5 01       		.byte	0x1
+ 441 00a6 3F       		.uleb128 0x3f
+ 442 00a7 19       		.uleb128 0x19
+ 443 00a8 03       		.uleb128 0x3
+ 444 00a9 0E       		.uleb128 0xe
+ 445 00aa 3A       		.uleb128 0x3a
+ 446 00ab 0B       		.uleb128 0xb
+ 447 00ac 3B       		.uleb128 0x3b
+ 448 00ad 0B       		.uleb128 0xb
+ 449 00ae 27       		.uleb128 0x27
+ 450 00af 19       		.uleb128 0x19
+ 451 00b0 49       		.uleb128 0x49
+ 452 00b1 13       		.uleb128 0x13
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccR3mdUI.s 			page 10
+
+
+ 453 00b2 11       		.uleb128 0x11
+ 454 00b3 01       		.uleb128 0x1
+ 455 00b4 12       		.uleb128 0x12
+ 456 00b5 06       		.uleb128 0x6
+ 457 00b6 40       		.uleb128 0x40
+ 458 00b7 18       		.uleb128 0x18
+ 459 00b8 9742     		.uleb128 0x2117
+ 460 00ba 19       		.uleb128 0x19
+ 461 00bb 00       		.byte	0
+ 462 00bc 00       		.byte	0
+ 463 00bd 00       		.byte	0
+ 464              		.section	.debug_loc,"",%progbits
+ 465              	.Ldebug_loc0:
+ 466              	.LLST0:
+ 467 0000 00000000 		.4byte	.LVL0
+ 468 0004 06000000 		.4byte	.LVL2
+ 469 0008 0100     		.2byte	0x1
+ 470 000a 50       		.byte	0x50
+ 471 000b 06000000 		.4byte	.LVL2
+ 472 000f 14000000 		.4byte	.LFE2
+ 473 0013 0400     		.2byte	0x4
+ 474 0015 F3       		.byte	0xf3
+ 475 0016 01       		.uleb128 0x1
+ 476 0017 50       		.byte	0x50
+ 477 0018 9F       		.byte	0x9f
+ 478 0019 00000000 		.4byte	0
+ 479 001d 00000000 		.4byte	0
+ 480              	.LLST1:
+ 481 0021 00000000 		.4byte	.LVL0
+ 482 0025 04000000 		.4byte	.LVL1
+ 483 0029 0100     		.2byte	0x1
+ 484 002b 51       		.byte	0x51
+ 485 002c 04000000 		.4byte	.LVL1
+ 486 0030 06000000 		.4byte	.LVL2
+ 487 0034 0400     		.2byte	0x4
+ 488 0036 F3       		.byte	0xf3
+ 489 0037 01       		.uleb128 0x1
+ 490 0038 51       		.byte	0x51
+ 491 0039 9F       		.byte	0x9f
+ 492 003a 06000000 		.4byte	.LVL2
+ 493 003e 0E000000 		.4byte	.LVL4
+ 494 0042 0C00     		.2byte	0xc
+ 495 0044 73       		.byte	0x73
+ 496 0045 00       		.sleb128 0
+ 497 0046 20       		.byte	0x20
+ 498 0047 F3       		.byte	0xf3
+ 499 0048 01       		.uleb128 0x1
+ 500 0049 51       		.byte	0x51
+ 501 004a 22       		.byte	0x22
+ 502 004b F3       		.byte	0xf3
+ 503 004c 01       		.uleb128 0x1
+ 504 004d 50       		.byte	0x50
+ 505 004e 22       		.byte	0x22
+ 506 004f 9F       		.byte	0x9f
+ 507 0050 0E000000 		.4byte	.LVL4
+ 508 0054 12000000 		.4byte	.LVL6
+ 509 0058 0B00     		.2byte	0xb
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccR3mdUI.s 			page 11
+
+
+ 510 005a F3       		.byte	0xf3
+ 511 005b 01       		.uleb128 0x1
+ 512 005c 50       		.byte	0x50
+ 513 005d 73       		.byte	0x73
+ 514 005e 00       		.sleb128 0
+ 515 005f 1C       		.byte	0x1c
+ 516 0060 F3       		.byte	0xf3
+ 517 0061 01       		.uleb128 0x1
+ 518 0062 51       		.byte	0x51
+ 519 0063 22       		.byte	0x22
+ 520 0064 9F       		.byte	0x9f
+ 521 0065 12000000 		.4byte	.LVL6
+ 522 0069 14000000 		.4byte	.LFE2
+ 523 006d 0C00     		.2byte	0xc
+ 524 006f 73       		.byte	0x73
+ 525 0070 00       		.sleb128 0
+ 526 0071 20       		.byte	0x20
+ 527 0072 F3       		.byte	0xf3
+ 528 0073 01       		.uleb128 0x1
+ 529 0074 51       		.byte	0x51
+ 530 0075 22       		.byte	0x22
+ 531 0076 F3       		.byte	0xf3
+ 532 0077 01       		.uleb128 0x1
+ 533 0078 50       		.byte	0x50
+ 534 0079 22       		.byte	0x22
+ 535 007a 9F       		.byte	0x9f
+ 536 007b 00000000 		.4byte	0
+ 537 007f 00000000 		.4byte	0
+ 538              	.LLST2:
+ 539 0083 00000000 		.4byte	.LVL0
+ 540 0087 06000000 		.4byte	.LVL2
+ 541 008b 0100     		.2byte	0x1
+ 542 008d 50       		.byte	0x50
+ 543 008e 06000000 		.4byte	.LVL2
+ 544 0092 0A000000 		.4byte	.LVL3
+ 545 0096 0100     		.2byte	0x1
+ 546 0098 53       		.byte	0x53
+ 547 0099 0A000000 		.4byte	.LVL3
+ 548 009d 0E000000 		.4byte	.LVL4
+ 549 00a1 0300     		.2byte	0x3
+ 550 00a3 73       		.byte	0x73
+ 551 00a4 01       		.sleb128 1
+ 552 00a5 9F       		.byte	0x9f
+ 553 00a6 0E000000 		.4byte	.LVL4
+ 554 00aa 14000000 		.4byte	.LFE2
+ 555 00ae 0100     		.2byte	0x1
+ 556 00b0 53       		.byte	0x53
+ 557 00b1 00000000 		.4byte	0
+ 558 00b5 00000000 		.4byte	0
+ 559              	.LLST3:
+ 560 00b9 00000000 		.4byte	.LVL0
+ 561 00bd 06000000 		.4byte	.LVL2
+ 562 00c1 0200     		.2byte	0x2
+ 563 00c3 30       		.byte	0x30
+ 564 00c4 9F       		.byte	0x9f
+ 565 00c5 06000000 		.4byte	.LVL2
+ 566 00c9 14000000 		.4byte	.LFE2
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccR3mdUI.s 			page 12
+
+
+ 567 00cd 0100     		.2byte	0x1
+ 568 00cf 50       		.byte	0x50
+ 569 00d0 00000000 		.4byte	0
+ 570 00d4 00000000 		.4byte	0
+ 571              	.LLST4:
+ 572 00d8 00000000 		.4byte	.LVL7
+ 573 00dc 04000000 		.4byte	.LVL8
+ 574 00e0 0100     		.2byte	0x1
+ 575 00e2 50       		.byte	0x50
+ 576 00e3 04000000 		.4byte	.LVL8
+ 577 00e7 16000000 		.4byte	.LFE3
+ 578 00eb 0400     		.2byte	0x4
+ 579 00ed F3       		.byte	0xf3
+ 580 00ee 01       		.uleb128 0x1
+ 581 00ef 50       		.byte	0x50
+ 582 00f0 9F       		.byte	0x9f
+ 583 00f1 00000000 		.4byte	0
+ 584 00f5 00000000 		.4byte	0
+ 585              	.LLST5:
+ 586 00f9 00000000 		.4byte	.LVL7
+ 587 00fd 04000000 		.4byte	.LVL8
+ 588 0101 0100     		.2byte	0x1
+ 589 0103 51       		.byte	0x51
+ 590 0104 04000000 		.4byte	.LVL8
+ 591 0108 16000000 		.4byte	.LFE3
+ 592 010c 0400     		.2byte	0x4
+ 593 010e F3       		.byte	0xf3
+ 594 010f 01       		.uleb128 0x1
+ 595 0110 51       		.byte	0x51
+ 596 0111 9F       		.byte	0x9f
+ 597 0112 00000000 		.4byte	0
+ 598 0116 00000000 		.4byte	0
+ 599              	.LLST7:
+ 600 011a 00000000 		.4byte	.LVL7
+ 601 011e 04000000 		.4byte	.LVL8
+ 602 0122 0200     		.2byte	0x2
+ 603 0124 30       		.byte	0x30
+ 604 0125 9F       		.byte	0x9f
+ 605 0126 04000000 		.4byte	.LVL8
+ 606 012a 16000000 		.4byte	.LFE3
+ 607 012e 0100     		.2byte	0x1
+ 608 0130 53       		.byte	0x53
+ 609 0131 00000000 		.4byte	0
+ 610 0135 00000000 		.4byte	0
+ 611              	.LLST8:
+ 612 0139 00000000 		.4byte	.LVL7
+ 613 013d 04000000 		.4byte	.LVL8
+ 614 0141 0200     		.2byte	0x2
+ 615 0143 30       		.byte	0x30
+ 616 0144 9F       		.byte	0x9f
+ 617 0145 04000000 		.4byte	.LVL8
+ 618 0149 0C000000 		.4byte	.LVL9
+ 619 014d 0700     		.2byte	0x7
+ 620 014f 70       		.byte	0x70
+ 621 0150 00       		.sleb128 0
+ 622 0151 F3       		.byte	0xf3
+ 623 0152 01       		.uleb128 0x1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccR3mdUI.s 			page 13
+
+
+ 624 0153 50       		.byte	0x50
+ 625 0154 1C       		.byte	0x1c
+ 626 0155 9F       		.byte	0x9f
+ 627 0156 0C000000 		.4byte	.LVL9
+ 628 015a 0E000000 		.4byte	.LVL10
+ 629 015e 0800     		.2byte	0x8
+ 630 0160 F3       		.byte	0xf3
+ 631 0161 01       		.uleb128 0x1
+ 632 0162 50       		.byte	0x50
+ 633 0163 20       		.byte	0x20
+ 634 0164 70       		.byte	0x70
+ 635 0165 00       		.sleb128 0
+ 636 0166 22       		.byte	0x22
+ 637 0167 9F       		.byte	0x9f
+ 638 0168 10000000 		.4byte	.LVL11
+ 639 016c 12000000 		.4byte	.LVL12
+ 640 0170 0700     		.2byte	0x7
+ 641 0172 70       		.byte	0x70
+ 642 0173 00       		.sleb128 0
+ 643 0174 F3       		.byte	0xf3
+ 644 0175 01       		.uleb128 0x1
+ 645 0176 50       		.byte	0x50
+ 646 0177 1C       		.byte	0x1c
+ 647 0178 9F       		.byte	0x9f
+ 648 0179 00000000 		.4byte	0
+ 649 017d 00000000 		.4byte	0
+ 650              		.section	.debug_aranges,"",%progbits
+ 651 0000 24000000 		.4byte	0x24
+ 652 0004 0200     		.2byte	0x2
+ 653 0006 00000000 		.4byte	.Ldebug_info0
+ 654 000a 04       		.byte	0x4
+ 655 000b 00       		.byte	0
+ 656 000c 0000     		.2byte	0
+ 657 000e 0000     		.2byte	0
+ 658 0010 00000000 		.4byte	.LFB2
+ 659 0014 14000000 		.4byte	.LFE2-.LFB2
+ 660 0018 00000000 		.4byte	.LFB3
+ 661 001c 16000000 		.4byte	.LFE3-.LFB3
+ 662 0020 00000000 		.4byte	0
+ 663 0024 00000000 		.4byte	0
+ 664              		.section	.debug_ranges,"",%progbits
+ 665              	.Ldebug_ranges0:
+ 666 0000 00000000 		.4byte	.LFB2
+ 667 0004 14000000 		.4byte	.LFE2
+ 668 0008 00000000 		.4byte	.LFB3
+ 669 000c 16000000 		.4byte	.LFE3
+ 670 0010 00000000 		.4byte	0
+ 671 0014 00000000 		.4byte	0
+ 672              		.section	.debug_line,"",%progbits
+ 673              	.Ldebug_line0:
+ 674 0000 6B010000 		.section	.debug_str,"MS",%progbits,1
+ 674      02003401 
+ 674      00000201 
+ 674      FB0E0D00 
+ 674      01010101 
+ 675              	.LASF8:
+ 676 0000 6C6F6E67 		.ascii	"long long int\000"
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccR3mdUI.s 			page 14
+
+
+ 676      206C6F6E 
+ 676      6720696E 
+ 676      7400
+ 677              	.LASF10:
+ 678 000e 756E7369 		.ascii	"unsigned int\000"
+ 678      676E6564 
+ 678      20696E74 
+ 678      00
+ 679              	.LASF20:
+ 680 001b 436F6465 		.ascii	"Code\\Device\\FM175XX\\Utility\\Utility.c\000"
+ 680      5C446576 
+ 680      6963655C 
+ 680      464D3137 
+ 680      3558585C 
+ 681              	.LASF6:
+ 682 0041 5F5F7569 		.ascii	"__uint32_t\000"
+ 682      6E743332 
+ 682      5F7400
+ 683              	.LASF19:
+ 684 004c 474E5520 		.ascii	"GNU C 4.9.3 20150303 (release) [ARM/embedded-4_9-br"
+ 684      4320342E 
+ 684      392E3320 
+ 684      32303135 
+ 684      30333033 
+ 685 007f 616E6368 		.ascii	"anch revision 221220] -mcpu=cortex-m0 -mthumb -g -O"
+ 685      20726576 
+ 685      6973696F 
+ 685      6E203232 
+ 685      31323230 
+ 686 00b2 73202D66 		.ascii	"s -ffunction-sections -ffat-lto-objects\000"
+ 686      66756E63 
+ 686      74696F6E 
+ 686      2D736563 
+ 686      74696F6E 
+ 687              	.LASF7:
+ 688 00da 6C6F6E67 		.ascii	"long unsigned int\000"
+ 688      20756E73 
+ 688      69676E65 
+ 688      6420696E 
+ 688      7400
+ 689              	.LASF21:
+ 690 00ec 473A5C50 		.ascii	"G:\\Psoc4_prj\\7.rental_house\\18-04-11\\second_ima"
+ 690      736F6334 
+ 690      5F70726A 
+ 690      5C372E72 
+ 690      656E7461 
+ 691 011b 6765735B 		.ascii	"ges[4-9]\\EntranceGuard_171019-12.50\\EntranceGuard"
+ 691      342D395D 
+ 691      5C456E74 
+ 691      72616E63 
+ 691      65477561 
+ 692 014c 2E637964 		.ascii	".cydsn\000"
+ 692      736E00
+ 693              	.LASF9:
+ 694 0153 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 694      206C6F6E 
+ 694      6720756E 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccR3mdUI.s 			page 15
+
+
+ 694      7369676E 
+ 694      65642069 
+ 695              	.LASF5:
+ 696 016a 5F5F7569 		.ascii	"__uint8_t\000"
+ 696      6E74385F 
+ 696      7400
+ 697              	.LASF18:
+ 698 0174 70427566 		.ascii	"pBuf\000"
+ 698      00
+ 699              	.LASF11:
+ 700 0179 75696E74 		.ascii	"uint8_t\000"
+ 700      385F7400 
+ 701              	.LASF1:
+ 702 0181 756E7369 		.ascii	"unsigned char\000"
+ 702      676E6564 
+ 702      20636861 
+ 702      7200
+ 703              	.LASF15:
+ 704 018f 63686172 		.ascii	"char\000"
+ 704      00
+ 705              	.LASF12:
+ 706 0194 75696E74 		.ascii	"uint32_t\000"
+ 706      33325F74 
+ 706      00
+ 707              	.LASF4:
+ 708 019d 6C6F6E67 		.ascii	"long int\000"
+ 708      20696E74 
+ 708      00
+ 709              	.LASF14:
+ 710 01a6 646F7562 		.ascii	"double\000"
+ 710      6C6500
+ 711              	.LASF3:
+ 712 01ad 73686F72 		.ascii	"short unsigned int\000"
+ 712      7420756E 
+ 712      7369676E 
+ 712      65642069 
+ 712      6E7400
+ 713              	.LASF0:
+ 714 01c0 7369676E 		.ascii	"signed char\000"
+ 714      65642063 
+ 714      68617200 
+ 715              	.LASF23:
+ 716 01cc 47657442 		.ascii	"GetByteBCC\000"
+ 716      79746542 
+ 716      434300
+ 717              	.LASF22:
+ 718 01d7 47657442 		.ascii	"GetByteSum\000"
+ 718      79746553 
+ 718      756D00
+ 719              	.LASF13:
+ 720 01e2 666C6F61 		.ascii	"float\000"
+ 720      7400
+ 721              	.LASF17:
+ 722 01e8 6E427974 		.ascii	"nBytes\000"
+ 722      657300
+ 723              	.LASF2:
+ 724 01ef 73686F72 		.ascii	"short int\000"
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccR3mdUI.s 			page 16
+
+
+ 724      7420696E 
+ 724      7400
+ 725              	.LASF16:
+ 726 01f9 73697A65 		.ascii	"sizetype\000"
+ 726      74797065 
+ 726      00
+ 727              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.9.3 20150303 (release) [ARM/embedded-4_9-br

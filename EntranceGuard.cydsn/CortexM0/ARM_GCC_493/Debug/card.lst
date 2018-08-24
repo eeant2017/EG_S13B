@@ -1,0 +1,4722 @@
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 1
+
+
+   1              		.cpu cortex-m0
+   2              		.fpu softvfp
+   3              		.eabi_attribute 20, 1
+   4              		.eabi_attribute 21, 1
+   5              		.eabi_attribute 23, 3
+   6              		.eabi_attribute 24, 1
+   7              		.eabi_attribute 25, 1
+   8              		.eabi_attribute 26, 1
+   9              		.eabi_attribute 30, 4
+  10              		.eabi_attribute 34, 0
+  11              		.eabi_attribute 18, 4
+  12              		.code	16
+  13              		.file	"card.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.CardBlock_Wr,"ax",%progbits
+  18              		.align	1
+  19              		.global	CardBlock_Wr
+  20              		.code	16
+  21              		.thumb_func
+  22              		.type	CardBlock_Wr, %function
+  23              	CardBlock_Wr:
+  24              	.LFB65:
+  25              		.file 1 "Code\\Device\\FM175XX\\card.c"
+   1:Code\Device\FM175XX/card.c **** //*************************************************************************************************
+   2:Code\Device\FM175XX/card.c **** // File name		: card.c
+   3:Code\Device\FM175XX/card.c **** // Description		: 刷卡的相关函数
+   4:Code\Device\FM175XX/card.c **** // Author			: Keno
+   5:Code\Device\FM175XX/card.c **** // Date				: 2016.8.8
+   6:Code\Device\FM175XX/card.c **** // Version			: V02
+   7:Code\Device\FM175XX/card.c **** //-------------------------------------------------------------------------------------------------
+   8:Code\Device\FM175XX/card.c **** // Info				: 
+   9:Code\Device\FM175XX/card.c **** //*************************************************************************************************
+  10:Code\Device\FM175XX/card.c **** #include "card.h"
+  11:Code\Device\FM175XX/card.c **** #include <stdint.h>
+  12:Code\Device\FM175XX/card.c **** #include <string.h>
+  13:Code\Device\FM175XX/card.c **** #include "common.h"
+  14:Code\Device\FM175XX/card.c **** #include "fm175xx.h"
+  15:Code\Device\FM175XX/card.c **** #include "user_data.h"
+  16:Code\Device\FM175XX/card.c **** 
+  17:Code\Device\FM175XX/card.c **** #include "type_a.h"
+  18:Code\Device\FM175XX/card.c **** #include "type_b.h"
+  19:Code\Device\FM175XX/card.c **** #include "mifare_card.h"
+  20:Code\Device\FM175XX/card.c **** #include "crypt.h"
+  21:Code\Device\FM175XX/card.c **** 
+  22:Code\Device\FM175XX/card.c **** 
+  23:Code\Device\FM175XX/card.c **** //******************************************* 外部函数声明 **********************************
+  24:Code\Device\FM175XX/card.c **** extern void ble_heartbeat(void);
+  25:Code\Device\FM175XX/card.c **** extern uint32 mem_var;
+  26:Code\Device\FM175XX/card.c **** 
+  27:Code\Device\FM175XX/card.c **** //*************************************************************************************************
+  28:Code\Device\FM175XX/card.c **** // Function name	: detect_nfc_card
+  29:Code\Device\FM175XX/card.c **** // Description		: 检测是否有卡
+  30:Code\Device\FM175XX/card.c **** // Parameter		: card_id	: 返回卡的UID
+  31:Code\Device\FM175XX/card.c **** //					: sz		: UID的长度
+  32:Code\Device\FM175XX/card.c **** // Return			: none
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 2
+
+
+  33:Code\Device\FM175XX/card.c **** //-------------------------------------------------------------------------------------------------
+  34:Code\Device\FM175XX/card.c **** // Info				: 专属读取eja IC卡
+  35:Code\Device\FM175XX/card.c **** //*************************************************************************************************
+  36:Code\Device\FM175XX/card.c **** #if card_scan 
+  37:Code\Device\FM175XX/card.c **** uint8 detect_nfc_card(uint8 *card_id, uint16 sz)
+  38:Code\Device\FM175XX/card.c **** {
+  39:Code\Device\FM175XX/card.c **** 	if (CardRead(card_id) == 1)
+  40:Code\Device\FM175XX/card.c **** 	{
+  41:Code\Device\FM175XX/card.c **** 		return RET_OK;
+  42:Code\Device\FM175XX/card.c **** 	}
+  43:Code\Device\FM175XX/card.c **** 	if(1 == nfc_detect_type_b(card_id, 8))
+  44:Code\Device\FM175XX/card.c **** 	{
+  45:Code\Device\FM175XX/card.c **** 		return RET_OK;
+  46:Code\Device\FM175XX/card.c **** 	}
+  47:Code\Device\FM175XX/card.c **** 	return RET_ERR;
+  48:Code\Device\FM175XX/card.c **** }
+  49:Code\Device\FM175XX/card.c **** #else	//备份
+  50:Code\Device\FM175XX/card.c **** uint8 detect_nfc_card(uint8 *card_id, uint16 sz)
+  51:Code\Device\FM175XX/card.c **** {
+  52:Code\Device\FM175XX/card.c **** 	if (nfc_detect_type_a(card_id, sz) != 0)
+  53:Code\Device\FM175XX/card.c **** 	{
+  54:Code\Device\FM175XX/card.c **** 		return RET_OK;
+  55:Code\Device\FM175XX/card.c **** 	}
+  56:Code\Device\FM175XX/card.c **** 	if (nfc_detect_type_b(card_id, sz) != 0)
+  57:Code\Device\FM175XX/card.c **** 	{
+  58:Code\Device\FM175XX/card.c **** 		return RET_OK;
+  59:Code\Device\FM175XX/card.c **** 	}
+  60:Code\Device\FM175XX/card.c **** 	return RET_ERR;
+  61:Code\Device\FM175XX/card.c **** }
+  62:Code\Device\FM175XX/card.c **** #endif
+  63:Code\Device\FM175XX/card.c **** 
+  64:Code\Device\FM175XX/card.c **** 
+  65:Code\Device\FM175XX/card.c **** //*************************************************************************************************
+  66:Code\Device\FM175XX/card.c **** // Function name	: detect_nfc_card_continus
+  67:Code\Device\FM175XX/card.c **** // Description		: 循环打开40次
+  68:Code\Device\FM175XX/card.c **** // Parameter		: card_id	: 返回卡的UID
+  69:Code\Device\FM175XX/card.c **** //					: sz		: UID的长度
+  70:Code\Device\FM175XX/card.c **** // Return			: none
+  71:Code\Device\FM175XX/card.c **** //-------------------------------------------------------------------------------------------------
+  72:Code\Device\FM175XX/card.c **** // Info				: 
+  73:Code\Device\FM175XX/card.c **** //*************************************************************************************************
+  74:Code\Device\FM175XX/card.c **** uint8 detect_nfc_card_continus(uint8 *card_id, uint16 sz)
+  75:Code\Device\FM175XX/card.c **** {
+  76:Code\Device\FM175XX/card.c **** 	uint32 loop = 0;
+  77:Code\Device\FM175XX/card.c **** 	for (loop = 0; loop < 40; loop++)
+  78:Code\Device\FM175XX/card.c **** 	{
+  79:Code\Device\FM175XX/card.c **** 		if (detect_nfc_card(card_id, sz) == RET_OK)
+  80:Code\Device\FM175XX/card.c **** 		{
+  81:Code\Device\FM175XX/card.c **** 			DBG_PRINTF("detect_nfc_card_continus--->uuid:\n");
+  82:Code\Device\FM175XX/card.c **** 			DBG_SOFT_PrintfHex(card_id, 8,16);
+  83:Code\Device\FM175XX/card.c **** 			return RET_OK;
+  84:Code\Device\FM175XX/card.c **** 		}
+  85:Code\Device\FM175XX/card.c **** 		ble_heartbeat();
+  86:Code\Device\FM175XX/card.c **** 	}
+  87:Code\Device\FM175XX/card.c **** 	return RET_ERR;
+  88:Code\Device\FM175XX/card.c **** }
+  89:Code\Device\FM175XX/card.c **** 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 3
+
+
+  90:Code\Device\FM175XX/card.c **** 
+  91:Code\Device\FM175XX/card.c **** #if 0
+  92:Code\Device\FM175XX/card.c **** //*************************************************************************************************
+  93:Code\Device\FM175XX/card.c **** // Function name	: detect_nfc_card_a
+  94:Code\Device\FM175XX/card.c **** // Description		: 检测是否有A卡
+  95:Code\Device\FM175XX/card.c **** // Parameter		: card_id	: 返回卡的UID
+  96:Code\Device\FM175XX/card.c **** //					: sz		: UID的长度
+  97:Code\Device\FM175XX/card.c **** // Return			: none
+  98:Code\Device\FM175XX/card.c **** //-------------------------------------------------------------------------------------------------
+  99:Code\Device\FM175XX/card.c **** // Info				: 
+ 100:Code\Device\FM175XX/card.c **** //*************************************************************************************************
+ 101:Code\Device\FM175XX/card.c **** uint8 Read_nfc_cardbyone_a(uint8 *card_id)
+ 102:Code\Device\FM175XX/card.c **** {
+ 103:Code\Device\FM175XX/card.c **** 	uint8 card_id_a[CARD_UID_LEN] = {0};
+ 104:Code\Device\FM175XX/card.c **** 	//一次读取
+ 105:Code\Device\FM175XX/card.c **** 	if ((nfc_detect_type_a((uint8 *)card_id_a, CARD_UID_LEN)) != 0)
+ 106:Code\Device\FM175XX/card.c **** 	{
+ 107:Code\Device\FM175XX/card.c **** 	// 滤除不准确的卡ID
+ 108:Code\Device\FM175XX/card.c **** 		if((card_id_a[0] == 0) && (card_id_a[1] == 0) &&(card_id_a[2] == 0) && (card_id_a[3] == 0))
+ 109:Code\Device\FM175XX/card.c **** 	{
+ 110:Code\Device\FM175XX/card.c **** 		return RET_ERR;
+ 111:Code\Device\FM175XX/card.c **** 	}
+ 112:Code\Device\FM175XX/card.c **** 		memcpy(card_id,card_id_a,CARD_UID_LEN);
+ 113:Code\Device\FM175XX/card.c **** 	return RET_OK;
+ 114:Code\Device\FM175XX/card.c **** 	}
+ 115:Code\Device\FM175XX/card.c **** }
+ 116:Code\Device\FM175XX/card.c **** 
+ 117:Code\Device\FM175XX/card.c **** //*************************************************************************************************
+ 118:Code\Device\FM175XX/card.c **** // Function name	: detect_nfc_card_a
+ 119:Code\Device\FM175XX/card.c **** // Description		: 检测是否有B卡--身份证
+ 120:Code\Device\FM175XX/card.c **** // Parameter		: card_id	: 返回卡的UID
+ 121:Code\Device\FM175XX/card.c **** //					: sz		: UID的长度
+ 122:Code\Device\FM175XX/card.c **** // Return			: none
+ 123:Code\Device\FM175XX/card.c **** //-------------------------------------------------------------------------------------------------
+ 124:Code\Device\FM175XX/card.c **** // Info				: 
+ 125:Code\Device\FM175XX/card.c **** //*************************************************************************************************
+ 126:Code\Device\FM175XX/card.c **** uint8 Read_nfc_cardbyone_b(uint8 *card_id)
+ 127:Code\Device\FM175XX/card.c **** {
+ 128:Code\Device\FM175XX/card.c **** 
+ 129:Code\Device\FM175XX/card.c **** 	//一次读取
+ 130:Code\Device\FM175XX/card.c **** 	if ((nfc_detect_type_b((uint8 *)card_id, CARD_UID_LEN)) != 0)
+ 131:Code\Device\FM175XX/card.c **** 	{
+ 132:Code\Device\FM175XX/card.c **** 		// 滤除不准确的卡ID
+ 133:Code\Device\FM175XX/card.c **** 		if((card_id[0] == 0) && (card_id[1] == 0) &&(card_id[2] == 0) && (card_id[3] == 0))
+ 134:Code\Device\FM175XX/card.c **** 		{
+ 135:Code\Device\FM175XX/card.c **** 			return RET_ERR;
+ 136:Code\Device\FM175XX/card.c **** 		}
+ 137:Code\Device\FM175XX/card.c **** 		#if 1
+ 138:Code\Device\FM175XX/card.c **** 		// 滤除不准确的卡ID
+ 139:Code\Device\FM175XX/card.c **** 		if((card_id[4] == 0) && (card_id[5] == 0) &&(card_id[6] == 0) && (card_id[7] == 0))
+ 140:Code\Device\FM175XX/card.c **** 		{
+ 141:Code\Device\FM175XX/card.c **** 			return RET_ERR;
+ 142:Code\Device\FM175XX/card.c **** 		}
+ 143:Code\Device\FM175XX/card.c **** 		#endif
+ 144:Code\Device\FM175XX/card.c **** 		return RET_OK;
+ 145:Code\Device\FM175XX/card.c **** 	}
+ 146:Code\Device\FM175XX/card.c **** }
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 4
+
+
+ 147:Code\Device\FM175XX/card.c **** #endif
+ 148:Code\Device\FM175XX/card.c **** 
+ 149:Code\Device\FM175XX/card.c **** #if 0
+ 150:Code\Device\FM175XX/card.c **** //*************************************************************************************************
+ 151:Code\Device\FM175XX/card.c **** // Function name	: Read_nfc_card2
+ 152:Code\Device\FM175XX/card.c **** // Description		: 检测是否有卡
+ 153:Code\Device\FM175XX/card.c **** // Parameter		: card_id	: 返回卡的UID
+ 154:Code\Device\FM175XX/card.c **** //					: sz		: UID的长度
+ 155:Code\Device\FM175XX/card.c **** // Return			: none
+ 156:Code\Device\FM175XX/card.c **** //-------------------------------------------------------------------------------------------------
+ 157:Code\Device\FM175XX/card.c **** // Info				: a卡天线读取两遍，b卡天线读两遍
+ 158:Code\Device\FM175XX/card.c **** //*************************************************************************************************
+ 159:Code\Device\FM175XX/card.c **** uint8 Read_nfc_card2(uint8 *card_id)
+ 160:Code\Device\FM175XX/card.c **** {
+ 161:Code\Device\FM175XX/card.c **** 	uint8 card_id0[8] = {0};
+ 162:Code\Device\FM175XX/card.c **** 	uint8 card_id1[8] = {0};
+ 163:Code\Device\FM175XX/card.c **** 	
+ 164:Code\Device\FM175XX/card.c **** 	uint8 card_id2[8] = {0};
+ 165:Code\Device\FM175XX/card.c **** 	uint8 card_id3[8] = {0};
+ 166:Code\Device\FM175XX/card.c **** 	
+ 167:Code\Device\FM175XX/card.c **** 	// 读取a卡
+ 168:Code\Device\FM175XX/card.c **** 	if(RET_OK == Read_nfc_cardbyone_a(card_id0))
+ 169:Code\Device\FM175XX/card.c **** 	{
+ 170:Code\Device\FM175XX/card.c **** 		if(RET_OK == Read_nfc_cardbyone_a(card_id1))
+ 171:Code\Device\FM175XX/card.c **** 		{
+ 172:Code\Device\FM175XX/card.c **** 			//只是读出三个不含4个0的数据
+ 173:Code\Device\FM175XX/card.c **** 			if(0 == memcmp(card_id0, card_id1,8))
+ 174:Code\Device\FM175XX/card.c **** 			{
+ 175:Code\Device\FM175XX/card.c **** 				{
+ 176:Code\Device\FM175XX/card.c **** 					memcpy(card_id,card_id0,8);
+ 177:Code\Device\FM175XX/card.c **** 					return RET_OK;
+ 178:Code\Device\FM175XX/card.c **** 				}
+ 179:Code\Device\FM175XX/card.c **** 			}
+ 180:Code\Device\FM175XX/card.c **** 			else
+ 181:Code\Device\FM175XX/card.c **** 			{	//不一样 丢弃
+ 182:Code\Device\FM175XX/card.c **** 				return RET_ERR;
+ 183:Code\Device\FM175XX/card.c **** 			}
+ 184:Code\Device\FM175XX/card.c **** 		}
+ 185:Code\Device\FM175XX/card.c **** 	}	
+ 186:Code\Device\FM175XX/card.c **** 	
+ 187:Code\Device\FM175XX/card.c **** 	//读取b卡
+ 188:Code\Device\FM175XX/card.c **** 	if(RET_OK == Read_nfc_cardbyone_b(card_id2))
+ 189:Code\Device\FM175XX/card.c **** 	{
+ 190:Code\Device\FM175XX/card.c **** 		if(RET_OK == Read_nfc_cardbyone_b(card_id3))
+ 191:Code\Device\FM175XX/card.c **** 		{
+ 192:Code\Device\FM175XX/card.c **** 			//只是读出三个不含4个0的数据
+ 193:Code\Device\FM175XX/card.c **** 			if(0 == memcmp(card_id2, card_id3,8))
+ 194:Code\Device\FM175XX/card.c **** 			{
+ 195:Code\Device\FM175XX/card.c **** 				{
+ 196:Code\Device\FM175XX/card.c **** 					memcpy(card_id,card_id2,8);
+ 197:Code\Device\FM175XX/card.c **** 					return RET_OK;
+ 198:Code\Device\FM175XX/card.c **** 				}
+ 199:Code\Device\FM175XX/card.c **** 			}
+ 200:Code\Device\FM175XX/card.c **** 			else
+ 201:Code\Device\FM175XX/card.c **** 			{	//不一样 丢弃
+ 202:Code\Device\FM175XX/card.c **** 				return RET_ERR;
+ 203:Code\Device\FM175XX/card.c **** 			}
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 5
+
+
+ 204:Code\Device\FM175XX/card.c **** 		}
+ 205:Code\Device\FM175XX/card.c **** 	}	
+ 206:Code\Device\FM175XX/card.c **** 	return RET_ERR;		
+ 207:Code\Device\FM175XX/card.c **** }
+ 208:Code\Device\FM175XX/card.c **** 
+ 209:Code\Device\FM175XX/card.c **** 
+ 210:Code\Device\FM175XX/card.c **** int CardScan_b(uint8 card_id[])
+ 211:Code\Device\FM175XX/card.c **** {
+ 212:Code\Device\FM175XX/card.c **** 	uint8_t statues;
+ 213:Code\Device\FM175XX/card.c ****     uint32_t rec_len;
+ 214:Code\Device\FM175XX/card.c ****     uint8_t cardFlag = 0;
+ 215:Code\Device\FM175XX/card.c ****     uint8_t pupi[4];
+ 216:Code\Device\FM175XX/card.c ****     uint8_t buff[12];
+ 217:Code\Device\FM175XX/card.c **** 	
+ 218:Code\Device\FM175XX/card.c **** 	statues = TypeB_WUP(&rec_len,buff,pupi);                            /* 寻卡                     
+ 219:Code\Device\FM175XX/card.c ****     if ( statues == TRUE )
+ 220:Code\Device\FM175XX/card.c ****     {
+ 221:Code\Device\FM175XX/card.c ****         statues = TypeB_Select(pupi,&rec_len,buff);
+ 222:Code\Device\FM175XX/card.c ****     }
+ 223:Code\Device\FM175XX/card.c **** 	
+ 224:Code\Device\FM175XX/card.c ****     if ( statues == TRUE )
+ 225:Code\Device\FM175XX/card.c ****     {
+ 226:Code\Device\FM175XX/card.c ****         cardFlag = 1;
+ 227:Code\Device\FM175XX/card.c ****         statues = TypeB_GetUID(&rec_len,&buff[0]);
+ 228:Code\Device\FM175XX/card.c ****         if(statues == TRUE)
+ 229:Code\Device\FM175XX/card.c ****         {
+ 230:Code\Device\FM175XX/card.c ****             memcpy(card_id, buff, 8);
+ 231:Code\Device\FM175XX/card.c ****         }
+ 232:Code\Device\FM175XX/card.c ****     }	
+ 233:Code\Device\FM175XX/card.c **** 	return cardFlag;
+ 234:Code\Device\FM175XX/card.c **** }
+ 235:Code\Device\FM175XX/card.c **** #endif
+ 236:Code\Device\FM175XX/card.c **** 
+ 237:Code\Device\FM175XX/card.c **** //=================================================================================================
+ 238:Code\Device\FM175XX/card.c **** 
+ 239:Code\Device\FM175XX/card.c **** //*************************************************************************************************
+ 240:Code\Device\FM175XX/card.c **** // Function name	: CardBlock_Wr
+ 241:Code\Device\FM175XX/card.c **** // Description		: 写入卡指定扇区的数据
+ 242:Code\Device\FM175XX/card.c **** // Parameter		: block_addr	: 卡的扇区号
+ 243:Code\Device\FM175XX/card.c **** // 					: pdata			: 数据
+ 244:Code\Device\FM175XX/card.c **** // Return			: none
+ 245:Code\Device\FM175XX/card.c **** //-------------------------------------------------------------------------------------------------
+ 246:Code\Device\FM175XX/card.c **** // Info				: 
+ 247:Code\Device\FM175XX/card.c **** //*************************************************************************************************
+ 248:Code\Device\FM175XX/card.c **** void CardBlock_Wr(uint8 block_addr, uint8 *pdata)
+ 249:Code\Device\FM175XX/card.c **** {
+  26              		.loc 1 249 0
+  27              		.cfi_startproc
+  28              	.LVL0:
+  29 0000 70B5     		push	{r4, r5, r6, lr}
+  30              		.cfi_def_cfa_offset 16
+  31              		.cfi_offset 4, -16
+  32              		.cfi_offset 5, -12
+  33              		.cfi_offset 6, -8
+  34              		.cfi_offset 14, -4
+  35 0002 041C     		mov	r4, r0
+  36 0004 86B0     		sub	sp, sp, #24
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 6
+
+
+  37              		.cfi_def_cfa_offset 40
+ 250:Code\Device\FM175XX/card.c **** 	uint8 statues;
+ 251:Code\Device\FM175XX/card.c **** 	uint8 blockAddr;
+ 252:Code\Device\FM175XX/card.c **** 	uint8 key[6]= {0xff,0xff,0xfe,0xef,0xfa,0xaf};   
+  38              		.loc 1 252 0
+  39 0006 0622     		mov	r2, #6
+ 249:Code\Device\FM175XX/card.c **** 	uint8 statues;
+  40              		.loc 1 249 0
+  41 0008 0E1C     		mov	r6, r1
+  42              		.loc 1 252 0
+  43 000a 6846     		mov	r0, sp
+  44              	.LVL1:
+  45 000c 1149     		ldr	r1, .L7
+  46              	.LVL2:
+  47 000e FFF7FEFF 		bl	memcpy
+  48              	.LVL3:
+ 253:Code\Device\FM175XX/card.c **** 	uint8 blockData[16];
+ 254:Code\Device\FM175XX/card.c **** 	uint8 i;
+ 255:Code\Device\FM175XX/card.c **** 	
+ 256:Code\Device\FM175XX/card.c **** 	#if 0
+ 257:Code\Device\FM175XX/card.c **** 	FM175X_SoftReset( );
+ 258:Code\Device\FM175XX/card.c **** 	Set_Rf( 3 );                                                /* 打开双天线                  */
+ 259:Code\Device\FM175XX/card.c **** 	Pcd_ConfigISOType( 0 );                                     /* ISO14443寄存器初始化        *
+ 260:Code\Device\FM175XX/card.c **** 	statues = TypeA_CardActive( picc_atqa,picc_uid,picc_sak );  /* 激活A卡片                   */
+ 261:Code\Device\FM175XX/card.c **** 	if ( statues == TRUE ) 
+ 262:Code\Device\FM175XX/card.c **** 	{
+ 263:Code\Device\FM175XX/card.c **** 		DBG_SOFT_PutStr("\nCardUID:");
+ 264:Code\Device\FM175XX/card.c **** 		DBG_SOFT_PrintfHex(picc_uid,8,16);
+ 265:Code\Device\FM175XX/card.c **** 
+ 266:Code\Device\FM175XX/card.c **** 	}
+ 267:Code\Device\FM175XX/card.c **** 	else 
+ 268:Code\Device\FM175XX/card.c **** 	{
+ 269:Code\Device\FM175XX/card.c **** 		//DBG_SOFT_PutStr("No Card!\r\n");
+ 270:Code\Device\FM175XX/card.c **** 		TypeA_Halt( 0 );  	 					 				/* 卡片睡眠 					*/
+ 271:Code\Device\FM175XX/card.c **** 		return;
+ 272:Code\Device\FM175XX/card.c **** 	}
+ 273:Code\Device\FM175XX/card.c **** 	#endif
+ 274:Code\Device\FM175XX/card.c **** 	
+ 275:Code\Device\FM175XX/card.c **** 	// 先读0区块
+ 276:Code\Device\FM175XX/card.c **** 	blockAddr = block_addr;
+ 277:Code\Device\FM175XX/card.c **** 	statues = Mifare_Auth(0x00,blockAddr>>2,key,picc_uid);      /* 密钥认证                    */
+  49              		.loc 1 277 0
+  50 0012 A108     		lsr	r1, r4, #2
+  51 0014 0020     		mov	r0, #0
+  52 0016 6A46     		mov	r2, sp
+  53 0018 0F4B     		ldr	r3, .L7+4
+  54 001a FFF7FEFF 		bl	Mifare_Auth
+  55              	.LVL4:
+ 278:Code\Device\FM175XX/card.c **** 	if(statues  == TRUE)
+  56              		.loc 1 278 0
+  57 001e 0128     		cmp	r0, #1
+  58 0020 03D0     		beq	.L2
+  59              	.L4:
+ 279:Code\Device\FM175XX/card.c **** 	{
+ 280:Code\Device\FM175XX/card.c **** 		DBG_SOFT_PutStr("Auth OK!\r\n");
+ 281:Code\Device\FM175XX/card.c **** 	}
+ 282:Code\Device\FM175XX/card.c **** 	else
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 7
+
+
+ 283:Code\Device\FM175XX/card.c **** 	{
+ 284:Code\Device\FM175XX/card.c **** 		TypeA_Halt( 0 );  	 					 				/* 卡片睡眠 					*/
+  60              		.loc 1 284 0
+  61 0022 0020     		mov	r0, #0
+  62              	.LVL5:
+  63 0024 FFF7FEFF 		bl	TypeA_Halt
+  64              	.LVL6:
+  65 0028 11E0     		b	.L1
+  66              	.LVL7:
+  67              	.L2:
+ 285:Code\Device\FM175XX/card.c **** 		DBG_SOFT_PutStr("Auth Err!\r\n");
+ 286:Code\Device\FM175XX/card.c **** 		return ;
+ 287:Code\Device\FM175XX/card.c **** 	}	
+ 288:Code\Device\FM175XX/card.c **** 	statues = Mifare_Blockread(blockAddr,blockData);            /* 第一步 读块         		   */
+  68              		.loc 1 288 0
+  69 002a 02AD     		add	r5, sp, #8
+  70 002c 201C     		mov	r0, r4
+  71              	.LVL8:
+  72 002e 291C     		mov	r1, r5
+  73 0030 FFF7FEFF 		bl	Mifare_Blockread
+  74              	.LVL9:
+ 289:Code\Device\FM175XX/card.c **** 	if(statues  == TRUE)
+  75              		.loc 1 289 0
+  76 0034 0128     		cmp	r0, #1
+  77 0036 F4D1     		bne	.L4
+  78 0038 0023     		mov	r3, #0
+  79              	.L5:
+  80              	.LVL10:
+  81 003a EB54     		strb	r3, [r5, r3]
+  82              	.LVL11:
+  83 003c 0133     		add	r3, r3, #1
+  84              	.LVL12:
+ 290:Code\Device\FM175XX/card.c **** 	{
+ 291:Code\Device\FM175XX/card.c **** 		DBG_SOFT_PutStr("Read OK!\r\n");
+ 292:Code\Device\FM175XX/card.c **** 		DBG_SOFT_PrintfHex(blockData,16,16);
+ 293:Code\Device\FM175XX/card.c **** 	}
+ 294:Code\Device\FM175XX/card.c **** 	else
+ 295:Code\Device\FM175XX/card.c **** 	{
+ 296:Code\Device\FM175XX/card.c **** 		TypeA_Halt( 0 );  	 					 				/* 卡片睡眠 					*/
+ 297:Code\Device\FM175XX/card.c **** 		DBG_SOFT_PutStr("Read Err!\r\n");
+ 298:Code\Device\FM175XX/card.c **** 		return ;
+ 299:Code\Device\FM175XX/card.c **** 	}
+ 300:Code\Device\FM175XX/card.c **** 	for(i = 0; i < 16; i++)
+  85              		.loc 1 300 0 discriminator 3
+  86 003e 102B     		cmp	r3, #16
+  87 0040 FBD1     		bne	.L5
+ 301:Code\Device\FM175XX/card.c **** 	{
+ 302:Code\Device\FM175XX/card.c **** 		blockData[i] = i;
+ 303:Code\Device\FM175XX/card.c **** 	}
+ 304:Code\Device\FM175XX/card.c **** 	
+ 305:Code\Device\FM175XX/card.c **** 	#if 1
+ 306:Code\Device\FM175XX/card.c **** 	// blockAddr = 0x01;
+ 307:Code\Device\FM175XX/card.c **** 	statues = Mifare_Blockwrite(blockAddr,pdata);				/* 第二步 写块	 			  */
+  88              		.loc 1 307 0
+  89 0042 201C     		mov	r0, r4
+  90              	.LVL13:
+  91 0044 311C     		mov	r1, r6
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 8
+
+
+  92 0046 FFF7FEFF 		bl	Mifare_Blockwrite
+  93              	.LVL14:
+ 308:Code\Device\FM175XX/card.c **** 	if(statues  == TRUE)
+  94              		.loc 1 308 0
+  95 004a 0128     		cmp	r0, #1
+  96 004c E9D1     		bne	.L4
+  97              	.LVL15:
+  98              	.L1:
+ 309:Code\Device\FM175XX/card.c **** 	{
+ 310:Code\Device\FM175XX/card.c **** 		DBG_SOFT_PutStr("Write OK!\r\n");
+ 311:Code\Device\FM175XX/card.c **** 	}
+ 312:Code\Device\FM175XX/card.c **** 	else
+ 313:Code\Device\FM175XX/card.c **** 	{
+ 314:Code\Device\FM175XX/card.c **** 		TypeA_Halt( 0 );  	 					 				/* 卡片睡眠 					*/
+ 315:Code\Device\FM175XX/card.c **** 		DBG_SOFT_PutStr("Write Err!\r\n");
+ 316:Code\Device\FM175XX/card.c **** 		return ;
+ 317:Code\Device\FM175XX/card.c **** 	}
+ 318:Code\Device\FM175XX/card.c **** 	#endif
+ 319:Code\Device\FM175XX/card.c **** 	
+ 320:Code\Device\FM175XX/card.c **** 	#if 0
+ 321:Code\Device\FM175XX/card.c **** 	// 写完后 再读出来
+ 322:Code\Device\FM175XX/card.c **** 	statues = Mifare_Blockread(blockAddr,blockData);            /* 第三步 读块      		  */
+ 323:Code\Device\FM175XX/card.c **** 	TypeA_Halt( 0 );  	 					 					/* 卡片睡眠 					*/
+ 324:Code\Device\FM175XX/card.c **** 	if(statues  == TRUE)
+ 325:Code\Device\FM175XX/card.c **** 	{
+ 326:Code\Device\FM175XX/card.c **** 		DBG_SOFT_PutStr("Read OK!\r\n");
+ 327:Code\Device\FM175XX/card.c **** 		DBG_SOFT_PrintfHex(blockData,16,16);
+ 328:Code\Device\FM175XX/card.c **** 	}
+ 329:Code\Device\FM175XX/card.c **** 	else
+ 330:Code\Device\FM175XX/card.c **** 	{
+ 331:Code\Device\FM175XX/card.c **** 		DBG_SOFT_PutStr("Read Err!\r\n");
+ 332:Code\Device\FM175XX/card.c **** 		return ;
+ 333:Code\Device\FM175XX/card.c **** 	}
+ 334:Code\Device\FM175XX/card.c **** 	#endif
+ 335:Code\Device\FM175XX/card.c **** }
+  99              		.loc 1 335 0
+ 100 004e 06B0     		add	sp, sp, #24
+ 101              		@ sp needed
+ 102              	.LVL16:
+ 103              	.LVL17:
+ 104 0050 70BD     		pop	{r4, r5, r6, pc}
+ 105              	.L8:
+ 106 0052 C046     		.align	2
+ 107              	.L7:
+ 108 0054 00000000 		.word	.LANCHOR0
+ 109 0058 00000000 		.word	picc_uid
+ 110              		.cfi_endproc
+ 111              	.LFE65:
+ 112              		.size	CardBlock_Wr, .-CardBlock_Wr
+ 113              		.section	.text.CardBlock_Rd,"ax",%progbits
+ 114              		.align	1
+ 115              		.global	CardBlock_Rd
+ 116              		.code	16
+ 117              		.thumb_func
+ 118              		.type	CardBlock_Rd, %function
+ 119              	CardBlock_Rd:
+ 120              	.LFB66:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 9
+
+
+ 336:Code\Device\FM175XX/card.c **** 
+ 337:Code\Device\FM175XX/card.c **** 
+ 338:Code\Device\FM175XX/card.c **** //*************************************************************************************************
+ 339:Code\Device\FM175XX/card.c **** // Function name	: CardBlock_Rd
+ 340:Code\Device\FM175XX/card.c **** // Description		: 读出卡指定扇区的数据
+ 341:Code\Device\FM175XX/card.c **** // Parameter		: block_addr	: 卡的扇区号
+ 342:Code\Device\FM175XX/card.c **** // 					: pdata			: 数据
+ 343:Code\Device\FM175XX/card.c **** // Return			: none
+ 344:Code\Device\FM175XX/card.c **** //-------------------------------------------------------------------------------------------------
+ 345:Code\Device\FM175XX/card.c **** // Info				: 
+ 346:Code\Device\FM175XX/card.c **** //*************************************************************************************************
+ 347:Code\Device\FM175XX/card.c **** int CardBlock_Rd(uint8 block_addr, uint8 *pdata)
+ 348:Code\Device\FM175XX/card.c **** {
+ 121              		.loc 1 348 0
+ 122              		.cfi_startproc
+ 123              	.LVL18:
+ 124 0000 30B5     		push	{r4, r5, lr}
+ 125              		.cfi_def_cfa_offset 12
+ 126              		.cfi_offset 4, -12
+ 127              		.cfi_offset 5, -8
+ 128              		.cfi_offset 14, -4
+ 129 0002 041C     		mov	r4, r0
+ 130 0004 87B0     		sub	sp, sp, #28
+ 131              		.cfi_def_cfa_offset 40
+ 349:Code\Device\FM175XX/card.c **** 	uint8 statues;
+ 350:Code\Device\FM175XX/card.c **** 	uint8 blockAddr;
+ 351:Code\Device\FM175XX/card.c **** 	uint8 key[6]= {0xff,0xff,0xfe,0xef,0xfa,0xaf};   
+ 132              		.loc 1 351 0
+ 133 0006 0622     		mov	r2, #6
+ 348:Code\Device\FM175XX/card.c **** 	uint8 statues;
+ 134              		.loc 1 348 0
+ 135 0008 0D1C     		mov	r5, r1
+ 136              		.loc 1 351 0
+ 137 000a 6846     		mov	r0, sp
+ 138              	.LVL19:
+ 139 000c 0F49     		ldr	r1, .L14
+ 140              	.LVL20:
+ 141 000e FFF7FEFF 		bl	memcpy
+ 142              	.LVL21:
+ 352:Code\Device\FM175XX/card.c **** 	uint8 blockData[16];
+ 353:Code\Device\FM175XX/card.c **** 
+ 354:Code\Device\FM175XX/card.c **** 	
+ 355:Code\Device\FM175XX/card.c **** #if 0	
+ 356:Code\Device\FM175XX/card.c **** 	Set_Rf( 3 );                                                /* 打开双天线                  */
+ 357:Code\Device\FM175XX/card.c **** 	Pcd_ConfigISOType( 0 );                                     /* ISO14443寄存器初始化        *
+ 358:Code\Device\FM175XX/card.c **** 	statues = TypeA_CardActive( picc_atqa,picc_uid,picc_sak );  /* 激活A卡片                   */
+ 359:Code\Device\FM175XX/card.c **** 	if ( statues == TRUE ) 
+ 360:Code\Device\FM175XX/card.c **** 	{
+ 361:Code\Device\FM175XX/card.c **** 		DBG_SOFT_PutStr("\nCardBlock_Rd CardUID:");
+ 362:Code\Device\FM175XX/card.c **** 		DBG_SOFT_PrintfHex(picc_uid,8,16);
+ 363:Code\Device\FM175XX/card.c **** 
+ 364:Code\Device\FM175XX/card.c **** 	}
+ 365:Code\Device\FM175XX/card.c **** 	else 
+ 366:Code\Device\FM175XX/card.c **** 	{
+ 367:Code\Device\FM175XX/card.c **** 		//DBG_SOFT_PutStr("No Card!\r\n");
+ 368:Code\Device\FM175XX/card.c **** 		TypeA_Halt( 0 );  	 					 				/* 卡片睡眠 					*/
+ 369:Code\Device\FM175XX/card.c **** 		return 0;
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 10
+
+
+ 370:Code\Device\FM175XX/card.c **** 	}
+ 371:Code\Device\FM175XX/card.c **** #endif	
+ 372:Code\Device\FM175XX/card.c **** 
+ 373:Code\Device\FM175XX/card.c **** 	blockAddr = block_addr; 
+ 374:Code\Device\FM175XX/card.c **** 	statues = Mifare_Auth(0x00,blockAddr>>2,key,picc_uid);      /* 密钥认证                    */
+ 143              		.loc 1 374 0
+ 144 0012 A108     		lsr	r1, r4, #2
+ 145 0014 0020     		mov	r0, #0
+ 146 0016 6A46     		mov	r2, sp
+ 147 0018 0D4B     		ldr	r3, .L14+4
+ 148 001a FFF7FEFF 		bl	Mifare_Auth
+ 149              	.LVL22:
+ 375:Code\Device\FM175XX/card.c **** 	if(statues  == TRUE)
+ 150              		.loc 1 375 0
+ 151 001e 0128     		cmp	r0, #1
+ 152 0020 04D0     		beq	.L10
+ 376:Code\Device\FM175XX/card.c **** 	{
+ 377:Code\Device\FM175XX/card.c **** 		//DBG_SOFT_PutStr("Auth OK!\r\n");
+ 378:Code\Device\FM175XX/card.c **** 	}
+ 379:Code\Device\FM175XX/card.c **** 	else
+ 380:Code\Device\FM175XX/card.c **** 	{
+ 381:Code\Device\FM175XX/card.c **** 		TypeA_Halt( 0 ); 										/* 卡片睡眠 				   */									
+ 153              		.loc 1 381 0
+ 154 0022 0020     		mov	r0, #0
+ 155              	.LVL23:
+ 156 0024 FFF7FEFF 		bl	TypeA_Halt
+ 157              	.LVL24:
+ 382:Code\Device\FM175XX/card.c **** 		DBG_SOFT_PutStr("Auth Err!\r\n");     
+ 383:Code\Device\FM175XX/card.c **** 		return 0;
+ 158              		.loc 1 383 0
+ 159 0028 0020     		mov	r0, #0
+ 160 002a 0DE0     		b	.L11
+ 161              	.LVL25:
+ 162              	.L10:
+ 163              	.LBB4:
+ 164              	.LBB5:
+ 384:Code\Device\FM175XX/card.c **** 	}	
+ 385:Code\Device\FM175XX/card.c **** 	statues = Mifare_Blockread(blockAddr,blockData);            /* 第一步 读块         		   */
+ 165              		.loc 1 385 0
+ 166 002c 201C     		mov	r0, r4
+ 167              	.LVL26:
+ 168 002e 02A9     		add	r1, sp, #8
+ 169 0030 FFF7FEFF 		bl	Mifare_Blockread
+ 170              	.LVL27:
+ 171 0034 041C     		mov	r4, r0
+ 172              	.LVL28:
+ 386:Code\Device\FM175XX/card.c **** 	//TypeA_Halt( 0 );  											/* 卡片睡眠 				   */
+ 387:Code\Device\FM175XX/card.c **** 	if(statues  == TRUE)
+ 388:Code\Device\FM175XX/card.c **** 	{
+ 389:Code\Device\FM175XX/card.c **** 		memcpy(pdata,blockData,16);
+ 390:Code\Device\FM175XX/card.c **** 		//DBG_SOFT_PutStr("Read OK!\r\n");
+ 391:Code\Device\FM175XX/card.c **** 		//DBG_SOFT_PrintfHex(blockData,16,16);
+ 392:Code\Device\FM175XX/card.c **** 		return 1;
+ 393:Code\Device\FM175XX/card.c **** 	}
+ 394:Code\Device\FM175XX/card.c **** 	else
+ 395:Code\Device\FM175XX/card.c **** 	{
+ 396:Code\Device\FM175XX/card.c **** 		DBG_SOFT_PutStr("Read Err!\r\n");     
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 11
+
+
+ 397:Code\Device\FM175XX/card.c **** 		return 0;
+ 173              		.loc 1 397 0
+ 174 0036 0020     		mov	r0, #0
+ 387:Code\Device\FM175XX/card.c **** 	{
+ 175              		.loc 1 387 0
+ 176 0038 012C     		cmp	r4, #1
+ 177 003a 05D1     		bne	.L11
+ 389:Code\Device\FM175XX/card.c **** 		//DBG_SOFT_PutStr("Read OK!\r\n");
+ 178              		.loc 1 389 0
+ 179 003c 281C     		mov	r0, r5
+ 180 003e 02A9     		add	r1, sp, #8
+ 181 0040 1022     		mov	r2, #16
+ 182 0042 FFF7FEFF 		bl	memcpy
+ 183              	.LVL29:
+ 392:Code\Device\FM175XX/card.c **** 	}
+ 184              		.loc 1 392 0
+ 185 0046 201C     		mov	r0, r4
+ 186              	.LVL30:
+ 187              	.L11:
+ 188              	.LBE5:
+ 189              	.LBE4:
+ 398:Code\Device\FM175XX/card.c **** 	}
+ 399:Code\Device\FM175XX/card.c **** 	
+ 400:Code\Device\FM175XX/card.c **** }
+ 190              		.loc 1 400 0
+ 191 0048 07B0     		add	sp, sp, #28
+ 192              		@ sp needed
+ 193              	.LVL31:
+ 194 004a 30BD     		pop	{r4, r5, pc}
+ 195              	.L15:
+ 196              		.align	2
+ 197              	.L14:
+ 198 004c 00000000 		.word	.LANCHOR0
+ 199 0050 00000000 		.word	picc_uid
+ 200              		.cfi_endproc
+ 201              	.LFE66:
+ 202              		.size	CardBlock_Rd, .-CardBlock_Rd
+ 203              		.section	.text.IsCardLegality,"ax",%progbits
+ 204              		.align	1
+ 205              		.global	IsCardLegality
+ 206              		.code	16
+ 207              		.thumb_func
+ 208              		.type	IsCardLegality, %function
+ 209              	IsCardLegality:
+ 210              	.LFB67:
+ 401:Code\Device\FM175XX/card.c **** 
+ 402:Code\Device\FM175XX/card.c **** //*************************************************************************************************
+ 403:Code\Device\FM175XX/card.c **** // Function name	: IsCardLegality
+ 404:Code\Device\FM175XX/card.c **** // Description		: 检测卡 合法性
+ 405:Code\Device\FM175XX/card.c **** // Parameter		: card_id	: 卡的UID
+ 406:Code\Device\FM175XX/card.c **** // Return			: 是否成功
+ 407:Code\Device\FM175XX/card.c **** //-------------------------------------------------------------------------------------------------
+ 408:Code\Device\FM175XX/card.c **** // Info				: 
+ 409:Code\Device\FM175XX/card.c **** //*************************************************************************************************
+ 410:Code\Device\FM175XX/card.c **** int IsCardLegality(uint8 uid[])
+ 411:Code\Device\FM175XX/card.c **** {
+ 211              		.loc 1 411 0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 12
+
+
+ 212              		.cfi_startproc
+ 213              	.LVL32:
+ 214 0000 70B5     		push	{r4, r5, r6, lr}
+ 215              		.cfi_def_cfa_offset 16
+ 216              		.cfi_offset 4, -16
+ 217              		.cfi_offset 5, -12
+ 218              		.cfi_offset 6, -8
+ 219              		.cfi_offset 14, -4
+ 412:Code\Device\FM175XX/card.c **** 	uint8 uid_buf1[16] = {0x00,0x00,0x00,0x00,0x3a,0x3a,0x3a,0x3a,0x3a,0x3a,0x3a,0x3a,0x3a,0x3a,0x3a,0
+ 220              		.loc 1 412 0
+ 221 0002 1024     		mov	r4, #16
+ 222 0004 164D     		ldr	r5, .L17
+ 411:Code\Device\FM175XX/card.c **** 	uint8 uid_buf1[16] = {0x00,0x00,0x00,0x00,0x3a,0x3a,0x3a,0x3a,0x3a,0x3a,0x3a,0x3a,0x3a,0x3a,0x3a,0
+ 223              		.loc 1 411 0
+ 224 0006 8EB0     		sub	sp, sp, #56
+ 225              		.cfi_def_cfa_offset 72
+ 411:Code\Device\FM175XX/card.c **** 	uint8 uid_buf1[16] = {0x00,0x00,0x00,0x00,0x3a,0x3a,0x3a,0x3a,0x3a,0x3a,0x3a,0x3a,0x3a,0x3a,0x3a,0
+ 226              		.loc 1 411 0
+ 227 0008 061C     		mov	r6, r0
+ 228              		.loc 1 412 0
+ 229 000a A91D     		add	r1, r5, #6
+ 230 000c 221C     		mov	r2, r4
+ 231 000e 02A8     		add	r0, sp, #8
+ 232              	.LVL33:
+ 233 0010 FFF7FEFF 		bl	memcpy
+ 234              	.LVL34:
+ 413:Code\Device\FM175XX/card.c **** 	uint8 crypt_buf[16] = {0x6f,0x35,0x4a,0x6c,0x58,0xed,0xbd,0xd8,0x19,0x5f,0xd5,0xb8,0x90,0xaf,0xbf,
+ 235              		.loc 1 413 0
+ 236 0014 291C     		mov	r1, r5
+ 414:Code\Device\FM175XX/card.c **** 	uint8 tmp_buf[16] = {0};
+ 415:Code\Device\FM175XX/card.c **** 	
+ 416:Code\Device\FM175XX/card.c **** 	memcpy(uid_buf1, uid, 4);
+ 237              		.loc 1 416 0
+ 238 0016 0425     		mov	r5, #4
+ 413:Code\Device\FM175XX/card.c **** 	uint8 crypt_buf[16] = {0x6f,0x35,0x4a,0x6c,0x58,0xed,0xbd,0xd8,0x19,0x5f,0xd5,0xb8,0x90,0xaf,0xbf,
+ 239              		.loc 1 413 0
+ 240 0018 221C     		mov	r2, r4
+ 241 001a 1631     		add	r1, r1, #22
+ 242 001c 06A8     		add	r0, sp, #24
+ 243 001e FFF7FEFF 		bl	memcpy
+ 244              	.LVL35:
+ 414:Code\Device\FM175XX/card.c **** 	uint8 tmp_buf[16] = {0};
+ 245              		.loc 1 414 0
+ 246 0022 221C     		mov	r2, r4
+ 247 0024 0AA8     		add	r0, sp, #40
+ 248 0026 0021     		mov	r1, #0
+ 249 0028 FFF7FEFF 		bl	memset
+ 250              	.LVL36:
+ 251              		.loc 1 416 0
+ 252 002c 311C     		mov	r1, r6
+ 253 002e 2A1C     		mov	r2, r5
+ 254 0030 02A8     		add	r0, sp, #8
+ 255 0032 FFF7FEFF 		bl	memcpy
+ 256              	.LVL37:
+ 417:Code\Device\FM175XX/card.c **** 	do_crypt(crypt_buf, uid_buf1, uid_buf1, 16, 1);
+ 257              		.loc 1 417 0
+ 258 0036 0123     		mov	r3, #1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 13
+
+
+ 259 0038 02A9     		add	r1, sp, #8
+ 260 003a 0A1C     		mov	r2, r1
+ 261 003c 0093     		str	r3, [sp]
+ 262 003e 06A8     		add	r0, sp, #24
+ 263 0040 231C     		mov	r3, r4
+ 264 0042 FFF7FEFF 		bl	do_crypt
+ 265              	.LVL38:
+ 418:Code\Device\FM175XX/card.c **** 	//DBG_SOFT_PutStr("IsCardLegality -> crypt_data:\n");
+ 419:Code\Device\FM175XX/card.c **** 	//DBG_SOFT_PrintfHex(uid_buf1,16,16);
+ 420:Code\Device\FM175XX/card.c **** 	
+ 421:Code\Device\FM175XX/card.c **** 	CardBlock_Rd(VALID_BLK, tmp_buf);
+ 266              		.loc 1 421 0
+ 267 0046 0AA9     		add	r1, sp, #40
+ 268 0048 281C     		mov	r0, r5
+ 269 004a FFF7FEFF 		bl	CardBlock_Rd
+ 270              	.LVL39:
+ 422:Code\Device\FM175XX/card.c **** 	
+ 423:Code\Device\FM175XX/card.c **** 	//DBG_SOFT_PutStr("IsCardLegality -> CardBlock_Rd:\n");
+ 424:Code\Device\FM175XX/card.c **** 	//DBG_SOFT_PrintfHex(tmp_buf,16,16);
+ 425:Code\Device\FM175XX/card.c **** 	
+ 426:Code\Device\FM175XX/card.c **** 	if(0 == memcmp(tmp_buf, uid_buf1,16))
+ 271              		.loc 1 426 0
+ 272 004e 0AA8     		add	r0, sp, #40
+ 273 0050 02A9     		add	r1, sp, #8
+ 274 0052 221C     		mov	r2, r4
+ 275 0054 FFF7FEFF 		bl	memcmp
+ 276              	.LVL40:
+ 277 0058 4342     		neg	r3, r0
+ 278 005a 5841     		adc	r0, r0, r3
+ 427:Code\Device\FM175XX/card.c **** 	{
+ 428:Code\Device\FM175XX/card.c **** 		//DBG_SOFT_PutStr("memcmp ok!\n");
+ 429:Code\Device\FM175XX/card.c **** 		return 1;
+ 430:Code\Device\FM175XX/card.c **** 	}
+ 431:Code\Device\FM175XX/card.c **** 	else
+ 432:Code\Device\FM175XX/card.c **** 	{
+ 433:Code\Device\FM175XX/card.c **** 		//DBG_SOFT_PutStr("memcmp err!\n");
+ 434:Code\Device\FM175XX/card.c **** 		return 0;
+ 435:Code\Device\FM175XX/card.c **** 	}
+ 436:Code\Device\FM175XX/card.c **** 
+ 437:Code\Device\FM175XX/card.c **** }
+ 279              		.loc 1 437 0
+ 280 005c 0EB0     		add	sp, sp, #56
+ 281              		@ sp needed
+ 282              	.LVL41:
+ 283 005e 70BD     		pop	{r4, r5, r6, pc}
+ 284              	.L18:
+ 285              		.align	2
+ 286              	.L17:
+ 287 0060 00000000 		.word	.LANCHOR0
+ 288              		.cfi_endproc
+ 289              	.LFE67:
+ 290              		.size	IsCardLegality, .-IsCardLegality
+ 291              		.section	.text.CardInfoUpdate,"ax",%progbits
+ 292              		.align	1
+ 293              		.global	CardInfoUpdate
+ 294              		.code	16
+ 295              		.thumb_func
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 14
+
+
+ 296              		.type	CardInfoUpdate, %function
+ 297              	CardInfoUpdate:
+ 298              	.LFB68:
+ 438:Code\Device\FM175XX/card.c **** 
+ 439:Code\Device\FM175XX/card.c **** 
+ 440:Code\Device\FM175XX/card.c **** //*************************************************************************************************
+ 441:Code\Device\FM175XX/card.c **** // Function name	: CardInfoUpdate
+ 442:Code\Device\FM175XX/card.c **** // Description		: 更新卡的信息
+ 443:Code\Device\FM175XX/card.c **** // Parameter		: none
+ 444:Code\Device\FM175XX/card.c **** // Return			: 是否成功
+ 445:Code\Device\FM175XX/card.c **** //-------------------------------------------------------------------------------------------------
+ 446:Code\Device\FM175XX/card.c **** // Info				: TIMESTAMP_BLK: 时间戳(0-3)+内存变量初值(8-11)+内存变量当前值(12-15)
+ 447:Code\Device\FM175XX/card.c **** //*************************************************************************************************
+ 448:Code\Device\FM175XX/card.c **** int CardInfoUpdate(void)
+ 449:Code\Device\FM175XX/card.c **** {
+ 299              		.loc 1 449 0
+ 300              		.cfi_startproc
+ 301 0000 30B5     		push	{r4, r5, lr}
+ 302              		.cfi_def_cfa_offset 12
+ 303              		.cfi_offset 4, -12
+ 304              		.cfi_offset 5, -8
+ 305              		.cfi_offset 14, -4
+ 306 0002 85B0     		sub	sp, sp, #20
+ 307              		.cfi_def_cfa_offset 32
+ 450:Code\Device\FM175XX/card.c **** 	uint8 tmp_buf[16] = {0};
+ 308              		.loc 1 450 0
+ 309 0004 0021     		mov	r1, #0
+ 310 0006 1022     		mov	r2, #16
+ 311 0008 6846     		mov	r0, sp
+ 312 000a FFF7FEFF 		bl	memset
+ 313              	.LVL42:
+ 451:Code\Device\FM175XX/card.c **** 	uint32 timer;
+ 452:Code\Device\FM175XX/card.c **** 	uint32 IC_curvar;
+ 453:Code\Device\FM175XX/card.c **** 
+ 454:Code\Device\FM175XX/card.c **** 	
+ 455:Code\Device\FM175XX/card.c **** 	CardBlock_Rd(TIMESTAMP_BLK, tmp_buf);								// 先读出原值
+ 314              		.loc 1 455 0
+ 315 000e 0520     		mov	r0, #5
+ 316 0010 6946     		mov	r1, sp
+ 317 0012 FFF7FEFF 		bl	CardBlock_Rd
+ 318              	.LVL43:
+ 456:Code\Device\FM175XX/card.c **** 	DBG_SOFT_PutStr("Step1 CardBlock_Rd TIMESTAMP_BLK:\n");
+ 457:Code\Device\FM175XX/card.c **** 	DBG_SOFT_PrintfHex(tmp_buf,16,16);
+ 458:Code\Device\FM175XX/card.c **** 	
+ 459:Code\Device\FM175XX/card.c **** 	if(mem_var == 0)													// 首次刷卡开门
+ 319              		.loc 1 459 0
+ 320 0016 304D     		ldr	r5, .L26
+ 321 0018 2B68     		ldr	r3, [r5]
+ 322 001a 2C1C     		mov	r4, r5
+ 323 001c 002B     		cmp	r3, #0
+ 324 001e 1BD1     		bne	.L20
+ 460:Code\Device\FM175XX/card.c **** 	{		
+ 461:Code\Device\FM175XX/card.c **** 		memcpy(tmp_buf+8, tmp_buf+12,4);								// 上电复位 备份初始mem变量值
+ 325              		.loc 1 461 0
+ 326 0020 039B     		ldr	r3, [sp, #12]
+ 327 0022 0293     		str	r3, [sp, #8]
+ 462:Code\Device\FM175XX/card.c **** 		DBG_SOFT_PutStr("mem_var = 0!\n");
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 15
+
+
+ 463:Code\Device\FM175XX/card.c **** 		//1.写入时间戳		
+ 464:Code\Device\FM175XX/card.c **** 		timer = (uint32)RTC_GetUnixTime();
+ 328              		.loc 1 464 0
+ 329 0024 FFF7FEFF 		bl	RTC_GetUnixTime
+ 330              	.LVL44:
+ 465:Code\Device\FM175XX/card.c **** 		LONG2BYTE(timer, tmp_buf);
+ 331              		.loc 1 465 0
+ 332 0028 6A46     		mov	r2, sp
+ 466:Code\Device\FM175XX/card.c **** 		
+ 467:Code\Device\FM175XX/card.c **** 		//2.写入当前内存变量
+ 468:Code\Device\FM175XX/card.c **** 		mem_var++;
+ 469:Code\Device\FM175XX/card.c **** 		LONG2BYTE(mem_var, tmp_buf+12);
+ 333              		.loc 1 469 0
+ 334 002a 6946     		mov	r1, sp
+ 465:Code\Device\FM175XX/card.c **** 		LONG2BYTE(timer, tmp_buf);
+ 335              		.loc 1 465 0
+ 336 002c 030E     		lsr	r3, r0, #24
+ 337 002e 1370     		strb	r3, [r2]
+ 338 0030 030C     		lsr	r3, r0, #16
+ 339 0032 5370     		strb	r3, [r2, #1]
+ 340 0034 030A     		lsr	r3, r0, #8
+ 341 0036 9370     		strb	r3, [r2, #2]
+ 468:Code\Device\FM175XX/card.c **** 		LONG2BYTE(mem_var, tmp_buf+12);
+ 342              		.loc 1 468 0
+ 343 0038 2B68     		ldr	r3, [r5]
+ 465:Code\Device\FM175XX/card.c **** 		LONG2BYTE(timer, tmp_buf);
+ 344              		.loc 1 465 0
+ 345 003a D070     		strb	r0, [r2, #3]
+ 468:Code\Device\FM175XX/card.c **** 		LONG2BYTE(mem_var, tmp_buf+12);
+ 346              		.loc 1 468 0
+ 347 003c 0133     		add	r3, r3, #1
+ 348              		.loc 1 469 0
+ 349 003e 1A0E     		lsr	r2, r3, #24
+ 350 0040 0A73     		strb	r2, [r1, #12]
+ 351 0042 1A0C     		lsr	r2, r3, #16
+ 352 0044 4A73     		strb	r2, [r1, #13]
+ 470:Code\Device\FM175XX/card.c **** 		
+ 471:Code\Device\FM175XX/card.c **** 		CardBlock_Wr(TIMESTAMP_BLK, tmp_buf);
+ 353              		.loc 1 471 0
+ 354 0046 0520     		mov	r0, #5
+ 355              	.LVL45:
+ 469:Code\Device\FM175XX/card.c **** 		
+ 356              		.loc 1 469 0
+ 357 0048 1A0A     		lsr	r2, r3, #8
+ 358 004a 8A73     		strb	r2, [r1, #14]
+ 468:Code\Device\FM175XX/card.c **** 		LONG2BYTE(mem_var, tmp_buf+12);
+ 359              		.loc 1 468 0
+ 360 004c 2B60     		str	r3, [r5]
+ 469:Code\Device\FM175XX/card.c **** 		
+ 361              		.loc 1 469 0
+ 362 004e CB73     		strb	r3, [r1, #15]
+ 363              		.loc 1 471 0
+ 364 0050 FFF7FEFF 		bl	CardBlock_Wr
+ 365              	.LVL46:
+ 472:Code\Device\FM175XX/card.c **** 		return 1;
+ 366              		.loc 1 472 0
+ 367 0054 0122     		mov	r2, #1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 16
+
+
+ 368 0056 3CE0     		b	.L21
+ 369              	.L20:
+ 473:Code\Device\FM175XX/card.c **** 	}
+ 474:Code\Device\FM175XX/card.c **** 	else																// 非首次刷卡开门
+ 475:Code\Device\FM175XX/card.c **** 	{
+ 476:Code\Device\FM175XX/card.c **** 		DBG_SOFT_PutStr("mem_var = ");
+ 477:Code\Device\FM175XX/card.c **** 		DBG_SOFT_PrintfHex((uint8 *)&mem_var,1,16);
+ 478:Code\Device\FM175XX/card.c **** 		IC_curvar = BYTE2LONG(tmp_buf[12],tmp_buf[13],tmp_buf[14],tmp_buf[15]);
+ 370              		.loc 1 478 0
+ 371 0058 6A46     		mov	r2, sp
+ 372 005a 127B     		ldrb	r2, [r2, #12]
+ 373 005c 1106     		lsl	r1, r2, #24
+ 374 005e 6A46     		mov	r2, sp
+ 375 0060 527B     		ldrb	r2, [r2, #13]
+ 376 0062 1204     		lsl	r2, r2, #16
+ 377 0064 0A43     		orr	r2, r1
+ 378 0066 6946     		mov	r1, sp
+ 379 0068 C97B     		ldrb	r1, [r1, #15]
+ 380 006a 0A43     		orr	r2, r1
+ 381 006c 6946     		mov	r1, sp
+ 382 006e 897B     		ldrb	r1, [r1, #14]
+ 383 0070 0902     		lsl	r1, r1, #8
+ 384 0072 0A43     		orr	r2, r1
+ 385              	.LVL47:
+ 479:Code\Device\FM175XX/card.c **** 		if(mem_var == IC_curvar)										// 内存变量 = IC变量
+ 386              		.loc 1 479 0
+ 387 0074 9342     		cmp	r3, r2
+ 388 0076 0BD1     		bne	.L22
+ 480:Code\Device\FM175XX/card.c **** 		{
+ 481:Code\Device\FM175XX/card.c **** 			DBG_SOFT_PutStr("mem_var = IC_curvar Branch\n");
+ 482:Code\Device\FM175XX/card.c **** 			mem_var++;
+ 483:Code\Device\FM175XX/card.c **** 			IC_curvar = mem_var;
+ 484:Code\Device\FM175XX/card.c **** 			LONG2BYTE(IC_curvar, tmp_buf+12);
+ 389              		.loc 1 484 0
+ 390 0078 6946     		mov	r1, sp
+ 482:Code\Device\FM175XX/card.c **** 			IC_curvar = mem_var;
+ 391              		.loc 1 482 0
+ 392 007a 0133     		add	r3, r3, #1
+ 393              		.loc 1 484 0
+ 394 007c 1A0E     		lsr	r2, r3, #24
+ 395              	.LVL48:
+ 396 007e 0A73     		strb	r2, [r1, #12]
+ 397              	.LVL49:
+ 398 0080 1A0C     		lsr	r2, r3, #16
+ 399 0082 4A73     		strb	r2, [r1, #13]
+ 400 0084 1A0A     		lsr	r2, r3, #8
+ 482:Code\Device\FM175XX/card.c **** 			IC_curvar = mem_var;
+ 401              		.loc 1 482 0
+ 402 0086 2B60     		str	r3, [r5]
+ 403              	.LVL50:
+ 404              		.loc 1 484 0
+ 405 0088 8A73     		strb	r2, [r1, #14]
+ 406 008a CB73     		strb	r3, [r1, #15]
+ 485:Code\Device\FM175XX/card.c **** 			CardBlock_Wr(TIMESTAMP_BLK, tmp_buf);			
+ 407              		.loc 1 485 0
+ 408 008c 0520     		mov	r0, #5
+ 409 008e 09E0     		b	.L25
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 17
+
+
+ 410              	.LVL51:
+ 411              	.L22:
+ 486:Code\Device\FM175XX/card.c **** 		}
+ 487:Code\Device\FM175XX/card.c **** 		else if(mem_var == IC_curvar + 1)								// 内存变量 = IC变量 + 1
+ 488:Code\Device\FM175XX/card.c **** 		{
+ 489:Code\Device\FM175XX/card.c **** 			DBG_SOFT_PutStr("mem_var = IC_curvar+1 Branch\n");
+ 490:Code\Device\FM175XX/card.c **** 			LONG2BYTE(mem_var, tmp_buf+12);
+ 491:Code\Device\FM175XX/card.c **** 			CardBlock_Wr(TIMESTAMP_BLK, tmp_buf);	
+ 492:Code\Device\FM175XX/card.c **** 		}
+ 493:Code\Device\FM175XX/card.c **** 		else															// 内存变量没有写入就拿开了 以及其他情况处理
+ 494:Code\Device\FM175XX/card.c **** 		{
+ 495:Code\Device\FM175XX/card.c **** 			DBG_SOFT_PutStr("Other Branch\n");
+ 496:Code\Device\FM175XX/card.c **** 			LONG2BYTE(mem_var, tmp_buf+12);								// 直接先写入mem_var值 后面再读出比对
+ 412              		.loc 1 496 0
+ 413 0090 6A46     		mov	r2, sp
+ 414              	.LVL52:
+ 415 0092 180C     		lsr	r0, r3, #16
+ 416 0094 190A     		lsr	r1, r3, #8
+ 417              	.LVL53:
+ 418 0096 5073     		strb	r0, [r2, #13]
+ 419              	.LVL54:
+ 420 0098 9173     		strb	r1, [r2, #14]
+ 497:Code\Device\FM175XX/card.c **** 			CardBlock_Wr(TIMESTAMP_BLK, tmp_buf);	
+ 421              		.loc 1 497 0
+ 422 009a 0520     		mov	r0, #5
+ 423 009c 6946     		mov	r1, sp
+ 424 009e 1D0E     		lsr	r5, r3, #24
+ 496:Code\Device\FM175XX/card.c **** 			CardBlock_Wr(TIMESTAMP_BLK, tmp_buf);	
+ 425              		.loc 1 496 0
+ 426 00a0 1573     		strb	r5, [r2, #12]
+ 427 00a2 D373     		strb	r3, [r2, #15]
+ 428              	.L25:
+ 429              		.loc 1 497 0
+ 430 00a4 FFF7FEFF 		bl	CardBlock_Wr
+ 431              	.LVL55:
+ 498:Code\Device\FM175XX/card.c **** 		}
+ 499:Code\Device\FM175XX/card.c **** 		
+ 500:Code\Device\FM175XX/card.c **** 		CardBlock_Rd(TIMESTAMP_BLK, tmp_buf);							// 读出IC内存变量
+ 432              		.loc 1 500 0
+ 433 00a8 0520     		mov	r0, #5
+ 434 00aa 6946     		mov	r1, sp
+ 435 00ac FFF7FEFF 		bl	CardBlock_Rd
+ 436              	.LVL56:
+ 501:Code\Device\FM175XX/card.c **** 		IC_curvar = BYTE2LONG(tmp_buf[12],tmp_buf[13],tmp_buf[14],tmp_buf[15]);
+ 437              		.loc 1 501 0
+ 438 00b0 6B46     		mov	r3, sp
+ 439 00b2 187B     		ldrb	r0, [r3, #12]
+ 440 00b4 5B7B     		ldrb	r3, [r3, #13]
+ 441 00b6 0006     		lsl	r0, r0, #24
+ 442 00b8 1B04     		lsl	r3, r3, #16
+ 443 00ba 1843     		orr	r0, r3
+ 444 00bc 6B46     		mov	r3, sp
+ 445 00be DB7B     		ldrb	r3, [r3, #15]
+ 446 00c0 1843     		orr	r0, r3
+ 447 00c2 6B46     		mov	r3, sp
+ 448 00c4 9B7B     		ldrb	r3, [r3, #14]
+ 449 00c6 1B02     		lsl	r3, r3, #8
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 18
+
+
+ 450 00c8 1843     		orr	r0, r3
+ 502:Code\Device\FM175XX/card.c **** 			
+ 503:Code\Device\FM175XX/card.c **** 		DBG_SOFT_PutStr("Step2 CardBlock_Rd TIMESTAMP_BLK:\n");
+ 504:Code\Device\FM175XX/card.c **** 		DBG_SOFT_PrintfHex(tmp_buf,16,16);
+ 505:Code\Device\FM175XX/card.c **** 		
+ 506:Code\Device\FM175XX/card.c **** 		DBG_SOFT_PutStr("RD Back IC_curvar = ");
+ 507:Code\Device\FM175XX/card.c **** 		DBG_SOFT_PrintfHex((uint8 *)&IC_curvar,1,16);
+ 508:Code\Device\FM175XX/card.c **** 		DBG_SOFT_PutStr("Cur mem_var = ");
+ 509:Code\Device\FM175XX/card.c **** 		DBG_SOFT_PrintfHex((uint8 *)&mem_var,1,16);
+ 510:Code\Device\FM175XX/card.c **** 		
+ 511:Code\Device\FM175XX/card.c **** 		if(IC_curvar == mem_var)
+ 451              		.loc 1 511 0
+ 452 00ca 2368     		ldr	r3, [r4]
+ 453 00cc C01A     		sub	r0, r0, r3
+ 472:Code\Device\FM175XX/card.c **** 	}
+ 454              		.loc 1 472 0
+ 455 00ce 4242     		neg	r2, r0
+ 456 00d0 4241     		adc	r2, r2, r0
+ 457              	.LVL57:
+ 458              	.L21:
+ 512:Code\Device\FM175XX/card.c **** 		{
+ 513:Code\Device\FM175XX/card.c **** 			return 1;
+ 514:Code\Device\FM175XX/card.c **** 		}
+ 515:Code\Device\FM175XX/card.c **** 		else
+ 516:Code\Device\FM175XX/card.c **** 		{
+ 517:Code\Device\FM175XX/card.c **** 			return 0;
+ 518:Code\Device\FM175XX/card.c **** 		}
+ 519:Code\Device\FM175XX/card.c **** 	}	
+ 520:Code\Device\FM175XX/card.c **** }
+ 459              		.loc 1 520 0
+ 460 00d2 101C     		mov	r0, r2
+ 461 00d4 05B0     		add	sp, sp, #20
+ 462              		@ sp needed
+ 463 00d6 30BD     		pop	{r4, r5, pc}
+ 464              	.L27:
+ 465              		.align	2
+ 466              	.L26:
+ 467 00d8 00000000 		.word	mem_var
+ 468              		.cfi_endproc
+ 469              	.LFE68:
+ 470              		.size	CardInfoUpdate, .-CardInfoUpdate
+ 471              		.section	.text.CardScan,"ax",%progbits
+ 472              		.align	1
+ 473              		.global	CardScan
+ 474              		.code	16
+ 475              		.thumb_func
+ 476              		.type	CardScan, %function
+ 477              	CardScan:
+ 478              	.LFB69:
+ 521:Code\Device\FM175XX/card.c **** 
+ 522:Code\Device\FM175XX/card.c **** #if 0
+ 523:Code\Device\FM175XX/card.c **** //*************************************************************************************************
+ 524:Code\Device\FM175XX/card.c **** // Function name	: CardRegister
+ 525:Code\Device\FM175XX/card.c **** // Description		: 检测卡 有效性
+ 526:Code\Device\FM175XX/card.c **** // Parameter		: none
+ 527:Code\Device\FM175XX/card.c **** // Return			: 是否成功
+ 528:Code\Device\FM175XX/card.c **** //-------------------------------------------------------------------------------------------------
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 19
+
+
+ 529:Code\Device\FM175XX/card.c **** // Info				: no use
+ 530:Code\Device\FM175XX/card.c **** //*************************************************************************************************
+ 531:Code\Device\FM175XX/card.c **** void CardRegister(uint8 uid[], uint8 timedate[])
+ 532:Code\Device\FM175XX/card.c **** {
+ 533:Code\Device\FM175XX/card.c **** 	uint8 statues;
+ 534:Code\Device\FM175XX/card.c **** 	uint8 uid_buf1[16] = {0x00,0x00,0x00,0x00,0x3a,0x3a,0x3a,0x3a,0x3a,0x3a,0x3a,0x3a,0x3a,0x3a,0x3a,0
+ 535:Code\Device\FM175XX/card.c **** 	uint8 crypt_buf[16] = {0x6f,0x35,0x4a,0x6c,0x58,0xed,0xbd,0xd8,0x19,0x5f,0xd5,0xb8,0x90,0xaf,0xbf,
+ 536:Code\Device\FM175XX/card.c **** 	uint8 tmp_buf[16] = {0};
+ 537:Code\Device\FM175XX/card.c **** 	
+ 538:Code\Device\FM175XX/card.c **** 	uint8 blockcrypt_buf[16] = {0xff,0xff,0xfe,0xef,0xfa,0xaf};					// 数据块加密密码
+ 539:Code\Device\FM175XX/card.c **** 	
+ 540:Code\Device\FM175XX/card.c **** 	memcpy(uid_buf1, uid, 4);
+ 541:Code\Device\FM175XX/card.c **** 	do_crypt(crypt_buf, uid_buf1, uid_buf1, 16, 1);								// 合法性加密1
+ 542:Code\Device\FM175XX/card.c **** 	do_crypt(blockcrypt_buf, uid_buf1, uid_buf1, 16, 1);						// 块存储加密2
+ 543:Code\Device\FM175XX/card.c **** 	
+ 544:Code\Device\FM175XX/card.c **** 	
+ 545:Code\Device\FM175XX/card.c **** 	#if 1
+ 546:Code\Device\FM175XX/card.c **** 	FM175X_SoftReset( );
+ 547:Code\Device\FM175XX/card.c **** 	Set_Rf( 3 );                                                				// 打开双天线                
+ 548:Code\Device\FM175XX/card.c **** 	Pcd_ConfigISOType( 0 );                                     				// ISO14443寄存器初始化     
+ 549:Code\Device\FM175XX/card.c **** 	statues = TypeA_CardActive( picc_atqa,picc_uid,picc_sak );  				// 激活A卡片                  
+ 550:Code\Device\FM175XX/card.c **** 	if ( statues == TRUE ) 
+ 551:Code\Device\FM175XX/card.c **** 	{
+ 552:Code\Device\FM175XX/card.c **** 		DBG_SOFT_PutStr("\nCardUID:");
+ 553:Code\Device\FM175XX/card.c **** 		DBG_SOFT_PrintfHex(picc_uid,8,16);
+ 554:Code\Device\FM175XX/card.c **** 	}
+ 555:Code\Device\FM175XX/card.c **** 	else 
+ 556:Code\Device\FM175XX/card.c **** 	{
+ 557:Code\Device\FM175XX/card.c **** 		//DBG_SOFT_PutStr("No Card!\r\n");
+ 558:Code\Device\FM175XX/card.c **** 		TypeA_Halt( 0 );  	 					 								// 卡片睡眠 					*/
+ 559:Code\Device\FM175XX/card.c **** 		return;
+ 560:Code\Device\FM175XX/card.c **** 	}
+ 561:Code\Device\FM175XX/card.c **** 	#endif
+ 562:Code\Device\FM175XX/card.c **** 	CardBlock_Wr(VALID_BLK, uid_buf1);											// 存入合法性验证区块 4
+ 563:Code\Device\FM175XX/card.c **** 	
+ 564:Code\Device\FM175XX/card.c **** 	//..填入有效期值
+ 565:Code\Device\FM175XX/card.c **** 	memset(tmp_buf, 0, 16);
+ 566:Code\Device\FM175XX/card.c **** 	memcpy(tmp_buf+4, timedate, 4);												// 注册只需要写入有效期
+ 567:Code\Device\FM175XX/card.c **** 	CardBlock_Wr(TIMESTAMP_BLK, tmp_buf);										// 存入有效期验证区块 5
+ 568:Code\Device\FM175XX/card.c **** }
+ 569:Code\Device\FM175XX/card.c **** #endif
+ 570:Code\Device\FM175XX/card.c **** 
+ 571:Code\Device\FM175XX/card.c **** //*************************************************************************************************
+ 572:Code\Device\FM175XX/card.c **** // Function name	: CardScan
+ 573:Code\Device\FM175XX/card.c **** // Description		: 读出卡指定扇区的数据
+ 574:Code\Device\FM175XX/card.c **** // Parameter		: uid: 扫描到卡 读取卡uid
+ 575:Code\Device\FM175XX/card.c **** // Return			: none
+ 576:Code\Device\FM175XX/card.c **** //-------------------------------------------------------------------------------------------------
+ 577:Code\Device\FM175XX/card.c **** // Info				: 
+ 578:Code\Device\FM175XX/card.c **** //*************************************************************************************************
+ 579:Code\Device\FM175XX/card.c **** int CardScan(uint8 uid[])
+ 580:Code\Device\FM175XX/card.c **** {
+ 479              		.loc 1 580 0
+ 480              		.cfi_startproc
+ 481              	.LVL58:
+ 482 0000 38B5     		push	{r3, r4, r5, lr}
+ 483              		.cfi_def_cfa_offset 16
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 20
+
+
+ 484              		.cfi_offset 3, -16
+ 485              		.cfi_offset 4, -12
+ 486              		.cfi_offset 5, -8
+ 487              		.cfi_offset 14, -4
+ 488              		.loc 1 580 0
+ 489 0002 051C     		mov	r5, r0
+ 581:Code\Device\FM175XX/card.c **** 	uint8 statues = 0;
+ 582:Code\Device\FM175XX/card.c **** 	//uint8 key[6]= {0xFF,0xFF,0xFF,0xFF,0xFF,0xFF};   
+ 583:Code\Device\FM175XX/card.c **** 
+ 584:Code\Device\FM175XX/card.c **** 	
+ 585:Code\Device\FM175XX/card.c **** 	FM175X_SoftReset( );  
+ 490              		.loc 1 585 0
+ 491 0004 FFF7FEFF 		bl	FM175X_SoftReset
+ 492              	.LVL59:
+ 586:Code\Device\FM175XX/card.c **** 	Set_Rf( 3 );                                                /* 打开双天线                  */
+ 493              		.loc 1 586 0
+ 494 0008 0320     		mov	r0, #3
+ 495 000a FFF7FEFF 		bl	Set_Rf
+ 496              	.LVL60:
+ 587:Code\Device\FM175XX/card.c **** 	Pcd_ConfigISOType( 0 );                                     /* ISO14443寄存器初始化        *
+ 497              		.loc 1 587 0
+ 498 000e 0020     		mov	r0, #0
+ 499 0010 FFF7FEFF 		bl	Pcd_ConfigISOType
+ 500              	.LVL61:
+ 588:Code\Device\FM175XX/card.c **** 	statues = TypeA_CardActive( picc_atqa,picc_uid,picc_sak );  /* 激活A卡片                   */
+ 501              		.loc 1 588 0
+ 502 0014 114C     		ldr	r4, .L37
+ 503 0016 1248     		ldr	r0, .L37+4
+ 504 0018 211C     		mov	r1, r4
+ 505 001a 124A     		ldr	r2, .L37+8
+ 506 001c FFF7FEFF 		bl	TypeA_CardActive
+ 507              	.LVL62:
+ 589:Code\Device\FM175XX/card.c **** 	if ( statues == TRUE ) 
+ 508              		.loc 1 589 0
+ 509 0020 0128     		cmp	r0, #1
+ 510 0022 03D0     		beq	.L29
+ 511              	.LVL63:
+ 512              	.L31:
+ 590:Code\Device\FM175XX/card.c **** 	{
+ 591:Code\Device\FM175XX/card.c **** 		DBG_SOFT_PutStr("\nScaned Card:");	
+ 592:Code\Device\FM175XX/card.c **** 		DBG_SOFT_PrintfHex(picc_uid,8,16);
+ 593:Code\Device\FM175XX/card.c **** 	}
+ 594:Code\Device\FM175XX/card.c **** 	else
+ 595:Code\Device\FM175XX/card.c **** 	{
+ 596:Code\Device\FM175XX/card.c **** 		TypeA_Halt( 0 );  	 					 				/* 卡片睡眠 					*/
+ 513              		.loc 1 596 0
+ 514 0024 0020     		mov	r0, #0
+ 515 0026 FFF7FEFF 		bl	TypeA_Halt
+ 516              	.LVL64:
+ 517 002a 14E0     		b	.L36
+ 518              	.LVL65:
+ 519              	.L29:
+ 597:Code\Device\FM175XX/card.c **** 		//DBG_SOFT_PutStr("\nScaned Card Failed\n");
+ 598:Code\Device\FM175XX/card.c **** 		return 0;
+ 599:Code\Device\FM175XX/card.c **** 	}
+ 600:Code\Device\FM175XX/card.c **** 	
+ 601:Code\Device\FM175XX/card.c **** 	if(0 == IsCardLegality(picc_uid))							/* 验证合法性					*/
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 21
+
+
+ 520              		.loc 1 601 0
+ 521 002c 201C     		mov	r0, r4
+ 522              	.LVL66:
+ 523 002e FFF7FEFF 		bl	IsCardLegality
+ 524              	.LVL67:
+ 525 0032 0028     		cmp	r0, #0
+ 526 0034 F6D0     		beq	.L31
+ 602:Code\Device\FM175XX/card.c **** 	{
+ 603:Code\Device\FM175XX/card.c **** 		TypeA_Halt( 0 );  	 					 				/* 卡片睡眠 					*/
+ 604:Code\Device\FM175XX/card.c **** 		return 0;
+ 605:Code\Device\FM175XX/card.c **** 	}
+ 606:Code\Device\FM175XX/card.c **** 	memcpy(uid, picc_uid, 4);									/* 合法性通过 上报UID			*/
+ 527              		.loc 1 606 0
+ 528 0036 211C     		mov	r1, r4
+ 529 0038 0422     		mov	r2, #4
+ 530 003a 281C     		mov	r0, r5
+ 531 003c FFF7FEFF 		bl	memcpy
+ 532              	.LVL68:
+ 607:Code\Device\FM175XX/card.c **** 	DBG_SOFT_PutStr("\nScaned Card: IsCardLegality 1 OK!\n");
+ 608:Code\Device\FM175XX/card.c **** 	
+ 609:Code\Device\FM175XX/card.c **** 	if(1 == CardInfoUpdate())									/* 读写 IC内部信息				*/
+ 533              		.loc 1 609 0
+ 534 0040 FFF7FEFF 		bl	CardInfoUpdate
+ 535              	.LVL69:
+ 536 0044 041C     		mov	r4, r0
+ 610:Code\Device\FM175XX/card.c **** 	{
+ 611:Code\Device\FM175XX/card.c **** 		DBG_SOFT_PutStr("CardInfoUpdate OK!\n");
+ 612:Code\Device\FM175XX/card.c **** 		Set_Rf( 0 );    										/* 关闭双天线					*/
+ 537              		.loc 1 612 0
+ 538 0046 0020     		mov	r0, #0
+ 609:Code\Device\FM175XX/card.c **** 	{
+ 539              		.loc 1 609 0
+ 540 0048 012C     		cmp	r4, #1
+ 541 004a 02D1     		bne	.L32
+ 542              		.loc 1 612 0
+ 543 004c FFF7FEFF 		bl	Set_Rf
+ 544              	.LVL70:
+ 613:Code\Device\FM175XX/card.c **** 		return 1;
+ 545              		.loc 1 613 0
+ 546 0050 02E0     		b	.L30
+ 547              	.L32:
+ 614:Code\Device\FM175XX/card.c **** 	}
+ 615:Code\Device\FM175XX/card.c **** 	else
+ 616:Code\Device\FM175XX/card.c **** 	{
+ 617:Code\Device\FM175XX/card.c **** 		DBG_SOFT_PutStr("CardInfoUpdate ERR!\n");
+ 618:Code\Device\FM175XX/card.c **** 		Set_Rf( 0 );    										/* 关闭双天线					*/
+ 548              		.loc 1 618 0
+ 549 0052 FFF7FEFF 		bl	Set_Rf
+ 550              	.LVL71:
+ 551              	.L36:
+ 619:Code\Device\FM175XX/card.c **** 		return 0;
+ 552              		.loc 1 619 0
+ 553 0056 0024     		mov	r4, #0
+ 554              	.L30:
+ 620:Code\Device\FM175XX/card.c **** 	}
+ 621:Code\Device\FM175XX/card.c **** 
+ 622:Code\Device\FM175XX/card.c **** }
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 22
+
+
+ 555              		.loc 1 622 0
+ 556 0058 201C     		mov	r0, r4
+ 557              		@ sp needed
+ 558              	.LVL72:
+ 559 005a 38BD     		pop	{r3, r4, r5, pc}
+ 560              	.L38:
+ 561              		.align	2
+ 562              	.L37:
+ 563 005c 00000000 		.word	picc_uid
+ 564 0060 00000000 		.word	picc_atqa
+ 565 0064 00000000 		.word	picc_sak
+ 566              		.cfi_endproc
+ 567              	.LFE69:
+ 568              		.size	CardScan, .-CardScan
+ 569              		.section	.text.CardRead,"ax",%progbits
+ 570              		.align	1
+ 571              		.global	CardRead
+ 572              		.code	16
+ 573              		.thumb_func
+ 574              		.type	CardRead, %function
+ 575              	CardRead:
+ 576              	.LFB70:
+ 623:Code\Device\FM175XX/card.c **** 
+ 624:Code\Device\FM175XX/card.c **** //*************************************************************************************************
+ 625:Code\Device\FM175XX/card.c **** // Function name	: CardRead
+ 626:Code\Device\FM175XX/card.c **** // Description		: 录入卡片的UID
+ 627:Code\Device\FM175XX/card.c **** // Parameter		: uid: 扫描到卡 读取卡uid
+ 628:Code\Device\FM175XX/card.c **** // Return			: 0/1
+ 629:Code\Device\FM175XX/card.c **** //-------------------------------------------------------------------------------------------------
+ 630:Code\Device\FM175XX/card.c **** // Info				: 适用于03指令使用
+ 631:Code\Device\FM175XX/card.c **** //*************************************************************************************************
+ 632:Code\Device\FM175XX/card.c **** int CardRead(uint8 uid[])
+ 633:Code\Device\FM175XX/card.c **** {
+ 577              		.loc 1 633 0
+ 578              		.cfi_startproc
+ 579              	.LVL73:
+ 580 0000 70B5     		push	{r4, r5, r6, lr}
+ 581              		.cfi_def_cfa_offset 16
+ 582              		.cfi_offset 4, -16
+ 583              		.cfi_offset 5, -12
+ 584              		.cfi_offset 6, -8
+ 585              		.cfi_offset 14, -4
+ 586              		.loc 1 633 0
+ 587 0002 061C     		mov	r6, r0
+ 634:Code\Device\FM175XX/card.c **** 	uint8 statues = 0;
+ 635:Code\Device\FM175XX/card.c **** 
+ 636:Code\Device\FM175XX/card.c **** 	
+ 637:Code\Device\FM175XX/card.c **** 	FM175X_SoftReset( );  
+ 588              		.loc 1 637 0
+ 589 0004 FFF7FEFF 		bl	FM175X_SoftReset
+ 590              	.LVL74:
+ 638:Code\Device\FM175XX/card.c **** 	Set_Rf( 3 );                                                /* 打开双天线                  */
+ 591              		.loc 1 638 0
+ 592 0008 0320     		mov	r0, #3
+ 593 000a FFF7FEFF 		bl	Set_Rf
+ 594              	.LVL75:
+ 639:Code\Device\FM175XX/card.c **** 	Pcd_ConfigISOType( 0 );                                     /* ISO14443寄存器初始化        *
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 23
+
+
+ 595              		.loc 1 639 0
+ 596 000e 0020     		mov	r0, #0
+ 597 0010 FFF7FEFF 		bl	Pcd_ConfigISOType
+ 598              	.LVL76:
+ 640:Code\Device\FM175XX/card.c **** 	statues = TypeA_CardActive( picc_atqa,picc_uid,picc_sak );  /* 激活A卡片                   */
+ 599              		.loc 1 640 0
+ 600 0014 0E4D     		ldr	r5, .L46
+ 601 0016 0F48     		ldr	r0, .L46+4
+ 602 0018 291C     		mov	r1, r5
+ 603 001a 0F4A     		ldr	r2, .L46+8
+ 604 001c FFF7FEFF 		bl	TypeA_CardActive
+ 605              	.LVL77:
+ 606 0020 041E     		sub	r4, r0, #0
+ 607              	.LVL78:
+ 641:Code\Device\FM175XX/card.c **** 	if ( statues == TRUE ) 
+ 608              		.loc 1 641 0
+ 609 0022 012C     		cmp	r4, #1
+ 610 0024 04D0     		beq	.L40
+ 611              	.LVL79:
+ 612              	.L42:
+ 642:Code\Device\FM175XX/card.c **** 	{
+ 643:Code\Device\FM175XX/card.c **** 		DBG_SOFT_PutStr("\nCardRead Card uid:");	
+ 644:Code\Device\FM175XX/card.c **** 		DBG_SOFT_PrintfHex(picc_uid,8,16);
+ 645:Code\Device\FM175XX/card.c **** 	}
+ 646:Code\Device\FM175XX/card.c **** 	else
+ 647:Code\Device\FM175XX/card.c **** 	{
+ 648:Code\Device\FM175XX/card.c **** 		TypeA_Halt( 0 );  	 					 				/* 卡片睡眠 					*/
+ 613              		.loc 1 648 0
+ 614 0026 0020     		mov	r0, #0
+ 615 0028 FFF7FEFF 		bl	TypeA_Halt
+ 616              	.LVL80:
+ 649:Code\Device\FM175XX/card.c **** 		//DBG_SOFT_PutStr("\nScaned Card Failed\n");
+ 650:Code\Device\FM175XX/card.c **** 		
+ 651:Code\Device\FM175XX/card.c **** 		return 0;
+ 617              		.loc 1 651 0
+ 618 002c 0020     		mov	r0, #0
+ 619 002e 0DE0     		b	.L41
+ 620              	.LVL81:
+ 621              	.L40:
+ 652:Code\Device\FM175XX/card.c **** 	}
+ 653:Code\Device\FM175XX/card.c **** 	
+ 654:Code\Device\FM175XX/card.c **** 	if(0 == IsCardLegality(picc_uid))							/* 验证合法性					*/
+ 622              		.loc 1 654 0
+ 623 0030 281C     		mov	r0, r5
+ 624              	.LVL82:
+ 625 0032 FFF7FEFF 		bl	IsCardLegality
+ 626              	.LVL83:
+ 627 0036 0028     		cmp	r0, #0
+ 628 0038 F5D0     		beq	.L42
+ 629              	.LVL84:
+ 630              	.LBB8:
+ 631              	.LBB9:
+ 655:Code\Device\FM175XX/card.c **** 	{
+ 656:Code\Device\FM175XX/card.c **** 		TypeA_Halt( 0 );  	 					 				/* 卡片睡眠 					*/
+ 657:Code\Device\FM175XX/card.c **** 		return 0;
+ 658:Code\Device\FM175XX/card.c **** 	}
+ 659:Code\Device\FM175XX/card.c **** 	memcpy(uid, picc_uid, 4);									/* 合法性通过 上报UID			*/
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 24
+
+
+ 632              		.loc 1 659 0
+ 633 003a 291C     		mov	r1, r5
+ 634 003c 0422     		mov	r2, #4
+ 635 003e 301C     		mov	r0, r6
+ 636 0040 FFF7FEFF 		bl	memcpy
+ 637              	.LVL85:
+ 660:Code\Device\FM175XX/card.c **** 	Set_Rf( 0 );    											/* 关闭双天线					*/
+ 638              		.loc 1 660 0
+ 639 0044 0020     		mov	r0, #0
+ 640 0046 FFF7FEFF 		bl	Set_Rf
+ 641              	.LVL86:
+ 642 004a 201C     		mov	r0, r4
+ 643              	.LVL87:
+ 644              	.L41:
+ 645              	.LBE9:
+ 646              	.LBE8:
+ 661:Code\Device\FM175XX/card.c **** 	DBG_SOFT_PutStr("\nCardRead Scaned Card: IsCardLegality 1 OK!\n");
+ 662:Code\Device\FM175XX/card.c **** 	return 1;
+ 663:Code\Device\FM175XX/card.c **** }
+ 647              		.loc 1 663 0
+ 648              		@ sp needed
+ 649              	.LVL88:
+ 650 004c 70BD     		pop	{r4, r5, r6, pc}
+ 651              	.L47:
+ 652 004e C046     		.align	2
+ 653              	.L46:
+ 654 0050 00000000 		.word	picc_uid
+ 655 0054 00000000 		.word	picc_atqa
+ 656 0058 00000000 		.word	picc_sak
+ 657              		.cfi_endproc
+ 658              	.LFE70:
+ 659              		.size	CardRead, .-CardRead
+ 660              		.section	.text.detect_nfc_card,"ax",%progbits
+ 661              		.align	1
+ 662              		.global	detect_nfc_card
+ 663              		.code	16
+ 664              		.thumb_func
+ 665              		.type	detect_nfc_card, %function
+ 666              	detect_nfc_card:
+ 667              	.LFB63:
+  38:Code\Device\FM175XX/card.c **** 	if (CardRead(card_id) == 1)
+ 668              		.loc 1 38 0
+ 669              		.cfi_startproc
+ 670              	.LVL89:
+ 671 0000 10B5     		push	{r4, lr}
+ 672              		.cfi_def_cfa_offset 8
+ 673              		.cfi_offset 4, -8
+ 674              		.cfi_offset 14, -4
+  38:Code\Device\FM175XX/card.c **** 	if (CardRead(card_id) == 1)
+ 675              		.loc 1 38 0
+ 676 0002 041C     		mov	r4, r0
+  39:Code\Device\FM175XX/card.c **** 	{
+ 677              		.loc 1 39 0
+ 678 0004 FFF7FEFF 		bl	CardRead
+ 679              	.LVL90:
+ 680 0008 031C     		mov	r3, r0
+  41:Code\Device\FM175XX/card.c **** 	}
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 25
+
+
+ 681              		.loc 1 41 0
+ 682 000a 0120     		mov	r0, #1
+  39:Code\Device\FM175XX/card.c **** 	{
+ 683              		.loc 1 39 0
+ 684 000c 8342     		cmp	r3, r0
+ 685 000e 07D0     		beq	.L49
+ 686              	.LVL91:
+ 687              	.LBB12:
+ 688              	.LBB13:
+  43:Code\Device\FM175XX/card.c **** 	{
+ 689              		.loc 1 43 0
+ 690 0010 201C     		mov	r0, r4
+ 691 0012 0821     		mov	r1, #8
+ 692 0014 FFF7FEFF 		bl	nfc_detect_type_b
+ 693              	.LVL92:
+ 694 0018 0138     		sub	r0, r0, #1
+ 695 001a 4342     		neg	r3, r0
+ 696 001c 5841     		adc	r0, r0, r3
+ 697              	.LBE13:
+ 698              	.LBE12:
+  41:Code\Device\FM175XX/card.c **** 	}
+ 699              		.loc 1 41 0
+ 700 001e C0B2     		uxtb	r0, r0
+ 701              	.LVL93:
+ 702              	.L49:
+  48:Code\Device\FM175XX/card.c **** #else	//备份
+ 703              		.loc 1 48 0
+ 704              		@ sp needed
+ 705              	.LVL94:
+ 706 0020 10BD     		pop	{r4, pc}
+ 707              		.cfi_endproc
+ 708              	.LFE63:
+ 709              		.size	detect_nfc_card, .-detect_nfc_card
+ 710              		.section	.text.detect_nfc_card_continus,"ax",%progbits
+ 711              		.align	1
+ 712              		.global	detect_nfc_card_continus
+ 713              		.code	16
+ 714              		.thumb_func
+ 715              		.type	detect_nfc_card_continus, %function
+ 716              	detect_nfc_card_continus:
+ 717              	.LFB64:
+  75:Code\Device\FM175XX/card.c **** 	uint32 loop = 0;
+ 718              		.loc 1 75 0
+ 719              		.cfi_startproc
+ 720              	.LVL95:
+ 721 0000 70B5     		push	{r4, r5, r6, lr}
+ 722              		.cfi_def_cfa_offset 16
+ 723              		.cfi_offset 4, -16
+ 724              		.cfi_offset 5, -12
+ 725              		.cfi_offset 6, -8
+ 726              		.cfi_offset 14, -4
+  75:Code\Device\FM175XX/card.c **** 	uint32 loop = 0;
+ 727              		.loc 1 75 0
+ 728 0002 051C     		mov	r5, r0
+ 729 0004 0E1C     		mov	r6, r1
+ 730 0006 2824     		mov	r4, #40
+ 731              	.LVL96:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 26
+
+
+ 732              	.L54:
+  79:Code\Device\FM175XX/card.c **** 		{
+ 733              		.loc 1 79 0
+ 734 0008 281C     		mov	r0, r5
+ 735 000a 311C     		mov	r1, r6
+ 736 000c FFF7FEFF 		bl	detect_nfc_card
+ 737              	.LVL97:
+ 738 0010 0128     		cmp	r0, #1
+ 739 0012 05D0     		beq	.L53
+ 740 0014 013C     		sub	r4, r4, #1
+ 741              	.LVL98:
+  85:Code\Device\FM175XX/card.c **** 	}
+ 742              		.loc 1 85 0 discriminator 2
+ 743 0016 FFF7FEFF 		bl	ble_heartbeat
+ 744              	.LVL99:
+  77:Code\Device\FM175XX/card.c **** 	{
+ 745              		.loc 1 77 0 discriminator 2
+ 746 001a 002C     		cmp	r4, #0
+ 747 001c F4D1     		bne	.L54
+  87:Code\Device\FM175XX/card.c **** }
+ 748              		.loc 1 87 0
+ 749 001e 201C     		mov	r0, r4
+ 750              	.L53:
+  88:Code\Device\FM175XX/card.c **** 
+ 751              		.loc 1 88 0
+ 752              		@ sp needed
+ 753              	.LVL100:
+ 754 0020 70BD     		pop	{r4, r5, r6, pc}
+ 755              		.cfi_endproc
+ 756              	.LFE64:
+ 757              		.size	detect_nfc_card_continus, .-detect_nfc_card_continus
+ 758              		.comm	picc_sak,3,1
+ 759              		.comm	picc_uid,15,1
+ 760              		.comm	picc_atqa,2,1
+ 761              		.comm	ADCResultCenter,1,1
+ 762              		.section	.rodata
+ 763              		.set	.LANCHOR0,. + 0
+ 764              	.LC0:
+ 765 0000 FF       		.byte	-1
+ 766 0001 FF       		.byte	-1
+ 767 0002 FE       		.byte	-2
+ 768 0003 EF       		.byte	-17
+ 769 0004 FA       		.byte	-6
+ 770 0005 AF       		.byte	-81
+ 771              	.LC1:
+ 772 0006 00       		.byte	0
+ 773 0007 00       		.byte	0
+ 774 0008 00       		.byte	0
+ 775 0009 00       		.byte	0
+ 776 000a 3A       		.byte	58
+ 777 000b 3A       		.byte	58
+ 778 000c 3A       		.byte	58
+ 779 000d 3A       		.byte	58
+ 780 000e 3A       		.byte	58
+ 781 000f 3A       		.byte	58
+ 782 0010 3A       		.byte	58
+ 783 0011 3A       		.byte	58
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 27
+
+
+ 784 0012 3A       		.byte	58
+ 785 0013 3A       		.byte	58
+ 786 0014 3A       		.byte	58
+ 787 0015 3A       		.byte	58
+ 788              	.LC2:
+ 789 0016 6F       		.byte	111
+ 790 0017 35       		.byte	53
+ 791 0018 4A       		.byte	74
+ 792 0019 6C       		.byte	108
+ 793 001a 58       		.byte	88
+ 794 001b ED       		.byte	-19
+ 795 001c BD       		.byte	-67
+ 796 001d D8       		.byte	-40
+ 797 001e 19       		.byte	25
+ 798 001f 5F       		.byte	95
+ 799 0020 D5       		.byte	-43
+ 800 0021 B8       		.byte	-72
+ 801 0022 90       		.byte	-112
+ 802 0023 AF       		.byte	-81
+ 803 0024 BF       		.byte	-65
+ 804 0025 38       		.byte	56
+ 805              		.text
+ 806              	.Letext0:
+ 807              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+ 808              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+ 809              		.file 4 "Generated_Source\\PSoC4/cytypes.h"
+ 810              		.file 5 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+ 811              		.file 6 ".\\Code\\Device\\FM175XX\\LPCD/lpcd_api.h"
+ 812              		.file 7 ".\\Code\\Device\\FM175XX\\IOS14443/type_a.h"
+ 813              		.file 8 ".\\Code\\Device\\FM175XX\\IOS14443/mifare_card.h"
+ 814              		.file 9 ".\\Code\\Common\\crypt/crypt.h"
+ 815              		.file 10 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9
+ 816              		.file 11 "Generated_Source\\PSoC4/RTC.h"
+ 817              		.file 12 "Code\\Device\\FM175XX\\fm175xx.h"
+ 818              		.section	.debug_info,"",%progbits
+ 819              	.Ldebug_info0:
+ 820 0000 9B0A0000 		.4byte	0xa9b
+ 821 0004 0400     		.2byte	0x4
+ 822 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 823 000a 04       		.byte	0x4
+ 824 000b 01       		.uleb128 0x1
+ 825 000c 5B000000 		.4byte	.LASF60
+ 826 0010 01       		.byte	0x1
+ 827 0011 36000000 		.4byte	.LASF61
+ 828 0015 F4010000 		.4byte	.LASF62
+ 829 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 830 001d 00000000 		.4byte	0
+ 831 0021 00000000 		.4byte	.Ldebug_line0
+ 832 0025 02       		.uleb128 0x2
+ 833 0026 01       		.byte	0x1
+ 834 0027 06       		.byte	0x6
+ 835 0028 7A020000 		.4byte	.LASF0
+ 836 002c 03       		.uleb128 0x3
+ 837 002d E2010000 		.4byte	.LASF5
+ 838 0031 02       		.byte	0x2
+ 839 0032 1D       		.byte	0x1d
+ 840 0033 37000000 		.4byte	0x37
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 28
+
+
+ 841 0037 02       		.uleb128 0x2
+ 842 0038 01       		.byte	0x1
+ 843 0039 08       		.byte	0x8
+ 844 003a 5B020000 		.4byte	.LASF1
+ 845 003e 02       		.uleb128 0x2
+ 846 003f 02       		.byte	0x2
+ 847 0040 05       		.byte	0x5
+ 848 0041 51000000 		.4byte	.LASF2
+ 849 0045 02       		.uleb128 0x2
+ 850 0046 02       		.byte	0x2
+ 851 0047 07       		.byte	0x7
+ 852 0048 D6020000 		.4byte	.LASF3
+ 853 004c 02       		.uleb128 0x2
+ 854 004d 04       		.byte	0x4
+ 855 004e 05       		.byte	0x5
+ 856 004f C0010000 		.4byte	.LASF4
+ 857 0053 03       		.uleb128 0x3
+ 858 0054 FD000000 		.4byte	.LASF6
+ 859 0058 02       		.byte	0x2
+ 860 0059 41       		.byte	0x41
+ 861 005a 5E000000 		.4byte	0x5e
+ 862 005e 02       		.uleb128 0x2
+ 863 005f 04       		.byte	0x4
+ 864 0060 07       		.byte	0x7
+ 865 0061 2B030000 		.4byte	.LASF7
+ 866 0065 02       		.uleb128 0x2
+ 867 0066 08       		.byte	0x8
+ 868 0067 05       		.byte	0x5
+ 869 0068 7A010000 		.4byte	.LASF8
+ 870 006c 02       		.uleb128 0x2
+ 871 006d 08       		.byte	0x8
+ 872 006e 07       		.byte	0x7
+ 873 006f 86020000 		.4byte	.LASF9
+ 874 0073 04       		.uleb128 0x4
+ 875 0074 04       		.byte	0x4
+ 876 0075 05       		.byte	0x5
+ 877 0076 696E7400 		.ascii	"int\000"
+ 878 007a 02       		.uleb128 0x2
+ 879 007b 04       		.byte	0x4
+ 880 007c 07       		.byte	0x7
+ 881 007d A6020000 		.4byte	.LASF10
+ 882 0081 03       		.uleb128 0x3
+ 883 0082 1F010000 		.4byte	.LASF11
+ 884 0086 03       		.byte	0x3
+ 885 0087 15       		.byte	0x15
+ 886 0088 2C000000 		.4byte	0x2c
+ 887 008c 03       		.uleb128 0x3
+ 888 008d 9D020000 		.4byte	.LASF12
+ 889 0091 03       		.byte	0x3
+ 890 0092 2D       		.byte	0x2d
+ 891 0093 53000000 		.4byte	0x53
+ 892 0097 05       		.uleb128 0x5
+ 893 0098 44010000 		.4byte	.LASF13
+ 894 009c 04       		.byte	0x4
+ 895 009d B901     		.2byte	0x1b9
+ 896 009f 37000000 		.4byte	0x37
+ 897 00a3 05       		.uleb128 0x5
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 29
+
+
+ 898 00a4 18010000 		.4byte	.LASF14
+ 899 00a8 04       		.byte	0x4
+ 900 00a9 BA01     		.2byte	0x1ba
+ 901 00ab 45000000 		.4byte	0x45
+ 902 00af 05       		.uleb128 0x5
+ 903 00b0 15030000 		.4byte	.LASF15
+ 904 00b4 04       		.byte	0x4
+ 905 00b5 BB01     		.2byte	0x1bb
+ 906 00b7 5E000000 		.4byte	0x5e
+ 907 00bb 02       		.uleb128 0x2
+ 908 00bc 04       		.byte	0x4
+ 909 00bd 04       		.byte	0x4
+ 910 00be 6D010000 		.4byte	.LASF16
+ 911 00c2 02       		.uleb128 0x2
+ 912 00c3 08       		.byte	0x8
+ 913 00c4 04       		.byte	0x4
+ 914 00c5 4F030000 		.4byte	.LASF17
+ 915 00c9 05       		.uleb128 0x5
+ 916 00ca C9010000 		.4byte	.LASF18
+ 917 00ce 04       		.byte	0x4
+ 918 00cf C501     		.2byte	0x1c5
+ 919 00d1 6C000000 		.4byte	0x6c
+ 920 00d5 02       		.uleb128 0x2
+ 921 00d6 01       		.byte	0x1
+ 922 00d7 08       		.byte	0x8
+ 923 00d8 B5010000 		.4byte	.LASF19
+ 924 00dc 03       		.uleb128 0x3
+ 925 00dd FA020000 		.4byte	.LASF20
+ 926 00e1 05       		.byte	0x5
+ 927 00e2 D4       		.byte	0xd4
+ 928 00e3 7A000000 		.4byte	0x7a
+ 929 00e7 02       		.uleb128 0x2
+ 930 00e8 04       		.byte	0x4
+ 931 00e9 07       		.byte	0x7
+ 932 00ea E9000000 		.4byte	.LASF21
+ 933 00ee 06       		.uleb128 0x6
+ 934 00ef 04       		.byte	0x4
+ 935 00f0 07       		.uleb128 0x7
+ 936 00f1 04       		.byte	0x4
+ 937 00f2 97000000 		.4byte	0x97
+ 938 00f6 08       		.uleb128 0x8
+ 939 00f7 7E030000 		.4byte	.LASF27
+ 940 00fb 01       		.byte	0x1
+ 941 00fc 5B01     		.2byte	0x15b
+ 942 00fe 73000000 		.4byte	0x73
+ 943 0102 01       		.byte	0x1
+ 944 0103 50010000 		.4byte	0x150
+ 945 0107 09       		.uleb128 0x9
+ 946 0108 F2000000 		.4byte	.LASF22
+ 947 010c 01       		.byte	0x1
+ 948 010d 5B01     		.2byte	0x15b
+ 949 010f 97000000 		.4byte	0x97
+ 950 0113 09       		.uleb128 0x9
+ 951 0114 BA010000 		.4byte	.LASF23
+ 952 0118 01       		.byte	0x1
+ 953 0119 5B01     		.2byte	0x15b
+ 954 011b F0000000 		.4byte	0xf0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 30
+
+
+ 955 011f 0A       		.uleb128 0xa
+ 956 0120 2E000000 		.4byte	.LASF24
+ 957 0124 01       		.byte	0x1
+ 958 0125 5D01     		.2byte	0x15d
+ 959 0127 97000000 		.4byte	0x97
+ 960 012b 0A       		.uleb128 0xa
+ 961 012c 3A010000 		.4byte	.LASF25
+ 962 0130 01       		.byte	0x1
+ 963 0131 5E01     		.2byte	0x15e
+ 964 0133 97000000 		.4byte	0x97
+ 965 0137 0B       		.uleb128 0xb
+ 966 0138 6B657900 		.ascii	"key\000"
+ 967 013c 01       		.byte	0x1
+ 968 013d 5F01     		.2byte	0x15f
+ 969 013f 50010000 		.4byte	0x150
+ 970 0143 0A       		.uleb128 0xa
+ 971 0144 B3020000 		.4byte	.LASF26
+ 972 0148 01       		.byte	0x1
+ 973 0149 6001     		.2byte	0x160
+ 974 014b 60010000 		.4byte	0x160
+ 975 014f 00       		.byte	0
+ 976 0150 0C       		.uleb128 0xc
+ 977 0151 97000000 		.4byte	0x97
+ 978 0155 60010000 		.4byte	0x160
+ 979 0159 0D       		.uleb128 0xd
+ 980 015a E7000000 		.4byte	0xe7
+ 981 015e 05       		.byte	0x5
+ 982 015f 00       		.byte	0
+ 983 0160 0C       		.uleb128 0xc
+ 984 0161 97000000 		.4byte	0x97
+ 985 0165 70010000 		.4byte	0x170
+ 986 0169 0D       		.uleb128 0xd
+ 987 016a E7000000 		.4byte	0xe7
+ 988 016e 0F       		.byte	0xf
+ 989 016f 00       		.byte	0
+ 990 0170 08       		.uleb128 0x8
+ 991 0171 BD030000 		.4byte	.LASF28
+ 992 0175 01       		.byte	0x1
+ 993 0176 7802     		.2byte	0x278
+ 994 0178 73000000 		.4byte	0x73
+ 995 017c 01       		.byte	0x1
+ 996 017d 9A010000 		.4byte	0x19a
+ 997 0181 0E       		.uleb128 0xe
+ 998 0182 75696400 		.ascii	"uid\000"
+ 999 0186 01       		.byte	0x1
+ 1000 0187 7802     		.2byte	0x278
+ 1001 0189 F0000000 		.4byte	0xf0
+ 1002 018d 0A       		.uleb128 0xa
+ 1003 018e 2E000000 		.4byte	.LASF24
+ 1004 0192 01       		.byte	0x1
+ 1005 0193 7A02     		.2byte	0x27a
+ 1006 0195 97000000 		.4byte	0x97
+ 1007 0199 00       		.byte	0
+ 1008 019a 0F       		.uleb128 0xf
+ 1009 019b 9E030000 		.4byte	.LASF29
+ 1010 019f 01       		.byte	0x1
+ 1011 01a0 25       		.byte	0x25
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 31
+
+
+ 1012 01a1 97000000 		.4byte	0x97
+ 1013 01a5 01       		.byte	0x1
+ 1014 01a6 C0010000 		.4byte	0x1c0
+ 1015 01aa 10       		.uleb128 0x10
+ 1016 01ab EC010000 		.4byte	.LASF30
+ 1017 01af 01       		.byte	0x1
+ 1018 01b0 25       		.byte	0x25
+ 1019 01b1 F0000000 		.4byte	0xf0
+ 1020 01b5 11       		.uleb128 0x11
+ 1021 01b6 737A00   		.ascii	"sz\000"
+ 1022 01b9 01       		.byte	0x1
+ 1023 01ba 25       		.byte	0x25
+ 1024 01bb A3000000 		.4byte	0xa3
+ 1025 01bf 00       		.byte	0
+ 1026 01c0 12       		.uleb128 0x12
+ 1027 01c1 27010000 		.4byte	.LASF63
+ 1028 01c5 01       		.byte	0x1
+ 1029 01c6 F8       		.byte	0xf8
+ 1030 01c7 00000000 		.4byte	.LFB65
+ 1031 01cb 5C000000 		.4byte	.LFE65-.LFB65
+ 1032 01cf 01       		.uleb128 0x1
+ 1033 01d0 9C       		.byte	0x9c
+ 1034 01d1 CA020000 		.4byte	0x2ca
+ 1035 01d5 13       		.uleb128 0x13
+ 1036 01d6 F2000000 		.4byte	.LASF22
+ 1037 01da 01       		.byte	0x1
+ 1038 01db F8       		.byte	0xf8
+ 1039 01dc 97000000 		.4byte	0x97
+ 1040 01e0 00000000 		.4byte	.LLST0
+ 1041 01e4 13       		.uleb128 0x13
+ 1042 01e5 BA010000 		.4byte	.LASF23
+ 1043 01e9 01       		.byte	0x1
+ 1044 01ea F8       		.byte	0xf8
+ 1045 01eb F0000000 		.4byte	0xf0
+ 1046 01ef 21000000 		.4byte	.LLST1
+ 1047 01f3 14       		.uleb128 0x14
+ 1048 01f4 2E000000 		.4byte	.LASF24
+ 1049 01f8 01       		.byte	0x1
+ 1050 01f9 FA       		.byte	0xfa
+ 1051 01fa 97000000 		.4byte	0x97
+ 1052 01fe 4D000000 		.4byte	.LLST2
+ 1053 0202 14       		.uleb128 0x14
+ 1054 0203 3A010000 		.4byte	.LASF25
+ 1055 0207 01       		.byte	0x1
+ 1056 0208 FB       		.byte	0xfb
+ 1057 0209 97000000 		.4byte	0x97
+ 1058 020d 81000000 		.4byte	.LLST3
+ 1059 0211 15       		.uleb128 0x15
+ 1060 0212 6B657900 		.ascii	"key\000"
+ 1061 0216 01       		.byte	0x1
+ 1062 0217 FC       		.byte	0xfc
+ 1063 0218 50010000 		.4byte	0x150
+ 1064 021c 02       		.uleb128 0x2
+ 1065 021d 91       		.byte	0x91
+ 1066 021e 58       		.sleb128 -40
+ 1067 021f 16       		.uleb128 0x16
+ 1068 0220 B3020000 		.4byte	.LASF26
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 32
+
+
+ 1069 0224 01       		.byte	0x1
+ 1070 0225 FD       		.byte	0xfd
+ 1071 0226 60010000 		.4byte	0x160
+ 1072 022a 02       		.uleb128 0x2
+ 1073 022b 91       		.byte	0x91
+ 1074 022c 60       		.sleb128 -32
+ 1075 022d 17       		.uleb128 0x17
+ 1076 022e 6900     		.ascii	"i\000"
+ 1077 0230 01       		.byte	0x1
+ 1078 0231 FE       		.byte	0xfe
+ 1079 0232 97000000 		.4byte	0x97
+ 1080 0236 94000000 		.4byte	.LLST4
+ 1081 023a 18       		.uleb128 0x18
+ 1082 023b 12000000 		.4byte	.LVL3
+ 1083 023f 21090000 		.4byte	0x921
+ 1084 0243 5C020000 		.4byte	0x25c
+ 1085 0247 19       		.uleb128 0x19
+ 1086 0248 01       		.uleb128 0x1
+ 1087 0249 52       		.byte	0x52
+ 1088 024a 01       		.uleb128 0x1
+ 1089 024b 36       		.byte	0x36
+ 1090 024c 19       		.uleb128 0x19
+ 1091 024d 01       		.uleb128 0x1
+ 1092 024e 51       		.byte	0x51
+ 1093 024f 05       		.uleb128 0x5
+ 1094 0250 03       		.byte	0x3
+ 1095 0251 00000000 		.4byte	.LANCHOR0
+ 1096 0255 19       		.uleb128 0x19
+ 1097 0256 01       		.uleb128 0x1
+ 1098 0257 50       		.byte	0x50
+ 1099 0258 02       		.uleb128 0x2
+ 1100 0259 7D       		.byte	0x7d
+ 1101 025a 00       		.sleb128 0
+ 1102 025b 00       		.byte	0
+ 1103 025c 18       		.uleb128 0x18
+ 1104 025d 1E000000 		.4byte	.LVL4
+ 1105 0261 45090000 		.4byte	0x945
+ 1106 0265 86020000 		.4byte	0x286
+ 1107 0269 19       		.uleb128 0x19
+ 1108 026a 01       		.uleb128 0x1
+ 1109 026b 53       		.byte	0x53
+ 1110 026c 05       		.uleb128 0x5
+ 1111 026d 03       		.byte	0x3
+ 1112 026e 00000000 		.4byte	picc_uid
+ 1113 0272 19       		.uleb128 0x19
+ 1114 0273 01       		.uleb128 0x1
+ 1115 0274 52       		.byte	0x52
+ 1116 0275 02       		.uleb128 0x2
+ 1117 0276 7D       		.byte	0x7d
+ 1118 0277 00       		.sleb128 0
+ 1119 0278 19       		.uleb128 0x19
+ 1120 0279 01       		.uleb128 0x1
+ 1121 027a 51       		.byte	0x51
+ 1122 027b 04       		.uleb128 0x4
+ 1123 027c 74       		.byte	0x74
+ 1124 027d 00       		.sleb128 0
+ 1125 027e 32       		.byte	0x32
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 33
+
+
+ 1126 027f 25       		.byte	0x25
+ 1127 0280 19       		.uleb128 0x19
+ 1128 0281 01       		.uleb128 0x1
+ 1129 0282 50       		.byte	0x50
+ 1130 0283 01       		.uleb128 0x1
+ 1131 0284 30       		.byte	0x30
+ 1132 0285 00       		.byte	0
+ 1133 0286 18       		.uleb128 0x18
+ 1134 0287 28000000 		.4byte	.LVL6
+ 1135 028b 6F090000 		.4byte	0x96f
+ 1136 028f 99020000 		.4byte	0x299
+ 1137 0293 19       		.uleb128 0x19
+ 1138 0294 01       		.uleb128 0x1
+ 1139 0295 50       		.byte	0x50
+ 1140 0296 01       		.uleb128 0x1
+ 1141 0297 30       		.byte	0x30
+ 1142 0298 00       		.byte	0
+ 1143 0299 18       		.uleb128 0x18
+ 1144 029a 34000000 		.4byte	.LVL9
+ 1145 029e 84090000 		.4byte	0x984
+ 1146 02a2 B3020000 		.4byte	0x2b3
+ 1147 02a6 19       		.uleb128 0x19
+ 1148 02a7 01       		.uleb128 0x1
+ 1149 02a8 51       		.byte	0x51
+ 1150 02a9 02       		.uleb128 0x2
+ 1151 02aa 75       		.byte	0x75
+ 1152 02ab 00       		.sleb128 0
+ 1153 02ac 19       		.uleb128 0x19
+ 1154 02ad 01       		.uleb128 0x1
+ 1155 02ae 50       		.byte	0x50
+ 1156 02af 02       		.uleb128 0x2
+ 1157 02b0 74       		.byte	0x74
+ 1158 02b1 00       		.sleb128 0
+ 1159 02b2 00       		.byte	0
+ 1160 02b3 1A       		.uleb128 0x1a
+ 1161 02b4 4A000000 		.4byte	.LVL14
+ 1162 02b8 9E090000 		.4byte	0x99e
+ 1163 02bc 19       		.uleb128 0x19
+ 1164 02bd 01       		.uleb128 0x1
+ 1165 02be 51       		.byte	0x51
+ 1166 02bf 02       		.uleb128 0x2
+ 1167 02c0 76       		.byte	0x76
+ 1168 02c1 00       		.sleb128 0
+ 1169 02c2 19       		.uleb128 0x19
+ 1170 02c3 01       		.uleb128 0x1
+ 1171 02c4 50       		.byte	0x50
+ 1172 02c5 02       		.uleb128 0x2
+ 1173 02c6 74       		.byte	0x74
+ 1174 02c7 00       		.sleb128 0
+ 1175 02c8 00       		.byte	0
+ 1176 02c9 00       		.byte	0
+ 1177 02ca 1B       		.uleb128 0x1b
+ 1178 02cb F6000000 		.4byte	0xf6
+ 1179 02cf 00000000 		.4byte	.LFB66
+ 1180 02d3 54000000 		.4byte	.LFE66-.LFB66
+ 1181 02d7 01       		.uleb128 0x1
+ 1182 02d8 9C       		.byte	0x9c
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 34
+
+
+ 1183 02d9 E4030000 		.4byte	0x3e4
+ 1184 02dd 1C       		.uleb128 0x1c
+ 1185 02de 07010000 		.4byte	0x107
+ 1186 02e2 CA000000 		.4byte	.LLST5
+ 1187 02e6 1C       		.uleb128 0x1c
+ 1188 02e7 13010000 		.4byte	0x113
+ 1189 02eb EB000000 		.4byte	.LLST6
+ 1190 02ef 1D       		.uleb128 0x1d
+ 1191 02f0 1F010000 		.4byte	0x11f
+ 1192 02f4 17010000 		.4byte	.LLST7
+ 1193 02f8 1D       		.uleb128 0x1d
+ 1194 02f9 2B010000 		.4byte	0x12b
+ 1195 02fd 35010000 		.4byte	.LLST8
+ 1196 0301 1E       		.uleb128 0x1e
+ 1197 0302 37010000 		.4byte	0x137
+ 1198 0306 02       		.uleb128 0x2
+ 1199 0307 91       		.byte	0x91
+ 1200 0308 58       		.sleb128 -40
+ 1201 0309 1F       		.uleb128 0x1f
+ 1202 030a 43010000 		.4byte	0x143
+ 1203 030e 20       		.uleb128 0x20
+ 1204 030f 2C000000 		.4byte	.LBB4
+ 1205 0313 1C000000 		.4byte	.LBE4-.LBB4
+ 1206 0317 88030000 		.4byte	0x388
+ 1207 031b 1C       		.uleb128 0x1c
+ 1208 031c 13010000 		.4byte	0x113
+ 1209 0320 48010000 		.4byte	.LLST9
+ 1210 0324 1C       		.uleb128 0x1c
+ 1211 0325 07010000 		.4byte	0x107
+ 1212 0329 5B010000 		.4byte	.LLST10
+ 1213 032d 21       		.uleb128 0x21
+ 1214 032e 2C000000 		.4byte	.LBB5
+ 1215 0332 1C000000 		.4byte	.LBE5-.LBB5
+ 1216 0336 1D       		.uleb128 0x1d
+ 1217 0337 1F010000 		.4byte	0x11f
+ 1218 033b 6E010000 		.4byte	.LLST11
+ 1219 033f 1F       		.uleb128 0x1f
+ 1220 0340 2B010000 		.4byte	0x12b
+ 1221 0344 1F       		.uleb128 0x1f
+ 1222 0345 37010000 		.4byte	0x137
+ 1223 0349 1E       		.uleb128 0x1e
+ 1224 034a 43010000 		.4byte	0x143
+ 1225 034e 02       		.uleb128 0x2
+ 1226 034f 91       		.byte	0x91
+ 1227 0350 60       		.sleb128 -32
+ 1228 0351 18       		.uleb128 0x18
+ 1229 0352 34000000 		.4byte	.LVL27
+ 1230 0356 84090000 		.4byte	0x984
+ 1231 035a 6B030000 		.4byte	0x36b
+ 1232 035e 19       		.uleb128 0x19
+ 1233 035f 01       		.uleb128 0x1
+ 1234 0360 51       		.byte	0x51
+ 1235 0361 02       		.uleb128 0x2
+ 1236 0362 91       		.byte	0x91
+ 1237 0363 60       		.sleb128 -32
+ 1238 0364 19       		.uleb128 0x19
+ 1239 0365 01       		.uleb128 0x1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 35
+
+
+ 1240 0366 50       		.byte	0x50
+ 1241 0367 02       		.uleb128 0x2
+ 1242 0368 74       		.byte	0x74
+ 1243 0369 00       		.sleb128 0
+ 1244 036a 00       		.byte	0
+ 1245 036b 1A       		.uleb128 0x1a
+ 1246 036c 46000000 		.4byte	.LVL29
+ 1247 0370 21090000 		.4byte	0x921
+ 1248 0374 19       		.uleb128 0x19
+ 1249 0375 01       		.uleb128 0x1
+ 1250 0376 52       		.byte	0x52
+ 1251 0377 01       		.uleb128 0x1
+ 1252 0378 40       		.byte	0x40
+ 1253 0379 19       		.uleb128 0x19
+ 1254 037a 01       		.uleb128 0x1
+ 1255 037b 51       		.byte	0x51
+ 1256 037c 02       		.uleb128 0x2
+ 1257 037d 91       		.byte	0x91
+ 1258 037e 60       		.sleb128 -32
+ 1259 037f 19       		.uleb128 0x19
+ 1260 0380 01       		.uleb128 0x1
+ 1261 0381 50       		.byte	0x50
+ 1262 0382 02       		.uleb128 0x2
+ 1263 0383 75       		.byte	0x75
+ 1264 0384 00       		.sleb128 0
+ 1265 0385 00       		.byte	0
+ 1266 0386 00       		.byte	0
+ 1267 0387 00       		.byte	0
+ 1268 0388 18       		.uleb128 0x18
+ 1269 0389 12000000 		.4byte	.LVL21
+ 1270 038d 21090000 		.4byte	0x921
+ 1271 0391 AA030000 		.4byte	0x3aa
+ 1272 0395 19       		.uleb128 0x19
+ 1273 0396 01       		.uleb128 0x1
+ 1274 0397 52       		.byte	0x52
+ 1275 0398 01       		.uleb128 0x1
+ 1276 0399 36       		.byte	0x36
+ 1277 039a 19       		.uleb128 0x19
+ 1278 039b 01       		.uleb128 0x1
+ 1279 039c 51       		.byte	0x51
+ 1280 039d 05       		.uleb128 0x5
+ 1281 039e 03       		.byte	0x3
+ 1282 039f 00000000 		.4byte	.LANCHOR0
+ 1283 03a3 19       		.uleb128 0x19
+ 1284 03a4 01       		.uleb128 0x1
+ 1285 03a5 50       		.byte	0x50
+ 1286 03a6 02       		.uleb128 0x2
+ 1287 03a7 7D       		.byte	0x7d
+ 1288 03a8 00       		.sleb128 0
+ 1289 03a9 00       		.byte	0
+ 1290 03aa 18       		.uleb128 0x18
+ 1291 03ab 1E000000 		.4byte	.LVL22
+ 1292 03af 45090000 		.4byte	0x945
+ 1293 03b3 D4030000 		.4byte	0x3d4
+ 1294 03b7 19       		.uleb128 0x19
+ 1295 03b8 01       		.uleb128 0x1
+ 1296 03b9 53       		.byte	0x53
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 36
+
+
+ 1297 03ba 05       		.uleb128 0x5
+ 1298 03bb 03       		.byte	0x3
+ 1299 03bc 00000000 		.4byte	picc_uid
+ 1300 03c0 19       		.uleb128 0x19
+ 1301 03c1 01       		.uleb128 0x1
+ 1302 03c2 52       		.byte	0x52
+ 1303 03c3 02       		.uleb128 0x2
+ 1304 03c4 7D       		.byte	0x7d
+ 1305 03c5 00       		.sleb128 0
+ 1306 03c6 19       		.uleb128 0x19
+ 1307 03c7 01       		.uleb128 0x1
+ 1308 03c8 51       		.byte	0x51
+ 1309 03c9 04       		.uleb128 0x4
+ 1310 03ca 74       		.byte	0x74
+ 1311 03cb 00       		.sleb128 0
+ 1312 03cc 32       		.byte	0x32
+ 1313 03cd 25       		.byte	0x25
+ 1314 03ce 19       		.uleb128 0x19
+ 1315 03cf 01       		.uleb128 0x1
+ 1316 03d0 50       		.byte	0x50
+ 1317 03d1 01       		.uleb128 0x1
+ 1318 03d2 30       		.byte	0x30
+ 1319 03d3 00       		.byte	0
+ 1320 03d4 1A       		.uleb128 0x1a
+ 1321 03d5 28000000 		.4byte	.LVL24
+ 1322 03d9 6F090000 		.4byte	0x96f
+ 1323 03dd 19       		.uleb128 0x19
+ 1324 03de 01       		.uleb128 0x1
+ 1325 03df 50       		.byte	0x50
+ 1326 03e0 01       		.uleb128 0x1
+ 1327 03e1 30       		.byte	0x30
+ 1328 03e2 00       		.byte	0
+ 1329 03e3 00       		.byte	0
+ 1330 03e4 22       		.uleb128 0x22
+ 1331 03e5 AE030000 		.4byte	.LASF34
+ 1332 03e9 01       		.byte	0x1
+ 1333 03ea 9A01     		.2byte	0x19a
+ 1334 03ec 73000000 		.4byte	0x73
+ 1335 03f0 00000000 		.4byte	.LFB67
+ 1336 03f4 64000000 		.4byte	.LFE67-.LFB67
+ 1337 03f8 01       		.uleb128 0x1
+ 1338 03f9 9C       		.byte	0x9c
+ 1339 03fa 20050000 		.4byte	0x520
+ 1340 03fe 23       		.uleb128 0x23
+ 1341 03ff 75696400 		.ascii	"uid\000"
+ 1342 0403 01       		.byte	0x1
+ 1343 0404 9A01     		.2byte	0x19a
+ 1344 0406 F0000000 		.4byte	0xf0
+ 1345 040a 81010000 		.4byte	.LLST12
+ 1346 040e 24       		.uleb128 0x24
+ 1347 040f 4A010000 		.4byte	.LASF31
+ 1348 0413 01       		.byte	0x1
+ 1349 0414 9C01     		.2byte	0x19c
+ 1350 0416 60010000 		.4byte	0x160
+ 1351 041a 02       		.uleb128 0x2
+ 1352 041b 91       		.byte	0x91
+ 1353 041c 40       		.sleb128 -64
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 37
+
+
+ 1354 041d 24       		.uleb128 0x24
+ 1355 041e 6D030000 		.4byte	.LASF32
+ 1356 0422 01       		.byte	0x1
+ 1357 0423 9D01     		.2byte	0x19d
+ 1358 0425 60010000 		.4byte	0x160
+ 1359 0429 02       		.uleb128 0x2
+ 1360 042a 91       		.byte	0x91
+ 1361 042b 50       		.sleb128 -48
+ 1362 042c 24       		.uleb128 0x24
+ 1363 042d D0010000 		.4byte	.LASF33
+ 1364 0431 01       		.byte	0x1
+ 1365 0432 9E01     		.2byte	0x19e
+ 1366 0434 60010000 		.4byte	0x160
+ 1367 0438 02       		.uleb128 0x2
+ 1368 0439 91       		.byte	0x91
+ 1369 043a 60       		.sleb128 -32
+ 1370 043b 18       		.uleb128 0x18
+ 1371 043c 14000000 		.4byte	.LVL34
+ 1372 0440 21090000 		.4byte	0x921
+ 1373 0444 5B040000 		.4byte	0x45b
+ 1374 0448 19       		.uleb128 0x19
+ 1375 0449 01       		.uleb128 0x1
+ 1376 044a 52       		.byte	0x52
+ 1377 044b 02       		.uleb128 0x2
+ 1378 044c 74       		.byte	0x74
+ 1379 044d 00       		.sleb128 0
+ 1380 044e 19       		.uleb128 0x19
+ 1381 044f 01       		.uleb128 0x1
+ 1382 0450 51       		.byte	0x51
+ 1383 0451 02       		.uleb128 0x2
+ 1384 0452 75       		.byte	0x75
+ 1385 0453 06       		.sleb128 6
+ 1386 0454 19       		.uleb128 0x19
+ 1387 0455 01       		.uleb128 0x1
+ 1388 0456 50       		.byte	0x50
+ 1389 0457 02       		.uleb128 0x2
+ 1390 0458 91       		.byte	0x91
+ 1391 0459 40       		.sleb128 -64
+ 1392 045a 00       		.byte	0
+ 1393 045b 18       		.uleb128 0x18
+ 1394 045c 22000000 		.4byte	.LVL35
+ 1395 0460 21090000 		.4byte	0x921
+ 1396 0464 7E040000 		.4byte	0x47e
+ 1397 0468 19       		.uleb128 0x19
+ 1398 0469 01       		.uleb128 0x1
+ 1399 046a 52       		.byte	0x52
+ 1400 046b 02       		.uleb128 0x2
+ 1401 046c 74       		.byte	0x74
+ 1402 046d 00       		.sleb128 0
+ 1403 046e 19       		.uleb128 0x19
+ 1404 046f 01       		.uleb128 0x1
+ 1405 0470 51       		.byte	0x51
+ 1406 0471 05       		.uleb128 0x5
+ 1407 0472 03       		.byte	0x3
+ 1408 0473 16000000 		.4byte	.LANCHOR0+22
+ 1409 0477 19       		.uleb128 0x19
+ 1410 0478 01       		.uleb128 0x1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 38
+
+
+ 1411 0479 50       		.byte	0x50
+ 1412 047a 02       		.uleb128 0x2
+ 1413 047b 91       		.byte	0x91
+ 1414 047c 50       		.sleb128 -48
+ 1415 047d 00       		.byte	0
+ 1416 047e 18       		.uleb128 0x18
+ 1417 047f 2C000000 		.4byte	.LVL36
+ 1418 0483 B8090000 		.4byte	0x9b8
+ 1419 0487 9D040000 		.4byte	0x49d
+ 1420 048b 19       		.uleb128 0x19
+ 1421 048c 01       		.uleb128 0x1
+ 1422 048d 52       		.byte	0x52
+ 1423 048e 02       		.uleb128 0x2
+ 1424 048f 74       		.byte	0x74
+ 1425 0490 00       		.sleb128 0
+ 1426 0491 19       		.uleb128 0x19
+ 1427 0492 01       		.uleb128 0x1
+ 1428 0493 51       		.byte	0x51
+ 1429 0494 01       		.uleb128 0x1
+ 1430 0495 30       		.byte	0x30
+ 1431 0496 19       		.uleb128 0x19
+ 1432 0497 01       		.uleb128 0x1
+ 1433 0498 50       		.byte	0x50
+ 1434 0499 02       		.uleb128 0x2
+ 1435 049a 91       		.byte	0x91
+ 1436 049b 60       		.sleb128 -32
+ 1437 049c 00       		.byte	0
+ 1438 049d 18       		.uleb128 0x18
+ 1439 049e 36000000 		.4byte	.LVL37
+ 1440 04a2 21090000 		.4byte	0x921
+ 1441 04a6 BD040000 		.4byte	0x4bd
+ 1442 04aa 19       		.uleb128 0x19
+ 1443 04ab 01       		.uleb128 0x1
+ 1444 04ac 52       		.byte	0x52
+ 1445 04ad 02       		.uleb128 0x2
+ 1446 04ae 75       		.byte	0x75
+ 1447 04af 00       		.sleb128 0
+ 1448 04b0 19       		.uleb128 0x19
+ 1449 04b1 01       		.uleb128 0x1
+ 1450 04b2 51       		.byte	0x51
+ 1451 04b3 02       		.uleb128 0x2
+ 1452 04b4 76       		.byte	0x76
+ 1453 04b5 00       		.sleb128 0
+ 1454 04b6 19       		.uleb128 0x19
+ 1455 04b7 01       		.uleb128 0x1
+ 1456 04b8 50       		.byte	0x50
+ 1457 04b9 02       		.uleb128 0x2
+ 1458 04ba 91       		.byte	0x91
+ 1459 04bb 40       		.sleb128 -64
+ 1460 04bc 00       		.byte	0
+ 1461 04bd 18       		.uleb128 0x18
+ 1462 04be 46000000 		.4byte	.LVL38
+ 1463 04c2 D5090000 		.4byte	0x9d5
+ 1464 04c6 E9040000 		.4byte	0x4e9
+ 1465 04ca 19       		.uleb128 0x19
+ 1466 04cb 01       		.uleb128 0x1
+ 1467 04cc 53       		.byte	0x53
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 39
+
+
+ 1468 04cd 02       		.uleb128 0x2
+ 1469 04ce 74       		.byte	0x74
+ 1470 04cf 00       		.sleb128 0
+ 1471 04d0 19       		.uleb128 0x19
+ 1472 04d1 01       		.uleb128 0x1
+ 1473 04d2 52       		.byte	0x52
+ 1474 04d3 02       		.uleb128 0x2
+ 1475 04d4 91       		.byte	0x91
+ 1476 04d5 40       		.sleb128 -64
+ 1477 04d6 19       		.uleb128 0x19
+ 1478 04d7 01       		.uleb128 0x1
+ 1479 04d8 51       		.byte	0x51
+ 1480 04d9 02       		.uleb128 0x2
+ 1481 04da 91       		.byte	0x91
+ 1482 04db 40       		.sleb128 -64
+ 1483 04dc 19       		.uleb128 0x19
+ 1484 04dd 01       		.uleb128 0x1
+ 1485 04de 50       		.byte	0x50
+ 1486 04df 02       		.uleb128 0x2
+ 1487 04e0 91       		.byte	0x91
+ 1488 04e1 50       		.sleb128 -48
+ 1489 04e2 19       		.uleb128 0x19
+ 1490 04e3 02       		.uleb128 0x2
+ 1491 04e4 7D       		.byte	0x7d
+ 1492 04e5 00       		.sleb128 0
+ 1493 04e6 01       		.uleb128 0x1
+ 1494 04e7 31       		.byte	0x31
+ 1495 04e8 00       		.byte	0
+ 1496 04e9 18       		.uleb128 0x18
+ 1497 04ea 4E000000 		.4byte	.LVL39
+ 1498 04ee F6000000 		.4byte	0xf6
+ 1499 04f2 03050000 		.4byte	0x503
+ 1500 04f6 19       		.uleb128 0x19
+ 1501 04f7 01       		.uleb128 0x1
+ 1502 04f8 51       		.byte	0x51
+ 1503 04f9 02       		.uleb128 0x2
+ 1504 04fa 91       		.byte	0x91
+ 1505 04fb 60       		.sleb128 -32
+ 1506 04fc 19       		.uleb128 0x19
+ 1507 04fd 01       		.uleb128 0x1
+ 1508 04fe 50       		.byte	0x50
+ 1509 04ff 02       		.uleb128 0x2
+ 1510 0500 75       		.byte	0x75
+ 1511 0501 00       		.sleb128 0
+ 1512 0502 00       		.byte	0
+ 1513 0503 1A       		.uleb128 0x1a
+ 1514 0504 58000000 		.4byte	.LVL40
+ 1515 0508 FE090000 		.4byte	0x9fe
+ 1516 050c 19       		.uleb128 0x19
+ 1517 050d 01       		.uleb128 0x1
+ 1518 050e 52       		.byte	0x52
+ 1519 050f 02       		.uleb128 0x2
+ 1520 0510 74       		.byte	0x74
+ 1521 0511 00       		.sleb128 0
+ 1522 0512 19       		.uleb128 0x19
+ 1523 0513 01       		.uleb128 0x1
+ 1524 0514 51       		.byte	0x51
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 40
+
+
+ 1525 0515 02       		.uleb128 0x2
+ 1526 0516 91       		.byte	0x91
+ 1527 0517 40       		.sleb128 -64
+ 1528 0518 19       		.uleb128 0x19
+ 1529 0519 01       		.uleb128 0x1
+ 1530 051a 50       		.byte	0x50
+ 1531 051b 02       		.uleb128 0x2
+ 1532 051c 91       		.byte	0x91
+ 1533 051d 60       		.sleb128 -32
+ 1534 051e 00       		.byte	0
+ 1535 051f 00       		.byte	0
+ 1536 0520 22       		.uleb128 0x22
+ 1537 0521 1C030000 		.4byte	.LASF35
+ 1538 0525 01       		.byte	0x1
+ 1539 0526 C001     		.2byte	0x1c0
+ 1540 0528 73000000 		.4byte	0x73
+ 1541 052c 00000000 		.4byte	.LFB68
+ 1542 0530 DC000000 		.4byte	.LFE68-.LFB68
+ 1543 0534 01       		.uleb128 0x1
+ 1544 0535 9C       		.byte	0x9c
+ 1545 0536 E1050000 		.4byte	0x5e1
+ 1546 053a 24       		.uleb128 0x24
+ 1547 053b D0010000 		.4byte	.LASF33
+ 1548 053f 01       		.byte	0x1
+ 1549 0540 C201     		.2byte	0x1c2
+ 1550 0542 60010000 		.4byte	0x160
+ 1551 0546 02       		.uleb128 0x2
+ 1552 0547 91       		.byte	0x91
+ 1553 0548 60       		.sleb128 -32
+ 1554 0549 25       		.uleb128 0x25
+ 1555 054a 34010000 		.4byte	.LASF36
+ 1556 054e 01       		.byte	0x1
+ 1557 054f C301     		.2byte	0x1c3
+ 1558 0551 AF000000 		.4byte	0xaf
+ 1559 0555 AD010000 		.4byte	.LLST13
+ 1560 0559 25       		.uleb128 0x25
+ 1561 055a D8010000 		.4byte	.LASF37
+ 1562 055e 01       		.byte	0x1
+ 1563 055f C401     		.2byte	0x1c4
+ 1564 0561 AF000000 		.4byte	0xaf
+ 1565 0565 C0010000 		.4byte	.LLST14
+ 1566 0569 18       		.uleb128 0x18
+ 1567 056a 0E000000 		.4byte	.LVL42
+ 1568 056e B8090000 		.4byte	0x9b8
+ 1569 0572 87050000 		.4byte	0x587
+ 1570 0576 19       		.uleb128 0x19
+ 1571 0577 01       		.uleb128 0x1
+ 1572 0578 52       		.byte	0x52
+ 1573 0579 01       		.uleb128 0x1
+ 1574 057a 40       		.byte	0x40
+ 1575 057b 19       		.uleb128 0x19
+ 1576 057c 01       		.uleb128 0x1
+ 1577 057d 51       		.byte	0x51
+ 1578 057e 01       		.uleb128 0x1
+ 1579 057f 30       		.byte	0x30
+ 1580 0580 19       		.uleb128 0x19
+ 1581 0581 01       		.uleb128 0x1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 41
+
+
+ 1582 0582 50       		.byte	0x50
+ 1583 0583 02       		.uleb128 0x2
+ 1584 0584 7D       		.byte	0x7d
+ 1585 0585 00       		.sleb128 0
+ 1586 0586 00       		.byte	0
+ 1587 0587 18       		.uleb128 0x18
+ 1588 0588 16000000 		.4byte	.LVL43
+ 1589 058c F6000000 		.4byte	0xf6
+ 1590 0590 A0050000 		.4byte	0x5a0
+ 1591 0594 19       		.uleb128 0x19
+ 1592 0595 01       		.uleb128 0x1
+ 1593 0596 51       		.byte	0x51
+ 1594 0597 02       		.uleb128 0x2
+ 1595 0598 7D       		.byte	0x7d
+ 1596 0599 00       		.sleb128 0
+ 1597 059a 19       		.uleb128 0x19
+ 1598 059b 01       		.uleb128 0x1
+ 1599 059c 50       		.byte	0x50
+ 1600 059d 01       		.uleb128 0x1
+ 1601 059e 35       		.byte	0x35
+ 1602 059f 00       		.byte	0
+ 1603 05a0 26       		.uleb128 0x26
+ 1604 05a1 28000000 		.4byte	.LVL44
+ 1605 05a5 1D0A0000 		.4byte	0xa1d
+ 1606 05a9 18       		.uleb128 0x18
+ 1607 05aa 54000000 		.4byte	.LVL46
+ 1608 05ae C0010000 		.4byte	0x1c0
+ 1609 05b2 C2050000 		.4byte	0x5c2
+ 1610 05b6 19       		.uleb128 0x19
+ 1611 05b7 01       		.uleb128 0x1
+ 1612 05b8 51       		.byte	0x51
+ 1613 05b9 02       		.uleb128 0x2
+ 1614 05ba 7D       		.byte	0x7d
+ 1615 05bb 00       		.sleb128 0
+ 1616 05bc 19       		.uleb128 0x19
+ 1617 05bd 01       		.uleb128 0x1
+ 1618 05be 50       		.byte	0x50
+ 1619 05bf 01       		.uleb128 0x1
+ 1620 05c0 35       		.byte	0x35
+ 1621 05c1 00       		.byte	0
+ 1622 05c2 26       		.uleb128 0x26
+ 1623 05c3 A8000000 		.4byte	.LVL55
+ 1624 05c7 C0010000 		.4byte	0x1c0
+ 1625 05cb 1A       		.uleb128 0x1a
+ 1626 05cc B0000000 		.4byte	.LVL56
+ 1627 05d0 F6000000 		.4byte	0xf6
+ 1628 05d4 19       		.uleb128 0x19
+ 1629 05d5 01       		.uleb128 0x1
+ 1630 05d6 51       		.byte	0x51
+ 1631 05d7 02       		.uleb128 0x2
+ 1632 05d8 7D       		.byte	0x7d
+ 1633 05d9 00       		.sleb128 0
+ 1634 05da 19       		.uleb128 0x19
+ 1635 05db 01       		.uleb128 0x1
+ 1636 05dc 50       		.byte	0x50
+ 1637 05dd 01       		.uleb128 0x1
+ 1638 05de 35       		.byte	0x35
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 42
+
+
+ 1639 05df 00       		.byte	0
+ 1640 05e0 00       		.byte	0
+ 1641 05e1 22       		.uleb128 0x22
+ 1642 05e2 71020000 		.4byte	.LASF38
+ 1643 05e6 01       		.byte	0x1
+ 1644 05e7 4302     		.2byte	0x243
+ 1645 05e9 73000000 		.4byte	0x73
+ 1646 05ed 00000000 		.4byte	.LFB69
+ 1647 05f1 68000000 		.4byte	.LFE69-.LFB69
+ 1648 05f5 01       		.uleb128 0x1
+ 1649 05f6 9C       		.byte	0x9c
+ 1650 05f7 DC060000 		.4byte	0x6dc
+ 1651 05fb 23       		.uleb128 0x23
+ 1652 05fc 75696400 		.ascii	"uid\000"
+ 1653 0600 01       		.byte	0x1
+ 1654 0601 4302     		.2byte	0x243
+ 1655 0603 F0000000 		.4byte	0xf0
+ 1656 0607 A2020000 		.4byte	.LLST15
+ 1657 060b 25       		.uleb128 0x25
+ 1658 060c 2E000000 		.4byte	.LASF24
+ 1659 0610 01       		.byte	0x1
+ 1660 0611 4502     		.2byte	0x245
+ 1661 0613 97000000 		.4byte	0x97
+ 1662 0617 CE020000 		.4byte	.LLST16
+ 1663 061b 26       		.uleb128 0x26
+ 1664 061c 08000000 		.4byte	.LVL59
+ 1665 0620 290A0000 		.4byte	0xa29
+ 1666 0624 18       		.uleb128 0x18
+ 1667 0625 0E000000 		.4byte	.LVL60
+ 1668 0629 340A0000 		.4byte	0xa34
+ 1669 062d 37060000 		.4byte	0x637
+ 1670 0631 19       		.uleb128 0x19
+ 1671 0632 01       		.uleb128 0x1
+ 1672 0633 50       		.byte	0x50
+ 1673 0634 01       		.uleb128 0x1
+ 1674 0635 33       		.byte	0x33
+ 1675 0636 00       		.byte	0
+ 1676 0637 18       		.uleb128 0x18
+ 1677 0638 14000000 		.4byte	.LVL61
+ 1678 063c 490A0000 		.4byte	0xa49
+ 1679 0640 4A060000 		.4byte	0x64a
+ 1680 0644 19       		.uleb128 0x19
+ 1681 0645 01       		.uleb128 0x1
+ 1682 0646 50       		.byte	0x50
+ 1683 0647 01       		.uleb128 0x1
+ 1684 0648 30       		.byte	0x30
+ 1685 0649 00       		.byte	0
+ 1686 064a 18       		.uleb128 0x18
+ 1687 064b 20000000 		.4byte	.LVL62
+ 1688 064f 5E0A0000 		.4byte	0xa5e
+ 1689 0653 70060000 		.4byte	0x670
+ 1690 0657 19       		.uleb128 0x19
+ 1691 0658 01       		.uleb128 0x1
+ 1692 0659 52       		.byte	0x52
+ 1693 065a 05       		.uleb128 0x5
+ 1694 065b 03       		.byte	0x3
+ 1695 065c 00000000 		.4byte	picc_sak
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 43
+
+
+ 1696 0660 19       		.uleb128 0x19
+ 1697 0661 01       		.uleb128 0x1
+ 1698 0662 51       		.byte	0x51
+ 1699 0663 02       		.uleb128 0x2
+ 1700 0664 74       		.byte	0x74
+ 1701 0665 00       		.sleb128 0
+ 1702 0666 19       		.uleb128 0x19
+ 1703 0667 01       		.uleb128 0x1
+ 1704 0668 50       		.byte	0x50
+ 1705 0669 05       		.uleb128 0x5
+ 1706 066a 03       		.byte	0x3
+ 1707 066b 00000000 		.4byte	picc_atqa
+ 1708 066f 00       		.byte	0
+ 1709 0670 18       		.uleb128 0x18
+ 1710 0671 2A000000 		.4byte	.LVL64
+ 1711 0675 6F090000 		.4byte	0x96f
+ 1712 0679 83060000 		.4byte	0x683
+ 1713 067d 19       		.uleb128 0x19
+ 1714 067e 01       		.uleb128 0x1
+ 1715 067f 50       		.byte	0x50
+ 1716 0680 01       		.uleb128 0x1
+ 1717 0681 30       		.byte	0x30
+ 1718 0682 00       		.byte	0
+ 1719 0683 18       		.uleb128 0x18
+ 1720 0684 32000000 		.4byte	.LVL67
+ 1721 0688 E4030000 		.4byte	0x3e4
+ 1722 068c 97060000 		.4byte	0x697
+ 1723 0690 19       		.uleb128 0x19
+ 1724 0691 01       		.uleb128 0x1
+ 1725 0692 50       		.byte	0x50
+ 1726 0693 02       		.uleb128 0x2
+ 1727 0694 74       		.byte	0x74
+ 1728 0695 00       		.sleb128 0
+ 1729 0696 00       		.byte	0
+ 1730 0697 18       		.uleb128 0x18
+ 1731 0698 40000000 		.4byte	.LVL68
+ 1732 069c 21090000 		.4byte	0x921
+ 1733 06a0 B6060000 		.4byte	0x6b6
+ 1734 06a4 19       		.uleb128 0x19
+ 1735 06a5 01       		.uleb128 0x1
+ 1736 06a6 52       		.byte	0x52
+ 1737 06a7 01       		.uleb128 0x1
+ 1738 06a8 34       		.byte	0x34
+ 1739 06a9 19       		.uleb128 0x19
+ 1740 06aa 01       		.uleb128 0x1
+ 1741 06ab 51       		.byte	0x51
+ 1742 06ac 02       		.uleb128 0x2
+ 1743 06ad 74       		.byte	0x74
+ 1744 06ae 00       		.sleb128 0
+ 1745 06af 19       		.uleb128 0x19
+ 1746 06b0 01       		.uleb128 0x1
+ 1747 06b1 50       		.byte	0x50
+ 1748 06b2 02       		.uleb128 0x2
+ 1749 06b3 75       		.byte	0x75
+ 1750 06b4 00       		.sleb128 0
+ 1751 06b5 00       		.byte	0
+ 1752 06b6 26       		.uleb128 0x26
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 44
+
+
+ 1753 06b7 44000000 		.4byte	.LVL69
+ 1754 06bb 20050000 		.4byte	0x520
+ 1755 06bf 18       		.uleb128 0x18
+ 1756 06c0 50000000 		.4byte	.LVL70
+ 1757 06c4 340A0000 		.4byte	0xa34
+ 1758 06c8 D2060000 		.4byte	0x6d2
+ 1759 06cc 19       		.uleb128 0x19
+ 1760 06cd 01       		.uleb128 0x1
+ 1761 06ce 50       		.byte	0x50
+ 1762 06cf 01       		.uleb128 0x1
+ 1763 06d0 30       		.byte	0x30
+ 1764 06d1 00       		.byte	0
+ 1765 06d2 26       		.uleb128 0x26
+ 1766 06d3 56000000 		.4byte	.LVL71
+ 1767 06d7 340A0000 		.4byte	0xa34
+ 1768 06db 00       		.byte	0
+ 1769 06dc 1B       		.uleb128 0x1b
+ 1770 06dd 70010000 		.4byte	0x170
+ 1771 06e1 00000000 		.4byte	.LFB70
+ 1772 06e5 5C000000 		.4byte	.LFE70-.LFB70
+ 1773 06e9 01       		.uleb128 0x1
+ 1774 06ea 9C       		.byte	0x9c
+ 1775 06eb CE070000 		.4byte	0x7ce
+ 1776 06ef 1C       		.uleb128 0x1c
+ 1777 06f0 81010000 		.4byte	0x181
+ 1778 06f4 F8020000 		.4byte	.LLST17
+ 1779 06f8 1D       		.uleb128 0x1d
+ 1780 06f9 8D010000 		.4byte	0x18d
+ 1781 06fd 24030000 		.4byte	.LLST18
+ 1782 0701 20       		.uleb128 0x20
+ 1783 0702 3A000000 		.4byte	.LBB8
+ 1784 0706 12000000 		.4byte	.LBE8-.LBB8
+ 1785 070a 55070000 		.4byte	0x755
+ 1786 070e 1C       		.uleb128 0x1c
+ 1787 070f 81010000 		.4byte	0x181
+ 1788 0713 4E030000 		.4byte	.LLST19
+ 1789 0717 21       		.uleb128 0x21
+ 1790 0718 3A000000 		.4byte	.LBB9
+ 1791 071c 12000000 		.4byte	.LBE9-.LBB9
+ 1792 0720 1F       		.uleb128 0x1f
+ 1793 0721 8D010000 		.4byte	0x18d
+ 1794 0725 18       		.uleb128 0x18
+ 1795 0726 44000000 		.4byte	.LVL85
+ 1796 072a 21090000 		.4byte	0x921
+ 1797 072e 44070000 		.4byte	0x744
+ 1798 0732 19       		.uleb128 0x19
+ 1799 0733 01       		.uleb128 0x1
+ 1800 0734 52       		.byte	0x52
+ 1801 0735 01       		.uleb128 0x1
+ 1802 0736 34       		.byte	0x34
+ 1803 0737 19       		.uleb128 0x19
+ 1804 0738 01       		.uleb128 0x1
+ 1805 0739 51       		.byte	0x51
+ 1806 073a 02       		.uleb128 0x2
+ 1807 073b 75       		.byte	0x75
+ 1808 073c 00       		.sleb128 0
+ 1809 073d 19       		.uleb128 0x19
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 45
+
+
+ 1810 073e 01       		.uleb128 0x1
+ 1811 073f 50       		.byte	0x50
+ 1812 0740 02       		.uleb128 0x2
+ 1813 0741 76       		.byte	0x76
+ 1814 0742 00       		.sleb128 0
+ 1815 0743 00       		.byte	0
+ 1816 0744 1A       		.uleb128 0x1a
+ 1817 0745 4A000000 		.4byte	.LVL86
+ 1818 0749 340A0000 		.4byte	0xa34
+ 1819 074d 19       		.uleb128 0x19
+ 1820 074e 01       		.uleb128 0x1
+ 1821 074f 50       		.byte	0x50
+ 1822 0750 01       		.uleb128 0x1
+ 1823 0751 30       		.byte	0x30
+ 1824 0752 00       		.byte	0
+ 1825 0753 00       		.byte	0
+ 1826 0754 00       		.byte	0
+ 1827 0755 26       		.uleb128 0x26
+ 1828 0756 08000000 		.4byte	.LVL74
+ 1829 075a 290A0000 		.4byte	0xa29
+ 1830 075e 18       		.uleb128 0x18
+ 1831 075f 0E000000 		.4byte	.LVL75
+ 1832 0763 340A0000 		.4byte	0xa34
+ 1833 0767 71070000 		.4byte	0x771
+ 1834 076b 19       		.uleb128 0x19
+ 1835 076c 01       		.uleb128 0x1
+ 1836 076d 50       		.byte	0x50
+ 1837 076e 01       		.uleb128 0x1
+ 1838 076f 33       		.byte	0x33
+ 1839 0770 00       		.byte	0
+ 1840 0771 18       		.uleb128 0x18
+ 1841 0772 14000000 		.4byte	.LVL76
+ 1842 0776 490A0000 		.4byte	0xa49
+ 1843 077a 84070000 		.4byte	0x784
+ 1844 077e 19       		.uleb128 0x19
+ 1845 077f 01       		.uleb128 0x1
+ 1846 0780 50       		.byte	0x50
+ 1847 0781 01       		.uleb128 0x1
+ 1848 0782 30       		.byte	0x30
+ 1849 0783 00       		.byte	0
+ 1850 0784 18       		.uleb128 0x18
+ 1851 0785 20000000 		.4byte	.LVL77
+ 1852 0789 5E0A0000 		.4byte	0xa5e
+ 1853 078d AA070000 		.4byte	0x7aa
+ 1854 0791 19       		.uleb128 0x19
+ 1855 0792 01       		.uleb128 0x1
+ 1856 0793 52       		.byte	0x52
+ 1857 0794 05       		.uleb128 0x5
+ 1858 0795 03       		.byte	0x3
+ 1859 0796 00000000 		.4byte	picc_sak
+ 1860 079a 19       		.uleb128 0x19
+ 1861 079b 01       		.uleb128 0x1
+ 1862 079c 51       		.byte	0x51
+ 1863 079d 02       		.uleb128 0x2
+ 1864 079e 75       		.byte	0x75
+ 1865 079f 00       		.sleb128 0
+ 1866 07a0 19       		.uleb128 0x19
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 46
+
+
+ 1867 07a1 01       		.uleb128 0x1
+ 1868 07a2 50       		.byte	0x50
+ 1869 07a3 05       		.uleb128 0x5
+ 1870 07a4 03       		.byte	0x3
+ 1871 07a5 00000000 		.4byte	picc_atqa
+ 1872 07a9 00       		.byte	0
+ 1873 07aa 18       		.uleb128 0x18
+ 1874 07ab 2C000000 		.4byte	.LVL80
+ 1875 07af 6F090000 		.4byte	0x96f
+ 1876 07b3 BD070000 		.4byte	0x7bd
+ 1877 07b7 19       		.uleb128 0x19
+ 1878 07b8 01       		.uleb128 0x1
+ 1879 07b9 50       		.byte	0x50
+ 1880 07ba 01       		.uleb128 0x1
+ 1881 07bb 30       		.byte	0x30
+ 1882 07bc 00       		.byte	0
+ 1883 07bd 1A       		.uleb128 0x1a
+ 1884 07be 36000000 		.4byte	.LVL83
+ 1885 07c2 E4030000 		.4byte	0x3e4
+ 1886 07c6 19       		.uleb128 0x19
+ 1887 07c7 01       		.uleb128 0x1
+ 1888 07c8 50       		.byte	0x50
+ 1889 07c9 02       		.uleb128 0x2
+ 1890 07ca 75       		.byte	0x75
+ 1891 07cb 00       		.sleb128 0
+ 1892 07cc 00       		.byte	0
+ 1893 07cd 00       		.byte	0
+ 1894 07ce 1B       		.uleb128 0x1b
+ 1895 07cf 9A010000 		.4byte	0x19a
+ 1896 07d3 00000000 		.4byte	.LFB63
+ 1897 07d7 22000000 		.4byte	.LFE63-.LFB63
+ 1898 07db 01       		.uleb128 0x1
+ 1899 07dc 9C       		.byte	0x9c
+ 1900 07dd 39080000 		.4byte	0x839
+ 1901 07e1 1C       		.uleb128 0x1c
+ 1902 07e2 AA010000 		.4byte	0x1aa
+ 1903 07e6 61030000 		.4byte	.LLST20
+ 1904 07ea 1C       		.uleb128 0x1c
+ 1905 07eb B5010000 		.4byte	0x1b5
+ 1906 07ef 8D030000 		.4byte	.LLST21
+ 1907 07f3 20       		.uleb128 0x20
+ 1908 07f4 10000000 		.4byte	.LBB12
+ 1909 07f8 0E000000 		.4byte	.LBE12-.LBB12
+ 1910 07fc 28080000 		.4byte	0x828
+ 1911 0800 1C       		.uleb128 0x1c
+ 1912 0801 B5010000 		.4byte	0x1b5
+ 1913 0805 AE030000 		.4byte	.LLST22
+ 1914 0809 1C       		.uleb128 0x1c
+ 1915 080a AA010000 		.4byte	0x1aa
+ 1916 080e C4030000 		.4byte	.LLST23
+ 1917 0812 1A       		.uleb128 0x1a
+ 1918 0813 18000000 		.4byte	.LVL92
+ 1919 0817 7D0A0000 		.4byte	0xa7d
+ 1920 081b 19       		.uleb128 0x19
+ 1921 081c 01       		.uleb128 0x1
+ 1922 081d 51       		.byte	0x51
+ 1923 081e 01       		.uleb128 0x1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 47
+
+
+ 1924 081f 38       		.byte	0x38
+ 1925 0820 19       		.uleb128 0x19
+ 1926 0821 01       		.uleb128 0x1
+ 1927 0822 50       		.byte	0x50
+ 1928 0823 02       		.uleb128 0x2
+ 1929 0824 74       		.byte	0x74
+ 1930 0825 00       		.sleb128 0
+ 1931 0826 00       		.byte	0
+ 1932 0827 00       		.byte	0
+ 1933 0828 1A       		.uleb128 0x1a
+ 1934 0829 08000000 		.4byte	.LVL90
+ 1935 082d 70010000 		.4byte	0x170
+ 1936 0831 19       		.uleb128 0x19
+ 1937 0832 01       		.uleb128 0x1
+ 1938 0833 50       		.byte	0x50
+ 1939 0834 02       		.uleb128 0x2
+ 1940 0835 74       		.byte	0x74
+ 1941 0836 00       		.sleb128 0
+ 1942 0837 00       		.byte	0
+ 1943 0838 00       		.byte	0
+ 1944 0839 27       		.uleb128 0x27
+ 1945 083a BD020000 		.4byte	.LASF39
+ 1946 083e 01       		.byte	0x1
+ 1947 083f 4A       		.byte	0x4a
+ 1948 0840 97000000 		.4byte	0x97
+ 1949 0844 00000000 		.4byte	.LFB64
+ 1950 0848 22000000 		.4byte	.LFE64-.LFB64
+ 1951 084c 01       		.uleb128 0x1
+ 1952 084d 9C       		.byte	0x9c
+ 1953 084e A2080000 		.4byte	0x8a2
+ 1954 0852 13       		.uleb128 0x13
+ 1955 0853 EC010000 		.4byte	.LASF30
+ 1956 0857 01       		.byte	0x1
+ 1957 0858 4A       		.byte	0x4a
+ 1958 0859 F0000000 		.4byte	0xf0
+ 1959 085d D7030000 		.4byte	.LLST24
+ 1960 0861 28       		.uleb128 0x28
+ 1961 0862 737A00   		.ascii	"sz\000"
+ 1962 0865 01       		.byte	0x1
+ 1963 0866 4A       		.byte	0x4a
+ 1964 0867 A3000000 		.4byte	0xa3
+ 1965 086b 03040000 		.4byte	.LLST25
+ 1966 086f 14       		.uleb128 0x14
+ 1967 0870 8B030000 		.4byte	.LASF40
+ 1968 0874 01       		.byte	0x1
+ 1969 0875 4C       		.byte	0x4c
+ 1970 0876 AF000000 		.4byte	0xaf
+ 1971 087a 24040000 		.4byte	.LLST26
+ 1972 087e 18       		.uleb128 0x18
+ 1973 087f 10000000 		.4byte	.LVL97
+ 1974 0883 9A010000 		.4byte	0x19a
+ 1975 0887 98080000 		.4byte	0x898
+ 1976 088b 19       		.uleb128 0x19
+ 1977 088c 01       		.uleb128 0x1
+ 1978 088d 51       		.byte	0x51
+ 1979 088e 02       		.uleb128 0x2
+ 1980 088f 76       		.byte	0x76
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 48
+
+
+ 1981 0890 00       		.sleb128 0
+ 1982 0891 19       		.uleb128 0x19
+ 1983 0892 01       		.uleb128 0x1
+ 1984 0893 50       		.byte	0x50
+ 1985 0894 02       		.uleb128 0x2
+ 1986 0895 75       		.byte	0x75
+ 1987 0896 00       		.sleb128 0
+ 1988 0897 00       		.byte	0
+ 1989 0898 26       		.uleb128 0x26
+ 1990 0899 1A000000 		.4byte	.LVL99
+ 1991 089d 970A0000 		.4byte	0xa97
+ 1992 08a1 00       		.byte	0
+ 1993 08a2 29       		.uleb128 0x29
+ 1994 08a3 56030000 		.4byte	.LASF41
+ 1995 08a7 06       		.byte	0x6
+ 1996 08a8 0A       		.byte	0xa
+ 1997 08a9 81000000 		.4byte	0x81
+ 1998 08ad 05       		.uleb128 0x5
+ 1999 08ae 03       		.byte	0x3
+ 2000 08af 00000000 		.4byte	ADCResultCenter
+ 2001 08b3 0C       		.uleb128 0xc
+ 2002 08b4 81000000 		.4byte	0x81
+ 2003 08b8 C3080000 		.4byte	0x8c3
+ 2004 08bc 0D       		.uleb128 0xd
+ 2005 08bd E7000000 		.4byte	0xe7
+ 2006 08c1 01       		.byte	0x1
+ 2007 08c2 00       		.byte	0
+ 2008 08c3 29       		.uleb128 0x29
+ 2009 08c4 99010000 		.4byte	.LASF42
+ 2010 08c8 07       		.byte	0x7
+ 2011 08c9 06       		.byte	0x6
+ 2012 08ca B3080000 		.4byte	0x8b3
+ 2013 08ce 05       		.uleb128 0x5
+ 2014 08cf 03       		.byte	0x3
+ 2015 08d0 00000000 		.4byte	picc_atqa
+ 2016 08d4 0C       		.uleb128 0xc
+ 2017 08d5 81000000 		.4byte	0x81
+ 2018 08d9 E4080000 		.4byte	0x8e4
+ 2019 08dd 0D       		.uleb128 0xd
+ 2020 08de E7000000 		.4byte	0xe7
+ 2021 08e2 0E       		.byte	0xe
+ 2022 08e3 00       		.byte	0
+ 2023 08e4 29       		.uleb128 0x29
+ 2024 08e5 08010000 		.4byte	.LASF43
+ 2025 08e9 07       		.byte	0x7
+ 2026 08ea 06       		.byte	0x6
+ 2027 08eb D4080000 		.4byte	0x8d4
+ 2028 08ef 05       		.uleb128 0x5
+ 2029 08f0 03       		.byte	0x3
+ 2030 08f1 00000000 		.4byte	picc_uid
+ 2031 08f5 0C       		.uleb128 0xc
+ 2032 08f6 81000000 		.4byte	0x81
+ 2033 08fa 05090000 		.4byte	0x905
+ 2034 08fe 0D       		.uleb128 0xd
+ 2035 08ff E7000000 		.4byte	0xe7
+ 2036 0903 02       		.byte	0x2
+ 2037 0904 00       		.byte	0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 49
+
+
+ 2038 0905 29       		.uleb128 0x29
+ 2039 0906 64010000 		.4byte	.LASF44
+ 2040 090a 07       		.byte	0x7
+ 2041 090b 06       		.byte	0x6
+ 2042 090c F5080000 		.4byte	0x8f5
+ 2043 0910 05       		.uleb128 0x5
+ 2044 0911 03       		.byte	0x3
+ 2045 0912 00000000 		.4byte	picc_sak
+ 2046 0916 2A       		.uleb128 0x2a
+ 2047 0917 69020000 		.4byte	.LASF45
+ 2048 091b 01       		.byte	0x1
+ 2049 091c 19       		.byte	0x19
+ 2050 091d AF000000 		.4byte	0xaf
+ 2051 0921 2B       		.uleb128 0x2b
+ 2052 0922 11010000 		.4byte	.LASF50
+ 2053 0926 EE000000 		.4byte	0xee
+ 2054 092a 3E090000 		.4byte	0x93e
+ 2055 092e 2C       		.uleb128 0x2c
+ 2056 092f EE000000 		.4byte	0xee
+ 2057 0933 2C       		.uleb128 0x2c
+ 2058 0934 3E090000 		.4byte	0x93e
+ 2059 0938 2C       		.uleb128 0x2c
+ 2060 0939 E7000000 		.4byte	0xe7
+ 2061 093d 00       		.byte	0
+ 2062 093e 07       		.uleb128 0x7
+ 2063 093f 04       		.byte	0x4
+ 2064 0940 44090000 		.4byte	0x944
+ 2065 0944 2D       		.uleb128 0x2d
+ 2066 0945 2E       		.uleb128 0x2e
+ 2067 0946 10000000 		.4byte	.LASF46
+ 2068 094a 08       		.byte	0x8
+ 2069 094b 24       		.byte	0x24
+ 2070 094c 81000000 		.4byte	0x81
+ 2071 0950 69090000 		.4byte	0x969
+ 2072 0954 2C       		.uleb128 0x2c
+ 2073 0955 81000000 		.4byte	0x81
+ 2074 0959 2C       		.uleb128 0x2c
+ 2075 095a 81000000 		.4byte	0x81
+ 2076 095e 2C       		.uleb128 0x2c
+ 2077 095f 69090000 		.4byte	0x969
+ 2078 0963 2C       		.uleb128 0x2c
+ 2079 0964 69090000 		.4byte	0x969
+ 2080 0968 00       		.byte	0
+ 2081 0969 07       		.uleb128 0x7
+ 2082 096a 04       		.byte	0x4
+ 2083 096b 81000000 		.4byte	0x81
+ 2084 096f 2E       		.uleb128 0x2e
+ 2085 0970 01030000 		.4byte	.LASF47
+ 2086 0974 07       		.byte	0x7
+ 2087 0975 0C       		.byte	0xc
+ 2088 0976 81000000 		.4byte	0x81
+ 2089 097a 84090000 		.4byte	0x984
+ 2090 097e 2C       		.uleb128 0x2c
+ 2091 097f 81000000 		.4byte	0x81
+ 2092 0983 00       		.byte	0
+ 2093 0984 2E       		.uleb128 0x2e
+ 2094 0985 88010000 		.4byte	.LASF48
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 50
+
+
+ 2095 0989 08       		.byte	0x8
+ 2096 098a 23       		.byte	0x23
+ 2097 098b 81000000 		.4byte	0x81
+ 2098 098f 9E090000 		.4byte	0x99e
+ 2099 0993 2C       		.uleb128 0x2c
+ 2100 0994 81000000 		.4byte	0x81
+ 2101 0998 2C       		.uleb128 0x2c
+ 2102 0999 69090000 		.4byte	0x969
+ 2103 099d 00       		.byte	0
+ 2104 099e 2E       		.uleb128 0x2e
+ 2105 099f 1C000000 		.4byte	.LASF49
+ 2106 09a3 08       		.byte	0x8
+ 2107 09a4 22       		.byte	0x22
+ 2108 09a5 81000000 		.4byte	0x81
+ 2109 09a9 B8090000 		.4byte	0x9b8
+ 2110 09ad 2C       		.uleb128 0x2c
+ 2111 09ae 81000000 		.4byte	0x81
+ 2112 09b2 2C       		.uleb128 0x2c
+ 2113 09b3 69090000 		.4byte	0x969
+ 2114 09b7 00       		.byte	0
+ 2115 09b8 2B       		.uleb128 0x2b
+ 2116 09b9 77030000 		.4byte	.LASF51
+ 2117 09bd EE000000 		.4byte	0xee
+ 2118 09c1 D5090000 		.4byte	0x9d5
+ 2119 09c5 2C       		.uleb128 0x2c
+ 2120 09c6 EE000000 		.4byte	0xee
+ 2121 09ca 2C       		.uleb128 0x2c
+ 2122 09cb 73000000 		.4byte	0x73
+ 2123 09cf 2C       		.uleb128 0x2c
+ 2124 09d0 E7000000 		.4byte	0xe7
+ 2125 09d4 00       		.byte	0
+ 2126 09d5 2E       		.uleb128 0x2e
+ 2127 09d6 0C030000 		.4byte	.LASF52
+ 2128 09da 09       		.byte	0x9
+ 2129 09db 0B       		.byte	0xb
+ 2130 09dc 73000000 		.4byte	0x73
+ 2131 09e0 FE090000 		.4byte	0x9fe
+ 2132 09e4 2C       		.uleb128 0x2c
+ 2133 09e5 69090000 		.4byte	0x969
+ 2134 09e9 2C       		.uleb128 0x2c
+ 2135 09ea 69090000 		.4byte	0x969
+ 2136 09ee 2C       		.uleb128 0x2c
+ 2137 09ef 69090000 		.4byte	0x969
+ 2138 09f3 2C       		.uleb128 0x2c
+ 2139 09f4 8C000000 		.4byte	0x8c
+ 2140 09f8 2C       		.uleb128 0x2c
+ 2141 09f9 81000000 		.4byte	0x81
+ 2142 09fd 00       		.byte	0
+ 2143 09fe 2E       		.uleb128 0x2e
+ 2144 09ff 73010000 		.4byte	.LASF53
+ 2145 0a03 0A       		.byte	0xa
+ 2146 0a04 16       		.byte	0x16
+ 2147 0a05 73000000 		.4byte	0x73
+ 2148 0a09 1D0A0000 		.4byte	0xa1d
+ 2149 0a0d 2C       		.uleb128 0x2c
+ 2150 0a0e 3E090000 		.4byte	0x93e
+ 2151 0a12 2C       		.uleb128 0x2c
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 51
+
+
+ 2152 0a13 3E090000 		.4byte	0x93e
+ 2153 0a17 2C       		.uleb128 0x2c
+ 2154 0a18 DC000000 		.4byte	0xdc
+ 2155 0a1c 00       		.byte	0
+ 2156 0a1d 2F       		.uleb128 0x2f
+ 2157 0a1e 00000000 		.4byte	.LASF54
+ 2158 0a22 0B       		.byte	0xb
+ 2159 0a23 5201     		.2byte	0x152
+ 2160 0a25 C9000000 		.4byte	0xc9
+ 2161 0a29 30       		.uleb128 0x30
+ 2162 0a2a 53010000 		.4byte	.LASF55
+ 2163 0a2e 0C       		.byte	0xc
+ 2164 0a2f 65       		.byte	0x65
+ 2165 0a30 81000000 		.4byte	0x81
+ 2166 0a34 2E       		.uleb128 0x2e
+ 2167 0a35 66030000 		.4byte	.LASF56
+ 2168 0a39 0C       		.byte	0xc
+ 2169 0a3a 5B       		.byte	0x5b
+ 2170 0a3b 81000000 		.4byte	0x81
+ 2171 0a3f 490A0000 		.4byte	0xa49
+ 2172 0a43 2C       		.uleb128 0x2c
+ 2173 0a44 81000000 		.4byte	0x81
+ 2174 0a48 00       		.byte	0
+ 2175 0a49 2E       		.uleb128 0x2e
+ 2176 0a4a A3010000 		.4byte	.LASF57
+ 2177 0a4e 0C       		.byte	0xc
+ 2178 0a4f 64       		.byte	0x64
+ 2179 0a50 81000000 		.4byte	0x81
+ 2180 0a54 5E0A0000 		.4byte	0xa5e
+ 2181 0a58 2C       		.uleb128 0x2c
+ 2182 0a59 81000000 		.4byte	0x81
+ 2183 0a5d 00       		.byte	0
+ 2184 0a5e 2E       		.uleb128 0x2e
+ 2185 0a5f E9020000 		.4byte	.LASF58
+ 2186 0a63 07       		.byte	0x7
+ 2187 0a64 0D       		.byte	0xd
+ 2188 0a65 81000000 		.4byte	0x81
+ 2189 0a69 7D0A0000 		.4byte	0xa7d
+ 2190 0a6d 2C       		.uleb128 0x2c
+ 2191 0a6e 69090000 		.4byte	0x969
+ 2192 0a72 2C       		.uleb128 0x2c
+ 2193 0a73 69090000 		.4byte	0x969
+ 2194 0a77 2C       		.uleb128 0x2c
+ 2195 0a78 69090000 		.4byte	0x969
+ 2196 0a7c 00       		.byte	0
+ 2197 0a7d 2E       		.uleb128 0x2e
+ 2198 0a7e 3D030000 		.4byte	.LASF59
+ 2199 0a82 0C       		.byte	0xc
+ 2200 0a83 76       		.byte	0x76
+ 2201 0a84 81000000 		.4byte	0x81
+ 2202 0a88 970A0000 		.4byte	0xa97
+ 2203 0a8c 2C       		.uleb128 0x2c
+ 2204 0a8d 69090000 		.4byte	0x969
+ 2205 0a91 2C       		.uleb128 0x2c
+ 2206 0a92 A3000000 		.4byte	0xa3
+ 2207 0a96 00       		.byte	0
+ 2208 0a97 31       		.uleb128 0x31
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 52
+
+
+ 2209 0a98 90030000 		.4byte	.LASF64
+ 2210 0a9c 01       		.byte	0x1
+ 2211 0a9d 18       		.byte	0x18
+ 2212 0a9e 00       		.byte	0
+ 2213              		.section	.debug_abbrev,"",%progbits
+ 2214              	.Ldebug_abbrev0:
+ 2215 0000 01       		.uleb128 0x1
+ 2216 0001 11       		.uleb128 0x11
+ 2217 0002 01       		.byte	0x1
+ 2218 0003 25       		.uleb128 0x25
+ 2219 0004 0E       		.uleb128 0xe
+ 2220 0005 13       		.uleb128 0x13
+ 2221 0006 0B       		.uleb128 0xb
+ 2222 0007 03       		.uleb128 0x3
+ 2223 0008 0E       		.uleb128 0xe
+ 2224 0009 1B       		.uleb128 0x1b
+ 2225 000a 0E       		.uleb128 0xe
+ 2226 000b 55       		.uleb128 0x55
+ 2227 000c 17       		.uleb128 0x17
+ 2228 000d 11       		.uleb128 0x11
+ 2229 000e 01       		.uleb128 0x1
+ 2230 000f 10       		.uleb128 0x10
+ 2231 0010 17       		.uleb128 0x17
+ 2232 0011 00       		.byte	0
+ 2233 0012 00       		.byte	0
+ 2234 0013 02       		.uleb128 0x2
+ 2235 0014 24       		.uleb128 0x24
+ 2236 0015 00       		.byte	0
+ 2237 0016 0B       		.uleb128 0xb
+ 2238 0017 0B       		.uleb128 0xb
+ 2239 0018 3E       		.uleb128 0x3e
+ 2240 0019 0B       		.uleb128 0xb
+ 2241 001a 03       		.uleb128 0x3
+ 2242 001b 0E       		.uleb128 0xe
+ 2243 001c 00       		.byte	0
+ 2244 001d 00       		.byte	0
+ 2245 001e 03       		.uleb128 0x3
+ 2246 001f 16       		.uleb128 0x16
+ 2247 0020 00       		.byte	0
+ 2248 0021 03       		.uleb128 0x3
+ 2249 0022 0E       		.uleb128 0xe
+ 2250 0023 3A       		.uleb128 0x3a
+ 2251 0024 0B       		.uleb128 0xb
+ 2252 0025 3B       		.uleb128 0x3b
+ 2253 0026 0B       		.uleb128 0xb
+ 2254 0027 49       		.uleb128 0x49
+ 2255 0028 13       		.uleb128 0x13
+ 2256 0029 00       		.byte	0
+ 2257 002a 00       		.byte	0
+ 2258 002b 04       		.uleb128 0x4
+ 2259 002c 24       		.uleb128 0x24
+ 2260 002d 00       		.byte	0
+ 2261 002e 0B       		.uleb128 0xb
+ 2262 002f 0B       		.uleb128 0xb
+ 2263 0030 3E       		.uleb128 0x3e
+ 2264 0031 0B       		.uleb128 0xb
+ 2265 0032 03       		.uleb128 0x3
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 53
+
+
+ 2266 0033 08       		.uleb128 0x8
+ 2267 0034 00       		.byte	0
+ 2268 0035 00       		.byte	0
+ 2269 0036 05       		.uleb128 0x5
+ 2270 0037 16       		.uleb128 0x16
+ 2271 0038 00       		.byte	0
+ 2272 0039 03       		.uleb128 0x3
+ 2273 003a 0E       		.uleb128 0xe
+ 2274 003b 3A       		.uleb128 0x3a
+ 2275 003c 0B       		.uleb128 0xb
+ 2276 003d 3B       		.uleb128 0x3b
+ 2277 003e 05       		.uleb128 0x5
+ 2278 003f 49       		.uleb128 0x49
+ 2279 0040 13       		.uleb128 0x13
+ 2280 0041 00       		.byte	0
+ 2281 0042 00       		.byte	0
+ 2282 0043 06       		.uleb128 0x6
+ 2283 0044 0F       		.uleb128 0xf
+ 2284 0045 00       		.byte	0
+ 2285 0046 0B       		.uleb128 0xb
+ 2286 0047 0B       		.uleb128 0xb
+ 2287 0048 00       		.byte	0
+ 2288 0049 00       		.byte	0
+ 2289 004a 07       		.uleb128 0x7
+ 2290 004b 0F       		.uleb128 0xf
+ 2291 004c 00       		.byte	0
+ 2292 004d 0B       		.uleb128 0xb
+ 2293 004e 0B       		.uleb128 0xb
+ 2294 004f 49       		.uleb128 0x49
+ 2295 0050 13       		.uleb128 0x13
+ 2296 0051 00       		.byte	0
+ 2297 0052 00       		.byte	0
+ 2298 0053 08       		.uleb128 0x8
+ 2299 0054 2E       		.uleb128 0x2e
+ 2300 0055 01       		.byte	0x1
+ 2301 0056 3F       		.uleb128 0x3f
+ 2302 0057 19       		.uleb128 0x19
+ 2303 0058 03       		.uleb128 0x3
+ 2304 0059 0E       		.uleb128 0xe
+ 2305 005a 3A       		.uleb128 0x3a
+ 2306 005b 0B       		.uleb128 0xb
+ 2307 005c 3B       		.uleb128 0x3b
+ 2308 005d 05       		.uleb128 0x5
+ 2309 005e 27       		.uleb128 0x27
+ 2310 005f 19       		.uleb128 0x19
+ 2311 0060 49       		.uleb128 0x49
+ 2312 0061 13       		.uleb128 0x13
+ 2313 0062 20       		.uleb128 0x20
+ 2314 0063 0B       		.uleb128 0xb
+ 2315 0064 01       		.uleb128 0x1
+ 2316 0065 13       		.uleb128 0x13
+ 2317 0066 00       		.byte	0
+ 2318 0067 00       		.byte	0
+ 2319 0068 09       		.uleb128 0x9
+ 2320 0069 05       		.uleb128 0x5
+ 2321 006a 00       		.byte	0
+ 2322 006b 03       		.uleb128 0x3
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 54
+
+
+ 2323 006c 0E       		.uleb128 0xe
+ 2324 006d 3A       		.uleb128 0x3a
+ 2325 006e 0B       		.uleb128 0xb
+ 2326 006f 3B       		.uleb128 0x3b
+ 2327 0070 05       		.uleb128 0x5
+ 2328 0071 49       		.uleb128 0x49
+ 2329 0072 13       		.uleb128 0x13
+ 2330 0073 00       		.byte	0
+ 2331 0074 00       		.byte	0
+ 2332 0075 0A       		.uleb128 0xa
+ 2333 0076 34       		.uleb128 0x34
+ 2334 0077 00       		.byte	0
+ 2335 0078 03       		.uleb128 0x3
+ 2336 0079 0E       		.uleb128 0xe
+ 2337 007a 3A       		.uleb128 0x3a
+ 2338 007b 0B       		.uleb128 0xb
+ 2339 007c 3B       		.uleb128 0x3b
+ 2340 007d 05       		.uleb128 0x5
+ 2341 007e 49       		.uleb128 0x49
+ 2342 007f 13       		.uleb128 0x13
+ 2343 0080 00       		.byte	0
+ 2344 0081 00       		.byte	0
+ 2345 0082 0B       		.uleb128 0xb
+ 2346 0083 34       		.uleb128 0x34
+ 2347 0084 00       		.byte	0
+ 2348 0085 03       		.uleb128 0x3
+ 2349 0086 08       		.uleb128 0x8
+ 2350 0087 3A       		.uleb128 0x3a
+ 2351 0088 0B       		.uleb128 0xb
+ 2352 0089 3B       		.uleb128 0x3b
+ 2353 008a 05       		.uleb128 0x5
+ 2354 008b 49       		.uleb128 0x49
+ 2355 008c 13       		.uleb128 0x13
+ 2356 008d 00       		.byte	0
+ 2357 008e 00       		.byte	0
+ 2358 008f 0C       		.uleb128 0xc
+ 2359 0090 01       		.uleb128 0x1
+ 2360 0091 01       		.byte	0x1
+ 2361 0092 49       		.uleb128 0x49
+ 2362 0093 13       		.uleb128 0x13
+ 2363 0094 01       		.uleb128 0x1
+ 2364 0095 13       		.uleb128 0x13
+ 2365 0096 00       		.byte	0
+ 2366 0097 00       		.byte	0
+ 2367 0098 0D       		.uleb128 0xd
+ 2368 0099 21       		.uleb128 0x21
+ 2369 009a 00       		.byte	0
+ 2370 009b 49       		.uleb128 0x49
+ 2371 009c 13       		.uleb128 0x13
+ 2372 009d 2F       		.uleb128 0x2f
+ 2373 009e 0B       		.uleb128 0xb
+ 2374 009f 00       		.byte	0
+ 2375 00a0 00       		.byte	0
+ 2376 00a1 0E       		.uleb128 0xe
+ 2377 00a2 05       		.uleb128 0x5
+ 2378 00a3 00       		.byte	0
+ 2379 00a4 03       		.uleb128 0x3
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 55
+
+
+ 2380 00a5 08       		.uleb128 0x8
+ 2381 00a6 3A       		.uleb128 0x3a
+ 2382 00a7 0B       		.uleb128 0xb
+ 2383 00a8 3B       		.uleb128 0x3b
+ 2384 00a9 05       		.uleb128 0x5
+ 2385 00aa 49       		.uleb128 0x49
+ 2386 00ab 13       		.uleb128 0x13
+ 2387 00ac 00       		.byte	0
+ 2388 00ad 00       		.byte	0
+ 2389 00ae 0F       		.uleb128 0xf
+ 2390 00af 2E       		.uleb128 0x2e
+ 2391 00b0 01       		.byte	0x1
+ 2392 00b1 3F       		.uleb128 0x3f
+ 2393 00b2 19       		.uleb128 0x19
+ 2394 00b3 03       		.uleb128 0x3
+ 2395 00b4 0E       		.uleb128 0xe
+ 2396 00b5 3A       		.uleb128 0x3a
+ 2397 00b6 0B       		.uleb128 0xb
+ 2398 00b7 3B       		.uleb128 0x3b
+ 2399 00b8 0B       		.uleb128 0xb
+ 2400 00b9 27       		.uleb128 0x27
+ 2401 00ba 19       		.uleb128 0x19
+ 2402 00bb 49       		.uleb128 0x49
+ 2403 00bc 13       		.uleb128 0x13
+ 2404 00bd 20       		.uleb128 0x20
+ 2405 00be 0B       		.uleb128 0xb
+ 2406 00bf 01       		.uleb128 0x1
+ 2407 00c0 13       		.uleb128 0x13
+ 2408 00c1 00       		.byte	0
+ 2409 00c2 00       		.byte	0
+ 2410 00c3 10       		.uleb128 0x10
+ 2411 00c4 05       		.uleb128 0x5
+ 2412 00c5 00       		.byte	0
+ 2413 00c6 03       		.uleb128 0x3
+ 2414 00c7 0E       		.uleb128 0xe
+ 2415 00c8 3A       		.uleb128 0x3a
+ 2416 00c9 0B       		.uleb128 0xb
+ 2417 00ca 3B       		.uleb128 0x3b
+ 2418 00cb 0B       		.uleb128 0xb
+ 2419 00cc 49       		.uleb128 0x49
+ 2420 00cd 13       		.uleb128 0x13
+ 2421 00ce 00       		.byte	0
+ 2422 00cf 00       		.byte	0
+ 2423 00d0 11       		.uleb128 0x11
+ 2424 00d1 05       		.uleb128 0x5
+ 2425 00d2 00       		.byte	0
+ 2426 00d3 03       		.uleb128 0x3
+ 2427 00d4 08       		.uleb128 0x8
+ 2428 00d5 3A       		.uleb128 0x3a
+ 2429 00d6 0B       		.uleb128 0xb
+ 2430 00d7 3B       		.uleb128 0x3b
+ 2431 00d8 0B       		.uleb128 0xb
+ 2432 00d9 49       		.uleb128 0x49
+ 2433 00da 13       		.uleb128 0x13
+ 2434 00db 00       		.byte	0
+ 2435 00dc 00       		.byte	0
+ 2436 00dd 12       		.uleb128 0x12
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 56
+
+
+ 2437 00de 2E       		.uleb128 0x2e
+ 2438 00df 01       		.byte	0x1
+ 2439 00e0 3F       		.uleb128 0x3f
+ 2440 00e1 19       		.uleb128 0x19
+ 2441 00e2 03       		.uleb128 0x3
+ 2442 00e3 0E       		.uleb128 0xe
+ 2443 00e4 3A       		.uleb128 0x3a
+ 2444 00e5 0B       		.uleb128 0xb
+ 2445 00e6 3B       		.uleb128 0x3b
+ 2446 00e7 0B       		.uleb128 0xb
+ 2447 00e8 27       		.uleb128 0x27
+ 2448 00e9 19       		.uleb128 0x19
+ 2449 00ea 11       		.uleb128 0x11
+ 2450 00eb 01       		.uleb128 0x1
+ 2451 00ec 12       		.uleb128 0x12
+ 2452 00ed 06       		.uleb128 0x6
+ 2453 00ee 40       		.uleb128 0x40
+ 2454 00ef 18       		.uleb128 0x18
+ 2455 00f0 9742     		.uleb128 0x2117
+ 2456 00f2 19       		.uleb128 0x19
+ 2457 00f3 01       		.uleb128 0x1
+ 2458 00f4 13       		.uleb128 0x13
+ 2459 00f5 00       		.byte	0
+ 2460 00f6 00       		.byte	0
+ 2461 00f7 13       		.uleb128 0x13
+ 2462 00f8 05       		.uleb128 0x5
+ 2463 00f9 00       		.byte	0
+ 2464 00fa 03       		.uleb128 0x3
+ 2465 00fb 0E       		.uleb128 0xe
+ 2466 00fc 3A       		.uleb128 0x3a
+ 2467 00fd 0B       		.uleb128 0xb
+ 2468 00fe 3B       		.uleb128 0x3b
+ 2469 00ff 0B       		.uleb128 0xb
+ 2470 0100 49       		.uleb128 0x49
+ 2471 0101 13       		.uleb128 0x13
+ 2472 0102 02       		.uleb128 0x2
+ 2473 0103 17       		.uleb128 0x17
+ 2474 0104 00       		.byte	0
+ 2475 0105 00       		.byte	0
+ 2476 0106 14       		.uleb128 0x14
+ 2477 0107 34       		.uleb128 0x34
+ 2478 0108 00       		.byte	0
+ 2479 0109 03       		.uleb128 0x3
+ 2480 010a 0E       		.uleb128 0xe
+ 2481 010b 3A       		.uleb128 0x3a
+ 2482 010c 0B       		.uleb128 0xb
+ 2483 010d 3B       		.uleb128 0x3b
+ 2484 010e 0B       		.uleb128 0xb
+ 2485 010f 49       		.uleb128 0x49
+ 2486 0110 13       		.uleb128 0x13
+ 2487 0111 02       		.uleb128 0x2
+ 2488 0112 17       		.uleb128 0x17
+ 2489 0113 00       		.byte	0
+ 2490 0114 00       		.byte	0
+ 2491 0115 15       		.uleb128 0x15
+ 2492 0116 34       		.uleb128 0x34
+ 2493 0117 00       		.byte	0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 57
+
+
+ 2494 0118 03       		.uleb128 0x3
+ 2495 0119 08       		.uleb128 0x8
+ 2496 011a 3A       		.uleb128 0x3a
+ 2497 011b 0B       		.uleb128 0xb
+ 2498 011c 3B       		.uleb128 0x3b
+ 2499 011d 0B       		.uleb128 0xb
+ 2500 011e 49       		.uleb128 0x49
+ 2501 011f 13       		.uleb128 0x13
+ 2502 0120 02       		.uleb128 0x2
+ 2503 0121 18       		.uleb128 0x18
+ 2504 0122 00       		.byte	0
+ 2505 0123 00       		.byte	0
+ 2506 0124 16       		.uleb128 0x16
+ 2507 0125 34       		.uleb128 0x34
+ 2508 0126 00       		.byte	0
+ 2509 0127 03       		.uleb128 0x3
+ 2510 0128 0E       		.uleb128 0xe
+ 2511 0129 3A       		.uleb128 0x3a
+ 2512 012a 0B       		.uleb128 0xb
+ 2513 012b 3B       		.uleb128 0x3b
+ 2514 012c 0B       		.uleb128 0xb
+ 2515 012d 49       		.uleb128 0x49
+ 2516 012e 13       		.uleb128 0x13
+ 2517 012f 02       		.uleb128 0x2
+ 2518 0130 18       		.uleb128 0x18
+ 2519 0131 00       		.byte	0
+ 2520 0132 00       		.byte	0
+ 2521 0133 17       		.uleb128 0x17
+ 2522 0134 34       		.uleb128 0x34
+ 2523 0135 00       		.byte	0
+ 2524 0136 03       		.uleb128 0x3
+ 2525 0137 08       		.uleb128 0x8
+ 2526 0138 3A       		.uleb128 0x3a
+ 2527 0139 0B       		.uleb128 0xb
+ 2528 013a 3B       		.uleb128 0x3b
+ 2529 013b 0B       		.uleb128 0xb
+ 2530 013c 49       		.uleb128 0x49
+ 2531 013d 13       		.uleb128 0x13
+ 2532 013e 02       		.uleb128 0x2
+ 2533 013f 17       		.uleb128 0x17
+ 2534 0140 00       		.byte	0
+ 2535 0141 00       		.byte	0
+ 2536 0142 18       		.uleb128 0x18
+ 2537 0143 898201   		.uleb128 0x4109
+ 2538 0146 01       		.byte	0x1
+ 2539 0147 11       		.uleb128 0x11
+ 2540 0148 01       		.uleb128 0x1
+ 2541 0149 31       		.uleb128 0x31
+ 2542 014a 13       		.uleb128 0x13
+ 2543 014b 01       		.uleb128 0x1
+ 2544 014c 13       		.uleb128 0x13
+ 2545 014d 00       		.byte	0
+ 2546 014e 00       		.byte	0
+ 2547 014f 19       		.uleb128 0x19
+ 2548 0150 8A8201   		.uleb128 0x410a
+ 2549 0153 00       		.byte	0
+ 2550 0154 02       		.uleb128 0x2
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 58
+
+
+ 2551 0155 18       		.uleb128 0x18
+ 2552 0156 9142     		.uleb128 0x2111
+ 2553 0158 18       		.uleb128 0x18
+ 2554 0159 00       		.byte	0
+ 2555 015a 00       		.byte	0
+ 2556 015b 1A       		.uleb128 0x1a
+ 2557 015c 898201   		.uleb128 0x4109
+ 2558 015f 01       		.byte	0x1
+ 2559 0160 11       		.uleb128 0x11
+ 2560 0161 01       		.uleb128 0x1
+ 2561 0162 31       		.uleb128 0x31
+ 2562 0163 13       		.uleb128 0x13
+ 2563 0164 00       		.byte	0
+ 2564 0165 00       		.byte	0
+ 2565 0166 1B       		.uleb128 0x1b
+ 2566 0167 2E       		.uleb128 0x2e
+ 2567 0168 01       		.byte	0x1
+ 2568 0169 31       		.uleb128 0x31
+ 2569 016a 13       		.uleb128 0x13
+ 2570 016b 11       		.uleb128 0x11
+ 2571 016c 01       		.uleb128 0x1
+ 2572 016d 12       		.uleb128 0x12
+ 2573 016e 06       		.uleb128 0x6
+ 2574 016f 40       		.uleb128 0x40
+ 2575 0170 18       		.uleb128 0x18
+ 2576 0171 9742     		.uleb128 0x2117
+ 2577 0173 19       		.uleb128 0x19
+ 2578 0174 01       		.uleb128 0x1
+ 2579 0175 13       		.uleb128 0x13
+ 2580 0176 00       		.byte	0
+ 2581 0177 00       		.byte	0
+ 2582 0178 1C       		.uleb128 0x1c
+ 2583 0179 05       		.uleb128 0x5
+ 2584 017a 00       		.byte	0
+ 2585 017b 31       		.uleb128 0x31
+ 2586 017c 13       		.uleb128 0x13
+ 2587 017d 02       		.uleb128 0x2
+ 2588 017e 17       		.uleb128 0x17
+ 2589 017f 00       		.byte	0
+ 2590 0180 00       		.byte	0
+ 2591 0181 1D       		.uleb128 0x1d
+ 2592 0182 34       		.uleb128 0x34
+ 2593 0183 00       		.byte	0
+ 2594 0184 31       		.uleb128 0x31
+ 2595 0185 13       		.uleb128 0x13
+ 2596 0186 02       		.uleb128 0x2
+ 2597 0187 17       		.uleb128 0x17
+ 2598 0188 00       		.byte	0
+ 2599 0189 00       		.byte	0
+ 2600 018a 1E       		.uleb128 0x1e
+ 2601 018b 34       		.uleb128 0x34
+ 2602 018c 00       		.byte	0
+ 2603 018d 31       		.uleb128 0x31
+ 2604 018e 13       		.uleb128 0x13
+ 2605 018f 02       		.uleb128 0x2
+ 2606 0190 18       		.uleb128 0x18
+ 2607 0191 00       		.byte	0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 59
+
+
+ 2608 0192 00       		.byte	0
+ 2609 0193 1F       		.uleb128 0x1f
+ 2610 0194 34       		.uleb128 0x34
+ 2611 0195 00       		.byte	0
+ 2612 0196 31       		.uleb128 0x31
+ 2613 0197 13       		.uleb128 0x13
+ 2614 0198 00       		.byte	0
+ 2615 0199 00       		.byte	0
+ 2616 019a 20       		.uleb128 0x20
+ 2617 019b 0B       		.uleb128 0xb
+ 2618 019c 01       		.byte	0x1
+ 2619 019d 11       		.uleb128 0x11
+ 2620 019e 01       		.uleb128 0x1
+ 2621 019f 12       		.uleb128 0x12
+ 2622 01a0 06       		.uleb128 0x6
+ 2623 01a1 01       		.uleb128 0x1
+ 2624 01a2 13       		.uleb128 0x13
+ 2625 01a3 00       		.byte	0
+ 2626 01a4 00       		.byte	0
+ 2627 01a5 21       		.uleb128 0x21
+ 2628 01a6 0B       		.uleb128 0xb
+ 2629 01a7 01       		.byte	0x1
+ 2630 01a8 11       		.uleb128 0x11
+ 2631 01a9 01       		.uleb128 0x1
+ 2632 01aa 12       		.uleb128 0x12
+ 2633 01ab 06       		.uleb128 0x6
+ 2634 01ac 00       		.byte	0
+ 2635 01ad 00       		.byte	0
+ 2636 01ae 22       		.uleb128 0x22
+ 2637 01af 2E       		.uleb128 0x2e
+ 2638 01b0 01       		.byte	0x1
+ 2639 01b1 3F       		.uleb128 0x3f
+ 2640 01b2 19       		.uleb128 0x19
+ 2641 01b3 03       		.uleb128 0x3
+ 2642 01b4 0E       		.uleb128 0xe
+ 2643 01b5 3A       		.uleb128 0x3a
+ 2644 01b6 0B       		.uleb128 0xb
+ 2645 01b7 3B       		.uleb128 0x3b
+ 2646 01b8 05       		.uleb128 0x5
+ 2647 01b9 27       		.uleb128 0x27
+ 2648 01ba 19       		.uleb128 0x19
+ 2649 01bb 49       		.uleb128 0x49
+ 2650 01bc 13       		.uleb128 0x13
+ 2651 01bd 11       		.uleb128 0x11
+ 2652 01be 01       		.uleb128 0x1
+ 2653 01bf 12       		.uleb128 0x12
+ 2654 01c0 06       		.uleb128 0x6
+ 2655 01c1 40       		.uleb128 0x40
+ 2656 01c2 18       		.uleb128 0x18
+ 2657 01c3 9742     		.uleb128 0x2117
+ 2658 01c5 19       		.uleb128 0x19
+ 2659 01c6 01       		.uleb128 0x1
+ 2660 01c7 13       		.uleb128 0x13
+ 2661 01c8 00       		.byte	0
+ 2662 01c9 00       		.byte	0
+ 2663 01ca 23       		.uleb128 0x23
+ 2664 01cb 05       		.uleb128 0x5
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 60
+
+
+ 2665 01cc 00       		.byte	0
+ 2666 01cd 03       		.uleb128 0x3
+ 2667 01ce 08       		.uleb128 0x8
+ 2668 01cf 3A       		.uleb128 0x3a
+ 2669 01d0 0B       		.uleb128 0xb
+ 2670 01d1 3B       		.uleb128 0x3b
+ 2671 01d2 05       		.uleb128 0x5
+ 2672 01d3 49       		.uleb128 0x49
+ 2673 01d4 13       		.uleb128 0x13
+ 2674 01d5 02       		.uleb128 0x2
+ 2675 01d6 17       		.uleb128 0x17
+ 2676 01d7 00       		.byte	0
+ 2677 01d8 00       		.byte	0
+ 2678 01d9 24       		.uleb128 0x24
+ 2679 01da 34       		.uleb128 0x34
+ 2680 01db 00       		.byte	0
+ 2681 01dc 03       		.uleb128 0x3
+ 2682 01dd 0E       		.uleb128 0xe
+ 2683 01de 3A       		.uleb128 0x3a
+ 2684 01df 0B       		.uleb128 0xb
+ 2685 01e0 3B       		.uleb128 0x3b
+ 2686 01e1 05       		.uleb128 0x5
+ 2687 01e2 49       		.uleb128 0x49
+ 2688 01e3 13       		.uleb128 0x13
+ 2689 01e4 02       		.uleb128 0x2
+ 2690 01e5 18       		.uleb128 0x18
+ 2691 01e6 00       		.byte	0
+ 2692 01e7 00       		.byte	0
+ 2693 01e8 25       		.uleb128 0x25
+ 2694 01e9 34       		.uleb128 0x34
+ 2695 01ea 00       		.byte	0
+ 2696 01eb 03       		.uleb128 0x3
+ 2697 01ec 0E       		.uleb128 0xe
+ 2698 01ed 3A       		.uleb128 0x3a
+ 2699 01ee 0B       		.uleb128 0xb
+ 2700 01ef 3B       		.uleb128 0x3b
+ 2701 01f0 05       		.uleb128 0x5
+ 2702 01f1 49       		.uleb128 0x49
+ 2703 01f2 13       		.uleb128 0x13
+ 2704 01f3 02       		.uleb128 0x2
+ 2705 01f4 17       		.uleb128 0x17
+ 2706 01f5 00       		.byte	0
+ 2707 01f6 00       		.byte	0
+ 2708 01f7 26       		.uleb128 0x26
+ 2709 01f8 898201   		.uleb128 0x4109
+ 2710 01fb 00       		.byte	0
+ 2711 01fc 11       		.uleb128 0x11
+ 2712 01fd 01       		.uleb128 0x1
+ 2713 01fe 31       		.uleb128 0x31
+ 2714 01ff 13       		.uleb128 0x13
+ 2715 0200 00       		.byte	0
+ 2716 0201 00       		.byte	0
+ 2717 0202 27       		.uleb128 0x27
+ 2718 0203 2E       		.uleb128 0x2e
+ 2719 0204 01       		.byte	0x1
+ 2720 0205 3F       		.uleb128 0x3f
+ 2721 0206 19       		.uleb128 0x19
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 61
+
+
+ 2722 0207 03       		.uleb128 0x3
+ 2723 0208 0E       		.uleb128 0xe
+ 2724 0209 3A       		.uleb128 0x3a
+ 2725 020a 0B       		.uleb128 0xb
+ 2726 020b 3B       		.uleb128 0x3b
+ 2727 020c 0B       		.uleb128 0xb
+ 2728 020d 27       		.uleb128 0x27
+ 2729 020e 19       		.uleb128 0x19
+ 2730 020f 49       		.uleb128 0x49
+ 2731 0210 13       		.uleb128 0x13
+ 2732 0211 11       		.uleb128 0x11
+ 2733 0212 01       		.uleb128 0x1
+ 2734 0213 12       		.uleb128 0x12
+ 2735 0214 06       		.uleb128 0x6
+ 2736 0215 40       		.uleb128 0x40
+ 2737 0216 18       		.uleb128 0x18
+ 2738 0217 9742     		.uleb128 0x2117
+ 2739 0219 19       		.uleb128 0x19
+ 2740 021a 01       		.uleb128 0x1
+ 2741 021b 13       		.uleb128 0x13
+ 2742 021c 00       		.byte	0
+ 2743 021d 00       		.byte	0
+ 2744 021e 28       		.uleb128 0x28
+ 2745 021f 05       		.uleb128 0x5
+ 2746 0220 00       		.byte	0
+ 2747 0221 03       		.uleb128 0x3
+ 2748 0222 08       		.uleb128 0x8
+ 2749 0223 3A       		.uleb128 0x3a
+ 2750 0224 0B       		.uleb128 0xb
+ 2751 0225 3B       		.uleb128 0x3b
+ 2752 0226 0B       		.uleb128 0xb
+ 2753 0227 49       		.uleb128 0x49
+ 2754 0228 13       		.uleb128 0x13
+ 2755 0229 02       		.uleb128 0x2
+ 2756 022a 17       		.uleb128 0x17
+ 2757 022b 00       		.byte	0
+ 2758 022c 00       		.byte	0
+ 2759 022d 29       		.uleb128 0x29
+ 2760 022e 34       		.uleb128 0x34
+ 2761 022f 00       		.byte	0
+ 2762 0230 03       		.uleb128 0x3
+ 2763 0231 0E       		.uleb128 0xe
+ 2764 0232 3A       		.uleb128 0x3a
+ 2765 0233 0B       		.uleb128 0xb
+ 2766 0234 3B       		.uleb128 0x3b
+ 2767 0235 0B       		.uleb128 0xb
+ 2768 0236 49       		.uleb128 0x49
+ 2769 0237 13       		.uleb128 0x13
+ 2770 0238 3F       		.uleb128 0x3f
+ 2771 0239 19       		.uleb128 0x19
+ 2772 023a 02       		.uleb128 0x2
+ 2773 023b 18       		.uleb128 0x18
+ 2774 023c 00       		.byte	0
+ 2775 023d 00       		.byte	0
+ 2776 023e 2A       		.uleb128 0x2a
+ 2777 023f 34       		.uleb128 0x34
+ 2778 0240 00       		.byte	0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 62
+
+
+ 2779 0241 03       		.uleb128 0x3
+ 2780 0242 0E       		.uleb128 0xe
+ 2781 0243 3A       		.uleb128 0x3a
+ 2782 0244 0B       		.uleb128 0xb
+ 2783 0245 3B       		.uleb128 0x3b
+ 2784 0246 0B       		.uleb128 0xb
+ 2785 0247 49       		.uleb128 0x49
+ 2786 0248 13       		.uleb128 0x13
+ 2787 0249 3F       		.uleb128 0x3f
+ 2788 024a 19       		.uleb128 0x19
+ 2789 024b 3C       		.uleb128 0x3c
+ 2790 024c 19       		.uleb128 0x19
+ 2791 024d 00       		.byte	0
+ 2792 024e 00       		.byte	0
+ 2793 024f 2B       		.uleb128 0x2b
+ 2794 0250 2E       		.uleb128 0x2e
+ 2795 0251 01       		.byte	0x1
+ 2796 0252 3F       		.uleb128 0x3f
+ 2797 0253 19       		.uleb128 0x19
+ 2798 0254 03       		.uleb128 0x3
+ 2799 0255 0E       		.uleb128 0xe
+ 2800 0256 27       		.uleb128 0x27
+ 2801 0257 19       		.uleb128 0x19
+ 2802 0258 49       		.uleb128 0x49
+ 2803 0259 13       		.uleb128 0x13
+ 2804 025a 34       		.uleb128 0x34
+ 2805 025b 19       		.uleb128 0x19
+ 2806 025c 3C       		.uleb128 0x3c
+ 2807 025d 19       		.uleb128 0x19
+ 2808 025e 01       		.uleb128 0x1
+ 2809 025f 13       		.uleb128 0x13
+ 2810 0260 00       		.byte	0
+ 2811 0261 00       		.byte	0
+ 2812 0262 2C       		.uleb128 0x2c
+ 2813 0263 05       		.uleb128 0x5
+ 2814 0264 00       		.byte	0
+ 2815 0265 49       		.uleb128 0x49
+ 2816 0266 13       		.uleb128 0x13
+ 2817 0267 00       		.byte	0
+ 2818 0268 00       		.byte	0
+ 2819 0269 2D       		.uleb128 0x2d
+ 2820 026a 26       		.uleb128 0x26
+ 2821 026b 00       		.byte	0
+ 2822 026c 00       		.byte	0
+ 2823 026d 00       		.byte	0
+ 2824 026e 2E       		.uleb128 0x2e
+ 2825 026f 2E       		.uleb128 0x2e
+ 2826 0270 01       		.byte	0x1
+ 2827 0271 3F       		.uleb128 0x3f
+ 2828 0272 19       		.uleb128 0x19
+ 2829 0273 03       		.uleb128 0x3
+ 2830 0274 0E       		.uleb128 0xe
+ 2831 0275 3A       		.uleb128 0x3a
+ 2832 0276 0B       		.uleb128 0xb
+ 2833 0277 3B       		.uleb128 0x3b
+ 2834 0278 0B       		.uleb128 0xb
+ 2835 0279 27       		.uleb128 0x27
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 63
+
+
+ 2836 027a 19       		.uleb128 0x19
+ 2837 027b 49       		.uleb128 0x49
+ 2838 027c 13       		.uleb128 0x13
+ 2839 027d 3C       		.uleb128 0x3c
+ 2840 027e 19       		.uleb128 0x19
+ 2841 027f 01       		.uleb128 0x1
+ 2842 0280 13       		.uleb128 0x13
+ 2843 0281 00       		.byte	0
+ 2844 0282 00       		.byte	0
+ 2845 0283 2F       		.uleb128 0x2f
+ 2846 0284 2E       		.uleb128 0x2e
+ 2847 0285 00       		.byte	0
+ 2848 0286 3F       		.uleb128 0x3f
+ 2849 0287 19       		.uleb128 0x19
+ 2850 0288 03       		.uleb128 0x3
+ 2851 0289 0E       		.uleb128 0xe
+ 2852 028a 3A       		.uleb128 0x3a
+ 2853 028b 0B       		.uleb128 0xb
+ 2854 028c 3B       		.uleb128 0x3b
+ 2855 028d 05       		.uleb128 0x5
+ 2856 028e 27       		.uleb128 0x27
+ 2857 028f 19       		.uleb128 0x19
+ 2858 0290 49       		.uleb128 0x49
+ 2859 0291 13       		.uleb128 0x13
+ 2860 0292 3C       		.uleb128 0x3c
+ 2861 0293 19       		.uleb128 0x19
+ 2862 0294 00       		.byte	0
+ 2863 0295 00       		.byte	0
+ 2864 0296 30       		.uleb128 0x30
+ 2865 0297 2E       		.uleb128 0x2e
+ 2866 0298 00       		.byte	0
+ 2867 0299 3F       		.uleb128 0x3f
+ 2868 029a 19       		.uleb128 0x19
+ 2869 029b 03       		.uleb128 0x3
+ 2870 029c 0E       		.uleb128 0xe
+ 2871 029d 3A       		.uleb128 0x3a
+ 2872 029e 0B       		.uleb128 0xb
+ 2873 029f 3B       		.uleb128 0x3b
+ 2874 02a0 0B       		.uleb128 0xb
+ 2875 02a1 27       		.uleb128 0x27
+ 2876 02a2 19       		.uleb128 0x19
+ 2877 02a3 49       		.uleb128 0x49
+ 2878 02a4 13       		.uleb128 0x13
+ 2879 02a5 3C       		.uleb128 0x3c
+ 2880 02a6 19       		.uleb128 0x19
+ 2881 02a7 00       		.byte	0
+ 2882 02a8 00       		.byte	0
+ 2883 02a9 31       		.uleb128 0x31
+ 2884 02aa 2E       		.uleb128 0x2e
+ 2885 02ab 00       		.byte	0
+ 2886 02ac 3F       		.uleb128 0x3f
+ 2887 02ad 19       		.uleb128 0x19
+ 2888 02ae 03       		.uleb128 0x3
+ 2889 02af 0E       		.uleb128 0xe
+ 2890 02b0 3A       		.uleb128 0x3a
+ 2891 02b1 0B       		.uleb128 0xb
+ 2892 02b2 3B       		.uleb128 0x3b
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 64
+
+
+ 2893 02b3 0B       		.uleb128 0xb
+ 2894 02b4 27       		.uleb128 0x27
+ 2895 02b5 19       		.uleb128 0x19
+ 2896 02b6 3C       		.uleb128 0x3c
+ 2897 02b7 19       		.uleb128 0x19
+ 2898 02b8 00       		.byte	0
+ 2899 02b9 00       		.byte	0
+ 2900 02ba 00       		.byte	0
+ 2901              		.section	.debug_loc,"",%progbits
+ 2902              	.Ldebug_loc0:
+ 2903              	.LLST0:
+ 2904 0000 00000000 		.4byte	.LVL0
+ 2905 0004 0C000000 		.4byte	.LVL1
+ 2906 0008 0100     		.2byte	0x1
+ 2907 000a 50       		.byte	0x50
+ 2908 000b 0C000000 		.4byte	.LVL1
+ 2909 000f 5C000000 		.4byte	.LFE65
+ 2910 0013 0400     		.2byte	0x4
+ 2911 0015 F3       		.byte	0xf3
+ 2912 0016 01       		.uleb128 0x1
+ 2913 0017 50       		.byte	0x50
+ 2914 0018 9F       		.byte	0x9f
+ 2915 0019 00000000 		.4byte	0
+ 2916 001d 00000000 		.4byte	0
+ 2917              	.LLST1:
+ 2918 0021 00000000 		.4byte	.LVL0
+ 2919 0025 0E000000 		.4byte	.LVL2
+ 2920 0029 0100     		.2byte	0x1
+ 2921 002b 51       		.byte	0x51
+ 2922 002c 0E000000 		.4byte	.LVL2
+ 2923 0030 50000000 		.4byte	.LVL17
+ 2924 0034 0100     		.2byte	0x1
+ 2925 0036 56       		.byte	0x56
+ 2926 0037 50000000 		.4byte	.LVL17
+ 2927 003b 5C000000 		.4byte	.LFE65
+ 2928 003f 0400     		.2byte	0x4
+ 2929 0041 F3       		.byte	0xf3
+ 2930 0042 01       		.uleb128 0x1
+ 2931 0043 51       		.byte	0x51
+ 2932 0044 9F       		.byte	0x9f
+ 2933 0045 00000000 		.4byte	0
+ 2934 0049 00000000 		.4byte	0
+ 2935              	.LLST2:
+ 2936 004d 1E000000 		.4byte	.LVL4
+ 2937 0051 24000000 		.4byte	.LVL5
+ 2938 0055 0100     		.2byte	0x1
+ 2939 0057 50       		.byte	0x50
+ 2940 0058 2A000000 		.4byte	.LVL7
+ 2941 005c 2E000000 		.4byte	.LVL8
+ 2942 0060 0100     		.2byte	0x1
+ 2943 0062 50       		.byte	0x50
+ 2944 0063 34000000 		.4byte	.LVL9
+ 2945 0067 44000000 		.4byte	.LVL13
+ 2946 006b 0100     		.2byte	0x1
+ 2947 006d 50       		.byte	0x50
+ 2948 006e 4A000000 		.4byte	.LVL14
+ 2949 0072 4E000000 		.4byte	.LVL15
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 65
+
+
+ 2950 0076 0100     		.2byte	0x1
+ 2951 0078 50       		.byte	0x50
+ 2952 0079 00000000 		.4byte	0
+ 2953 007d 00000000 		.4byte	0
+ 2954              	.LLST3:
+ 2955 0081 12000000 		.4byte	.LVL3
+ 2956 0085 50000000 		.4byte	.LVL16
+ 2957 0089 0100     		.2byte	0x1
+ 2958 008b 54       		.byte	0x54
+ 2959 008c 00000000 		.4byte	0
+ 2960 0090 00000000 		.4byte	0
+ 2961              	.LLST4:
+ 2962 0094 3A000000 		.4byte	.LVL10
+ 2963 0098 3C000000 		.4byte	.LVL11
+ 2964 009c 0100     		.2byte	0x1
+ 2965 009e 53       		.byte	0x53
+ 2966 009f 3C000000 		.4byte	.LVL11
+ 2967 00a3 3E000000 		.4byte	.LVL12
+ 2968 00a7 0300     		.2byte	0x3
+ 2969 00a9 73       		.byte	0x73
+ 2970 00aa 01       		.sleb128 1
+ 2971 00ab 9F       		.byte	0x9f
+ 2972 00ac 3E000000 		.4byte	.LVL12
+ 2973 00b0 49000000 		.4byte	.LVL14-1
+ 2974 00b4 0C00     		.2byte	0xc
+ 2975 00b6 75       		.byte	0x75
+ 2976 00b7 00       		.sleb128 0
+ 2977 00b8 73       		.byte	0x73
+ 2978 00b9 00       		.sleb128 0
+ 2979 00ba 22       		.byte	0x22
+ 2980 00bb 31       		.byte	0x31
+ 2981 00bc 1C       		.byte	0x1c
+ 2982 00bd 94       		.byte	0x94
+ 2983 00be 01       		.byte	0x1
+ 2984 00bf 23       		.byte	0x23
+ 2985 00c0 01       		.uleb128 0x1
+ 2986 00c1 9F       		.byte	0x9f
+ 2987 00c2 00000000 		.4byte	0
+ 2988 00c6 00000000 		.4byte	0
+ 2989              	.LLST5:
+ 2990 00ca 00000000 		.4byte	.LVL18
+ 2991 00ce 0C000000 		.4byte	.LVL19
+ 2992 00d2 0100     		.2byte	0x1
+ 2993 00d4 50       		.byte	0x50
+ 2994 00d5 0C000000 		.4byte	.LVL19
+ 2995 00d9 54000000 		.4byte	.LFE66
+ 2996 00dd 0400     		.2byte	0x4
+ 2997 00df F3       		.byte	0xf3
+ 2998 00e0 01       		.uleb128 0x1
+ 2999 00e1 50       		.byte	0x50
+ 3000 00e2 9F       		.byte	0x9f
+ 3001 00e3 00000000 		.4byte	0
+ 3002 00e7 00000000 		.4byte	0
+ 3003              	.LLST6:
+ 3004 00eb 00000000 		.4byte	.LVL18
+ 3005 00ef 0E000000 		.4byte	.LVL20
+ 3006 00f3 0100     		.2byte	0x1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 66
+
+
+ 3007 00f5 51       		.byte	0x51
+ 3008 00f6 0E000000 		.4byte	.LVL20
+ 3009 00fa 4A000000 		.4byte	.LVL31
+ 3010 00fe 0100     		.2byte	0x1
+ 3011 0100 55       		.byte	0x55
+ 3012 0101 4A000000 		.4byte	.LVL31
+ 3013 0105 54000000 		.4byte	.LFE66
+ 3014 0109 0400     		.2byte	0x4
+ 3015 010b F3       		.byte	0xf3
+ 3016 010c 01       		.uleb128 0x1
+ 3017 010d 51       		.byte	0x51
+ 3018 010e 9F       		.byte	0x9f
+ 3019 010f 00000000 		.4byte	0
+ 3020 0113 00000000 		.4byte	0
+ 3021              	.LLST7:
+ 3022 0117 1E000000 		.4byte	.LVL22
+ 3023 011b 24000000 		.4byte	.LVL23
+ 3024 011f 0100     		.2byte	0x1
+ 3025 0121 50       		.byte	0x50
+ 3026 0122 2C000000 		.4byte	.LVL25
+ 3027 0126 2E000000 		.4byte	.LVL26
+ 3028 012a 0100     		.2byte	0x1
+ 3029 012c 50       		.byte	0x50
+ 3030 012d 00000000 		.4byte	0
+ 3031 0131 00000000 		.4byte	0
+ 3032              	.LLST8:
+ 3033 0135 12000000 		.4byte	.LVL21
+ 3034 0139 36000000 		.4byte	.LVL28
+ 3035 013d 0100     		.2byte	0x1
+ 3036 013f 54       		.byte	0x54
+ 3037 0140 00000000 		.4byte	0
+ 3038 0144 00000000 		.4byte	0
+ 3039              	.LLST9:
+ 3040 0148 2C000000 		.4byte	.LVL25
+ 3041 014c 48000000 		.4byte	.LVL30
+ 3042 0150 0100     		.2byte	0x1
+ 3043 0152 55       		.byte	0x55
+ 3044 0153 00000000 		.4byte	0
+ 3045 0157 00000000 		.4byte	0
+ 3046              	.LLST10:
+ 3047 015b 2C000000 		.4byte	.LVL25
+ 3048 015f 36000000 		.4byte	.LVL28
+ 3049 0163 0100     		.2byte	0x1
+ 3050 0165 54       		.byte	0x54
+ 3051 0166 00000000 		.4byte	0
+ 3052 016a 00000000 		.4byte	0
+ 3053              	.LLST11:
+ 3054 016e 36000000 		.4byte	.LVL28
+ 3055 0172 48000000 		.4byte	.LVL30
+ 3056 0176 0100     		.2byte	0x1
+ 3057 0178 54       		.byte	0x54
+ 3058 0179 00000000 		.4byte	0
+ 3059 017d 00000000 		.4byte	0
+ 3060              	.LLST12:
+ 3061 0181 00000000 		.4byte	.LVL32
+ 3062 0185 10000000 		.4byte	.LVL33
+ 3063 0189 0100     		.2byte	0x1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 67
+
+
+ 3064 018b 50       		.byte	0x50
+ 3065 018c 10000000 		.4byte	.LVL33
+ 3066 0190 5E000000 		.4byte	.LVL41
+ 3067 0194 0100     		.2byte	0x1
+ 3068 0196 56       		.byte	0x56
+ 3069 0197 5E000000 		.4byte	.LVL41
+ 3070 019b 64000000 		.4byte	.LFE67
+ 3071 019f 0400     		.2byte	0x4
+ 3072 01a1 F3       		.byte	0xf3
+ 3073 01a2 01       		.uleb128 0x1
+ 3074 01a3 50       		.byte	0x50
+ 3075 01a4 9F       		.byte	0x9f
+ 3076 01a5 00000000 		.4byte	0
+ 3077 01a9 00000000 		.4byte	0
+ 3078              	.LLST13:
+ 3079 01ad 28000000 		.4byte	.LVL44
+ 3080 01b1 48000000 		.4byte	.LVL45
+ 3081 01b5 0100     		.2byte	0x1
+ 3082 01b7 50       		.byte	0x50
+ 3083 01b8 00000000 		.4byte	0
+ 3084 01bc 00000000 		.4byte	0
+ 3085              	.LLST14:
+ 3086 01c0 74000000 		.4byte	.LVL47
+ 3087 01c4 7E000000 		.4byte	.LVL48
+ 3088 01c8 0100     		.2byte	0x1
+ 3089 01ca 52       		.byte	0x52
+ 3090 01cb 7E000000 		.4byte	.LVL48
+ 3091 01cf 80000000 		.4byte	.LVL49
+ 3092 01d3 2600     		.2byte	0x26
+ 3093 01d5 7D       		.byte	0x7d
+ 3094 01d6 0D       		.sleb128 13
+ 3095 01d7 94       		.byte	0x94
+ 3096 01d8 01       		.byte	0x1
+ 3097 01d9 08       		.byte	0x8
+ 3098 01da FF       		.byte	0xff
+ 3099 01db 1A       		.byte	0x1a
+ 3100 01dc 40       		.byte	0x40
+ 3101 01dd 24       		.byte	0x24
+ 3102 01de 7D       		.byte	0x7d
+ 3103 01df 0C       		.sleb128 12
+ 3104 01e0 94       		.byte	0x94
+ 3105 01e1 01       		.byte	0x1
+ 3106 01e2 08       		.byte	0x8
+ 3107 01e3 FF       		.byte	0xff
+ 3108 01e4 1A       		.byte	0x1a
+ 3109 01e5 48       		.byte	0x48
+ 3110 01e6 24       		.byte	0x24
+ 3111 01e7 21       		.byte	0x21
+ 3112 01e8 7D       		.byte	0x7d
+ 3113 01e9 0E       		.sleb128 14
+ 3114 01ea 94       		.byte	0x94
+ 3115 01eb 01       		.byte	0x1
+ 3116 01ec 08       		.byte	0x8
+ 3117 01ed FF       		.byte	0xff
+ 3118 01ee 1A       		.byte	0x1a
+ 3119 01ef 38       		.byte	0x38
+ 3120 01f0 24       		.byte	0x24
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 68
+
+
+ 3121 01f1 21       		.byte	0x21
+ 3122 01f2 7D       		.byte	0x7d
+ 3123 01f3 0F       		.sleb128 15
+ 3124 01f4 94       		.byte	0x94
+ 3125 01f5 01       		.byte	0x1
+ 3126 01f6 08       		.byte	0x8
+ 3127 01f7 FF       		.byte	0xff
+ 3128 01f8 1A       		.byte	0x1a
+ 3129 01f9 21       		.byte	0x21
+ 3130 01fa 9F       		.byte	0x9f
+ 3131 01fb 88000000 		.4byte	.LVL50
+ 3132 01ff 90000000 		.4byte	.LVL51
+ 3133 0203 0100     		.2byte	0x1
+ 3134 0205 53       		.byte	0x53
+ 3135 0206 90000000 		.4byte	.LVL51
+ 3136 020a 92000000 		.4byte	.LVL52
+ 3137 020e 0100     		.2byte	0x1
+ 3138 0210 52       		.byte	0x52
+ 3139 0211 92000000 		.4byte	.LVL52
+ 3140 0215 96000000 		.4byte	.LVL53
+ 3141 0219 1F00     		.2byte	0x1f
+ 3142 021b 72       		.byte	0x72
+ 3143 021c 0D       		.sleb128 13
+ 3144 021d 94       		.byte	0x94
+ 3145 021e 01       		.byte	0x1
+ 3146 021f 08       		.byte	0x8
+ 3147 0220 FF       		.byte	0xff
+ 3148 0221 1A       		.byte	0x1a
+ 3149 0222 40       		.byte	0x40
+ 3150 0223 24       		.byte	0x24
+ 3151 0224 72       		.byte	0x72
+ 3152 0225 0C       		.sleb128 12
+ 3153 0226 94       		.byte	0x94
+ 3154 0227 01       		.byte	0x1
+ 3155 0228 08       		.byte	0x8
+ 3156 0229 FF       		.byte	0xff
+ 3157 022a 1A       		.byte	0x1a
+ 3158 022b 48       		.byte	0x48
+ 3159 022c 24       		.byte	0x24
+ 3160 022d 21       		.byte	0x21
+ 3161 022e 72       		.byte	0x72
+ 3162 022f 0F       		.sleb128 15
+ 3163 0230 94       		.byte	0x94
+ 3164 0231 01       		.byte	0x1
+ 3165 0232 08       		.byte	0x8
+ 3166 0233 FF       		.byte	0xff
+ 3167 0234 1A       		.byte	0x1a
+ 3168 0235 21       		.byte	0x21
+ 3169 0236 71       		.byte	0x71
+ 3170 0237 00       		.sleb128 0
+ 3171 0238 21       		.byte	0x21
+ 3172 0239 9F       		.byte	0x9f
+ 3173 023a 96000000 		.4byte	.LVL53
+ 3174 023e 98000000 		.4byte	.LVL54
+ 3175 0242 2600     		.2byte	0x26
+ 3176 0244 72       		.byte	0x72
+ 3177 0245 0D       		.sleb128 13
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 69
+
+
+ 3178 0246 94       		.byte	0x94
+ 3179 0247 01       		.byte	0x1
+ 3180 0248 08       		.byte	0x8
+ 3181 0249 FF       		.byte	0xff
+ 3182 024a 1A       		.byte	0x1a
+ 3183 024b 40       		.byte	0x40
+ 3184 024c 24       		.byte	0x24
+ 3185 024d 72       		.byte	0x72
+ 3186 024e 0C       		.sleb128 12
+ 3187 024f 94       		.byte	0x94
+ 3188 0250 01       		.byte	0x1
+ 3189 0251 08       		.byte	0x8
+ 3190 0252 FF       		.byte	0xff
+ 3191 0253 1A       		.byte	0x1a
+ 3192 0254 48       		.byte	0x48
+ 3193 0255 24       		.byte	0x24
+ 3194 0256 21       		.byte	0x21
+ 3195 0257 72       		.byte	0x72
+ 3196 0258 0E       		.sleb128 14
+ 3197 0259 94       		.byte	0x94
+ 3198 025a 01       		.byte	0x1
+ 3199 025b 08       		.byte	0x8
+ 3200 025c FF       		.byte	0xff
+ 3201 025d 1A       		.byte	0x1a
+ 3202 025e 38       		.byte	0x38
+ 3203 025f 24       		.byte	0x24
+ 3204 0260 21       		.byte	0x21
+ 3205 0261 72       		.byte	0x72
+ 3206 0262 0F       		.sleb128 15
+ 3207 0263 94       		.byte	0x94
+ 3208 0264 01       		.byte	0x1
+ 3209 0265 08       		.byte	0x8
+ 3210 0266 FF       		.byte	0xff
+ 3211 0267 1A       		.byte	0x1a
+ 3212 0268 21       		.byte	0x21
+ 3213 0269 9F       		.byte	0x9f
+ 3214 026a B0000000 		.4byte	.LVL56
+ 3215 026e D2000000 		.4byte	.LVL57
+ 3216 0272 2600     		.2byte	0x26
+ 3217 0274 91       		.byte	0x91
+ 3218 0275 6C       		.sleb128 -20
+ 3219 0276 94       		.byte	0x94
+ 3220 0277 01       		.byte	0x1
+ 3221 0278 08       		.byte	0x8
+ 3222 0279 FF       		.byte	0xff
+ 3223 027a 1A       		.byte	0x1a
+ 3224 027b 48       		.byte	0x48
+ 3225 027c 24       		.byte	0x24
+ 3226 027d 91       		.byte	0x91
+ 3227 027e 6D       		.sleb128 -19
+ 3228 027f 94       		.byte	0x94
+ 3229 0280 01       		.byte	0x1
+ 3230 0281 08       		.byte	0x8
+ 3231 0282 FF       		.byte	0xff
+ 3232 0283 1A       		.byte	0x1a
+ 3233 0284 40       		.byte	0x40
+ 3234 0285 24       		.byte	0x24
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 70
+
+
+ 3235 0286 21       		.byte	0x21
+ 3236 0287 91       		.byte	0x91
+ 3237 0288 6E       		.sleb128 -18
+ 3238 0289 94       		.byte	0x94
+ 3239 028a 01       		.byte	0x1
+ 3240 028b 08       		.byte	0x8
+ 3241 028c FF       		.byte	0xff
+ 3242 028d 1A       		.byte	0x1a
+ 3243 028e 38       		.byte	0x38
+ 3244 028f 24       		.byte	0x24
+ 3245 0290 21       		.byte	0x21
+ 3246 0291 91       		.byte	0x91
+ 3247 0292 6F       		.sleb128 -17
+ 3248 0293 94       		.byte	0x94
+ 3249 0294 01       		.byte	0x1
+ 3250 0295 08       		.byte	0x8
+ 3251 0296 FF       		.byte	0xff
+ 3252 0297 1A       		.byte	0x1a
+ 3253 0298 21       		.byte	0x21
+ 3254 0299 9F       		.byte	0x9f
+ 3255 029a 00000000 		.4byte	0
+ 3256 029e 00000000 		.4byte	0
+ 3257              	.LLST15:
+ 3258 02a2 00000000 		.4byte	.LVL58
+ 3259 02a6 07000000 		.4byte	.LVL59-1
+ 3260 02aa 0100     		.2byte	0x1
+ 3261 02ac 50       		.byte	0x50
+ 3262 02ad 07000000 		.4byte	.LVL59-1
+ 3263 02b1 5A000000 		.4byte	.LVL72
+ 3264 02b5 0100     		.2byte	0x1
+ 3265 02b7 55       		.byte	0x55
+ 3266 02b8 5A000000 		.4byte	.LVL72
+ 3267 02bc 68000000 		.4byte	.LFE69
+ 3268 02c0 0400     		.2byte	0x4
+ 3269 02c2 F3       		.byte	0xf3
+ 3270 02c3 01       		.uleb128 0x1
+ 3271 02c4 50       		.byte	0x50
+ 3272 02c5 9F       		.byte	0x9f
+ 3273 02c6 00000000 		.4byte	0
+ 3274 02ca 00000000 		.4byte	0
+ 3275              	.LLST16:
+ 3276 02ce 00000000 		.4byte	.LVL58
+ 3277 02d2 20000000 		.4byte	.LVL62
+ 3278 02d6 0200     		.2byte	0x2
+ 3279 02d8 30       		.byte	0x30
+ 3280 02d9 9F       		.byte	0x9f
+ 3281 02da 20000000 		.4byte	.LVL62
+ 3282 02de 24000000 		.4byte	.LVL63
+ 3283 02e2 0100     		.2byte	0x1
+ 3284 02e4 50       		.byte	0x50
+ 3285 02e5 2C000000 		.4byte	.LVL65
+ 3286 02e9 2E000000 		.4byte	.LVL66
+ 3287 02ed 0100     		.2byte	0x1
+ 3288 02ef 50       		.byte	0x50
+ 3289 02f0 00000000 		.4byte	0
+ 3290 02f4 00000000 		.4byte	0
+ 3291              	.LLST17:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 71
+
+
+ 3292 02f8 00000000 		.4byte	.LVL73
+ 3293 02fc 07000000 		.4byte	.LVL74-1
+ 3294 0300 0100     		.2byte	0x1
+ 3295 0302 50       		.byte	0x50
+ 3296 0303 07000000 		.4byte	.LVL74-1
+ 3297 0307 4C000000 		.4byte	.LVL88
+ 3298 030b 0100     		.2byte	0x1
+ 3299 030d 56       		.byte	0x56
+ 3300 030e 4C000000 		.4byte	.LVL88
+ 3301 0312 5C000000 		.4byte	.LFE70
+ 3302 0316 0400     		.2byte	0x4
+ 3303 0318 F3       		.byte	0xf3
+ 3304 0319 01       		.uleb128 0x1
+ 3305 031a 50       		.byte	0x50
+ 3306 031b 9F       		.byte	0x9f
+ 3307 031c 00000000 		.4byte	0
+ 3308 0320 00000000 		.4byte	0
+ 3309              	.LLST18:
+ 3310 0324 00000000 		.4byte	.LVL73
+ 3311 0328 22000000 		.4byte	.LVL78
+ 3312 032c 0200     		.2byte	0x2
+ 3313 032e 30       		.byte	0x30
+ 3314 032f 9F       		.byte	0x9f
+ 3315 0330 22000000 		.4byte	.LVL78
+ 3316 0334 26000000 		.4byte	.LVL79
+ 3317 0338 0100     		.2byte	0x1
+ 3318 033a 50       		.byte	0x50
+ 3319 033b 30000000 		.4byte	.LVL81
+ 3320 033f 32000000 		.4byte	.LVL82
+ 3321 0343 0100     		.2byte	0x1
+ 3322 0345 50       		.byte	0x50
+ 3323 0346 00000000 		.4byte	0
+ 3324 034a 00000000 		.4byte	0
+ 3325              	.LLST19:
+ 3326 034e 3A000000 		.4byte	.LVL84
+ 3327 0352 4C000000 		.4byte	.LVL87
+ 3328 0356 0100     		.2byte	0x1
+ 3329 0358 56       		.byte	0x56
+ 3330 0359 00000000 		.4byte	0
+ 3331 035d 00000000 		.4byte	0
+ 3332              	.LLST20:
+ 3333 0361 00000000 		.4byte	.LVL89
+ 3334 0365 07000000 		.4byte	.LVL90-1
+ 3335 0369 0100     		.2byte	0x1
+ 3336 036b 50       		.byte	0x50
+ 3337 036c 07000000 		.4byte	.LVL90-1
+ 3338 0370 20000000 		.4byte	.LVL94
+ 3339 0374 0100     		.2byte	0x1
+ 3340 0376 54       		.byte	0x54
+ 3341 0377 20000000 		.4byte	.LVL94
+ 3342 037b 22000000 		.4byte	.LFE63
+ 3343 037f 0400     		.2byte	0x4
+ 3344 0381 F3       		.byte	0xf3
+ 3345 0382 01       		.uleb128 0x1
+ 3346 0383 50       		.byte	0x50
+ 3347 0384 9F       		.byte	0x9f
+ 3348 0385 00000000 		.4byte	0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 72
+
+
+ 3349 0389 00000000 		.4byte	0
+ 3350              	.LLST21:
+ 3351 038d 00000000 		.4byte	.LVL89
+ 3352 0391 07000000 		.4byte	.LVL90-1
+ 3353 0395 0100     		.2byte	0x1
+ 3354 0397 51       		.byte	0x51
+ 3355 0398 07000000 		.4byte	.LVL90-1
+ 3356 039c 22000000 		.4byte	.LFE63
+ 3357 03a0 0400     		.2byte	0x4
+ 3358 03a2 F3       		.byte	0xf3
+ 3359 03a3 01       		.uleb128 0x1
+ 3360 03a4 51       		.byte	0x51
+ 3361 03a5 9F       		.byte	0x9f
+ 3362 03a6 00000000 		.4byte	0
+ 3363 03aa 00000000 		.4byte	0
+ 3364              	.LLST22:
+ 3365 03ae 10000000 		.4byte	.LVL91
+ 3366 03b2 20000000 		.4byte	.LVL93
+ 3367 03b6 0400     		.2byte	0x4
+ 3368 03b8 F3       		.byte	0xf3
+ 3369 03b9 01       		.uleb128 0x1
+ 3370 03ba 51       		.byte	0x51
+ 3371 03bb 9F       		.byte	0x9f
+ 3372 03bc 00000000 		.4byte	0
+ 3373 03c0 00000000 		.4byte	0
+ 3374              	.LLST23:
+ 3375 03c4 10000000 		.4byte	.LVL91
+ 3376 03c8 20000000 		.4byte	.LVL93
+ 3377 03cc 0100     		.2byte	0x1
+ 3378 03ce 54       		.byte	0x54
+ 3379 03cf 00000000 		.4byte	0
+ 3380 03d3 00000000 		.4byte	0
+ 3381              	.LLST24:
+ 3382 03d7 00000000 		.4byte	.LVL95
+ 3383 03db 08000000 		.4byte	.LVL96
+ 3384 03df 0100     		.2byte	0x1
+ 3385 03e1 50       		.byte	0x50
+ 3386 03e2 08000000 		.4byte	.LVL96
+ 3387 03e6 20000000 		.4byte	.LVL100
+ 3388 03ea 0100     		.2byte	0x1
+ 3389 03ec 55       		.byte	0x55
+ 3390 03ed 20000000 		.4byte	.LVL100
+ 3391 03f1 22000000 		.4byte	.LFE64
+ 3392 03f5 0400     		.2byte	0x4
+ 3393 03f7 F3       		.byte	0xf3
+ 3394 03f8 01       		.uleb128 0x1
+ 3395 03f9 50       		.byte	0x50
+ 3396 03fa 9F       		.byte	0x9f
+ 3397 03fb 00000000 		.4byte	0
+ 3398 03ff 00000000 		.4byte	0
+ 3399              	.LLST25:
+ 3400 0403 00000000 		.4byte	.LVL95
+ 3401 0407 08000000 		.4byte	.LVL96
+ 3402 040b 0100     		.2byte	0x1
+ 3403 040d 51       		.byte	0x51
+ 3404 040e 08000000 		.4byte	.LVL96
+ 3405 0412 22000000 		.4byte	.LFE64
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 73
+
+
+ 3406 0416 0400     		.2byte	0x4
+ 3407 0418 F3       		.byte	0xf3
+ 3408 0419 01       		.uleb128 0x1
+ 3409 041a 51       		.byte	0x51
+ 3410 041b 9F       		.byte	0x9f
+ 3411 041c 00000000 		.4byte	0
+ 3412 0420 00000000 		.4byte	0
+ 3413              	.LLST26:
+ 3414 0424 00000000 		.4byte	.LVL95
+ 3415 0428 08000000 		.4byte	.LVL96
+ 3416 042c 0200     		.2byte	0x2
+ 3417 042e 30       		.byte	0x30
+ 3418 042f 9F       		.byte	0x9f
+ 3419 0430 08000000 		.4byte	.LVL96
+ 3420 0434 16000000 		.4byte	.LVL98
+ 3421 0438 0600     		.2byte	0x6
+ 3422 043a 08       		.byte	0x8
+ 3423 043b 28       		.byte	0x28
+ 3424 043c 74       		.byte	0x74
+ 3425 043d 00       		.sleb128 0
+ 3426 043e 1C       		.byte	0x1c
+ 3427 043f 9F       		.byte	0x9f
+ 3428 0440 16000000 		.4byte	.LVL98
+ 3429 0444 1A000000 		.4byte	.LVL99
+ 3430 0448 0600     		.2byte	0x6
+ 3431 044a 08       		.byte	0x8
+ 3432 044b 27       		.byte	0x27
+ 3433 044c 74       		.byte	0x74
+ 3434 044d 00       		.sleb128 0
+ 3435 044e 1C       		.byte	0x1c
+ 3436 044f 9F       		.byte	0x9f
+ 3437 0450 00000000 		.4byte	0
+ 3438 0454 00000000 		.4byte	0
+ 3439              		.section	.debug_aranges,"",%progbits
+ 3440 0000 54000000 		.4byte	0x54
+ 3441 0004 0200     		.2byte	0x2
+ 3442 0006 00000000 		.4byte	.Ldebug_info0
+ 3443 000a 04       		.byte	0x4
+ 3444 000b 00       		.byte	0
+ 3445 000c 0000     		.2byte	0
+ 3446 000e 0000     		.2byte	0
+ 3447 0010 00000000 		.4byte	.LFB65
+ 3448 0014 5C000000 		.4byte	.LFE65-.LFB65
+ 3449 0018 00000000 		.4byte	.LFB66
+ 3450 001c 54000000 		.4byte	.LFE66-.LFB66
+ 3451 0020 00000000 		.4byte	.LFB67
+ 3452 0024 64000000 		.4byte	.LFE67-.LFB67
+ 3453 0028 00000000 		.4byte	.LFB68
+ 3454 002c DC000000 		.4byte	.LFE68-.LFB68
+ 3455 0030 00000000 		.4byte	.LFB69
+ 3456 0034 68000000 		.4byte	.LFE69-.LFB69
+ 3457 0038 00000000 		.4byte	.LFB70
+ 3458 003c 5C000000 		.4byte	.LFE70-.LFB70
+ 3459 0040 00000000 		.4byte	.LFB63
+ 3460 0044 22000000 		.4byte	.LFE63-.LFB63
+ 3461 0048 00000000 		.4byte	.LFB64
+ 3462 004c 22000000 		.4byte	.LFE64-.LFB64
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 74
+
+
+ 3463 0050 00000000 		.4byte	0
+ 3464 0054 00000000 		.4byte	0
+ 3465              		.section	.debug_ranges,"",%progbits
+ 3466              	.Ldebug_ranges0:
+ 3467 0000 00000000 		.4byte	.LFB65
+ 3468 0004 5C000000 		.4byte	.LFE65
+ 3469 0008 00000000 		.4byte	.LFB66
+ 3470 000c 54000000 		.4byte	.LFE66
+ 3471 0010 00000000 		.4byte	.LFB67
+ 3472 0014 64000000 		.4byte	.LFE67
+ 3473 0018 00000000 		.4byte	.LFB68
+ 3474 001c DC000000 		.4byte	.LFE68
+ 3475 0020 00000000 		.4byte	.LFB69
+ 3476 0024 68000000 		.4byte	.LFE69
+ 3477 0028 00000000 		.4byte	.LFB70
+ 3478 002c 5C000000 		.4byte	.LFE70
+ 3479 0030 00000000 		.4byte	.LFB63
+ 3480 0034 22000000 		.4byte	.LFE63
+ 3481 0038 00000000 		.4byte	.LFB64
+ 3482 003c 22000000 		.4byte	.LFE64
+ 3483 0040 00000000 		.4byte	0
+ 3484 0044 00000000 		.4byte	0
+ 3485              		.section	.debug_line,"",%progbits
+ 3486              	.Ldebug_line0:
+ 3487 0000 93030000 		.section	.debug_str,"MS",%progbits,1
+ 3487      02007502 
+ 3487      00000201 
+ 3487      FB0E0D00 
+ 3487      01010101 
+ 3488              	.LASF54:
+ 3489 0000 5254435F 		.ascii	"RTC_GetUnixTime\000"
+ 3489      47657455 
+ 3489      6E697854 
+ 3489      696D6500 
+ 3490              	.LASF46:
+ 3491 0010 4D696661 		.ascii	"Mifare_Auth\000"
+ 3491      72655F41 
+ 3491      75746800 
+ 3492              	.LASF49:
+ 3493 001c 4D696661 		.ascii	"Mifare_Blockwrite\000"
+ 3493      72655F42 
+ 3493      6C6F636B 
+ 3493      77726974 
+ 3493      6500
+ 3494              	.LASF24:
+ 3495 002e 73746174 		.ascii	"statues\000"
+ 3495      75657300 
+ 3496              	.LASF61:
+ 3497 0036 436F6465 		.ascii	"Code\\Device\\FM175XX\\card.c\000"
+ 3497      5C446576 
+ 3497      6963655C 
+ 3497      464D3137 
+ 3497      3558585C 
+ 3498              	.LASF2:
+ 3499 0051 73686F72 		.ascii	"short int\000"
+ 3499      7420696E 
+ 3499      7400
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 75
+
+
+ 3500              	.LASF60:
+ 3501 005b 474E5520 		.ascii	"GNU C 4.9.3 20150303 (release) [ARM/embedded-4_9-br"
+ 3501      4320342E 
+ 3501      392E3320 
+ 3501      32303135 
+ 3501      30333033 
+ 3502 008e 616E6368 		.ascii	"anch revision 221220] -mcpu=cortex-m0 -mthumb -g -O"
+ 3502      20726576 
+ 3502      6973696F 
+ 3502      6E203232 
+ 3502      31323230 
+ 3503 00c1 73202D66 		.ascii	"s -ffunction-sections -ffat-lto-objects\000"
+ 3503      66756E63 
+ 3503      74696F6E 
+ 3503      2D736563 
+ 3503      74696F6E 
+ 3504              	.LASF21:
+ 3505 00e9 73697A65 		.ascii	"sizetype\000"
+ 3505      74797065 
+ 3505      00
+ 3506              	.LASF22:
+ 3507 00f2 626C6F63 		.ascii	"block_addr\000"
+ 3507      6B5F6164 
+ 3507      647200
+ 3508              	.LASF6:
+ 3509 00fd 5F5F7569 		.ascii	"__uint32_t\000"
+ 3509      6E743332 
+ 3509      5F7400
+ 3510              	.LASF43:
+ 3511 0108 70696363 		.ascii	"picc_uid\000"
+ 3511      5F756964 
+ 3511      00
+ 3512              	.LASF50:
+ 3513 0111 6D656D63 		.ascii	"memcpy\000"
+ 3513      707900
+ 3514              	.LASF14:
+ 3515 0118 75696E74 		.ascii	"uint16\000"
+ 3515      313600
+ 3516              	.LASF11:
+ 3517 011f 75696E74 		.ascii	"uint8_t\000"
+ 3517      385F7400 
+ 3518              	.LASF63:
+ 3519 0127 43617264 		.ascii	"CardBlock_Wr\000"
+ 3519      426C6F63 
+ 3519      6B5F5772 
+ 3519      00
+ 3520              	.LASF36:
+ 3521 0134 74696D65 		.ascii	"timer\000"
+ 3521      7200
+ 3522              	.LASF25:
+ 3523 013a 626C6F63 		.ascii	"blockAddr\000"
+ 3523      6B416464 
+ 3523      7200
+ 3524              	.LASF13:
+ 3525 0144 75696E74 		.ascii	"uint8\000"
+ 3525      3800
+ 3526              	.LASF31:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 76
+
+
+ 3527 014a 7569645F 		.ascii	"uid_buf1\000"
+ 3527      62756631 
+ 3527      00
+ 3528              	.LASF55:
+ 3529 0153 464D3137 		.ascii	"FM175X_SoftReset\000"
+ 3529      35585F53 
+ 3529      6F667452 
+ 3529      65736574 
+ 3529      00
+ 3530              	.LASF44:
+ 3531 0164 70696363 		.ascii	"picc_sak\000"
+ 3531      5F73616B 
+ 3531      00
+ 3532              	.LASF16:
+ 3533 016d 666C6F61 		.ascii	"float\000"
+ 3533      7400
+ 3534              	.LASF53:
+ 3535 0173 6D656D63 		.ascii	"memcmp\000"
+ 3535      6D7000
+ 3536              	.LASF8:
+ 3537 017a 6C6F6E67 		.ascii	"long long int\000"
+ 3537      206C6F6E 
+ 3537      6720696E 
+ 3537      7400
+ 3538              	.LASF48:
+ 3539 0188 4D696661 		.ascii	"Mifare_Blockread\000"
+ 3539      72655F42 
+ 3539      6C6F636B 
+ 3539      72656164 
+ 3539      00
+ 3540              	.LASF42:
+ 3541 0199 70696363 		.ascii	"picc_atqa\000"
+ 3541      5F617471 
+ 3541      6100
+ 3542              	.LASF57:
+ 3543 01a3 5063645F 		.ascii	"Pcd_ConfigISOType\000"
+ 3543      436F6E66 
+ 3543      69674953 
+ 3543      4F547970 
+ 3543      6500
+ 3544              	.LASF19:
+ 3545 01b5 63686172 		.ascii	"char\000"
+ 3545      00
+ 3546              	.LASF23:
+ 3547 01ba 70646174 		.ascii	"pdata\000"
+ 3547      6100
+ 3548              	.LASF4:
+ 3549 01c0 6C6F6E67 		.ascii	"long int\000"
+ 3549      20696E74 
+ 3549      00
+ 3550              	.LASF18:
+ 3551 01c9 75696E74 		.ascii	"uint64\000"
+ 3551      363400
+ 3552              	.LASF33:
+ 3553 01d0 746D705F 		.ascii	"tmp_buf\000"
+ 3553      62756600 
+ 3554              	.LASF37:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 77
+
+
+ 3555 01d8 49435F63 		.ascii	"IC_curvar\000"
+ 3555      75727661 
+ 3555      7200
+ 3556              	.LASF5:
+ 3557 01e2 5F5F7569 		.ascii	"__uint8_t\000"
+ 3557      6E74385F 
+ 3557      7400
+ 3558              	.LASF30:
+ 3559 01ec 63617264 		.ascii	"card_id\000"
+ 3559      5F696400 
+ 3560              	.LASF62:
+ 3561 01f4 473A5C50 		.ascii	"G:\\Psoc4_prj\\7.rental_house\\18-04-11\\second_ima"
+ 3561      736F6334 
+ 3561      5F70726A 
+ 3561      5C372E72 
+ 3561      656E7461 
+ 3562 0223 6765735B 		.ascii	"ges[4-9]\\EntranceGuard_171019-12.50\\EntranceGuard"
+ 3562      342D395D 
+ 3562      5C456E74 
+ 3562      72616E63 
+ 3562      65477561 
+ 3563 0254 2E637964 		.ascii	".cydsn\000"
+ 3563      736E00
+ 3564              	.LASF1:
+ 3565 025b 756E7369 		.ascii	"unsigned char\000"
+ 3565      676E6564 
+ 3565      20636861 
+ 3565      7200
+ 3566              	.LASF45:
+ 3567 0269 6D656D5F 		.ascii	"mem_var\000"
+ 3567      76617200 
+ 3568              	.LASF38:
+ 3569 0271 43617264 		.ascii	"CardScan\000"
+ 3569      5363616E 
+ 3569      00
+ 3570              	.LASF0:
+ 3571 027a 7369676E 		.ascii	"signed char\000"
+ 3571      65642063 
+ 3571      68617200 
+ 3572              	.LASF9:
+ 3573 0286 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 3573      206C6F6E 
+ 3573      6720756E 
+ 3573      7369676E 
+ 3573      65642069 
+ 3574              	.LASF12:
+ 3575 029d 75696E74 		.ascii	"uint32_t\000"
+ 3575      33325F74 
+ 3575      00
+ 3576              	.LASF10:
+ 3577 02a6 756E7369 		.ascii	"unsigned int\000"
+ 3577      676E6564 
+ 3577      20696E74 
+ 3577      00
+ 3578              	.LASF26:
+ 3579 02b3 626C6F63 		.ascii	"blockData\000"
+ 3579      6B446174 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 78
+
+
+ 3579      6100
+ 3580              	.LASF39:
+ 3581 02bd 64657465 		.ascii	"detect_nfc_card_continus\000"
+ 3581      63745F6E 
+ 3581      66635F63 
+ 3581      6172645F 
+ 3581      636F6E74 
+ 3582              	.LASF3:
+ 3583 02d6 73686F72 		.ascii	"short unsigned int\000"
+ 3583      7420756E 
+ 3583      7369676E 
+ 3583      65642069 
+ 3583      6E7400
+ 3584              	.LASF58:
+ 3585 02e9 54797065 		.ascii	"TypeA_CardActive\000"
+ 3585      415F4361 
+ 3585      72644163 
+ 3585      74697665 
+ 3585      00
+ 3586              	.LASF20:
+ 3587 02fa 73697A65 		.ascii	"size_t\000"
+ 3587      5F7400
+ 3588              	.LASF47:
+ 3589 0301 54797065 		.ascii	"TypeA_Halt\000"
+ 3589      415F4861 
+ 3589      6C7400
+ 3590              	.LASF52:
+ 3591 030c 646F5F63 		.ascii	"do_crypt\000"
+ 3591      72797074 
+ 3591      00
+ 3592              	.LASF15:
+ 3593 0315 75696E74 		.ascii	"uint32\000"
+ 3593      333200
+ 3594              	.LASF35:
+ 3595 031c 43617264 		.ascii	"CardInfoUpdate\000"
+ 3595      496E666F 
+ 3595      55706461 
+ 3595      746500
+ 3596              	.LASF7:
+ 3597 032b 6C6F6E67 		.ascii	"long unsigned int\000"
+ 3597      20756E73 
+ 3597      69676E65 
+ 3597      6420696E 
+ 3597      7400
+ 3598              	.LASF59:
+ 3599 033d 6E66635F 		.ascii	"nfc_detect_type_b\000"
+ 3599      64657465 
+ 3599      63745F74 
+ 3599      7970655F 
+ 3599      6200
+ 3600              	.LASF17:
+ 3601 034f 646F7562 		.ascii	"double\000"
+ 3601      6C6500
+ 3602              	.LASF41:
+ 3603 0356 41444352 		.ascii	"ADCResultCenter\000"
+ 3603      6573756C 
+ 3603      7443656E 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc58sU4R.s 			page 79
+
+
+ 3603      74657200 
+ 3604              	.LASF56:
+ 3605 0366 5365745F 		.ascii	"Set_Rf\000"
+ 3605      526600
+ 3606              	.LASF32:
+ 3607 036d 63727970 		.ascii	"crypt_buf\000"
+ 3607      745F6275 
+ 3607      6600
+ 3608              	.LASF51:
+ 3609 0377 6D656D73 		.ascii	"memset\000"
+ 3609      657400
+ 3610              	.LASF27:
+ 3611 037e 43617264 		.ascii	"CardBlock_Rd\000"
+ 3611      426C6F63 
+ 3611      6B5F5264 
+ 3611      00
+ 3612              	.LASF40:
+ 3613 038b 6C6F6F70 		.ascii	"loop\000"
+ 3613      00
+ 3614              	.LASF64:
+ 3615 0390 626C655F 		.ascii	"ble_heartbeat\000"
+ 3615      68656172 
+ 3615      74626561 
+ 3615      7400
+ 3616              	.LASF29:
+ 3617 039e 64657465 		.ascii	"detect_nfc_card\000"
+ 3617      63745F6E 
+ 3617      66635F63 
+ 3617      61726400 
+ 3618              	.LASF34:
+ 3619 03ae 49734361 		.ascii	"IsCardLegality\000"
+ 3619      72644C65 
+ 3619      67616C69 
+ 3619      747900
+ 3620              	.LASF28:
+ 3621 03bd 43617264 		.ascii	"CardRead\000"
+ 3621      52656164 
+ 3621      00
+ 3622              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.9.3 20150303 (release) [ARM/embedded-4_9-br

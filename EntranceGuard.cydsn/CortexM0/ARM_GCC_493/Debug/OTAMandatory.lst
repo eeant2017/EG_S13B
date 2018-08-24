@@ -1,0 +1,1752 @@
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccHNdoAW.s 			page 1
+
+
+   1              		.cpu cortex-m0
+   2              		.fpu softvfp
+   3              		.eabi_attribute 20, 1
+   4              		.eabi_attribute 21, 1
+   5              		.eabi_attribute 23, 3
+   6              		.eabi_attribute 24, 1
+   7              		.eabi_attribute 25, 1
+   8              		.eabi_attribute 26, 1
+   9              		.eabi_attribute 30, 4
+  10              		.eabi_attribute 34, 0
+  11              		.eabi_attribute 18, 4
+  12              		.code	16
+  13              		.file	"OTAMandatory.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.Bootloader_Start_c,"ax",%progbits
+  18              		.align	1
+  19              		.global	Bootloader_Start_c
+  20              		.code	16
+  21              		.thumb_func
+  22              		.type	Bootloader_Start_c, %function
+  23              	Bootloader_Start_c:
+  24              	.LFB63:
+  25              		.file 1 "OTAMandatory.c"
+   1:OTAMandatory.c **** /*******************************************************************************
+   2:OTAMandatory.c **** * File Name: OTAMandatory.c
+   3:OTAMandatory.c **** *
+   4:OTAMandatory.c **** * Version: 1.30
+   5:OTAMandatory.c **** *
+   6:OTAMandatory.c **** * Description:
+   7:OTAMandatory.c **** *  Provides an API that implement core functionality of OTA.
+   8:OTAMandatory.c **** *
+   9:OTAMandatory.c **** * Hardware Dependency:
+  10:OTAMandatory.c **** *  CY8CKIT-042 BLE
+  11:OTAMandatory.c **** *
+  12:OTAMandatory.c **** ********************************************************************************
+  13:OTAMandatory.c **** * Copyright 2014-2015, Cypress Semiconductor Corporation. All rights reserved.
+  14:OTAMandatory.c **** * This software is owned by Cypress Semiconductor Corporation and is protected
+  15:OTAMandatory.c **** * by and subject to worldwide patent and copyright laws and treaties.
+  16:OTAMandatory.c **** * Therefore, you may use this software only as provided in the license agreement
+  17:OTAMandatory.c **** * accompanying the software package from which you obtained this software.
+  18:OTAMandatory.c **** * CYPRESS AND ITS SUPPLIERS MAKE NO WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+  19:OTAMandatory.c **** * WITH REGARD TO THIS SOFTWARE, INCLUDING, BUT NOT LIMITED TO, NONINFRINGEMENT,
+  20:OTAMandatory.c **** * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+  21:OTAMandatory.c **** *******************************************************************************/
+  22:OTAMandatory.c **** #include "cytypes.h"
+  23:OTAMandatory.c **** #include "OTAMandatory.h"
+  24:OTAMandatory.c **** #include "debug.h"
+  25:OTAMandatory.c **** #include "common.h"
+  26:OTAMandatory.c **** 
+  27:OTAMandatory.c **** #if defined(__ARMCC_VERSION)
+  28:OTAMandatory.c ****     /*******************************************************************************
+  29:OTAMandatory.c ****     * Following code implements re-initialization of separate RAM segment containing
+  30:OTAMandatory.c ****     * data that is required for BLE Stack operation.
+  31:OTAMandatory.c ****     * This code is used in case of MDK compiler.
+  32:OTAMandatory.c ****     *******************************************************************************/
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccHNdoAW.s 			page 2
+
+
+  33:OTAMandatory.c ****     __attribute__ ((section(".bootloaderruntype"), zero_init))
+  34:OTAMandatory.c ****     volatile uint32 CyReturnToBootloaddableAddress;
+  35:OTAMandatory.c ****     extern void Bootloader__main(void);
+  36:OTAMandatory.c ****     void InitializeBootloaderSRAM(void);
+  37:OTAMandatory.c ****     extern int main(void);
+  38:OTAMandatory.c ****     extern int $Super$$main(void);
+  39:OTAMandatory.c ****     extern void initialize_psoc(void);
+  40:OTAMandatory.c **** 
+  41:OTAMandatory.c ****     /*******************************************************************************
+  42:OTAMandatory.c ****     * Function Name: _platform_post_lib_init()
+  43:OTAMandatory.c ****     ********************************************************************************
+  44:OTAMandatory.c ****     *
+  45:OTAMandatory.c ****     * Summary:
+  46:OTAMandatory.c ****     *   This function is called by MDK compiler startup code.
+  47:OTAMandatory.c ****     *
+  48:OTAMandatory.c ****     * Parameters:
+  49:OTAMandatory.c ****     *   None
+  50:OTAMandatory.c ****     *
+  51:OTAMandatory.c ****     *******************************************************************************/
+  52:OTAMandatory.c ****     void _platform_post_lib_init()
+  53:OTAMandatory.c ****     {
+  54:OTAMandatory.c ****         initialize_psoc();
+  55:OTAMandatory.c ****         InitializeBootloaderSRAM();
+  56:OTAMandatory.c ****     }
+  57:OTAMandatory.c **** #elif defined (__GNUC__)
+  58:OTAMandatory.c ****     /*******************************************************************************
+  59:OTAMandatory.c ****     * Following code implements re-initialization of separate RAM segment containing
+  60:OTAMandatory.c ****     * data that is required for BLE Stack operation.
+  61:OTAMandatory.c ****     * This code is used in case of GCC compiler
+  62:OTAMandatory.c ****     *******************************************************************************/
+  63:OTAMandatory.c ****     extern void Bootloader__libc_init_array(void);
+  64:OTAMandatory.c ****     typedef unsigned char __cy_byte_align8 __attribute ((aligned (8)));
+  65:OTAMandatory.c ****     struct __cy_region
+  66:OTAMandatory.c ****     {
+  67:OTAMandatory.c ****         __cy_byte_align8 *init; /* Initial contents of this region.  */
+  68:OTAMandatory.c ****         __cy_byte_align8 *data; /* Start address of region.  */
+  69:OTAMandatory.c ****         size_t init_size;       /* Size of initial data.  */
+  70:OTAMandatory.c ****         size_t zero_size;       /* Additional size to be zeroed.  */
+  71:OTAMandatory.c ****     };
+  72:OTAMandatory.c ****     extern const struct __cy_region Bootloader__cy_regions[];
+  73:OTAMandatory.c ****     extern const char Bootloader__cy_region_num __attribute__((weak));
+  74:OTAMandatory.c ****     
+  75:OTAMandatory.c ****     
+  76:OTAMandatory.c ****     #define Bootloader__cy_region_num ((size_t)&Bootloader__cy_region_num)
+  77:OTAMandatory.c ****     
+  78:OTAMandatory.c **** 
+  79:OTAMandatory.c ****     /*******************************************************************************
+  80:OTAMandatory.c ****     * Function Name: Bootloader_Start_c()
+  81:OTAMandatory.c ****     ********************************************************************************
+  82:OTAMandatory.c ****     *
+  83:OTAMandatory.c ****     * Summary:
+  84:OTAMandatory.c ****     *   This function initializes bootloader RAM .bss section. It is required for 
+  85:OTAMandatory.c ****     *   BLE Stack operation.
+  86:OTAMandatory.c ****     *
+  87:OTAMandatory.c ****     * Parameters:
+  88:OTAMandatory.c ****     *   None
+  89:OTAMandatory.c ****     *
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccHNdoAW.s 			page 3
+
+
+  90:OTAMandatory.c ****     *******************************************************************************/
+  91:OTAMandatory.c ****     void Bootloader_Start_c(void)
+  92:OTAMandatory.c ****     {
+  26              		.loc 1 92 0
+  27              		.cfi_startproc
+  28              	.LVL0:
+  29 0000 70B5     		push	{r4, r5, r6, lr}
+  30              		.cfi_def_cfa_offset 16
+  31              		.cfi_offset 4, -16
+  32              		.cfi_offset 5, -12
+  33              		.cfi_offset 6, -8
+  34              		.cfi_offset 14, -4
+  35 0002 0E49     		ldr	r1, .L12
+  93:OTAMandatory.c ****         unsigned regions = Bootloader__cy_region_num;
+  94:OTAMandatory.c ****         const struct __cy_region *rptr = Bootloader__cy_regions;
+  36              		.loc 1 94 0
+  37 0004 0E4B     		ldr	r3, .L12+4
+  38 0006 0139     		sub	r1, r1, #1
+  39              	.LVL1:
+  40              	.L2:
+  95:OTAMandatory.c **** 
+  96:OTAMandatory.c ****         /* Initialize memory */
+  97:OTAMandatory.c ****         for (regions = Bootloader__cy_region_num; regions != 0u; regions--)
+  41              		.loc 1 97 0 discriminator 1
+  42 0008 4A1C     		add	r2, r1, #1
+  43 000a 15D0     		beq	.L9
+  44              	.LBB2:
+  98:OTAMandatory.c ****         {
+  99:OTAMandatory.c ****             uint32 *src = (uint32 *)rptr->init;
+ 100:OTAMandatory.c ****             uint32 *dst = (uint32 *)rptr->data;
+ 101:OTAMandatory.c ****             unsigned limit = rptr->init_size;
+ 102:OTAMandatory.c ****             unsigned count;
+ 103:OTAMandatory.c **** 
+ 104:OTAMandatory.c ****             for (count = 0u; count != limit; count += sizeof (uint32))
+  45              		.loc 1 104 0
+  46 000c 0022     		mov	r2, #0
+  99:OTAMandatory.c ****             uint32 *dst = (uint32 *)rptr->data;
+  47              		.loc 1 99 0
+  48 000e 1E68     		ldr	r6, [r3]
+  49              	.LVL2:
+ 100:OTAMandatory.c ****             unsigned limit = rptr->init_size;
+  50              		.loc 1 100 0
+  51 0010 5C68     		ldr	r4, [r3, #4]
+  52              	.LVL3:
+ 101:OTAMandatory.c ****             unsigned count;
+  53              		.loc 1 101 0
+  54 0012 9D68     		ldr	r5, [r3, #8]
+  55              	.LVL4:
+  56              	.L3:
+  57 0014 A018     		add	r0, r4, r2
+  58              	.LVL5:
+  59              		.loc 1 104 0 discriminator 1
+  60 0016 AA42     		cmp	r2, r5
+  61 0018 03D0     		beq	.L10
+ 105:OTAMandatory.c ****             {
+ 106:OTAMandatory.c ****                 *dst = *src;
+  62              		.loc 1 106 0 discriminator 3
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccHNdoAW.s 			page 4
+
+
+  63 001a B058     		ldr	r0, [r6, r2]
+  64              	.LVL6:
+  65 001c A050     		str	r0, [r4, r2]
+  66              	.LVL7:
+ 104:OTAMandatory.c ****             {
+  67              		.loc 1 104 0 discriminator 3
+  68 001e 0432     		add	r2, r2, #4
+  69              	.LVL8:
+  70 0020 F8E7     		b	.L3
+  71              	.LVL9:
+  72              	.L10:
+  73 0022 021C     		mov	r2, r0
+  74              	.LVL10:
+ 107:OTAMandatory.c ****                 dst++;
+ 108:OTAMandatory.c ****                 src++;
+ 109:OTAMandatory.c ****             }
+ 110:OTAMandatory.c ****             limit = rptr->zero_size;
+  75              		.loc 1 110 0
+  76 0024 DC68     		ldr	r4, [r3, #12]
+  77              	.LVL11:
+  78              	.L5:
+  79 0026 151A     		sub	r5, r2, r0
+  80              	.LVL12:
+ 111:OTAMandatory.c ****             for (count = 0u; count != limit; count += sizeof (uint32))
+  81              		.loc 1 111 0 discriminator 1
+  82 0028 A542     		cmp	r5, r4
+  83 002a 02D0     		beq	.L11
+ 112:OTAMandatory.c ****             {
+ 113:OTAMandatory.c ****                 *dst = 0u;
+  84              		.loc 1 113 0 discriminator 3
+  85 002c 0025     		mov	r5, #0
+  86              	.LVL13:
+  87 002e 20C2     		stmia	r2!, {r5}
+  88              	.LVL14:
+  89 0030 F9E7     		b	.L5
+  90              	.LVL15:
+  91              	.L11:
+ 114:OTAMandatory.c ****                 dst++;
+ 115:OTAMandatory.c ****             }
+ 116:OTAMandatory.c **** 
+ 117:OTAMandatory.c ****             rptr++;
+  92              		.loc 1 117 0 discriminator 2
+  93 0032 1033     		add	r3, r3, #16
+  94              	.LVL16:
+  95 0034 0139     		sub	r1, r1, #1
+  96              	.LVL17:
+  97 0036 E7E7     		b	.L2
+  98              	.LVL18:
+  99              	.L9:
+ 100              	.LBE2:
+ 118:OTAMandatory.c ****         }
+ 119:OTAMandatory.c **** 
+ 120:OTAMandatory.c ****         /* Invoke static objects constructors using Bootloader__libc_init_array() function call her
+ 121:OTAMandatory.c ****          * if they are needed.
+ 122:OTAMandatory.c ****          */
+ 123:OTAMandatory.c **** }   
+ 101              		.loc 1 123 0
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccHNdoAW.s 			page 5
+
+
+ 102              		@ sp needed
+ 103 0038 70BD     		pop	{r4, r5, r6, pc}
+ 104              	.L13:
+ 105 003a C046     		.align	2
+ 106              	.L12:
+ 107 003c 00000000 		.word	Bootloader__cy_region_num
+ 108 0040 00000000 		.word	Bootloader__cy_regions
+ 109              		.cfi_endproc
+ 110              	.LFE63:
+ 111              		.size	Bootloader_Start_c, .-Bootloader_Start_c
+ 112              		.section	.text.InitializeBootloaderSRAM,"ax",%progbits
+ 113              		.align	1
+ 114              		.global	InitializeBootloaderSRAM
+ 115              		.code	16
+ 116              		.thumb_func
+ 117              		.type	InitializeBootloaderSRAM, %function
+ 118              	InitializeBootloaderSRAM:
+ 119              	.LFB64:
+ 124:OTAMandatory.c **** #elif defined (__ICCARM__)
+ 125:OTAMandatory.c ****     /*******************************************************************************
+ 126:OTAMandatory.c ****     * Following code implements re-initialization of separate RAM segment containing
+ 127:OTAMandatory.c ****     * data that is required for BLE Stack operation.
+ 128:OTAMandatory.c ****     * This code is used in case of IAR compiler.
+ 129:OTAMandatory.c ****     *******************************************************************************/
+ 130:OTAMandatory.c ****     extern void Bootloader__iar_data_init3(void);
+ 131:OTAMandatory.c **** #endif  /* (__ARMCC_VERSION) */
+ 132:OTAMandatory.c **** 
+ 133:OTAMandatory.c **** 
+ 134:OTAMandatory.c **** /*******************************************************************************
+ 135:OTAMandatory.c **** * Function Name: Bootloader_Start_c()
+ 136:OTAMandatory.c **** ********************************************************************************
+ 137:OTAMandatory.c **** *
+ 138:OTAMandatory.c **** * Summary:
+ 139:OTAMandatory.c **** *   This function triggers initialization of bootloader RAM .bss section.
+ 140:OTAMandatory.c **** *   It is required for BLE Stack operation. This function should be called from
+ 141:OTAMandatory.c **** *   main() prior BLE component start.
+ 142:OTAMandatory.c **** *
+ 143:OTAMandatory.c **** * Parameters:
+ 144:OTAMandatory.c **** *   None
+ 145:OTAMandatory.c **** *
+ 146:OTAMandatory.c **** *******************************************************************************/
+ 147:OTAMandatory.c **** void InitializeBootloaderSRAM()
+ 148:OTAMandatory.c **** {
+ 120              		.loc 1 148 0
+ 121              		.cfi_startproc
+ 122 0000 08B5     		push	{r3, lr}
+ 123              		.cfi_def_cfa_offset 8
+ 124              		.cfi_offset 3, -8
+ 125              		.cfi_offset 14, -4
+ 149:OTAMandatory.c **** #if defined(__ARMCC_VERSION)
+ 150:OTAMandatory.c ****     CyReturnToBootloaddableAddress = (uint32)$Super$$main;
+ 151:OTAMandatory.c ****     Bootloader__main();
+ 152:OTAMandatory.c **** #elif defined (__GNUC__)
+ 153:OTAMandatory.c ****     Bootloader_Start_c();
+ 126              		.loc 1 153 0
+ 127 0002 FFF7FEFF 		bl	Bootloader_Start_c
+ 128              	.LVL19:
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccHNdoAW.s 			page 6
+
+
+ 154:OTAMandatory.c **** #elif defined (__ICCARM__)
+ 155:OTAMandatory.c ****     Bootloader__iar_data_init3();
+ 156:OTAMandatory.c **** #endif /* defined(__ARMCC_VERSION) */
+ 157:OTAMandatory.c **** }
+ 129              		.loc 1 157 0
+ 130              		@ sp needed
+ 131 0006 08BD     		pop	{r3, pc}
+ 132              		.cfi_endproc
+ 133              	.LFE64:
+ 134              		.size	InitializeBootloaderSRAM, .-InitializeBootloaderSRAM
+ 135              		.section	.text.ConfigureSharedPins,"ax",%progbits
+ 136              		.align	1
+ 137              		.global	ConfigureSharedPins
+ 138              		.code	16
+ 139              		.thumb_func
+ 140              		.type	ConfigureSharedPins, %function
+ 141              	ConfigureSharedPins:
+ 142              	.LFB65:
+ 158:OTAMandatory.c **** 
+ 159:OTAMandatory.c **** 
+ 160:OTAMandatory.c **** /*******************************************************************************
+ 161:OTAMandatory.c **** * Function Name: ConfigureSharedPins()
+ 162:OTAMandatory.c **** ********************************************************************************
+ 163:OTAMandatory.c **** *
+ 164:OTAMandatory.c **** * Summary:
+ 165:OTAMandatory.c **** *   This function configures shared pins.
+ 166:OTAMandatory.c **** *
+ 167:OTAMandatory.c **** * Parameters:
+ 168:OTAMandatory.c **** *   None
+ 169:OTAMandatory.c **** *
+ 170:OTAMandatory.c **** *******************************************************************************/
+ 171:OTAMandatory.c **** void ConfigureSharedPins()
+ 172:OTAMandatory.c **** {
+ 143              		.loc 1 172 0
+ 144              		.cfi_startproc
+ 145 0000 08B5     		push	{r3, lr}
+ 146              		.cfi_def_cfa_offset 8
+ 147              		.cfi_offset 3, -8
+ 148              		.cfi_offset 14, -4
+ 173:OTAMandatory.c **** #if 0
+ 174:OTAMandatory.c ****     Disconnect_LED_SetDriveMode(LED_1_DM_RES_UP);
+ 175:OTAMandatory.c ****     Advertising_LED_SetDriveMode(LED_1_DM_RES_UP);
+ 176:OTAMandatory.c ****     CapsLock_LED_SetDriveMode(LED_1_DM_RES_UP);
+ 177:OTAMandatory.c ****     Disconnect_LED_Write(LED_OFF);
+ 178:OTAMandatory.c ****     Advertising_LED_Write(LED_OFF);
+ 179:OTAMandatory.c ****     CapsLock_LED_Write(LED_OFF);
+ 180:OTAMandatory.c **** #endif
+ 181:OTAMandatory.c **** //    Bootloader_Service_Activation_SetDriveMode(LED_1_DM_RES_UP);
+ 182:OTAMandatory.c ****     Bootloader_Service_Activation_Write(1);
+ 149              		.loc 1 182 0
+ 150 0002 0120     		mov	r0, #1
+ 151 0004 FFF7FEFF 		bl	Bootloader_Service_Activation_Write
+ 152              	.LVL20:
+ 183:OTAMandatory.c **** }
+ 153              		.loc 1 183 0
+ 154              		@ sp needed
+ 155 0008 08BD     		pop	{r3, pc}
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccHNdoAW.s 			page 7
+
+
+ 156              		.cfi_endproc
+ 157              	.LFE65:
+ 158              		.size	ConfigureSharedPins, .-ConfigureSharedPins
+ 159              		.section	.text.BootloaderSwitch,"ax",%progbits
+ 160              		.align	1
+ 161              		.global	BootloaderSwitch
+ 162              		.code	16
+ 163              		.thumb_func
+ 164              		.type	BootloaderSwitch, %function
+ 165              	BootloaderSwitch:
+ 166              	.LFB66:
+ 184:OTAMandatory.c **** 
+ 185:OTAMandatory.c **** 
+ 186:OTAMandatory.c **** /*******************************************************************************
+ 187:OTAMandatory.c **** * Function Name: BootloaderSwitch()
+ 188:OTAMandatory.c **** ********************************************************************************
+ 189:OTAMandatory.c **** *
+ 190:OTAMandatory.c **** * Summary:
+ 191:OTAMandatory.c **** *   This function polls SW2 button and if it is pressed - shedules bootloader 
+ 192:OTAMandatory.c **** *   project launch. That action includes sotware reset.
+ 193:OTAMandatory.c **** *
+ 194:OTAMandatory.c **** * Parameters:
+ 195:OTAMandatory.c **** *   None
+ 196:OTAMandatory.c **** *
+ 197:OTAMandatory.c **** *******************************************************************************/
+ 198:OTAMandatory.c **** void BootloaderSwitch()
+ 199:OTAMandatory.c **** {
+ 167              		.loc 1 199 0
+ 168              		.cfi_startproc
+ 200:OTAMandatory.c **** 
+ 201:OTAMandatory.c ****     DBG_PRINTF("Bootloader activation button pressed \r\n");
+ 202:OTAMandatory.c ****     DBG_PRINTF("Switching to bootloader application... \r\n");
+ 203:OTAMandatory.c ****     CyDelay(500);
+ 169              		.loc 1 203 0
+ 170 0000 FA20     		mov	r0, #250
+ 199:OTAMandatory.c **** 
+ 171              		.loc 1 199 0
+ 172 0002 08B5     		push	{r3, lr}
+ 173              		.cfi_def_cfa_offset 8
+ 174              		.cfi_offset 3, -8
+ 175              		.cfi_offset 14, -4
+ 176              		.loc 1 203 0
+ 177 0004 4000     		lsl	r0, r0, #1
+ 178 0006 FFF7FEFF 		bl	CyDelay
+ 179              	.LVL21:
+ 204:OTAMandatory.c **** 
+ 205:OTAMandatory.c ****     CyBle_Shutdown(); /* stop all ongoing activities */
+ 180              		.loc 1 205 0
+ 181 000a FFF7FEFF 		bl	CyBle_Shutdown
+ 182              	.LVL22:
+ 206:OTAMandatory.c ****     CyBle_ProcessEvents(); /* process all pending events */
+ 183              		.loc 1 206 0
+ 184 000e FFF7FEFF 		bl	CyBle_ProcessEvents
+ 185              	.LVL23:
+ 207:OTAMandatory.c ****     CyBle_SetState(CYBLE_STATE_STOPPED);
+ 186              		.loc 1 207 0
+ 187 0012 0022     		mov	r2, #0
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccHNdoAW.s 			page 8
+
+
+ 188 0014 024B     		ldr	r3, .L17
+ 189 0016 1A70     		strb	r2, [r3]
+ 208:OTAMandatory.c **** //           CySysWdtUnlock();
+ 209:OTAMandatory.c **** //            CySysWdtDisable(WDT_COUNTER_MASK);
+ 210:OTAMandatory.c ****     CyGlobalIntDisable;
+ 190              		.loc 1 210 0
+ 191              	@ 210 "OTAMandatory.c" 1
+ 192 0018 72B6     		CPSID   i
+ 193              	@ 0 "" 2
+ 211:OTAMandatory.c ****     Bootloadable_Load();
+ 194              		.loc 1 211 0
+ 195              		.code	16
+ 196 001a FFF7FEFF 		bl	Bootloadable_Load
+ 197              	.LVL24:
+ 212:OTAMandatory.c **** }
+ 198              		.loc 1 212 0
+ 199              		@ sp needed
+ 200 001e 08BD     		pop	{r3, pc}
+ 201              	.L18:
+ 202              		.align	2
+ 203              	.L17:
+ 204 0020 00000000 		.word	cyBle_state
+ 205              		.cfi_endproc
+ 206              	.LFE66:
+ 207              		.size	BootloaderSwitch, .-BootloaderSwitch
+ 208              		.section	.text.ConfigureServices,"ax",%progbits
+ 209              		.align	1
+ 210              		.global	ConfigureServices
+ 211              		.code	16
+ 212              		.thumb_func
+ 213              		.type	ConfigureServices, %function
+ 214              	ConfigureServices:
+ 215              	.LFB67:
+ 213:OTAMandatory.c **** 
+ 214:OTAMandatory.c **** 
+ 215:OTAMandatory.c **** /*******************************************************************************
+ 216:OTAMandatory.c **** * Function Name: ConfigureServices()
+ 217:OTAMandatory.c **** ********************************************************************************
+ 218:OTAMandatory.c **** *
+ 219:OTAMandatory.c **** * Summary:
+ 220:OTAMandatory.c **** *   This function configures BLE component services to match required
+ 221:OTAMandatory.c **** *   configuration.
+ 222:OTAMandatory.c **** *
+ 223:OTAMandatory.c **** * Parameters:
+ 224:OTAMandatory.c **** *   None
+ 225:OTAMandatory.c **** *
+ 226:OTAMandatory.c **** *******************************************************************************/
+ 227:OTAMandatory.c **** void ConfigureServices()
+ 228:OTAMandatory.c **** {
+ 216              		.loc 1 228 0
+ 217              		.cfi_startproc
+ 229:OTAMandatory.c **** //    CyBle_GattsDisableAttribute(CYBLE_BTS_SERVICE_HANDLE);
+ 230:OTAMandatory.c **** 
+ 231:OTAMandatory.c **** #if defined(__ICCARM__)
+ 232:OTAMandatory.c ****     CyBle_GattsEnableAttribute(CYBLE_HID_SERVICE_HANDLE);
+ 233:OTAMandatory.c ****     CyBle_GattsEnableAttribute(CYBLE_DIS_SERVICE_HANDLE);
+ 234:OTAMandatory.c ****     CyBle_GattsEnableAttribute(CYBLE_BAS_SERVICE_HANDLE);
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccHNdoAW.s 			page 9
+
+
+ 235:OTAMandatory.c ****     CyBle_GattsEnableAttribute(CYBLE_SCPS_SERVICE_HANDLE);
+ 236:OTAMandatory.c **** #endif /* defined(__ICCARM__) */
+ 237:OTAMandatory.c **** }
+ 218              		.loc 1 237 0
+ 219              		@ sp needed
+ 220 0000 7047     		bx	lr
+ 221              		.cfi_endproc
+ 222              	.LFE67:
+ 223              		.size	ConfigureServices, .-ConfigureServices
+ 224              		.weak	Bootloader__cy_region_num
+ 225              		.text
+ 226              	.Letext0:
+ 227              		.file 2 "Generated_Source\\PSoC4/cytypes.h"
+ 228              		.file 3 "OTAMandatory.h"
+ 229              		.file 4 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+ 230              		.file 5 "Generated_Source\\PSoC4/CyLib.h"
+ 231              		.file 6 "Generated_Source\\PSoC4/Bootloadable.h"
+ 232              		.section	.debug_info,"",%progbits
+ 233              	.Ldebug_info0:
+ 234 0000 C0020000 		.4byte	0x2c0
+ 235 0004 0400     		.2byte	0x4
+ 236 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 237 000a 04       		.byte	0x4
+ 238 000b 01       		.uleb128 0x1
+ 239 000c 51010000 		.4byte	.LASF42
+ 240 0010 01       		.byte	0x1
+ 241 0011 19000000 		.4byte	.LASF43
+ 242 0015 2F000000 		.4byte	.LASF44
+ 243 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 244 001d 00000000 		.4byte	0
+ 245 0021 00000000 		.4byte	.Ldebug_line0
+ 246 0025 02       		.uleb128 0x2
+ 247 0026 01       		.byte	0x1
+ 248 0027 06       		.byte	0x6
+ 249 0028 62030000 		.4byte	.LASF0
+ 250 002c 02       		.uleb128 0x2
+ 251 002d 01       		.byte	0x1
+ 252 002e 08       		.byte	0x8
+ 253 002f 2B010000 		.4byte	.LASF1
+ 254 0033 02       		.uleb128 0x2
+ 255 0034 02       		.byte	0x2
+ 256 0035 05       		.byte	0x5
+ 257 0036 12030000 		.4byte	.LASF2
+ 258 003a 02       		.uleb128 0x2
+ 259 003b 02       		.byte	0x2
+ 260 003c 07       		.byte	0x7
+ 261 003d D3000000 		.4byte	.LASF3
+ 262 0041 02       		.uleb128 0x2
+ 263 0042 04       		.byte	0x4
+ 264 0043 05       		.byte	0x5
+ 265 0044 59030000 		.4byte	.LASF4
+ 266 0048 02       		.uleb128 0x2
+ 267 0049 04       		.byte	0x4
+ 268 004a 07       		.byte	0x7
+ 269 004b 39010000 		.4byte	.LASF5
+ 270 004f 02       		.uleb128 0x2
+ 271 0050 08       		.byte	0x8
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccHNdoAW.s 			page 10
+
+
+ 272 0051 05       		.byte	0x5
+ 273 0052 D0020000 		.4byte	.LASF6
+ 274 0056 02       		.uleb128 0x2
+ 275 0057 08       		.byte	0x8
+ 276 0058 07       		.byte	0x7
+ 277 0059 8F030000 		.4byte	.LASF7
+ 278 005d 03       		.uleb128 0x3
+ 279 005e 04       		.byte	0x4
+ 280 005f 05       		.byte	0x5
+ 281 0060 696E7400 		.ascii	"int\000"
+ 282 0064 02       		.uleb128 0x2
+ 283 0065 04       		.byte	0x4
+ 284 0066 07       		.byte	0x7
+ 285 0067 3C020000 		.4byte	.LASF8
+ 286 006b 04       		.uleb128 0x4
+ 287 006c 4B010000 		.4byte	.LASF9
+ 288 0070 02       		.byte	0x2
+ 289 0071 B901     		.2byte	0x1b9
+ 290 0073 2C000000 		.4byte	0x2c
+ 291 0077 04       		.uleb128 0x4
+ 292 0078 35020000 		.4byte	.LASF10
+ 293 007c 02       		.byte	0x2
+ 294 007d BB01     		.2byte	0x1bb
+ 295 007f 48000000 		.4byte	0x48
+ 296 0083 02       		.uleb128 0x2
+ 297 0084 04       		.byte	0x4
+ 298 0085 04       		.byte	0x4
+ 299 0086 09010000 		.4byte	.LASF11
+ 300 008a 02       		.uleb128 0x2
+ 301 008b 08       		.byte	0x8
+ 302 008c 04       		.byte	0x4
+ 303 008d E6000000 		.4byte	.LASF12
+ 304 0091 02       		.uleb128 0x2
+ 305 0092 01       		.byte	0x1
+ 306 0093 08       		.byte	0x8
+ 307 0094 49020000 		.4byte	.LASF13
+ 308 0098 02       		.uleb128 0x2
+ 309 0099 04       		.byte	0x4
+ 310 009a 07       		.byte	0x7
+ 311 009b A3020000 		.4byte	.LASF14
+ 312 009f 05       		.uleb128 0x5
+ 313 00a0 01       		.byte	0x1
+ 314 00a1 03       		.byte	0x3
+ 315 00a2 A002     		.2byte	0x2a0
+ 316 00a4 C7000000 		.4byte	0xc7
+ 317 00a8 06       		.uleb128 0x6
+ 318 00a9 54020000 		.4byte	.LASF15
+ 319 00ad 00       		.sleb128 0
+ 320 00ae 06       		.uleb128 0x6
+ 321 00af 76030000 		.4byte	.LASF16
+ 322 00b3 01       		.sleb128 1
+ 323 00b4 06       		.uleb128 0x6
+ 324 00b5 43030000 		.4byte	.LASF17
+ 325 00b9 02       		.sleb128 2
+ 326 00ba 06       		.uleb128 0x6
+ 327 00bb F3010000 		.4byte	.LASF18
+ 328 00bf 03       		.sleb128 3
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccHNdoAW.s 			page 11
+
+
+ 329 00c0 06       		.uleb128 0x6
+ 330 00c1 BA000000 		.4byte	.LASF19
+ 331 00c5 04       		.sleb128 4
+ 332 00c6 00       		.byte	0
+ 333 00c7 04       		.uleb128 0x4
+ 334 00c8 1C030000 		.4byte	.LASF20
+ 335 00cc 03       		.byte	0x3
+ 336 00cd A602     		.2byte	0x2a6
+ 337 00cf 9F000000 		.4byte	0x9f
+ 338 00d3 07       		.uleb128 0x7
+ 339 00d4 28000000 		.4byte	.LASF21
+ 340 00d8 04       		.byte	0x4
+ 341 00d9 D4       		.byte	0xd4
+ 342 00da 64000000 		.4byte	0x64
+ 343 00de 08       		.uleb128 0x8
+ 344 00df 91000000 		.4byte	0x91
+ 345 00e3 07       		.uleb128 0x7
+ 346 00e4 72020000 		.4byte	.LASF22
+ 347 00e8 01       		.byte	0x1
+ 348 00e9 40       		.byte	0x40
+ 349 00ea 2C000000 		.4byte	0x2c
+ 350 00ee 09       		.uleb128 0x9
+ 351 00ef A6030000 		.4byte	.LASF45
+ 352 00f3 10       		.byte	0x10
+ 353 00f4 01       		.byte	0x1
+ 354 00f5 41       		.byte	0x41
+ 355 00f6 2B010000 		.4byte	0x12b
+ 356 00fa 0A       		.uleb128 0xa
+ 357 00fb DE020000 		.4byte	.LASF23
+ 358 00ff 01       		.byte	0x1
+ 359 0100 43       		.byte	0x43
+ 360 0101 2B010000 		.4byte	0x12b
+ 361 0105 00       		.byte	0
+ 362 0106 0A       		.uleb128 0xa
+ 363 0107 0F010000 		.4byte	.LASF24
+ 364 010b 01       		.byte	0x1
+ 365 010c 44       		.byte	0x44
+ 366 010d 2B010000 		.4byte	0x12b
+ 367 0111 04       		.byte	0x4
+ 368 0112 0A       		.uleb128 0xa
+ 369 0113 68020000 		.4byte	.LASF25
+ 370 0117 01       		.byte	0x1
+ 371 0118 45       		.byte	0x45
+ 372 0119 D3000000 		.4byte	0xd3
+ 373 011d 08       		.byte	0x8
+ 374 011e 0A       		.uleb128 0xa
+ 375 011f FF000000 		.4byte	.LASF26
+ 376 0123 01       		.byte	0x1
+ 377 0124 46       		.byte	0x46
+ 378 0125 D3000000 		.4byte	0xd3
+ 379 0129 0C       		.byte	0xc
+ 380 012a 00       		.byte	0
+ 381 012b 0B       		.uleb128 0xb
+ 382 012c 04       		.byte	0x4
+ 383 012d E3000000 		.4byte	0xe3
+ 384 0131 0C       		.uleb128 0xc
+ 385 0132 22020000 		.4byte	.LASF31
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccHNdoAW.s 			page 12
+
+
+ 386 0136 01       		.byte	0x1
+ 387 0137 5B       		.byte	0x5b
+ 388 0138 00000000 		.4byte	.LFB63
+ 389 013c 44000000 		.4byte	.LFE63-.LFB63
+ 390 0140 01       		.uleb128 0x1
+ 391 0141 9C       		.byte	0x9c
+ 392 0142 AB010000 		.4byte	0x1ab
+ 393 0146 0D       		.uleb128 0xd
+ 394 0147 6E030000 		.4byte	.LASF27
+ 395 014b 01       		.byte	0x1
+ 396 014c 5D       		.byte	0x5d
+ 397 014d 64000000 		.4byte	0x64
+ 398 0151 00000000 		.4byte	.LLST0
+ 399 0155 0D       		.uleb128 0xd
+ 400 0156 1D020000 		.4byte	.LASF28
+ 401 015a 01       		.byte	0x1
+ 402 015b 5E       		.byte	0x5e
+ 403 015c AB010000 		.4byte	0x1ab
+ 404 0160 2D000000 		.4byte	.LLST1
+ 405 0164 0E       		.uleb128 0xe
+ 406 0165 0C000000 		.4byte	.LBB2
+ 407 0169 2C000000 		.4byte	.LBE2-.LBB2
+ 408 016d 0F       		.uleb128 0xf
+ 409 016e 73726300 		.ascii	"src\000"
+ 410 0172 01       		.byte	0x1
+ 411 0173 63       		.byte	0x63
+ 412 0174 B6010000 		.4byte	0x1b6
+ 413 0178 40000000 		.4byte	.LLST2
+ 414 017c 0F       		.uleb128 0xf
+ 415 017d 64737400 		.ascii	"dst\000"
+ 416 0181 01       		.byte	0x1
+ 417 0182 64       		.byte	0x64
+ 418 0183 B6010000 		.4byte	0x1b6
+ 419 0187 85000000 		.4byte	.LLST3
+ 420 018b 0D       		.uleb128 0xd
+ 421 018c 4E020000 		.4byte	.LASF29
+ 422 0190 01       		.byte	0x1
+ 423 0191 65       		.byte	0x65
+ 424 0192 64000000 		.4byte	0x64
+ 425 0196 EB000000 		.4byte	.LLST4
+ 426 019a 0D       		.uleb128 0xd
+ 427 019b 0C030000 		.4byte	.LASF30
+ 428 019f 01       		.byte	0x1
+ 429 01a0 66       		.byte	0x66
+ 430 01a1 64000000 		.4byte	0x64
+ 431 01a5 09010000 		.4byte	.LLST5
+ 432 01a9 00       		.byte	0
+ 433 01aa 00       		.byte	0
+ 434 01ab 0B       		.uleb128 0xb
+ 435 01ac 04       		.byte	0x4
+ 436 01ad B1010000 		.4byte	0x1b1
+ 437 01b1 08       		.uleb128 0x8
+ 438 01b2 EE000000 		.4byte	0xee
+ 439 01b6 0B       		.uleb128 0xb
+ 440 01b7 04       		.byte	0x4
+ 441 01b8 77000000 		.4byte	0x77
+ 442 01bc 10       		.uleb128 0x10
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccHNdoAW.s 			page 13
+
+
+ 443 01bd 00000000 		.4byte	.LASF46
+ 444 01c1 01       		.byte	0x1
+ 445 01c2 93       		.byte	0x93
+ 446 01c3 00000000 		.4byte	.LFB64
+ 447 01c7 08000000 		.4byte	.LFE64-.LFB64
+ 448 01cb 01       		.uleb128 0x1
+ 449 01cc 9C       		.byte	0x9c
+ 450 01cd DB010000 		.4byte	0x1db
+ 451 01d1 11       		.uleb128 0x11
+ 452 01d2 06000000 		.4byte	.LVL19
+ 453 01d6 31010000 		.4byte	0x131
+ 454 01da 00       		.byte	0
+ 455 01db 0C       		.uleb128 0xc
+ 456 01dc 8F020000 		.4byte	.LASF32
+ 457 01e0 01       		.byte	0x1
+ 458 01e1 AB       		.byte	0xab
+ 459 01e2 00000000 		.4byte	.LFB65
+ 460 01e6 0A000000 		.4byte	.LFE65-.LFB65
+ 461 01ea 01       		.uleb128 0x1
+ 462 01eb 9C       		.byte	0x9c
+ 463 01ec 00020000 		.4byte	0x200
+ 464 01f0 12       		.uleb128 0x12
+ 465 01f1 08000000 		.4byte	.LVL20
+ 466 01f5 89020000 		.4byte	0x289
+ 467 01f9 13       		.uleb128 0x13
+ 468 01fa 01       		.uleb128 0x1
+ 469 01fb 50       		.byte	0x50
+ 470 01fc 01       		.uleb128 0x1
+ 471 01fd 31       		.byte	0x31
+ 472 01fe 00       		.byte	0
+ 473 01ff 00       		.byte	0
+ 474 0200 0C       		.uleb128 0xc
+ 475 0201 2A030000 		.4byte	.LASF33
+ 476 0205 01       		.byte	0x1
+ 477 0206 C6       		.byte	0xc6
+ 478 0207 00000000 		.4byte	.LFB66
+ 479 020b 24000000 		.4byte	.LFE66-.LFB66
+ 480 020f 01       		.uleb128 0x1
+ 481 0210 9C       		.byte	0x9c
+ 482 0211 46020000 		.4byte	0x246
+ 483 0215 14       		.uleb128 0x14
+ 484 0216 0A000000 		.4byte	.LVL21
+ 485 021a 9B020000 		.4byte	0x29b
+ 486 021e 2A020000 		.4byte	0x22a
+ 487 0222 13       		.uleb128 0x13
+ 488 0223 01       		.uleb128 0x1
+ 489 0224 50       		.byte	0x50
+ 490 0225 03       		.uleb128 0x3
+ 491 0226 0A       		.byte	0xa
+ 492 0227 F401     		.2byte	0x1f4
+ 493 0229 00       		.byte	0
+ 494 022a 11       		.uleb128 0x11
+ 495 022b 0E000000 		.4byte	.LVL22
+ 496 022f AC020000 		.4byte	0x2ac
+ 497 0233 11       		.uleb128 0x11
+ 498 0234 12000000 		.4byte	.LVL23
+ 499 0238 B4020000 		.4byte	0x2b4
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccHNdoAW.s 			page 14
+
+
+ 500 023c 11       		.uleb128 0x11
+ 501 023d 1E000000 		.4byte	.LVL24
+ 502 0241 BC020000 		.4byte	0x2bc
+ 503 0245 00       		.byte	0
+ 504 0246 15       		.uleb128 0x15
+ 505 0247 ED000000 		.4byte	.LASF47
+ 506 024b 01       		.byte	0x1
+ 507 024c E3       		.byte	0xe3
+ 508 024d 00000000 		.4byte	.LFB67
+ 509 0251 02000000 		.4byte	.LFE67-.LFB67
+ 510 0255 01       		.uleb128 0x1
+ 511 0256 9C       		.byte	0x9c
+ 512 0257 16       		.uleb128 0x16
+ 513 0258 83020000 		.4byte	.LASF34
+ 514 025c 03       		.byte	0x3
+ 515 025d 640D     		.2byte	0xd64
+ 516 025f C7000000 		.4byte	0xc7
+ 517 0263 17       		.uleb128 0x17
+ 518 0264 EE000000 		.4byte	0xee
+ 519 0268 6E020000 		.4byte	0x26e
+ 520 026c 18       		.uleb128 0x18
+ 521 026d 00       		.byte	0
+ 522 026e 19       		.uleb128 0x19
+ 523 026f 14010000 		.4byte	.LASF35
+ 524 0273 01       		.byte	0x1
+ 525 0274 48       		.byte	0x48
+ 526 0275 79020000 		.4byte	0x279
+ 527 0279 08       		.uleb128 0x8
+ 528 027a 63020000 		.4byte	0x263
+ 529 027e 19       		.uleb128 0x19
+ 530 027f F2020000 		.4byte	.LASF36
+ 531 0283 01       		.byte	0x1
+ 532 0284 49       		.byte	0x49
+ 533 0285 DE000000 		.4byte	0xde
+ 534 0289 1A       		.uleb128 0x1a
+ 535 028a AC020000 		.4byte	.LASF37
+ 536 028e 03       		.byte	0x3
+ 537 028f 8B0D     		.2byte	0xd8b
+ 538 0291 9B020000 		.4byte	0x29b
+ 539 0295 1B       		.uleb128 0x1b
+ 540 0296 6B000000 		.4byte	0x6b
+ 541 029a 00       		.byte	0
+ 542 029b 1C       		.uleb128 0x1c
+ 543 029c 3B030000 		.4byte	.LASF38
+ 544 02a0 05       		.byte	0x5
+ 545 02a1 D9       		.byte	0xd9
+ 546 02a2 AC020000 		.4byte	0x2ac
+ 547 02a6 1B       		.uleb128 0x1b
+ 548 02a7 77000000 		.4byte	0x77
+ 549 02ab 00       		.byte	0
+ 550 02ac 1D       		.uleb128 0x1d
+ 551 02ad E3020000 		.4byte	.LASF39
+ 552 02b1 03       		.byte	0x3
+ 553 02b2 B00D     		.2byte	0xdb0
+ 554 02b4 1D       		.uleb128 0x1d
+ 555 02b5 DF010000 		.4byte	.LASF40
+ 556 02b9 03       		.byte	0x3
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccHNdoAW.s 			page 15
+
+
+ 557 02ba 680D     		.2byte	0xd68
+ 558 02bc 1E       		.uleb128 0x1e
+ 559 02bd 0B020000 		.4byte	.LASF41
+ 560 02c1 06       		.byte	0x6
+ 561 02c2 58       		.byte	0x58
+ 562 02c3 00       		.byte	0
+ 563              		.section	.debug_abbrev,"",%progbits
+ 564              	.Ldebug_abbrev0:
+ 565 0000 01       		.uleb128 0x1
+ 566 0001 11       		.uleb128 0x11
+ 567 0002 01       		.byte	0x1
+ 568 0003 25       		.uleb128 0x25
+ 569 0004 0E       		.uleb128 0xe
+ 570 0005 13       		.uleb128 0x13
+ 571 0006 0B       		.uleb128 0xb
+ 572 0007 03       		.uleb128 0x3
+ 573 0008 0E       		.uleb128 0xe
+ 574 0009 1B       		.uleb128 0x1b
+ 575 000a 0E       		.uleb128 0xe
+ 576 000b 55       		.uleb128 0x55
+ 577 000c 17       		.uleb128 0x17
+ 578 000d 11       		.uleb128 0x11
+ 579 000e 01       		.uleb128 0x1
+ 580 000f 10       		.uleb128 0x10
+ 581 0010 17       		.uleb128 0x17
+ 582 0011 00       		.byte	0
+ 583 0012 00       		.byte	0
+ 584 0013 02       		.uleb128 0x2
+ 585 0014 24       		.uleb128 0x24
+ 586 0015 00       		.byte	0
+ 587 0016 0B       		.uleb128 0xb
+ 588 0017 0B       		.uleb128 0xb
+ 589 0018 3E       		.uleb128 0x3e
+ 590 0019 0B       		.uleb128 0xb
+ 591 001a 03       		.uleb128 0x3
+ 592 001b 0E       		.uleb128 0xe
+ 593 001c 00       		.byte	0
+ 594 001d 00       		.byte	0
+ 595 001e 03       		.uleb128 0x3
+ 596 001f 24       		.uleb128 0x24
+ 597 0020 00       		.byte	0
+ 598 0021 0B       		.uleb128 0xb
+ 599 0022 0B       		.uleb128 0xb
+ 600 0023 3E       		.uleb128 0x3e
+ 601 0024 0B       		.uleb128 0xb
+ 602 0025 03       		.uleb128 0x3
+ 603 0026 08       		.uleb128 0x8
+ 604 0027 00       		.byte	0
+ 605 0028 00       		.byte	0
+ 606 0029 04       		.uleb128 0x4
+ 607 002a 16       		.uleb128 0x16
+ 608 002b 00       		.byte	0
+ 609 002c 03       		.uleb128 0x3
+ 610 002d 0E       		.uleb128 0xe
+ 611 002e 3A       		.uleb128 0x3a
+ 612 002f 0B       		.uleb128 0xb
+ 613 0030 3B       		.uleb128 0x3b
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccHNdoAW.s 			page 16
+
+
+ 614 0031 05       		.uleb128 0x5
+ 615 0032 49       		.uleb128 0x49
+ 616 0033 13       		.uleb128 0x13
+ 617 0034 00       		.byte	0
+ 618 0035 00       		.byte	0
+ 619 0036 05       		.uleb128 0x5
+ 620 0037 04       		.uleb128 0x4
+ 621 0038 01       		.byte	0x1
+ 622 0039 0B       		.uleb128 0xb
+ 623 003a 0B       		.uleb128 0xb
+ 624 003b 3A       		.uleb128 0x3a
+ 625 003c 0B       		.uleb128 0xb
+ 626 003d 3B       		.uleb128 0x3b
+ 627 003e 05       		.uleb128 0x5
+ 628 003f 01       		.uleb128 0x1
+ 629 0040 13       		.uleb128 0x13
+ 630 0041 00       		.byte	0
+ 631 0042 00       		.byte	0
+ 632 0043 06       		.uleb128 0x6
+ 633 0044 28       		.uleb128 0x28
+ 634 0045 00       		.byte	0
+ 635 0046 03       		.uleb128 0x3
+ 636 0047 0E       		.uleb128 0xe
+ 637 0048 1C       		.uleb128 0x1c
+ 638 0049 0D       		.uleb128 0xd
+ 639 004a 00       		.byte	0
+ 640 004b 00       		.byte	0
+ 641 004c 07       		.uleb128 0x7
+ 642 004d 16       		.uleb128 0x16
+ 643 004e 00       		.byte	0
+ 644 004f 03       		.uleb128 0x3
+ 645 0050 0E       		.uleb128 0xe
+ 646 0051 3A       		.uleb128 0x3a
+ 647 0052 0B       		.uleb128 0xb
+ 648 0053 3B       		.uleb128 0x3b
+ 649 0054 0B       		.uleb128 0xb
+ 650 0055 49       		.uleb128 0x49
+ 651 0056 13       		.uleb128 0x13
+ 652 0057 00       		.byte	0
+ 653 0058 00       		.byte	0
+ 654 0059 08       		.uleb128 0x8
+ 655 005a 26       		.uleb128 0x26
+ 656 005b 00       		.byte	0
+ 657 005c 49       		.uleb128 0x49
+ 658 005d 13       		.uleb128 0x13
+ 659 005e 00       		.byte	0
+ 660 005f 00       		.byte	0
+ 661 0060 09       		.uleb128 0x9
+ 662 0061 13       		.uleb128 0x13
+ 663 0062 01       		.byte	0x1
+ 664 0063 03       		.uleb128 0x3
+ 665 0064 0E       		.uleb128 0xe
+ 666 0065 0B       		.uleb128 0xb
+ 667 0066 0B       		.uleb128 0xb
+ 668 0067 3A       		.uleb128 0x3a
+ 669 0068 0B       		.uleb128 0xb
+ 670 0069 3B       		.uleb128 0x3b
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccHNdoAW.s 			page 17
+
+
+ 671 006a 0B       		.uleb128 0xb
+ 672 006b 01       		.uleb128 0x1
+ 673 006c 13       		.uleb128 0x13
+ 674 006d 00       		.byte	0
+ 675 006e 00       		.byte	0
+ 676 006f 0A       		.uleb128 0xa
+ 677 0070 0D       		.uleb128 0xd
+ 678 0071 00       		.byte	0
+ 679 0072 03       		.uleb128 0x3
+ 680 0073 0E       		.uleb128 0xe
+ 681 0074 3A       		.uleb128 0x3a
+ 682 0075 0B       		.uleb128 0xb
+ 683 0076 3B       		.uleb128 0x3b
+ 684 0077 0B       		.uleb128 0xb
+ 685 0078 49       		.uleb128 0x49
+ 686 0079 13       		.uleb128 0x13
+ 687 007a 38       		.uleb128 0x38
+ 688 007b 0B       		.uleb128 0xb
+ 689 007c 00       		.byte	0
+ 690 007d 00       		.byte	0
+ 691 007e 0B       		.uleb128 0xb
+ 692 007f 0F       		.uleb128 0xf
+ 693 0080 00       		.byte	0
+ 694 0081 0B       		.uleb128 0xb
+ 695 0082 0B       		.uleb128 0xb
+ 696 0083 49       		.uleb128 0x49
+ 697 0084 13       		.uleb128 0x13
+ 698 0085 00       		.byte	0
+ 699 0086 00       		.byte	0
+ 700 0087 0C       		.uleb128 0xc
+ 701 0088 2E       		.uleb128 0x2e
+ 702 0089 01       		.byte	0x1
+ 703 008a 3F       		.uleb128 0x3f
+ 704 008b 19       		.uleb128 0x19
+ 705 008c 03       		.uleb128 0x3
+ 706 008d 0E       		.uleb128 0xe
+ 707 008e 3A       		.uleb128 0x3a
+ 708 008f 0B       		.uleb128 0xb
+ 709 0090 3B       		.uleb128 0x3b
+ 710 0091 0B       		.uleb128 0xb
+ 711 0092 27       		.uleb128 0x27
+ 712 0093 19       		.uleb128 0x19
+ 713 0094 11       		.uleb128 0x11
+ 714 0095 01       		.uleb128 0x1
+ 715 0096 12       		.uleb128 0x12
+ 716 0097 06       		.uleb128 0x6
+ 717 0098 40       		.uleb128 0x40
+ 718 0099 18       		.uleb128 0x18
+ 719 009a 9742     		.uleb128 0x2117
+ 720 009c 19       		.uleb128 0x19
+ 721 009d 01       		.uleb128 0x1
+ 722 009e 13       		.uleb128 0x13
+ 723 009f 00       		.byte	0
+ 724 00a0 00       		.byte	0
+ 725 00a1 0D       		.uleb128 0xd
+ 726 00a2 34       		.uleb128 0x34
+ 727 00a3 00       		.byte	0
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccHNdoAW.s 			page 18
+
+
+ 728 00a4 03       		.uleb128 0x3
+ 729 00a5 0E       		.uleb128 0xe
+ 730 00a6 3A       		.uleb128 0x3a
+ 731 00a7 0B       		.uleb128 0xb
+ 732 00a8 3B       		.uleb128 0x3b
+ 733 00a9 0B       		.uleb128 0xb
+ 734 00aa 49       		.uleb128 0x49
+ 735 00ab 13       		.uleb128 0x13
+ 736 00ac 02       		.uleb128 0x2
+ 737 00ad 17       		.uleb128 0x17
+ 738 00ae 00       		.byte	0
+ 739 00af 00       		.byte	0
+ 740 00b0 0E       		.uleb128 0xe
+ 741 00b1 0B       		.uleb128 0xb
+ 742 00b2 01       		.byte	0x1
+ 743 00b3 11       		.uleb128 0x11
+ 744 00b4 01       		.uleb128 0x1
+ 745 00b5 12       		.uleb128 0x12
+ 746 00b6 06       		.uleb128 0x6
+ 747 00b7 00       		.byte	0
+ 748 00b8 00       		.byte	0
+ 749 00b9 0F       		.uleb128 0xf
+ 750 00ba 34       		.uleb128 0x34
+ 751 00bb 00       		.byte	0
+ 752 00bc 03       		.uleb128 0x3
+ 753 00bd 08       		.uleb128 0x8
+ 754 00be 3A       		.uleb128 0x3a
+ 755 00bf 0B       		.uleb128 0xb
+ 756 00c0 3B       		.uleb128 0x3b
+ 757 00c1 0B       		.uleb128 0xb
+ 758 00c2 49       		.uleb128 0x49
+ 759 00c3 13       		.uleb128 0x13
+ 760 00c4 02       		.uleb128 0x2
+ 761 00c5 17       		.uleb128 0x17
+ 762 00c6 00       		.byte	0
+ 763 00c7 00       		.byte	0
+ 764 00c8 10       		.uleb128 0x10
+ 765 00c9 2E       		.uleb128 0x2e
+ 766 00ca 01       		.byte	0x1
+ 767 00cb 3F       		.uleb128 0x3f
+ 768 00cc 19       		.uleb128 0x19
+ 769 00cd 03       		.uleb128 0x3
+ 770 00ce 0E       		.uleb128 0xe
+ 771 00cf 3A       		.uleb128 0x3a
+ 772 00d0 0B       		.uleb128 0xb
+ 773 00d1 3B       		.uleb128 0x3b
+ 774 00d2 0B       		.uleb128 0xb
+ 775 00d3 11       		.uleb128 0x11
+ 776 00d4 01       		.uleb128 0x1
+ 777 00d5 12       		.uleb128 0x12
+ 778 00d6 06       		.uleb128 0x6
+ 779 00d7 40       		.uleb128 0x40
+ 780 00d8 18       		.uleb128 0x18
+ 781 00d9 9742     		.uleb128 0x2117
+ 782 00db 19       		.uleb128 0x19
+ 783 00dc 01       		.uleb128 0x1
+ 784 00dd 13       		.uleb128 0x13
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccHNdoAW.s 			page 19
+
+
+ 785 00de 00       		.byte	0
+ 786 00df 00       		.byte	0
+ 787 00e0 11       		.uleb128 0x11
+ 788 00e1 898201   		.uleb128 0x4109
+ 789 00e4 00       		.byte	0
+ 790 00e5 11       		.uleb128 0x11
+ 791 00e6 01       		.uleb128 0x1
+ 792 00e7 31       		.uleb128 0x31
+ 793 00e8 13       		.uleb128 0x13
+ 794 00e9 00       		.byte	0
+ 795 00ea 00       		.byte	0
+ 796 00eb 12       		.uleb128 0x12
+ 797 00ec 898201   		.uleb128 0x4109
+ 798 00ef 01       		.byte	0x1
+ 799 00f0 11       		.uleb128 0x11
+ 800 00f1 01       		.uleb128 0x1
+ 801 00f2 31       		.uleb128 0x31
+ 802 00f3 13       		.uleb128 0x13
+ 803 00f4 00       		.byte	0
+ 804 00f5 00       		.byte	0
+ 805 00f6 13       		.uleb128 0x13
+ 806 00f7 8A8201   		.uleb128 0x410a
+ 807 00fa 00       		.byte	0
+ 808 00fb 02       		.uleb128 0x2
+ 809 00fc 18       		.uleb128 0x18
+ 810 00fd 9142     		.uleb128 0x2111
+ 811 00ff 18       		.uleb128 0x18
+ 812 0100 00       		.byte	0
+ 813 0101 00       		.byte	0
+ 814 0102 14       		.uleb128 0x14
+ 815 0103 898201   		.uleb128 0x4109
+ 816 0106 01       		.byte	0x1
+ 817 0107 11       		.uleb128 0x11
+ 818 0108 01       		.uleb128 0x1
+ 819 0109 31       		.uleb128 0x31
+ 820 010a 13       		.uleb128 0x13
+ 821 010b 01       		.uleb128 0x1
+ 822 010c 13       		.uleb128 0x13
+ 823 010d 00       		.byte	0
+ 824 010e 00       		.byte	0
+ 825 010f 15       		.uleb128 0x15
+ 826 0110 2E       		.uleb128 0x2e
+ 827 0111 00       		.byte	0
+ 828 0112 3F       		.uleb128 0x3f
+ 829 0113 19       		.uleb128 0x19
+ 830 0114 03       		.uleb128 0x3
+ 831 0115 0E       		.uleb128 0xe
+ 832 0116 3A       		.uleb128 0x3a
+ 833 0117 0B       		.uleb128 0xb
+ 834 0118 3B       		.uleb128 0x3b
+ 835 0119 0B       		.uleb128 0xb
+ 836 011a 27       		.uleb128 0x27
+ 837 011b 19       		.uleb128 0x19
+ 838 011c 11       		.uleb128 0x11
+ 839 011d 01       		.uleb128 0x1
+ 840 011e 12       		.uleb128 0x12
+ 841 011f 06       		.uleb128 0x6
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccHNdoAW.s 			page 20
+
+
+ 842 0120 40       		.uleb128 0x40
+ 843 0121 18       		.uleb128 0x18
+ 844 0122 9742     		.uleb128 0x2117
+ 845 0124 19       		.uleb128 0x19
+ 846 0125 00       		.byte	0
+ 847 0126 00       		.byte	0
+ 848 0127 16       		.uleb128 0x16
+ 849 0128 34       		.uleb128 0x34
+ 850 0129 00       		.byte	0
+ 851 012a 03       		.uleb128 0x3
+ 852 012b 0E       		.uleb128 0xe
+ 853 012c 3A       		.uleb128 0x3a
+ 854 012d 0B       		.uleb128 0xb
+ 855 012e 3B       		.uleb128 0x3b
+ 856 012f 05       		.uleb128 0x5
+ 857 0130 49       		.uleb128 0x49
+ 858 0131 13       		.uleb128 0x13
+ 859 0132 3F       		.uleb128 0x3f
+ 860 0133 19       		.uleb128 0x19
+ 861 0134 3C       		.uleb128 0x3c
+ 862 0135 19       		.uleb128 0x19
+ 863 0136 00       		.byte	0
+ 864 0137 00       		.byte	0
+ 865 0138 17       		.uleb128 0x17
+ 866 0139 01       		.uleb128 0x1
+ 867 013a 01       		.byte	0x1
+ 868 013b 49       		.uleb128 0x49
+ 869 013c 13       		.uleb128 0x13
+ 870 013d 01       		.uleb128 0x1
+ 871 013e 13       		.uleb128 0x13
+ 872 013f 00       		.byte	0
+ 873 0140 00       		.byte	0
+ 874 0141 18       		.uleb128 0x18
+ 875 0142 21       		.uleb128 0x21
+ 876 0143 00       		.byte	0
+ 877 0144 00       		.byte	0
+ 878 0145 00       		.byte	0
+ 879 0146 19       		.uleb128 0x19
+ 880 0147 34       		.uleb128 0x34
+ 881 0148 00       		.byte	0
+ 882 0149 03       		.uleb128 0x3
+ 883 014a 0E       		.uleb128 0xe
+ 884 014b 3A       		.uleb128 0x3a
+ 885 014c 0B       		.uleb128 0xb
+ 886 014d 3B       		.uleb128 0x3b
+ 887 014e 0B       		.uleb128 0xb
+ 888 014f 49       		.uleb128 0x49
+ 889 0150 13       		.uleb128 0x13
+ 890 0151 3F       		.uleb128 0x3f
+ 891 0152 19       		.uleb128 0x19
+ 892 0153 3C       		.uleb128 0x3c
+ 893 0154 19       		.uleb128 0x19
+ 894 0155 00       		.byte	0
+ 895 0156 00       		.byte	0
+ 896 0157 1A       		.uleb128 0x1a
+ 897 0158 2E       		.uleb128 0x2e
+ 898 0159 01       		.byte	0x1
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccHNdoAW.s 			page 21
+
+
+ 899 015a 3F       		.uleb128 0x3f
+ 900 015b 19       		.uleb128 0x19
+ 901 015c 03       		.uleb128 0x3
+ 902 015d 0E       		.uleb128 0xe
+ 903 015e 3A       		.uleb128 0x3a
+ 904 015f 0B       		.uleb128 0xb
+ 905 0160 3B       		.uleb128 0x3b
+ 906 0161 05       		.uleb128 0x5
+ 907 0162 27       		.uleb128 0x27
+ 908 0163 19       		.uleb128 0x19
+ 909 0164 3C       		.uleb128 0x3c
+ 910 0165 19       		.uleb128 0x19
+ 911 0166 01       		.uleb128 0x1
+ 912 0167 13       		.uleb128 0x13
+ 913 0168 00       		.byte	0
+ 914 0169 00       		.byte	0
+ 915 016a 1B       		.uleb128 0x1b
+ 916 016b 05       		.uleb128 0x5
+ 917 016c 00       		.byte	0
+ 918 016d 49       		.uleb128 0x49
+ 919 016e 13       		.uleb128 0x13
+ 920 016f 00       		.byte	0
+ 921 0170 00       		.byte	0
+ 922 0171 1C       		.uleb128 0x1c
+ 923 0172 2E       		.uleb128 0x2e
+ 924 0173 01       		.byte	0x1
+ 925 0174 3F       		.uleb128 0x3f
+ 926 0175 19       		.uleb128 0x19
+ 927 0176 03       		.uleb128 0x3
+ 928 0177 0E       		.uleb128 0xe
+ 929 0178 3A       		.uleb128 0x3a
+ 930 0179 0B       		.uleb128 0xb
+ 931 017a 3B       		.uleb128 0x3b
+ 932 017b 0B       		.uleb128 0xb
+ 933 017c 27       		.uleb128 0x27
+ 934 017d 19       		.uleb128 0x19
+ 935 017e 3C       		.uleb128 0x3c
+ 936 017f 19       		.uleb128 0x19
+ 937 0180 01       		.uleb128 0x1
+ 938 0181 13       		.uleb128 0x13
+ 939 0182 00       		.byte	0
+ 940 0183 00       		.byte	0
+ 941 0184 1D       		.uleb128 0x1d
+ 942 0185 2E       		.uleb128 0x2e
+ 943 0186 00       		.byte	0
+ 944 0187 3F       		.uleb128 0x3f
+ 945 0188 19       		.uleb128 0x19
+ 946 0189 03       		.uleb128 0x3
+ 947 018a 0E       		.uleb128 0xe
+ 948 018b 3A       		.uleb128 0x3a
+ 949 018c 0B       		.uleb128 0xb
+ 950 018d 3B       		.uleb128 0x3b
+ 951 018e 05       		.uleb128 0x5
+ 952 018f 27       		.uleb128 0x27
+ 953 0190 19       		.uleb128 0x19
+ 954 0191 3C       		.uleb128 0x3c
+ 955 0192 19       		.uleb128 0x19
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccHNdoAW.s 			page 22
+
+
+ 956 0193 00       		.byte	0
+ 957 0194 00       		.byte	0
+ 958 0195 1E       		.uleb128 0x1e
+ 959 0196 2E       		.uleb128 0x2e
+ 960 0197 00       		.byte	0
+ 961 0198 3F       		.uleb128 0x3f
+ 962 0199 19       		.uleb128 0x19
+ 963 019a 03       		.uleb128 0x3
+ 964 019b 0E       		.uleb128 0xe
+ 965 019c 3A       		.uleb128 0x3a
+ 966 019d 0B       		.uleb128 0xb
+ 967 019e 3B       		.uleb128 0x3b
+ 968 019f 0B       		.uleb128 0xb
+ 969 01a0 27       		.uleb128 0x27
+ 970 01a1 19       		.uleb128 0x19
+ 971 01a2 3C       		.uleb128 0x3c
+ 972 01a3 19       		.uleb128 0x19
+ 973 01a4 00       		.byte	0
+ 974 01a5 00       		.byte	0
+ 975 01a6 00       		.byte	0
+ 976              		.section	.debug_loc,"",%progbits
+ 977              	.Ldebug_loc0:
+ 978              	.LLST0:
+ 979 0000 08000000 		.4byte	.LVL1
+ 980 0004 34000000 		.4byte	.LVL16
+ 981 0008 0300     		.2byte	0x3
+ 982 000a 71       		.byte	0x71
+ 983 000b 01       		.sleb128 1
+ 984 000c 9F       		.byte	0x9f
+ 985 000d 34000000 		.4byte	.LVL16
+ 986 0011 36000000 		.4byte	.LVL17
+ 987 0015 0100     		.2byte	0x1
+ 988 0017 51       		.byte	0x51
+ 989 0018 36000000 		.4byte	.LVL17
+ 990 001c 44000000 		.4byte	.LFE63
+ 991 0020 0300     		.2byte	0x3
+ 992 0022 71       		.byte	0x71
+ 993 0023 01       		.sleb128 1
+ 994 0024 9F       		.byte	0x9f
+ 995 0025 00000000 		.4byte	0
+ 996 0029 00000000 		.4byte	0
+ 997              	.LLST1:
+ 998 002d 08000000 		.4byte	.LVL1
+ 999 0031 44000000 		.4byte	.LFE63
+ 1000 0035 0100     		.2byte	0x1
+ 1001 0037 53       		.byte	0x53
+ 1002 0038 00000000 		.4byte	0
+ 1003 003c 00000000 		.4byte	0
+ 1004              	.LLST2:
+ 1005 0040 10000000 		.4byte	.LVL2
+ 1006 0044 14000000 		.4byte	.LVL4
+ 1007 0048 0100     		.2byte	0x1
+ 1008 004a 56       		.byte	0x56
+ 1009 004b 16000000 		.4byte	.LVL5
+ 1010 004f 1E000000 		.4byte	.LVL7
+ 1011 0053 0600     		.2byte	0x6
+ 1012 0055 76       		.byte	0x76
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccHNdoAW.s 			page 23
+
+
+ 1013 0056 00       		.sleb128 0
+ 1014 0057 72       		.byte	0x72
+ 1015 0058 00       		.sleb128 0
+ 1016 0059 22       		.byte	0x22
+ 1017 005a 9F       		.byte	0x9f
+ 1018 005b 1E000000 		.4byte	.LVL7
+ 1019 005f 20000000 		.4byte	.LVL8
+ 1020 0063 0800     		.2byte	0x8
+ 1021 0065 76       		.byte	0x76
+ 1022 0066 00       		.sleb128 0
+ 1023 0067 72       		.byte	0x72
+ 1024 0068 00       		.sleb128 0
+ 1025 0069 22       		.byte	0x22
+ 1026 006a 23       		.byte	0x23
+ 1027 006b 04       		.uleb128 0x4
+ 1028 006c 9F       		.byte	0x9f
+ 1029 006d 20000000 		.4byte	.LVL8
+ 1030 0071 24000000 		.4byte	.LVL10
+ 1031 0075 0600     		.2byte	0x6
+ 1032 0077 76       		.byte	0x76
+ 1033 0078 00       		.sleb128 0
+ 1034 0079 72       		.byte	0x72
+ 1035 007a 00       		.sleb128 0
+ 1036 007b 22       		.byte	0x22
+ 1037 007c 9F       		.byte	0x9f
+ 1038 007d 00000000 		.4byte	0
+ 1039 0081 00000000 		.4byte	0
+ 1040              	.LLST3:
+ 1041 0085 12000000 		.4byte	.LVL3
+ 1042 0089 14000000 		.4byte	.LVL4
+ 1043 008d 0100     		.2byte	0x1
+ 1044 008f 54       		.byte	0x54
+ 1045 0090 16000000 		.4byte	.LVL5
+ 1046 0094 1C000000 		.4byte	.LVL6
+ 1047 0098 0100     		.2byte	0x1
+ 1048 009a 50       		.byte	0x50
+ 1049 009b 1C000000 		.4byte	.LVL6
+ 1050 009f 1E000000 		.4byte	.LVL7
+ 1051 00a3 0600     		.2byte	0x6
+ 1052 00a5 74       		.byte	0x74
+ 1053 00a6 00       		.sleb128 0
+ 1054 00a7 72       		.byte	0x72
+ 1055 00a8 00       		.sleb128 0
+ 1056 00a9 22       		.byte	0x22
+ 1057 00aa 9F       		.byte	0x9f
+ 1058 00ab 1E000000 		.4byte	.LVL7
+ 1059 00af 20000000 		.4byte	.LVL8
+ 1060 00b3 0800     		.2byte	0x8
+ 1061 00b5 74       		.byte	0x74
+ 1062 00b6 00       		.sleb128 0
+ 1063 00b7 72       		.byte	0x72
+ 1064 00b8 00       		.sleb128 0
+ 1065 00b9 22       		.byte	0x22
+ 1066 00ba 23       		.byte	0x23
+ 1067 00bb 04       		.uleb128 0x4
+ 1068 00bc 9F       		.byte	0x9f
+ 1069 00bd 20000000 		.4byte	.LVL8
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccHNdoAW.s 			page 24
+
+
+ 1070 00c1 22000000 		.4byte	.LVL9
+ 1071 00c5 0600     		.2byte	0x6
+ 1072 00c7 74       		.byte	0x74
+ 1073 00c8 00       		.sleb128 0
+ 1074 00c9 72       		.byte	0x72
+ 1075 00ca 00       		.sleb128 0
+ 1076 00cb 22       		.byte	0x22
+ 1077 00cc 9F       		.byte	0x9f
+ 1078 00cd 22000000 		.4byte	.LVL9
+ 1079 00d1 26000000 		.4byte	.LVL11
+ 1080 00d5 0100     		.2byte	0x1
+ 1081 00d7 50       		.byte	0x50
+ 1082 00d8 26000000 		.4byte	.LVL11
+ 1083 00dc 38000000 		.4byte	.LVL18
+ 1084 00e0 0100     		.2byte	0x1
+ 1085 00e2 52       		.byte	0x52
+ 1086 00e3 00000000 		.4byte	0
+ 1087 00e7 00000000 		.4byte	0
+ 1088              	.LLST4:
+ 1089 00eb 14000000 		.4byte	.LVL4
+ 1090 00ef 26000000 		.4byte	.LVL11
+ 1091 00f3 0100     		.2byte	0x1
+ 1092 00f5 55       		.byte	0x55
+ 1093 00f6 26000000 		.4byte	.LVL11
+ 1094 00fa 38000000 		.4byte	.LVL18
+ 1095 00fe 0100     		.2byte	0x1
+ 1096 0100 54       		.byte	0x54
+ 1097 0101 00000000 		.4byte	0
+ 1098 0105 00000000 		.4byte	0
+ 1099              	.LLST5:
+ 1100 0109 16000000 		.4byte	.LVL5
+ 1101 010d 24000000 		.4byte	.LVL10
+ 1102 0111 0100     		.2byte	0x1
+ 1103 0113 52       		.byte	0x52
+ 1104 0114 26000000 		.4byte	.LVL11
+ 1105 0118 28000000 		.4byte	.LVL12
+ 1106 011c 0600     		.2byte	0x6
+ 1107 011e 72       		.byte	0x72
+ 1108 011f 00       		.sleb128 0
+ 1109 0120 70       		.byte	0x70
+ 1110 0121 00       		.sleb128 0
+ 1111 0122 1C       		.byte	0x1c
+ 1112 0123 9F       		.byte	0x9f
+ 1113 0124 28000000 		.4byte	.LVL12
+ 1114 0128 2E000000 		.4byte	.LVL13
+ 1115 012c 0100     		.2byte	0x1
+ 1116 012e 55       		.byte	0x55
+ 1117 012f 2E000000 		.4byte	.LVL13
+ 1118 0133 32000000 		.4byte	.LVL15
+ 1119 0137 0600     		.2byte	0x6
+ 1120 0139 72       		.byte	0x72
+ 1121 013a 00       		.sleb128 0
+ 1122 013b 70       		.byte	0x70
+ 1123 013c 00       		.sleb128 0
+ 1124 013d 1C       		.byte	0x1c
+ 1125 013e 9F       		.byte	0x9f
+ 1126 013f 32000000 		.4byte	.LVL15
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccHNdoAW.s 			page 25
+
+
+ 1127 0143 38000000 		.4byte	.LVL18
+ 1128 0147 0100     		.2byte	0x1
+ 1129 0149 55       		.byte	0x55
+ 1130 014a 00000000 		.4byte	0
+ 1131 014e 00000000 		.4byte	0
+ 1132              		.section	.debug_aranges,"",%progbits
+ 1133 0000 3C000000 		.4byte	0x3c
+ 1134 0004 0200     		.2byte	0x2
+ 1135 0006 00000000 		.4byte	.Ldebug_info0
+ 1136 000a 04       		.byte	0x4
+ 1137 000b 00       		.byte	0
+ 1138 000c 0000     		.2byte	0
+ 1139 000e 0000     		.2byte	0
+ 1140 0010 00000000 		.4byte	.LFB63
+ 1141 0014 44000000 		.4byte	.LFE63-.LFB63
+ 1142 0018 00000000 		.4byte	.LFB64
+ 1143 001c 08000000 		.4byte	.LFE64-.LFB64
+ 1144 0020 00000000 		.4byte	.LFB65
+ 1145 0024 0A000000 		.4byte	.LFE65-.LFB65
+ 1146 0028 00000000 		.4byte	.LFB66
+ 1147 002c 24000000 		.4byte	.LFE66-.LFB66
+ 1148 0030 00000000 		.4byte	.LFB67
+ 1149 0034 02000000 		.4byte	.LFE67-.LFB67
+ 1150 0038 00000000 		.4byte	0
+ 1151 003c 00000000 		.4byte	0
+ 1152              		.section	.debug_ranges,"",%progbits
+ 1153              	.Ldebug_ranges0:
+ 1154 0000 00000000 		.4byte	.LFB63
+ 1155 0004 44000000 		.4byte	.LFE63
+ 1156 0008 00000000 		.4byte	.LFB64
+ 1157 000c 08000000 		.4byte	.LFE64
+ 1158 0010 00000000 		.4byte	.LFB65
+ 1159 0014 0A000000 		.4byte	.LFE65
+ 1160 0018 00000000 		.4byte	.LFB66
+ 1161 001c 24000000 		.4byte	.LFE66
+ 1162 0020 00000000 		.4byte	.LFB67
+ 1163 0024 02000000 		.4byte	.LFE67
+ 1164 0028 00000000 		.4byte	0
+ 1165 002c 00000000 		.4byte	0
+ 1166              		.section	.debug_line,"",%progbits
+ 1167              	.Ldebug_line0:
+ 1168 0000 8C010000 		.section	.debug_str,"MS",%progbits,1
+ 1168      0200FA00 
+ 1168      00000201 
+ 1168      FB0E0D00 
+ 1168      01010101 
+ 1169              	.LASF46:
+ 1170 0000 496E6974 		.ascii	"InitializeBootloaderSRAM\000"
+ 1170      69616C69 
+ 1170      7A65426F 
+ 1170      6F746C6F 
+ 1170      61646572 
+ 1171              	.LASF43:
+ 1172 0019 4F54414D 		.ascii	"OTAMandatory.c\000"
+ 1172      616E6461 
+ 1172      746F7279 
+ 1172      2E6300
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccHNdoAW.s 			page 26
+
+
+ 1173              	.LASF21:
+ 1174 0028 73697A65 		.ascii	"size_t\000"
+ 1174      5F7400
+ 1175              	.LASF44:
+ 1176 002f 433A5C55 		.ascii	"C:\\Users\\zhiantec\\Documents\\Tencent Files\\1241"
+ 1176      73657273 
+ 1176      5C7A6869 
+ 1176      616E7465 
+ 1176      635C446F 
+ 1177 005d 39333938 		.ascii	"939835\\FileRecv\\MobileFile\\second_images[4-8]\\E"
+ 1177      33355C46 
+ 1177      696C6552 
+ 1177      6563765C 
+ 1177      4D6F6269 
+ 1178 008c 6E747261 		.ascii	"ntranceGuard_171019-12.50\\EntranceGuard.cydsn\000"
+ 1178      6E636547 
+ 1178      75617264 
+ 1178      5F313731 
+ 1178      3031392D 
+ 1179              	.LASF19:
+ 1180 00ba 4359424C 		.ascii	"CYBLE_STATE_DISCONNECTED\000"
+ 1180      455F5354 
+ 1180      4154455F 
+ 1180      44495343 
+ 1180      4F4E4E45 
+ 1181              	.LASF3:
+ 1182 00d3 73686F72 		.ascii	"short unsigned int\000"
+ 1182      7420756E 
+ 1182      7369676E 
+ 1182      65642069 
+ 1182      6E7400
+ 1183              	.LASF12:
+ 1184 00e6 646F7562 		.ascii	"double\000"
+ 1184      6C6500
+ 1185              	.LASF47:
+ 1186 00ed 436F6E66 		.ascii	"ConfigureServices\000"
+ 1186      69677572 
+ 1186      65536572 
+ 1186      76696365 
+ 1186      7300
+ 1187              	.LASF26:
+ 1188 00ff 7A65726F 		.ascii	"zero_size\000"
+ 1188      5F73697A 
+ 1188      6500
+ 1189              	.LASF11:
+ 1190 0109 666C6F61 		.ascii	"float\000"
+ 1190      7400
+ 1191              	.LASF24:
+ 1192 010f 64617461 		.ascii	"data\000"
+ 1192      00
+ 1193              	.LASF35:
+ 1194 0114 426F6F74 		.ascii	"Bootloader__cy_regions\000"
+ 1194      6C6F6164 
+ 1194      65725F5F 
+ 1194      63795F72 
+ 1194      6567696F 
+ 1195              	.LASF1:
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccHNdoAW.s 			page 27
+
+
+ 1196 012b 756E7369 		.ascii	"unsigned char\000"
+ 1196      676E6564 
+ 1196      20636861 
+ 1196      7200
+ 1197              	.LASF5:
+ 1198 0139 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1198      20756E73 
+ 1198      69676E65 
+ 1198      6420696E 
+ 1198      7400
+ 1199              	.LASF9:
+ 1200 014b 75696E74 		.ascii	"uint8\000"
+ 1200      3800
+ 1201              	.LASF42:
+ 1202 0151 474E5520 		.ascii	"GNU C 4.9.3 20150303 (release) [ARM/embedded-4_9-br"
+ 1202      4320342E 
+ 1202      392E3320 
+ 1202      32303135 
+ 1202      30333033 
+ 1203 0184 616E6368 		.ascii	"anch revision 221220] -mcpu=cortex-m0 -mthumb -g -O"
+ 1203      20726576 
+ 1203      6973696F 
+ 1203      6E203232 
+ 1203      31323230 
+ 1204 01b7 73202D66 		.ascii	"s -ffunction-sections -ffat-lto-objects\000"
+ 1204      66756E63 
+ 1204      74696F6E 
+ 1204      2D736563 
+ 1204      74696F6E 
+ 1205              	.LASF40:
+ 1206 01df 4379426C 		.ascii	"CyBle_ProcessEvents\000"
+ 1206      655F5072 
+ 1206      6F636573 
+ 1206      73457665 
+ 1206      6E747300 
+ 1207              	.LASF18:
+ 1208 01f3 4359424C 		.ascii	"CYBLE_STATE_ADVERTISING\000"
+ 1208      455F5354 
+ 1208      4154455F 
+ 1208      41445645 
+ 1208      52544953 
+ 1209              	.LASF41:
+ 1210 020b 426F6F74 		.ascii	"Bootloadable_Load\000"
+ 1210      6C6F6164 
+ 1210      61626C65 
+ 1210      5F4C6F61 
+ 1210      6400
+ 1211              	.LASF28:
+ 1212 021d 72707472 		.ascii	"rptr\000"
+ 1212      00
+ 1213              	.LASF31:
+ 1214 0222 426F6F74 		.ascii	"Bootloader_Start_c\000"
+ 1214      6C6F6164 
+ 1214      65725F53 
+ 1214      74617274 
+ 1214      5F6300
+ 1215              	.LASF10:
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccHNdoAW.s 			page 28
+
+
+ 1216 0235 75696E74 		.ascii	"uint32\000"
+ 1216      333200
+ 1217              	.LASF8:
+ 1218 023c 756E7369 		.ascii	"unsigned int\000"
+ 1218      676E6564 
+ 1218      20696E74 
+ 1218      00
+ 1219              	.LASF13:
+ 1220 0249 63686172 		.ascii	"char\000"
+ 1220      00
+ 1221              	.LASF29:
+ 1222 024e 6C696D69 		.ascii	"limit\000"
+ 1222      7400
+ 1223              	.LASF15:
+ 1224 0254 4359424C 		.ascii	"CYBLE_STATE_STOPPED\000"
+ 1224      455F5354 
+ 1224      4154455F 
+ 1224      53544F50 
+ 1224      50454400 
+ 1225              	.LASF25:
+ 1226 0268 696E6974 		.ascii	"init_size\000"
+ 1226      5F73697A 
+ 1226      6500
+ 1227              	.LASF22:
+ 1228 0272 5F5F6379 		.ascii	"__cy_byte_align8\000"
+ 1228      5F627974 
+ 1228      655F616C 
+ 1228      69676E38 
+ 1228      00
+ 1229              	.LASF34:
+ 1230 0283 6379426C 		.ascii	"cyBle_state\000"
+ 1230      655F7374 
+ 1230      61746500 
+ 1231              	.LASF32:
+ 1232 028f 436F6E66 		.ascii	"ConfigureSharedPins\000"
+ 1232      69677572 
+ 1232      65536861 
+ 1232      72656450 
+ 1232      696E7300 
+ 1233              	.LASF14:
+ 1234 02a3 73697A65 		.ascii	"sizetype\000"
+ 1234      74797065 
+ 1234      00
+ 1235              	.LASF37:
+ 1236 02ac 426F6F74 		.ascii	"Bootloader_Service_Activation_Write\000"
+ 1236      6C6F6164 
+ 1236      65725F53 
+ 1236      65727669 
+ 1236      63655F41 
+ 1237              	.LASF6:
+ 1238 02d0 6C6F6E67 		.ascii	"long long int\000"
+ 1238      206C6F6E 
+ 1238      6720696E 
+ 1238      7400
+ 1239              	.LASF23:
+ 1240 02de 696E6974 		.ascii	"init\000"
+ 1240      00
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccHNdoAW.s 			page 29
+
+
+ 1241              	.LASF39:
+ 1242 02e3 4379426C 		.ascii	"CyBle_Shutdown\000"
+ 1242      655F5368 
+ 1242      7574646F 
+ 1242      776E00
+ 1243              	.LASF36:
+ 1244 02f2 426F6F74 		.ascii	"Bootloader__cy_region_num\000"
+ 1244      6C6F6164 
+ 1244      65725F5F 
+ 1244      63795F72 
+ 1244      6567696F 
+ 1245              	.LASF30:
+ 1246 030c 636F756E 		.ascii	"count\000"
+ 1246      7400
+ 1247              	.LASF2:
+ 1248 0312 73686F72 		.ascii	"short int\000"
+ 1248      7420696E 
+ 1248      7400
+ 1249              	.LASF20:
+ 1250 031c 4359424C 		.ascii	"CYBLE_STATE_T\000"
+ 1250      455F5354 
+ 1250      4154455F 
+ 1250      5400
+ 1251              	.LASF33:
+ 1252 032a 426F6F74 		.ascii	"BootloaderSwitch\000"
+ 1252      6C6F6164 
+ 1252      65725377 
+ 1252      69746368 
+ 1252      00
+ 1253              	.LASF38:
+ 1254 033b 43794465 		.ascii	"CyDelay\000"
+ 1254      6C617900 
+ 1255              	.LASF17:
+ 1256 0343 4359424C 		.ascii	"CYBLE_STATE_CONNECTED\000"
+ 1256      455F5354 
+ 1256      4154455F 
+ 1256      434F4E4E 
+ 1256      45435445 
+ 1257              	.LASF4:
+ 1258 0359 6C6F6E67 		.ascii	"long int\000"
+ 1258      20696E74 
+ 1258      00
+ 1259              	.LASF0:
+ 1260 0362 7369676E 		.ascii	"signed char\000"
+ 1260      65642063 
+ 1260      68617200 
+ 1261              	.LASF27:
+ 1262 036e 72656769 		.ascii	"regions\000"
+ 1262      6F6E7300 
+ 1263              	.LASF16:
+ 1264 0376 4359424C 		.ascii	"CYBLE_STATE_INITIALIZING\000"
+ 1264      455F5354 
+ 1264      4154455F 
+ 1264      494E4954 
+ 1264      49414C49 
+ 1265              	.LASF7:
+ 1266 038f 6C6F6E67 		.ascii	"long long unsigned int\000"
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccHNdoAW.s 			page 30
+
+
+ 1266      206C6F6E 
+ 1266      6720756E 
+ 1266      7369676E 
+ 1266      65642069 
+ 1267              	.LASF45:
+ 1268 03a6 5F5F6379 		.ascii	"__cy_region\000"
+ 1268      5F726567 
+ 1268      696F6E00 
+ 1269              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.9.3 20150303 (release) [ARM/embedded-4_9-br

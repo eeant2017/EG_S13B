@@ -1,0 +1,2 @@
+copy .\EntranceGuard.cydsn\CortexM0\ARM_GCC_493\Debug\EntranceGuard.cyacd ..\EntranceGuard_S0x_V1.04.cyacd
+copy .\EntranceGuard.cydsn\CortexM0\ARM_GCC_493\Debug\EntranceGuard.hex ..\EntranceGuard_S0x_V1.04.hex

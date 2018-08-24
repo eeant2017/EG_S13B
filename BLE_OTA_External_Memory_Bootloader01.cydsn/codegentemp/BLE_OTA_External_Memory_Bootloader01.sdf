@@ -1,0 +1,25 @@
+(DELAYFILE
+ (SDFVERSION "IEEE 1497 4.0")
+ (DATE "2018-04-23T08:28:36Z")
+ (DESIGN "BLE_OTA_External_Memory_Bootloader01")
+ (VENDOR "Cypress Semiconductor")
+ (PROGRAM "PSoC Creator")
+ (VERSION " 4.1 Update 1")
+ (DIVIDER .)
+ (TIMESCALE 1 ns)
+ (CELL
+  (CELLTYPE "BLE_OTA_External_Memory_Bootloader01")
+  (INSTANCE *)
+  (DELAY
+   (ABSOLUTE
+    (INTERCONNECT ClockBlock.hfclk \\BLE\:bless_isr\\.clock (0.000:0.000:0.000))
+    (INTERCONNECT \\BLE\:cy_m0s8_ble\\.interrupt \\BLE\:bless_isr\\.interrupt (1.000:1.000:1.000))
+    (INTERCONNECT \\UART\:tx\(0\)_PAD\\ \\UART\:tx\(0\)\\.pad_in (0.000:0.000:0.000))
+    (INTERCONNECT FLASH_NCS\(0\)_PAD FLASH_NCS\(0\).pad_in (0.000:0.000:0.000))
+    (INTERCONNECT FLASH_SCK\(0\)_PAD FLASH_SCK\(0\).pad_in (0.000:0.000:0.000))
+    (INTERCONNECT FLASH_MISO\(0\)_PAD FLASH_MISO\(0\).pad_in (0.000:0.000:0.000))
+    (INTERCONNECT FLASH_MOSI\(0\)_PAD FLASH_MOSI\(0\).pad_in (0.000:0.000:0.000))
+   )
+  )
+ )
+)

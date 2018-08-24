@@ -1,0 +1,2426 @@
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckW6Rlm.s 			page 1
+
+
+   1              		.cpu cortex-m0
+   2              		.fpu softvfp
+   3              		.eabi_attribute 20, 1
+   4              		.eabi_attribute 21, 1
+   5              		.eabi_attribute 23, 3
+   6              		.eabi_attribute 24, 1
+   7              		.eabi_attribute 25, 1
+   8              		.eabi_attribute 26, 1
+   9              		.eabi_attribute 30, 4
+  10              		.eabi_attribute 34, 0
+  11              		.eabi_attribute 18, 4
+  12              		.code	16
+  13              		.file	"flash_spi.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.FLASH_SPI_Send_Dat,"ax",%progbits
+  18              		.align	1
+  19              		.code	16
+  20              		.thumb_func
+  21              		.type	FLASH_SPI_Send_Dat, %function
+  22              	FLASH_SPI_Send_Dat:
+  23              	.LFB64:
+  24              		.file 1 "Code\\Device\\W25Q80\\flash_spi.c"
+   1:Code\Device\W25Q80/flash_spi.c **** //*************************************************************************************************
+   2:Code\Device\W25Q80/flash_spi.c **** // File name		: flash_spi.c
+   3:Code\Device\W25Q80/flash_spi.c **** // Description		: 模拟flash_spi的相关函数
+   4:Code\Device\W25Q80/flash_spi.c **** // Author			: Keno
+   5:Code\Device\W25Q80/flash_spi.c **** // Date				: 2016.11.14
+   6:Code\Device\W25Q80/flash_spi.c **** // Version			: V02
+   7:Code\Device\W25Q80/flash_spi.c **** //*************************************************************************************************
+   8:Code\Device\W25Q80/flash_spi.c **** #include "flash_spi.h"
+   9:Code\Device\W25Q80/flash_spi.c **** 
+  10:Code\Device\W25Q80/flash_spi.c **** 
+  11:Code\Device\W25Q80/flash_spi.c **** //*************************************************************************************************
+  12:Code\Device\W25Q80/flash_spi.c **** // Function name	: FLASH_FLASH_SPI_Init
+  13:Code\Device\W25Q80/flash_spi.c **** // Description		: FLASH_FLASH_SPI的初始化
+  14:Code\Device\W25Q80/flash_spi.c **** // Parameter		: none
+  15:Code\Device\W25Q80/flash_spi.c **** // Return			: none
+  16:Code\Device\W25Q80/flash_spi.c **** //-------------------------------------------------------------------------------------------------
+  17:Code\Device\W25Q80/flash_spi.c **** // Info				: 
+  18:Code\Device\W25Q80/flash_spi.c **** //*************************************************************************************************
+  19:Code\Device\W25Q80/flash_spi.c **** void FLASH_SPI_Init(void)
+  20:Code\Device\W25Q80/flash_spi.c **** {
+  21:Code\Device\W25Q80/flash_spi.c **** 	FLASH_DISABLE();
+  22:Code\Device\W25Q80/flash_spi.c **** 	FLASH_SCK_RESET();
+  23:Code\Device\W25Q80/flash_spi.c **** 	FLASH_MOSI_RESET();
+  24:Code\Device\W25Q80/flash_spi.c **** }
+  25:Code\Device\W25Q80/flash_spi.c **** 
+  26:Code\Device\W25Q80/flash_spi.c **** //*************************************************************************************************
+  27:Code\Device\W25Q80/flash_spi.c **** // Function name	: FLASH_SPI_Send_Dat
+  28:Code\Device\W25Q80/flash_spi.c **** // Description		: 发送一字节数据
+  29:Code\Device\W25Q80/flash_spi.c **** // Parameter		: none
+  30:Code\Device\W25Q80/flash_spi.c **** // Return			: none
+  31:Code\Device\W25Q80/flash_spi.c **** //-------------------------------------------------------------------------------------------------
+  32:Code\Device\W25Q80/flash_spi.c **** // Info				: 
+  33:Code\Device\W25Q80/flash_spi.c **** //*************************************************************************************************
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckW6Rlm.s 			page 2
+
+
+  34:Code\Device\W25Q80/flash_spi.c **** static void FLASH_SPI_Send_Dat(INT8U dat)
+  35:Code\Device\W25Q80/flash_spi.c **** {
+  25              		.loc 1 35 0
+  26              		.cfi_startproc
+  27              	.LVL0:
+  28 0000 38B5     		push	{r3, r4, r5, lr}
+  29              		.cfi_def_cfa_offset 16
+  30              		.cfi_offset 3, -16
+  31              		.cfi_offset 4, -12
+  32              		.cfi_offset 5, -8
+  33              		.cfi_offset 14, -4
+  34              		.loc 1 35 0
+  35 0002 051C     		mov	r5, r0
+  36              	.LVL1:
+  37 0004 0824     		mov	r4, #8
+  38              	.LVL2:
+  39              	.L4:
+  36:Code\Device\W25Q80/flash_spi.c **** 	INT8U i;
+  37:Code\Device\W25Q80/flash_spi.c **** 	for (i = 0; i < 8; i++)
+  38:Code\Device\W25Q80/flash_spi.c **** 	{
+  39:Code\Device\W25Q80/flash_spi.c **** 		FLASH_SCK_RESET();
+  40              		.loc 1 39 0
+  41 0006 0020     		mov	r0, #0
+  42 0008 FFF7FEFF 		bl	FLASH_SCK_Write
+  43              	.LVL3:
+  40:Code\Device\W25Q80/flash_spi.c **** 		CyDelayUs(1);
+  44              		.loc 1 40 0
+  45 000c 0120     		mov	r0, #1
+  46 000e FFF7FEFF 		bl	CyDelayUs
+  47              	.LVL4:
+  41:Code\Device\W25Q80/flash_spi.c **** 		if (dat & 0x80)
+  48              		.loc 1 41 0
+  49 0012 6BB2     		sxtb	r3, r5
+  42:Code\Device\W25Q80/flash_spi.c **** 			FLASH_MOSI_SET();
+  50              		.loc 1 42 0
+  51 0014 0120     		mov	r0, #1
+  41:Code\Device\W25Q80/flash_spi.c **** 		if (dat & 0x80)
+  52              		.loc 1 41 0
+  53 0016 002B     		cmp	r3, #0
+  54 0018 00DB     		blt	.L5
+  43:Code\Device\W25Q80/flash_spi.c **** 		else
+  44:Code\Device\W25Q80/flash_spi.c **** 			FLASH_MOSI_RESET();
+  55              		.loc 1 44 0
+  56 001a 0020     		mov	r0, #0
+  57              	.L5:
+  58 001c FFF7FEFF 		bl	FLASH_MOSI_Write
+  59              	.LVL5:
+  45:Code\Device\W25Q80/flash_spi.c **** 		CyDelayUs(1);
+  60              		.loc 1 45 0
+  61 0020 0120     		mov	r0, #1
+  62 0022 FFF7FEFF 		bl	CyDelayUs
+  63              	.LVL6:
+  64 0026 013C     		sub	r4, r4, #1
+  65              	.LVL7:
+  46:Code\Device\W25Q80/flash_spi.c **** 		dat <<= 1;
+  47:Code\Device\W25Q80/flash_spi.c **** 		FLASH_SCK_SET();
+  66              		.loc 1 47 0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckW6Rlm.s 			page 3
+
+
+  67 0028 0120     		mov	r0, #1
+  68 002a FFF7FEFF 		bl	FLASH_SCK_Write
+  69              	.LVL8:
+  46:Code\Device\W25Q80/flash_spi.c **** 		dat <<= 1;
+  70              		.loc 1 46 0
+  71 002e 6D00     		lsl	r5, r5, #1
+  72              	.LVL9:
+  48:Code\Device\W25Q80/flash_spi.c **** 		CyDelayUs(2);
+  73              		.loc 1 48 0
+  74 0030 0220     		mov	r0, #2
+  75 0032 E4B2     		uxtb	r4, r4
+  46:Code\Device\W25Q80/flash_spi.c **** 		dat <<= 1;
+  76              		.loc 1 46 0
+  77 0034 EDB2     		uxtb	r5, r5
+  78              	.LVL10:
+  79              		.loc 1 48 0
+  80 0036 FFF7FEFF 		bl	CyDelayUs
+  81              	.LVL11:
+  37:Code\Device\W25Q80/flash_spi.c **** 	{
+  82              		.loc 1 37 0
+  83 003a 002C     		cmp	r4, #0
+  84 003c E3D1     		bne	.L4
+  49:Code\Device\W25Q80/flash_spi.c **** 	}
+  50:Code\Device\W25Q80/flash_spi.c **** 	FLASH_SCK_RESET();
+  85              		.loc 1 50 0
+  86 003e 201C     		mov	r0, r4
+  87 0040 FFF7FEFF 		bl	FLASH_SCK_Write
+  88              	.LVL12:
+  51:Code\Device\W25Q80/flash_spi.c **** 	CyDelayUs(10);
+  89              		.loc 1 51 0
+  90 0044 0A20     		mov	r0, #10
+  91 0046 FFF7FEFF 		bl	CyDelayUs
+  92              	.LVL13:
+  52:Code\Device\W25Q80/flash_spi.c **** }
+  93              		.loc 1 52 0
+  94              		@ sp needed
+  95              	.LVL14:
+  96 004a 38BD     		pop	{r3, r4, r5, pc}
+  97              		.cfi_endproc
+  98              	.LFE64:
+  99              		.size	FLASH_SPI_Send_Dat, .-FLASH_SPI_Send_Dat
+ 100              		.section	.text.FLASH_SPI_Receive_Dat,"ax",%progbits
+ 101              		.align	1
+ 102              		.code	16
+ 103              		.thumb_func
+ 104              		.type	FLASH_SPI_Receive_Dat, %function
+ 105              	FLASH_SPI_Receive_Dat:
+ 106              	.LFB65:
+  53:Code\Device\W25Q80/flash_spi.c **** 
+  54:Code\Device\W25Q80/flash_spi.c **** //*************************************************************************************************
+  55:Code\Device\W25Q80/flash_spi.c **** // Function name	: FLASH_SPI_Receive_Dat
+  56:Code\Device\W25Q80/flash_spi.c **** // Description		: 接收一字节数据
+  57:Code\Device\W25Q80/flash_spi.c **** // Parameter		: none
+  58:Code\Device\W25Q80/flash_spi.c **** // Return			: none
+  59:Code\Device\W25Q80/flash_spi.c **** //-------------------------------------------------------------------------------------------------
+  60:Code\Device\W25Q80/flash_spi.c **** // Info				: 
+  61:Code\Device\W25Q80/flash_spi.c **** //*************************************************************************************************
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckW6Rlm.s 			page 4
+
+
+  62:Code\Device\W25Q80/flash_spi.c **** static INT8U FLASH_SPI_Receive_Dat(void)
+  63:Code\Device\W25Q80/flash_spi.c **** {
+ 107              		.loc 1 63 0
+ 108              		.cfi_startproc
+ 109              	.LVL15:
+ 110 0000 38B5     		push	{r3, r4, r5, lr}
+ 111              		.cfi_def_cfa_offset 16
+ 112              		.cfi_offset 3, -16
+ 113              		.cfi_offset 4, -12
+ 114              		.cfi_offset 5, -8
+ 115              		.cfi_offset 14, -4
+ 116              		.loc 1 63 0
+ 117 0002 0825     		mov	r5, #8
+  64:Code\Device\W25Q80/flash_spi.c **** 	INT8U i ,dat = 0;
+ 118              		.loc 1 64 0
+ 119 0004 0024     		mov	r4, #0
+ 120              	.LVL16:
+ 121              	.L9:
+  65:Code\Device\W25Q80/flash_spi.c **** 	for (i = 0; i < 8; i++)
+  66:Code\Device\W25Q80/flash_spi.c **** 	{
+  67:Code\Device\W25Q80/flash_spi.c **** 		FLASH_SCK_RESET();
+ 122              		.loc 1 67 0
+ 123 0006 0020     		mov	r0, #0
+ 124 0008 FFF7FEFF 		bl	FLASH_SCK_Write
+ 125              	.LVL17:
+  68:Code\Device\W25Q80/flash_spi.c **** 		CyDelayUs(1);
+  69:Code\Device\W25Q80/flash_spi.c **** 		dat <<= 1;
+ 126              		.loc 1 69 0
+ 127 000c 6400     		lsl	r4, r4, #1
+ 128              	.LVL18:
+  68:Code\Device\W25Q80/flash_spi.c **** 		CyDelayUs(1);
+ 129              		.loc 1 68 0
+ 130 000e 0120     		mov	r0, #1
+ 131 0010 FFF7FEFF 		bl	CyDelayUs
+ 132              	.LVL19:
+ 133              		.loc 1 69 0
+ 134 0014 E4B2     		uxtb	r4, r4
+ 135              	.LVL20:
+  70:Code\Device\W25Q80/flash_spi.c **** 		if(FLASH_MISO_Read())
+ 136              		.loc 1 70 0
+ 137 0016 FFF7FEFF 		bl	FLASH_MISO_Read
+ 138              	.LVL21:
+ 139 001a 0028     		cmp	r0, #0
+ 140 001c 01D0     		beq	.L8
+  71:Code\Device\W25Q80/flash_spi.c **** 			dat |= 0x01;
+ 141              		.loc 1 71 0
+ 142 001e 0123     		mov	r3, #1
+ 143 0020 1C43     		orr	r4, r3
+ 144              	.LVL22:
+ 145              	.L8:
+  72:Code\Device\W25Q80/flash_spi.c **** 		else
+  73:Code\Device\W25Q80/flash_spi.c **** 			dat &= 0xfe;
+  74:Code\Device\W25Q80/flash_spi.c **** 		CyDelayUs(1);
+ 146              		.loc 1 74 0 discriminator 2
+ 147 0022 0120     		mov	r0, #1
+ 148 0024 FFF7FEFF 		bl	CyDelayUs
+ 149              	.LVL23:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckW6Rlm.s 			page 5
+
+
+ 150 0028 013D     		sub	r5, r5, #1
+ 151              	.LVL24:
+  75:Code\Device\W25Q80/flash_spi.c **** 		FLASH_SCK_SET();
+ 152              		.loc 1 75 0 discriminator 2
+ 153 002a 0120     		mov	r0, #1
+ 154 002c FFF7FEFF 		bl	FLASH_SCK_Write
+ 155              	.LVL25:
+ 156 0030 EDB2     		uxtb	r5, r5
+  76:Code\Device\W25Q80/flash_spi.c **** 		CyDelayUs(2);
+ 157              		.loc 1 76 0 discriminator 2
+ 158 0032 0220     		mov	r0, #2
+ 159 0034 FFF7FEFF 		bl	CyDelayUs
+ 160              	.LVL26:
+  65:Code\Device\W25Q80/flash_spi.c **** 	{
+ 161              		.loc 1 65 0 discriminator 2
+ 162 0038 002D     		cmp	r5, #0
+ 163 003a E4D1     		bne	.L9
+  77:Code\Device\W25Q80/flash_spi.c **** 	}
+  78:Code\Device\W25Q80/flash_spi.c **** 	FLASH_SCK_RESET();
+ 164              		.loc 1 78 0
+ 165 003c 281C     		mov	r0, r5
+ 166 003e FFF7FEFF 		bl	FLASH_SCK_Write
+ 167              	.LVL27:
+  79:Code\Device\W25Q80/flash_spi.c **** 	CyDelayUs(10);
+ 168              		.loc 1 79 0
+ 169 0042 0A20     		mov	r0, #10
+ 170 0044 FFF7FEFF 		bl	CyDelayUs
+ 171              	.LVL28:
+  80:Code\Device\W25Q80/flash_spi.c **** 	return dat;
+  81:Code\Device\W25Q80/flash_spi.c **** }
+ 172              		.loc 1 81 0
+ 173              		@ sp needed
+ 174 0048 201C     		mov	r0, r4
+ 175              	.LVL29:
+ 176 004a 38BD     		pop	{r3, r4, r5, pc}
+ 177              		.cfi_endproc
+ 178              	.LFE65:
+ 179              		.size	FLASH_SPI_Receive_Dat, .-FLASH_SPI_Receive_Dat
+ 180              		.section	.text.FLASH_SPI_Init,"ax",%progbits
+ 181              		.align	1
+ 182              		.global	FLASH_SPI_Init
+ 183              		.code	16
+ 184              		.thumb_func
+ 185              		.type	FLASH_SPI_Init, %function
+ 186              	FLASH_SPI_Init:
+ 187              	.LFB63:
+  20:Code\Device\W25Q80/flash_spi.c **** 	FLASH_DISABLE();
+ 188              		.loc 1 20 0
+ 189              		.cfi_startproc
+ 190 0000 08B5     		push	{r3, lr}
+ 191              		.cfi_def_cfa_offset 8
+ 192              		.cfi_offset 3, -8
+ 193              		.cfi_offset 14, -4
+  21:Code\Device\W25Q80/flash_spi.c **** 	FLASH_SCK_RESET();
+ 194              		.loc 1 21 0
+ 195 0002 0120     		mov	r0, #1
+ 196 0004 FFF7FEFF 		bl	FLASH_NCS_Write
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckW6Rlm.s 			page 6
+
+
+ 197              	.LVL30:
+  22:Code\Device\W25Q80/flash_spi.c **** 	FLASH_MOSI_RESET();
+ 198              		.loc 1 22 0
+ 199 0008 0020     		mov	r0, #0
+ 200 000a FFF7FEFF 		bl	FLASH_SCK_Write
+ 201              	.LVL31:
+  23:Code\Device\W25Q80/flash_spi.c **** }
+ 202              		.loc 1 23 0
+ 203 000e 0020     		mov	r0, #0
+ 204 0010 FFF7FEFF 		bl	FLASH_MOSI_Write
+ 205              	.LVL32:
+  24:Code\Device\W25Q80/flash_spi.c **** 
+ 206              		.loc 1 24 0
+ 207              		@ sp needed
+ 208 0014 08BD     		pop	{r3, pc}
+ 209              		.cfi_endproc
+ 210              	.LFE63:
+ 211              		.size	FLASH_SPI_Init, .-FLASH_SPI_Init
+ 212              		.section	.text.flash_spi_SetReg,"ax",%progbits
+ 213              		.align	1
+ 214              		.global	flash_spi_SetReg
+ 215              		.code	16
+ 216              		.thumb_func
+ 217              		.type	flash_spi_SetReg, %function
+ 218              	flash_spi_SetReg:
+ 219              	.LFB66:
+  82:Code\Device\W25Q80/flash_spi.c **** 
+  83:Code\Device\W25Q80/flash_spi.c **** //*************************************************************************************************
+  84:Code\Device\W25Q80/flash_spi.c **** // Function name	: flash_spi_SetReg
+  85:Code\Device\W25Q80/flash_spi.c **** // Description		: 设置寄存器
+  86:Code\Device\W25Q80/flash_spi.c **** // Parameter		: ucRegAddr	: 地址
+  87:Code\Device\W25Q80/flash_spi.c **** //					: ucRegVal	: 数据
+  88:Code\Device\W25Q80/flash_spi.c **** // Return			: none
+  89:Code\Device\W25Q80/flash_spi.c **** //-------------------------------------------------------------------------------------------------
+  90:Code\Device\W25Q80/flash_spi.c **** // Info				: 
+  91:Code\Device\W25Q80/flash_spi.c **** //*************************************************************************************************
+  92:Code\Device\W25Q80/flash_spi.c **** uint8_t flash_spi_SetReg(uint8_t ucRegAddr, uint8_t ucRegVal)
+  93:Code\Device\W25Q80/flash_spi.c **** {
+ 220              		.loc 1 93 0
+ 221              		.cfi_startproc
+ 222              	.LVL33:
+ 223 0000 38B5     		push	{r3, r4, r5, lr}
+ 224              		.cfi_def_cfa_offset 16
+ 225              		.cfi_offset 3, -16
+ 226              		.cfi_offset 4, -12
+ 227              		.cfi_offset 5, -8
+ 228              		.cfi_offset 14, -4
+ 229              		.loc 1 93 0
+ 230 0002 041C     		mov	r4, r0
+ 231 0004 0D1C     		mov	r5, r1
+  94:Code\Device\W25Q80/flash_spi.c **** 	FLASH_ENABLE();
+ 232              		.loc 1 94 0
+ 233 0006 0020     		mov	r0, #0
+ 234              	.LVL34:
+  95:Code\Device\W25Q80/flash_spi.c **** 	FLASH_SPI_Send_Dat(ucRegAddr << 1);
+ 235              		.loc 1 95 0
+ 236 0008 6400     		lsl	r4, r4, #1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckW6Rlm.s 			page 7
+
+
+  94:Code\Device\W25Q80/flash_spi.c **** 	FLASH_ENABLE();
+ 237              		.loc 1 94 0
+ 238 000a FFF7FEFF 		bl	FLASH_NCS_Write
+ 239              	.LVL35:
+ 240              		.loc 1 95 0
+ 241 000e E0B2     		uxtb	r0, r4
+ 242 0010 FFF7FEFF 		bl	FLASH_SPI_Send_Dat
+ 243              	.LVL36:
+  96:Code\Device\W25Q80/flash_spi.c **** 	FLASH_SPI_Send_Dat(ucRegVal);
+ 244              		.loc 1 96 0
+ 245 0014 281C     		mov	r0, r5
+ 246 0016 FFF7FEFF 		bl	FLASH_SPI_Send_Dat
+ 247              	.LVL37:
+  97:Code\Device\W25Q80/flash_spi.c **** 	FLASH_DISABLE();
+ 248              		.loc 1 97 0
+ 249 001a 0120     		mov	r0, #1
+ 250 001c FFF7FEFF 		bl	FLASH_NCS_Write
+ 251              	.LVL38:
+  98:Code\Device\W25Q80/flash_spi.c ****     return TRUE;
+  99:Code\Device\W25Q80/flash_spi.c **** }
+ 252              		.loc 1 99 0
+ 253              		@ sp needed
+ 254 0020 0120     		mov	r0, #1
+ 255 0022 38BD     		pop	{r3, r4, r5, pc}
+ 256              		.cfi_endproc
+ 257              	.LFE66:
+ 258              		.size	flash_spi_SetReg, .-flash_spi_SetReg
+ 259              		.section	.text.flash_spi_GetReg,"ax",%progbits
+ 260              		.align	1
+ 261              		.global	flash_spi_GetReg
+ 262              		.code	16
+ 263              		.thumb_func
+ 264              		.type	flash_spi_GetReg, %function
+ 265              	flash_spi_GetReg:
+ 266              	.LFB67:
+ 100:Code\Device\W25Q80/flash_spi.c **** 
+ 101:Code\Device\W25Q80/flash_spi.c **** //*************************************************************************************************
+ 102:Code\Device\W25Q80/flash_spi.c **** // Function name	: flash_spi_SetReg
+ 103:Code\Device\W25Q80/flash_spi.c **** // Description		: 读取寄存器
+ 104:Code\Device\W25Q80/flash_spi.c **** // Parameter		: ucRegAddr	: 地址
+ 105:Code\Device\W25Q80/flash_spi.c **** // Return			: none
+ 106:Code\Device\W25Q80/flash_spi.c **** //-------------------------------------------------------------------------------------------------
+ 107:Code\Device\W25Q80/flash_spi.c **** // Info				: 
+ 108:Code\Device\W25Q80/flash_spi.c **** //*************************************************************************************************
+ 109:Code\Device\W25Q80/flash_spi.c **** uint8_t flash_spi_GetReg(uint8_t ucRegAddr)
+ 110:Code\Device\W25Q80/flash_spi.c **** {
+ 267              		.loc 1 110 0
+ 268              		.cfi_startproc
+ 269              	.LVL39:
+ 270 0000 10B5     		push	{r4, lr}
+ 271              		.cfi_def_cfa_offset 8
+ 272              		.cfi_offset 4, -8
+ 273              		.cfi_offset 14, -4
+ 274              		.loc 1 110 0
+ 275 0002 041C     		mov	r4, r0
+ 111:Code\Device\W25Q80/flash_spi.c **** 	uint8_t ucRegVal;
+ 112:Code\Device\W25Q80/flash_spi.c **** 	FLASH_ENABLE();
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckW6Rlm.s 			page 8
+
+
+ 276              		.loc 1 112 0
+ 277 0004 0020     		mov	r0, #0
+ 278              	.LVL40:
+ 279 0006 FFF7FEFF 		bl	FLASH_NCS_Write
+ 280              	.LVL41:
+ 113:Code\Device\W25Q80/flash_spi.c **** 	FLASH_SPI_Send_Dat(0x80 | (ucRegAddr << 1));
+ 281              		.loc 1 113 0
+ 282 000a 8020     		mov	r0, #128
+ 283 000c 6400     		lsl	r4, r4, #1
+ 284 000e 4042     		neg	r0, r0
+ 285 0010 0443     		orr	r4, r0
+ 286 0012 E0B2     		uxtb	r0, r4
+ 287 0014 FFF7FEFF 		bl	FLASH_SPI_Send_Dat
+ 288              	.LVL42:
+ 114:Code\Device\W25Q80/flash_spi.c **** 	//FLASH_SPI_Send_Dat(0x00);
+ 115:Code\Device\W25Q80/flash_spi.c **** 	ucRegVal = FLASH_SPI_Receive_Dat();
+ 289              		.loc 1 115 0
+ 290 0018 FFF7FEFF 		bl	FLASH_SPI_Receive_Dat
+ 291              	.LVL43:
+ 292 001c 041C     		mov	r4, r0
+ 293              	.LVL44:
+ 116:Code\Device\W25Q80/flash_spi.c **** 	FLASH_DISABLE();
+ 294              		.loc 1 116 0
+ 295 001e 0120     		mov	r0, #1
+ 296 0020 FFF7FEFF 		bl	FLASH_NCS_Write
+ 297              	.LVL45:
+ 117:Code\Device\W25Q80/flash_spi.c ****     return ucRegVal;
+ 118:Code\Device\W25Q80/flash_spi.c **** }
+ 298              		.loc 1 118 0
+ 299              		@ sp needed
+ 300 0024 201C     		mov	r0, r4
+ 301              	.LVL46:
+ 302 0026 10BD     		pop	{r4, pc}
+ 303              		.cfi_endproc
+ 304              	.LFE67:
+ 305              		.size	flash_spi_GetReg, .-flash_spi_GetReg
+ 306              		.section	.text.flash_spi_GetReg2,"ax",%progbits
+ 307              		.align	1
+ 308              		.global	flash_spi_GetReg2
+ 309              		.code	16
+ 310              		.thumb_func
+ 311              		.type	flash_spi_GetReg2, %function
+ 312              	flash_spi_GetReg2:
+ 313              	.LFB68:
+ 119:Code\Device\W25Q80/flash_spi.c **** 
+ 120:Code\Device\W25Q80/flash_spi.c **** //*************************************************************************************************
+ 121:Code\Device\W25Q80/flash_spi.c **** // Function name	: flash_spi_SetReg
+ 122:Code\Device\W25Q80/flash_spi.c **** // Description		: 读取寄存器
+ 123:Code\Device\W25Q80/flash_spi.c **** // Parameter		: ucRegAddr	: 地址
+ 124:Code\Device\W25Q80/flash_spi.c **** // Return			: none
+ 125:Code\Device\W25Q80/flash_spi.c **** //-------------------------------------------------------------------------------------------------
+ 126:Code\Device\W25Q80/flash_spi.c **** // Info				: 
+ 127:Code\Device\W25Q80/flash_spi.c **** //*************************************************************************************************
+ 128:Code\Device\W25Q80/flash_spi.c **** uint8_t flash_spi_GetReg2(uint8_t ucRegAddr, uint8_t *p)
+ 129:Code\Device\W25Q80/flash_spi.c **** {
+ 314              		.loc 1 129 0
+ 315              		.cfi_startproc
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckW6Rlm.s 			page 9
+
+
+ 316              	.LVL47:
+ 317 0000 38B5     		push	{r3, r4, r5, lr}
+ 318              		.cfi_def_cfa_offset 16
+ 319              		.cfi_offset 3, -16
+ 320              		.cfi_offset 4, -12
+ 321              		.cfi_offset 5, -8
+ 322              		.cfi_offset 14, -4
+ 323              		.loc 1 129 0
+ 324 0002 041C     		mov	r4, r0
+ 130:Code\Device\W25Q80/flash_spi.c **** 	FLASH_ENABLE();
+ 325              		.loc 1 130 0
+ 326 0004 0020     		mov	r0, #0
+ 327              	.LVL48:
+ 129:Code\Device\W25Q80/flash_spi.c **** 	FLASH_ENABLE();
+ 328              		.loc 1 129 0
+ 329 0006 0D1C     		mov	r5, r1
+ 330              		.loc 1 130 0
+ 331 0008 FFF7FEFF 		bl	FLASH_NCS_Write
+ 332              	.LVL49:
+ 131:Code\Device\W25Q80/flash_spi.c **** 	FLASH_SPI_Send_Dat(0x80 | (ucRegAddr << 1));
+ 333              		.loc 1 131 0
+ 334 000c 8020     		mov	r0, #128
+ 335 000e 6400     		lsl	r4, r4, #1
+ 336 0010 4042     		neg	r0, r0
+ 337 0012 0443     		orr	r4, r0
+ 338 0014 E0B2     		uxtb	r0, r4
+ 339 0016 FFF7FEFF 		bl	FLASH_SPI_Send_Dat
+ 340              	.LVL50:
+ 132:Code\Device\W25Q80/flash_spi.c **** 	//FLASH_SPI_Send_Dat(0x00);
+ 133:Code\Device\W25Q80/flash_spi.c **** 	*p = FLASH_SPI_Receive_Dat();
+ 341              		.loc 1 133 0
+ 342 001a FFF7FEFF 		bl	FLASH_SPI_Receive_Dat
+ 343              	.LVL51:
+ 344 001e 2870     		strb	r0, [r5]
+ 134:Code\Device\W25Q80/flash_spi.c **** 	FLASH_DISABLE();
+ 345              		.loc 1 134 0
+ 346 0020 0120     		mov	r0, #1
+ 347 0022 FFF7FEFF 		bl	FLASH_NCS_Write
+ 348              	.LVL52:
+ 135:Code\Device\W25Q80/flash_spi.c ****     return TRUE;
+ 136:Code\Device\W25Q80/flash_spi.c **** }
+ 349              		.loc 1 136 0
+ 350              		@ sp needed
+ 351 0026 0120     		mov	r0, #1
+ 352              	.LVL53:
+ 353 0028 38BD     		pop	{r3, r4, r5, pc}
+ 354              		.cfi_endproc
+ 355              	.LFE68:
+ 356              		.size	flash_spi_GetReg2, .-flash_spi_GetReg2
+ 357              		.section	.text.FLASH_SPIRead_Sequence,"ax",%progbits
+ 358              		.align	1
+ 359              		.global	FLASH_SPIRead_Sequence
+ 360              		.code	16
+ 361              		.thumb_func
+ 362              		.type	FLASH_SPIRead_Sequence, %function
+ 363              	FLASH_SPIRead_Sequence:
+ 364              	.LFB69:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckW6Rlm.s 			page 10
+
+
+ 137:Code\Device\W25Q80/flash_spi.c **** 
+ 138:Code\Device\W25Q80/flash_spi.c **** /**************************************************************************************************
+ 139:Code\Device\W25Q80/flash_spi.c **** // Function name	: FLASH_SPIRead_Sequence
+ 140:Code\Device\W25Q80/flash_spi.c **** // Description		: FLASH_SPI读FIFO寄存器的值
+ 141:Code\Device\W25Q80/flash_spi.c **** // Parameter		: sequence_length 	: 数据长度
+ 142:Code\Device\W25Q80/flash_spi.c **** //					: ucRegAddr			: 寄存器地址
+ 143:Code\Device\W25Q80/flash_spi.c **** //					: *reg_value		: 数据指针
+ 144:Code\Device\W25Q80/flash_spi.c **** // Return			: none
+ 145:Code\Device\W25Q80/flash_spi.c **** //-------------------------------------------------------------------------------------------------
+ 146:Code\Device\W25Q80/flash_spi.c **** // Info				: 
+ 147:Code\Device\W25Q80/flash_spi.c **** ***************************************************************************************************
+ 148:Code\Device\W25Q80/flash_spi.c **** void FLASH_SPIRead_Sequence(uint8_t sequence_length, uint8_t ucRegAddr, uint8_t *reg_value)
+ 149:Code\Device\W25Q80/flash_spi.c **** {
+ 365              		.loc 1 149 0
+ 366              		.cfi_startproc
+ 367              	.LVL54:
+ 368 0000 70B5     		push	{r4, r5, r6, lr}
+ 369              		.cfi_def_cfa_offset 16
+ 370              		.cfi_offset 4, -16
+ 371              		.cfi_offset 5, -12
+ 372              		.cfi_offset 6, -8
+ 373              		.cfi_offset 14, -4
+ 150:Code\Device\W25Q80/flash_spi.c **** 	uint8_t i;
+ 151:Code\Device\W25Q80/flash_spi.c **** 	if (sequence_length == 0)
+ 374              		.loc 1 151 0
+ 375 0002 0028     		cmp	r0, #0
+ 376 0004 0AD0     		beq	.L17
+ 377 0006 141C     		mov	r4, r2
+ 378 0008 0E1C     		mov	r6, r1
+ 379 000a 1518     		add	r5, r2, r0
+ 380              	.LVL55:
+ 381              	.L19:
+ 152:Code\Device\W25Q80/flash_spi.c **** 		return;
+ 153:Code\Device\W25Q80/flash_spi.c **** 	for (i = 0; i < sequence_length; i++)
+ 382              		.loc 1 153 0 discriminator 1
+ 383 000c AC42     		cmp	r4, r5
+ 384 000e 05D0     		beq	.L17
+ 154:Code\Device\W25Q80/flash_spi.c **** 	{
+ 155:Code\Device\W25Q80/flash_spi.c **** 		*(reg_value + i) = flash_spi_GetReg(ucRegAddr);
+ 385              		.loc 1 155 0 discriminator 3
+ 386 0010 301C     		mov	r0, r6
+ 387 0012 FFF7FEFF 		bl	flash_spi_GetReg
+ 388              	.LVL56:
+ 389 0016 2070     		strb	r0, [r4]
+ 390              	.LVL57:
+ 391 0018 0134     		add	r4, r4, #1
+ 392              	.LVL58:
+ 393 001a F7E7     		b	.L19
+ 394              	.L17:
+ 156:Code\Device\W25Q80/flash_spi.c **** 	}
+ 157:Code\Device\W25Q80/flash_spi.c **** 	return;
+ 158:Code\Device\W25Q80/flash_spi.c **** }
+ 395              		.loc 1 158 0
+ 396              		@ sp needed
+ 397 001c 70BD     		pop	{r4, r5, r6, pc}
+ 398              		.cfi_endproc
+ 399              	.LFE69:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckW6Rlm.s 			page 11
+
+
+ 400              		.size	FLASH_SPIRead_Sequence, .-FLASH_SPIRead_Sequence
+ 401              		.section	.text.FLASH_SPIWrite_Sequence,"ax",%progbits
+ 402              		.align	1
+ 403              		.global	FLASH_SPIWrite_Sequence
+ 404              		.code	16
+ 405              		.thumb_func
+ 406              		.type	FLASH_SPIWrite_Sequence, %function
+ 407              	FLASH_SPIWrite_Sequence:
+ 408              	.LFB70:
+ 159:Code\Device\W25Q80/flash_spi.c **** 
+ 160:Code\Device\W25Q80/flash_spi.c **** /**************************************************************************************************
+ 161:Code\Device\W25Q80/flash_spi.c **** // Function name	: FLASH_SPIWrite_Sequence
+ 162:Code\Device\W25Q80/flash_spi.c **** // Description		: FLASH_SPI写FIFO的值
+ 163:Code\Device\W25Q80/flash_spi.c **** // Parameter		: sequence_length 数据长度 
+ 164:Code\Device\W25Q80/flash_spi.c **** //					: ucRegAddr：寄存器地址  
+ 165:Code\Device\W25Q80/flash_spi.c **** //					: *reg_value 数据指针
+ 166:Code\Device\W25Q80/flash_spi.c **** // Return			: none
+ 167:Code\Device\W25Q80/flash_spi.c **** //-------------------------------------------------------------------------------------------------
+ 168:Code\Device\W25Q80/flash_spi.c **** // Info				: 
+ 169:Code\Device\W25Q80/flash_spi.c **** ***************************************************************************************************
+ 170:Code\Device\W25Q80/flash_spi.c **** void FLASH_SPIWrite_Sequence(uint8_t sequence_length, uint8_t ucRegAddr, uint8_t *reg_value)
+ 171:Code\Device\W25Q80/flash_spi.c **** {
+ 409              		.loc 1 171 0
+ 410              		.cfi_startproc
+ 411              	.LVL59:
+ 412 0000 70B5     		push	{r4, r5, r6, lr}
+ 413              		.cfi_def_cfa_offset 16
+ 414              		.cfi_offset 4, -16
+ 415              		.cfi_offset 5, -12
+ 416              		.cfi_offset 6, -8
+ 417              		.cfi_offset 14, -4
+ 172:Code\Device\W25Q80/flash_spi.c **** 	uint8_t i;
+ 173:Code\Device\W25Q80/flash_spi.c **** 	if (sequence_length == 0)
+ 418              		.loc 1 173 0
+ 419 0002 0028     		cmp	r0, #0
+ 420 0004 0AD0     		beq	.L24
+ 421 0006 141C     		mov	r4, r2
+ 422 0008 0E1C     		mov	r6, r1
+ 423 000a 1518     		add	r5, r2, r0
+ 424              	.LVL60:
+ 425              	.L26:
+ 174:Code\Device\W25Q80/flash_spi.c **** 		return;
+ 175:Code\Device\W25Q80/flash_spi.c **** 	for (i = 0; i < sequence_length; i++)
+ 426              		.loc 1 175 0 discriminator 1
+ 427 000c AC42     		cmp	r4, r5
+ 428 000e 05D0     		beq	.L24
+ 176:Code\Device\W25Q80/flash_spi.c **** 	{
+ 177:Code\Device\W25Q80/flash_spi.c **** 		flash_spi_SetReg(ucRegAddr, *(reg_value + i));
+ 429              		.loc 1 177 0 discriminator 3
+ 430 0010 2178     		ldrb	r1, [r4]
+ 431 0012 301C     		mov	r0, r6
+ 432 0014 FFF7FEFF 		bl	flash_spi_SetReg
+ 433              	.LVL61:
+ 434 0018 0134     		add	r4, r4, #1
+ 435              	.LVL62:
+ 436 001a F7E7     		b	.L26
+ 437              	.L24:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckW6Rlm.s 			page 12
+
+
+ 178:Code\Device\W25Q80/flash_spi.c **** 	}
+ 179:Code\Device\W25Q80/flash_spi.c **** 	return;
+ 180:Code\Device\W25Q80/flash_spi.c **** }
+ 438              		.loc 1 180 0
+ 439              		@ sp needed
+ 440 001c 70BD     		pop	{r4, r5, r6, pc}
+ 441              		.cfi_endproc
+ 442              	.LFE70:
+ 443              		.size	FLASH_SPIWrite_Sequence, .-FLASH_SPIWrite_Sequence
+ 444              		.section	.text.FLASH_ReadWriteByte,"ax",%progbits
+ 445              		.align	1
+ 446              		.global	FLASH_ReadWriteByte
+ 447              		.code	16
+ 448              		.thumb_func
+ 449              		.type	FLASH_ReadWriteByte, %function
+ 450              	FLASH_ReadWriteByte:
+ 451              	.LFB71:
+ 181:Code\Device\W25Q80/flash_spi.c **** 
+ 182:Code\Device\W25Q80/flash_spi.c **** /**************************************************************************************************
+ 183:Code\Device\W25Q80/flash_spi.c **** // Function name	: FLASH_ReadWriteByte
+ 184:Code\Device\W25Q80/flash_spi.c **** // Description		: w25qxx 命令值
+ 185:Code\Device\W25Q80/flash_spi.c **** // Parameter		: uint8_t txdata 
+ 186:Code\Device\W25Q80/flash_spi.c **** //					:   
+ 187:Code\Device\W25Q80/flash_spi.c **** //					: 
+ 188:Code\Device\W25Q80/flash_spi.c **** // Return			: uint8_t
+ 189:Code\Device\W25Q80/flash_spi.c **** //-------------------------------------------------------------------------------------------------
+ 190:Code\Device\W25Q80/flash_spi.c **** // Info				: 
+ 191:Code\Device\W25Q80/flash_spi.c **** ***************************************************************************************************
+ 192:Code\Device\W25Q80/flash_spi.c **** #if 1
+ 193:Code\Device\W25Q80/flash_spi.c **** uint8_t FLASH_ReadWriteByte(uint8_t txdata, uint8 cmd_flag)
+ 194:Code\Device\W25Q80/flash_spi.c **** {
+ 452              		.loc 1 194 0
+ 453              		.cfi_startproc
+ 454              	.LVL63:
+ 455 0000 08B5     		push	{r3, lr}
+ 456              		.cfi_def_cfa_offset 8
+ 457              		.cfi_offset 3, -8
+ 458              		.cfi_offset 14, -4
+ 195:Code\Device\W25Q80/flash_spi.c **** 	if (cmd_flag == Flash_cmdRead)					
+ 459              		.loc 1 195 0
+ 460 0002 0129     		cmp	r1, #1
+ 461 0004 02D1     		bne	.L32
+ 196:Code\Device\W25Q80/flash_spi.c **** 	{
+ 197:Code\Device\W25Q80/flash_spi.c **** 		return FLASH_SPI_Receive_Dat();					// 如果cmd_flag 是1 表示读取指令 
+ 462              		.loc 1 197 0
+ 463 0006 FFF7FEFF 		bl	FLASH_SPI_Receive_Dat
+ 464              	.LVL64:
+ 465 000a 02E0     		b	.L33
+ 466              	.LVL65:
+ 467              	.L32:
+ 198:Code\Device\W25Q80/flash_spi.c **** 	}
+ 199:Code\Device\W25Q80/flash_spi.c **** 	else
+ 200:Code\Device\W25Q80/flash_spi.c **** 	{
+ 201:Code\Device\W25Q80/flash_spi.c **** 		FLASH_SPI_Send_Dat(txdata);						// 如果cmd_flag 是0 表示写入指令 
+ 468              		.loc 1 201 0
+ 469 000c FFF7FEFF 		bl	FLASH_SPI_Send_Dat
+ 470              	.LVL66:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckW6Rlm.s 			page 13
+
+
+ 202:Code\Device\W25Q80/flash_spi.c **** 		return 0;
+ 471              		.loc 1 202 0
+ 472 0010 0020     		mov	r0, #0
+ 473              	.L33:
+ 203:Code\Device\W25Q80/flash_spi.c **** 	}
+ 204:Code\Device\W25Q80/flash_spi.c **** }
+ 474              		.loc 1 204 0
+ 475              		@ sp needed
+ 476 0012 08BD     		pop	{r3, pc}
+ 477              		.cfi_endproc
+ 478              	.LFE71:
+ 479              		.size	FLASH_ReadWriteByte, .-FLASH_ReadWriteByte
+ 480              		.text
+ 481              	.Letext0:
+ 482              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+ 483              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+ 484              		.file 4 "Generated_Source\\PSoC4/cytypes.h"
+ 485              		.file 5 ".\\Code\\Common/config.h"
+ 486              		.file 6 "Generated_Source\\PSoC4/FLASH_SCK.h"
+ 487              		.file 7 "Generated_Source\\PSoC4/CyLib.h"
+ 488              		.file 8 "Generated_Source\\PSoC4/FLASH_MOSI.h"
+ 489              		.file 9 "Generated_Source\\PSoC4/FLASH_MISO.h"
+ 490              		.file 10 "Generated_Source\\PSoC4/FLASH_NCS.h"
+ 491              		.section	.debug_info,"",%progbits
+ 492              	.Ldebug_info0:
+ 493 0000 4F050000 		.4byte	0x54f
+ 494 0004 0400     		.2byte	0x4
+ 495 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 496 000a 04       		.byte	0x4
+ 497 000b 01       		.uleb128 0x1
+ 498 000c 1B000000 		.4byte	.LASF34
+ 499 0010 01       		.byte	0x1
+ 500 0011 C3010000 		.4byte	.LASF35
+ 501 0015 A8020000 		.4byte	.LASF36
+ 502 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 503 001d 00000000 		.4byte	0
+ 504 0021 00000000 		.4byte	.Ldebug_line0
+ 505 0025 02       		.uleb128 0x2
+ 506 0026 01       		.byte	0x1
+ 507 0027 06       		.byte	0x6
+ 508 0028 95020000 		.4byte	.LASF0
+ 509 002c 03       		.uleb128 0x3
+ 510 002d 11000000 		.4byte	.LASF9
+ 511 0031 02       		.byte	0x2
+ 512 0032 1D       		.byte	0x1d
+ 513 0033 37000000 		.4byte	0x37
+ 514 0037 02       		.uleb128 0x2
+ 515 0038 01       		.byte	0x1
+ 516 0039 08       		.byte	0x8
+ 517 003a 0F010000 		.4byte	.LASF1
+ 518 003e 02       		.uleb128 0x2
+ 519 003f 02       		.byte	0x2
+ 520 0040 05       		.byte	0x5
+ 521 0041 48020000 		.4byte	.LASF2
+ 522 0045 02       		.uleb128 0x2
+ 523 0046 02       		.byte	0x2
+ 524 0047 07       		.byte	0x7
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckW6Rlm.s 			page 14
+
+
+ 525 0048 38010000 		.4byte	.LASF3
+ 526 004c 02       		.uleb128 0x2
+ 527 004d 04       		.byte	0x4
+ 528 004e 05       		.byte	0x5
+ 529 004f BD000000 		.4byte	.LASF4
+ 530 0053 02       		.uleb128 0x2
+ 531 0054 04       		.byte	0x4
+ 532 0055 07       		.byte	0x7
+ 533 0056 26010000 		.4byte	.LASF5
+ 534 005a 02       		.uleb128 0x2
+ 535 005b 08       		.byte	0x8
+ 536 005c 05       		.byte	0x5
+ 537 005d 20020000 		.4byte	.LASF6
+ 538 0061 02       		.uleb128 0x2
+ 539 0062 08       		.byte	0x8
+ 540 0063 07       		.byte	0x7
+ 541 0064 E8010000 		.4byte	.LASF7
+ 542 0068 04       		.uleb128 0x4
+ 543 0069 04       		.byte	0x4
+ 544 006a 05       		.byte	0x5
+ 545 006b 696E7400 		.ascii	"int\000"
+ 546 006f 02       		.uleb128 0x2
+ 547 0070 04       		.byte	0x4
+ 548 0071 07       		.byte	0x7
+ 549 0072 B6010000 		.4byte	.LASF8
+ 550 0076 03       		.uleb128 0x3
+ 551 0077 FF010000 		.4byte	.LASF10
+ 552 007b 03       		.byte	0x3
+ 553 007c 15       		.byte	0x15
+ 554 007d 2C000000 		.4byte	0x2c
+ 555 0081 05       		.uleb128 0x5
+ 556 0082 52020000 		.4byte	.LASF11
+ 557 0086 04       		.byte	0x4
+ 558 0087 B901     		.2byte	0x1b9
+ 559 0089 37000000 		.4byte	0x37
+ 560 008d 05       		.uleb128 0x5
+ 561 008e 76010000 		.4byte	.LASF12
+ 562 0092 04       		.byte	0x4
+ 563 0093 BA01     		.2byte	0x1ba
+ 564 0095 45000000 		.4byte	0x45
+ 565 0099 02       		.uleb128 0x2
+ 566 009a 04       		.byte	0x4
+ 567 009b 04       		.byte	0x4
+ 568 009c F3000000 		.4byte	.LASF13
+ 569 00a0 02       		.uleb128 0x2
+ 570 00a1 08       		.byte	0x8
+ 571 00a2 04       		.byte	0x4
+ 572 00a3 6F010000 		.4byte	.LASF14
+ 573 00a7 02       		.uleb128 0x2
+ 574 00a8 01       		.byte	0x1
+ 575 00a9 08       		.byte	0x8
+ 576 00aa 90020000 		.4byte	.LASF15
+ 577 00ae 02       		.uleb128 0x2
+ 578 00af 04       		.byte	0x4
+ 579 00b0 07       		.byte	0x7
+ 580 00b1 07020000 		.4byte	.LASF16
+ 581 00b5 03       		.uleb128 0x3
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckW6Rlm.s 			page 15
+
+
+ 582 00b6 E2010000 		.4byte	.LASF17
+ 583 00ba 05       		.byte	0x5
+ 584 00bb 13       		.byte	0x13
+ 585 00bc 37000000 		.4byte	0x37
+ 586 00c0 06       		.uleb128 0x6
+ 587 00c1 4B010000 		.4byte	.LASF37
+ 588 00c5 01       		.byte	0x1
+ 589 00c6 22       		.byte	0x22
+ 590 00c7 00000000 		.4byte	.LFB64
+ 591 00cb 4C000000 		.4byte	.LFE64-.LFB64
+ 592 00cf 01       		.uleb128 0x1
+ 593 00d0 9C       		.byte	0x9c
+ 594 00d1 7D010000 		.4byte	0x17d
+ 595 00d5 07       		.uleb128 0x7
+ 596 00d6 64617400 		.ascii	"dat\000"
+ 597 00da 01       		.byte	0x1
+ 598 00db 22       		.byte	0x22
+ 599 00dc B5000000 		.4byte	0xb5
+ 600 00e0 00000000 		.4byte	.LLST0
+ 601 00e4 08       		.uleb128 0x8
+ 602 00e5 6900     		.ascii	"i\000"
+ 603 00e7 01       		.byte	0x1
+ 604 00e8 24       		.byte	0x24
+ 605 00e9 B5000000 		.4byte	0xb5
+ 606 00ed 29000000 		.4byte	.LLST1
+ 607 00f1 09       		.uleb128 0x9
+ 608 00f2 0C000000 		.4byte	.LVL3
+ 609 00f6 07050000 		.4byte	0x507
+ 610 00fa 04010000 		.4byte	0x104
+ 611 00fe 0A       		.uleb128 0xa
+ 612 00ff 01       		.uleb128 0x1
+ 613 0100 50       		.byte	0x50
+ 614 0101 01       		.uleb128 0x1
+ 615 0102 30       		.byte	0x30
+ 616 0103 00       		.byte	0
+ 617 0104 09       		.uleb128 0x9
+ 618 0105 12000000 		.4byte	.LVL4
+ 619 0109 18050000 		.4byte	0x518
+ 620 010d 17010000 		.4byte	0x117
+ 621 0111 0A       		.uleb128 0xa
+ 622 0112 01       		.uleb128 0x1
+ 623 0113 50       		.byte	0x50
+ 624 0114 01       		.uleb128 0x1
+ 625 0115 31       		.byte	0x31
+ 626 0116 00       		.byte	0
+ 627 0117 0B       		.uleb128 0xb
+ 628 0118 20000000 		.4byte	.LVL5
+ 629 011c 29050000 		.4byte	0x529
+ 630 0120 09       		.uleb128 0x9
+ 631 0121 26000000 		.4byte	.LVL6
+ 632 0125 18050000 		.4byte	0x518
+ 633 0129 33010000 		.4byte	0x133
+ 634 012d 0A       		.uleb128 0xa
+ 635 012e 01       		.uleb128 0x1
+ 636 012f 50       		.byte	0x50
+ 637 0130 01       		.uleb128 0x1
+ 638 0131 31       		.byte	0x31
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckW6Rlm.s 			page 16
+
+
+ 639 0132 00       		.byte	0
+ 640 0133 09       		.uleb128 0x9
+ 641 0134 2E000000 		.4byte	.LVL8
+ 642 0138 07050000 		.4byte	0x507
+ 643 013c 46010000 		.4byte	0x146
+ 644 0140 0A       		.uleb128 0xa
+ 645 0141 01       		.uleb128 0x1
+ 646 0142 50       		.byte	0x50
+ 647 0143 01       		.uleb128 0x1
+ 648 0144 31       		.byte	0x31
+ 649 0145 00       		.byte	0
+ 650 0146 09       		.uleb128 0x9
+ 651 0147 3A000000 		.4byte	.LVL11
+ 652 014b 18050000 		.4byte	0x518
+ 653 014f 59010000 		.4byte	0x159
+ 654 0153 0A       		.uleb128 0xa
+ 655 0154 01       		.uleb128 0x1
+ 656 0155 50       		.byte	0x50
+ 657 0156 01       		.uleb128 0x1
+ 658 0157 32       		.byte	0x32
+ 659 0158 00       		.byte	0
+ 660 0159 09       		.uleb128 0x9
+ 661 015a 44000000 		.4byte	.LVL12
+ 662 015e 07050000 		.4byte	0x507
+ 663 0162 6D010000 		.4byte	0x16d
+ 664 0166 0A       		.uleb128 0xa
+ 665 0167 01       		.uleb128 0x1
+ 666 0168 50       		.byte	0x50
+ 667 0169 02       		.uleb128 0x2
+ 668 016a 74       		.byte	0x74
+ 669 016b 00       		.sleb128 0
+ 670 016c 00       		.byte	0
+ 671 016d 0C       		.uleb128 0xc
+ 672 016e 4A000000 		.4byte	.LVL13
+ 673 0172 18050000 		.4byte	0x518
+ 674 0176 0A       		.uleb128 0xa
+ 675 0177 01       		.uleb128 0x1
+ 676 0178 50       		.byte	0x50
+ 677 0179 01       		.uleb128 0x1
+ 678 017a 3A       		.byte	0x3a
+ 679 017b 00       		.byte	0
+ 680 017c 00       		.byte	0
+ 681 017d 0D       		.uleb128 0xd
+ 682 017e F9000000 		.4byte	.LASF38
+ 683 0182 01       		.byte	0x1
+ 684 0183 3E       		.byte	0x3e
+ 685 0184 B5000000 		.4byte	0xb5
+ 686 0188 00000000 		.4byte	.LFB65
+ 687 018c 4C000000 		.4byte	.LFE65-.LFB65
+ 688 0190 01       		.uleb128 0x1
+ 689 0191 9C       		.byte	0x9c
+ 690 0192 3E020000 		.4byte	0x23e
+ 691 0196 08       		.uleb128 0x8
+ 692 0197 6900     		.ascii	"i\000"
+ 693 0199 01       		.byte	0x1
+ 694 019a 40       		.byte	0x40
+ 695 019b B5000000 		.4byte	0xb5
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckW6Rlm.s 			page 17
+
+
+ 696 019f 4C000000 		.4byte	.LLST2
+ 697 01a3 08       		.uleb128 0x8
+ 698 01a4 64617400 		.ascii	"dat\000"
+ 699 01a8 01       		.byte	0x1
+ 700 01a9 40       		.byte	0x40
+ 701 01aa B5000000 		.4byte	0xb5
+ 702 01ae 6F000000 		.4byte	.LLST3
+ 703 01b2 09       		.uleb128 0x9
+ 704 01b3 0C000000 		.4byte	.LVL17
+ 705 01b7 07050000 		.4byte	0x507
+ 706 01bb C5010000 		.4byte	0x1c5
+ 707 01bf 0A       		.uleb128 0xa
+ 708 01c0 01       		.uleb128 0x1
+ 709 01c1 50       		.byte	0x50
+ 710 01c2 01       		.uleb128 0x1
+ 711 01c3 30       		.byte	0x30
+ 712 01c4 00       		.byte	0
+ 713 01c5 09       		.uleb128 0x9
+ 714 01c6 14000000 		.4byte	.LVL19
+ 715 01ca 18050000 		.4byte	0x518
+ 716 01ce D8010000 		.4byte	0x1d8
+ 717 01d2 0A       		.uleb128 0xa
+ 718 01d3 01       		.uleb128 0x1
+ 719 01d4 50       		.byte	0x50
+ 720 01d5 01       		.uleb128 0x1
+ 721 01d6 31       		.byte	0x31
+ 722 01d7 00       		.byte	0
+ 723 01d8 0B       		.uleb128 0xb
+ 724 01d9 1A000000 		.4byte	.LVL21
+ 725 01dd 3A050000 		.4byte	0x53a
+ 726 01e1 09       		.uleb128 0x9
+ 727 01e2 28000000 		.4byte	.LVL23
+ 728 01e6 18050000 		.4byte	0x518
+ 729 01ea F4010000 		.4byte	0x1f4
+ 730 01ee 0A       		.uleb128 0xa
+ 731 01ef 01       		.uleb128 0x1
+ 732 01f0 50       		.byte	0x50
+ 733 01f1 01       		.uleb128 0x1
+ 734 01f2 31       		.byte	0x31
+ 735 01f3 00       		.byte	0
+ 736 01f4 09       		.uleb128 0x9
+ 737 01f5 30000000 		.4byte	.LVL25
+ 738 01f9 07050000 		.4byte	0x507
+ 739 01fd 07020000 		.4byte	0x207
+ 740 0201 0A       		.uleb128 0xa
+ 741 0202 01       		.uleb128 0x1
+ 742 0203 50       		.byte	0x50
+ 743 0204 01       		.uleb128 0x1
+ 744 0205 31       		.byte	0x31
+ 745 0206 00       		.byte	0
+ 746 0207 09       		.uleb128 0x9
+ 747 0208 38000000 		.4byte	.LVL26
+ 748 020c 18050000 		.4byte	0x518
+ 749 0210 1A020000 		.4byte	0x21a
+ 750 0214 0A       		.uleb128 0xa
+ 751 0215 01       		.uleb128 0x1
+ 752 0216 50       		.byte	0x50
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckW6Rlm.s 			page 18
+
+
+ 753 0217 01       		.uleb128 0x1
+ 754 0218 32       		.byte	0x32
+ 755 0219 00       		.byte	0
+ 756 021a 09       		.uleb128 0x9
+ 757 021b 42000000 		.4byte	.LVL27
+ 758 021f 07050000 		.4byte	0x507
+ 759 0223 2E020000 		.4byte	0x22e
+ 760 0227 0A       		.uleb128 0xa
+ 761 0228 01       		.uleb128 0x1
+ 762 0229 50       		.byte	0x50
+ 763 022a 02       		.uleb128 0x2
+ 764 022b 75       		.byte	0x75
+ 765 022c 00       		.sleb128 0
+ 766 022d 00       		.byte	0
+ 767 022e 0C       		.uleb128 0xc
+ 768 022f 48000000 		.4byte	.LVL28
+ 769 0233 18050000 		.4byte	0x518
+ 770 0237 0A       		.uleb128 0xa
+ 771 0238 01       		.uleb128 0x1
+ 772 0239 50       		.byte	0x50
+ 773 023a 01       		.uleb128 0x1
+ 774 023b 3A       		.byte	0x3a
+ 775 023c 00       		.byte	0
+ 776 023d 00       		.byte	0
+ 777 023e 0E       		.uleb128 0xe
+ 778 023f A7010000 		.4byte	.LASF23
+ 779 0243 01       		.byte	0x1
+ 780 0244 13       		.byte	0x13
+ 781 0245 00000000 		.4byte	.LFB63
+ 782 0249 16000000 		.4byte	.LFE63-.LFB63
+ 783 024d 01       		.uleb128 0x1
+ 784 024e 9C       		.byte	0x9c
+ 785 024f 89020000 		.4byte	0x289
+ 786 0253 09       		.uleb128 0x9
+ 787 0254 08000000 		.4byte	.LVL30
+ 788 0258 45050000 		.4byte	0x545
+ 789 025c 66020000 		.4byte	0x266
+ 790 0260 0A       		.uleb128 0xa
+ 791 0261 01       		.uleb128 0x1
+ 792 0262 50       		.byte	0x50
+ 793 0263 01       		.uleb128 0x1
+ 794 0264 31       		.byte	0x31
+ 795 0265 00       		.byte	0
+ 796 0266 09       		.uleb128 0x9
+ 797 0267 0E000000 		.4byte	.LVL31
+ 798 026b 07050000 		.4byte	0x507
+ 799 026f 79020000 		.4byte	0x279
+ 800 0273 0A       		.uleb128 0xa
+ 801 0274 01       		.uleb128 0x1
+ 802 0275 50       		.byte	0x50
+ 803 0276 01       		.uleb128 0x1
+ 804 0277 30       		.byte	0x30
+ 805 0278 00       		.byte	0
+ 806 0279 0C       		.uleb128 0xc
+ 807 027a 14000000 		.4byte	.LVL32
+ 808 027e 29050000 		.4byte	0x529
+ 809 0282 0A       		.uleb128 0xa
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckW6Rlm.s 			page 19
+
+
+ 810 0283 01       		.uleb128 0x1
+ 811 0284 50       		.byte	0x50
+ 812 0285 01       		.uleb128 0x1
+ 813 0286 30       		.byte	0x30
+ 814 0287 00       		.byte	0
+ 815 0288 00       		.byte	0
+ 816 0289 0F       		.uleb128 0xf
+ 817 028a C6000000 		.4byte	.LASF20
+ 818 028e 01       		.byte	0x1
+ 819 028f 5C       		.byte	0x5c
+ 820 0290 76000000 		.4byte	0x76
+ 821 0294 00000000 		.4byte	.LFB66
+ 822 0298 24000000 		.4byte	.LFE66-.LFB66
+ 823 029c 01       		.uleb128 0x1
+ 824 029d 9C       		.byte	0x9c
+ 825 029e 0B030000 		.4byte	0x30b
+ 826 02a2 10       		.uleb128 0x10
+ 827 02a3 3E020000 		.4byte	.LASF18
+ 828 02a7 01       		.byte	0x1
+ 829 02a8 5C       		.byte	0x5c
+ 830 02a9 76000000 		.4byte	0x76
+ 831 02ad 99000000 		.4byte	.LLST4
+ 832 02b1 10       		.uleb128 0x10
+ 833 02b2 94010000 		.4byte	.LASF19
+ 834 02b6 01       		.byte	0x1
+ 835 02b7 5C       		.byte	0x5c
+ 836 02b8 76000000 		.4byte	0x76
+ 837 02bc BA000000 		.4byte	.LLST5
+ 838 02c0 09       		.uleb128 0x9
+ 839 02c1 0E000000 		.4byte	.LVL35
+ 840 02c5 45050000 		.4byte	0x545
+ 841 02c9 D3020000 		.4byte	0x2d3
+ 842 02cd 0A       		.uleb128 0xa
+ 843 02ce 01       		.uleb128 0x1
+ 844 02cf 50       		.byte	0x50
+ 845 02d0 01       		.uleb128 0x1
+ 846 02d1 30       		.byte	0x30
+ 847 02d2 00       		.byte	0
+ 848 02d3 09       		.uleb128 0x9
+ 849 02d4 14000000 		.4byte	.LVL36
+ 850 02d8 C0000000 		.4byte	0xc0
+ 851 02dc E7020000 		.4byte	0x2e7
+ 852 02e0 0A       		.uleb128 0xa
+ 853 02e1 01       		.uleb128 0x1
+ 854 02e2 50       		.byte	0x50
+ 855 02e3 02       		.uleb128 0x2
+ 856 02e4 74       		.byte	0x74
+ 857 02e5 00       		.sleb128 0
+ 858 02e6 00       		.byte	0
+ 859 02e7 09       		.uleb128 0x9
+ 860 02e8 1A000000 		.4byte	.LVL37
+ 861 02ec C0000000 		.4byte	0xc0
+ 862 02f0 FB020000 		.4byte	0x2fb
+ 863 02f4 0A       		.uleb128 0xa
+ 864 02f5 01       		.uleb128 0x1
+ 865 02f6 50       		.byte	0x50
+ 866 02f7 02       		.uleb128 0x2
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckW6Rlm.s 			page 20
+
+
+ 867 02f8 75       		.byte	0x75
+ 868 02f9 00       		.sleb128 0
+ 869 02fa 00       		.byte	0
+ 870 02fb 0C       		.uleb128 0xc
+ 871 02fc 20000000 		.4byte	.LVL38
+ 872 0300 45050000 		.4byte	0x545
+ 873 0304 0A       		.uleb128 0xa
+ 874 0305 01       		.uleb128 0x1
+ 875 0306 50       		.byte	0x50
+ 876 0307 01       		.uleb128 0x1
+ 877 0308 31       		.byte	0x31
+ 878 0309 00       		.byte	0
+ 879 030a 00       		.byte	0
+ 880 030b 0F       		.uleb128 0xf
+ 881 030c 5E010000 		.4byte	.LASF21
+ 882 0310 01       		.byte	0x1
+ 883 0311 6D       		.byte	0x6d
+ 884 0312 76000000 		.4byte	0x76
+ 885 0316 00000000 		.4byte	.LFB67
+ 886 031a 28000000 		.4byte	.LFE67-.LFB67
+ 887 031e 01       		.uleb128 0x1
+ 888 031f 9C       		.byte	0x9c
+ 889 0320 82030000 		.4byte	0x382
+ 890 0324 10       		.uleb128 0x10
+ 891 0325 3E020000 		.4byte	.LASF18
+ 892 0329 01       		.byte	0x1
+ 893 032a 6D       		.byte	0x6d
+ 894 032b 76000000 		.4byte	0x76
+ 895 032f DB000000 		.4byte	.LLST6
+ 896 0333 11       		.uleb128 0x11
+ 897 0334 94010000 		.4byte	.LASF19
+ 898 0338 01       		.byte	0x1
+ 899 0339 6F       		.byte	0x6f
+ 900 033a 76000000 		.4byte	0x76
+ 901 033e FC000000 		.4byte	.LLST7
+ 902 0342 09       		.uleb128 0x9
+ 903 0343 0A000000 		.4byte	.LVL41
+ 904 0347 45050000 		.4byte	0x545
+ 905 034b 55030000 		.4byte	0x355
+ 906 034f 0A       		.uleb128 0xa
+ 907 0350 01       		.uleb128 0x1
+ 908 0351 50       		.byte	0x50
+ 909 0352 01       		.uleb128 0x1
+ 910 0353 30       		.byte	0x30
+ 911 0354 00       		.byte	0
+ 912 0355 09       		.uleb128 0x9
+ 913 0356 18000000 		.4byte	.LVL42
+ 914 035a C0000000 		.4byte	0xc0
+ 915 035e 69030000 		.4byte	0x369
+ 916 0362 0A       		.uleb128 0xa
+ 917 0363 01       		.uleb128 0x1
+ 918 0364 50       		.byte	0x50
+ 919 0365 02       		.uleb128 0x2
+ 920 0366 74       		.byte	0x74
+ 921 0367 00       		.sleb128 0
+ 922 0368 00       		.byte	0
+ 923 0369 0B       		.uleb128 0xb
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckW6Rlm.s 			page 21
+
+
+ 924 036a 1C000000 		.4byte	.LVL43
+ 925 036e 7D010000 		.4byte	0x17d
+ 926 0372 0C       		.uleb128 0xc
+ 927 0373 24000000 		.4byte	.LVL45
+ 928 0377 45050000 		.4byte	0x545
+ 929 037b 0A       		.uleb128 0xa
+ 930 037c 01       		.uleb128 0x1
+ 931 037d 50       		.byte	0x50
+ 932 037e 01       		.uleb128 0x1
+ 933 037f 31       		.byte	0x31
+ 934 0380 00       		.byte	0
+ 935 0381 00       		.byte	0
+ 936 0382 0F       		.uleb128 0xf
+ 937 0383 D7000000 		.4byte	.LASF22
+ 938 0387 01       		.byte	0x1
+ 939 0388 80       		.byte	0x80
+ 940 0389 76000000 		.4byte	0x76
+ 941 038d 00000000 		.4byte	.LFB68
+ 942 0391 2A000000 		.4byte	.LFE68-.LFB68
+ 943 0395 01       		.uleb128 0x1
+ 944 0396 9C       		.byte	0x9c
+ 945 0397 F7030000 		.4byte	0x3f7
+ 946 039b 10       		.uleb128 0x10
+ 947 039c 3E020000 		.4byte	.LASF18
+ 948 03a0 01       		.byte	0x1
+ 949 03a1 80       		.byte	0x80
+ 950 03a2 76000000 		.4byte	0x76
+ 951 03a6 0F010000 		.4byte	.LLST8
+ 952 03aa 07       		.uleb128 0x7
+ 953 03ab 7000     		.ascii	"p\000"
+ 954 03ad 01       		.byte	0x1
+ 955 03ae 80       		.byte	0x80
+ 956 03af F7030000 		.4byte	0x3f7
+ 957 03b3 30010000 		.4byte	.LLST9
+ 958 03b7 09       		.uleb128 0x9
+ 959 03b8 0C000000 		.4byte	.LVL49
+ 960 03bc 45050000 		.4byte	0x545
+ 961 03c0 CA030000 		.4byte	0x3ca
+ 962 03c4 0A       		.uleb128 0xa
+ 963 03c5 01       		.uleb128 0x1
+ 964 03c6 50       		.byte	0x50
+ 965 03c7 01       		.uleb128 0x1
+ 966 03c8 30       		.byte	0x30
+ 967 03c9 00       		.byte	0
+ 968 03ca 09       		.uleb128 0x9
+ 969 03cb 1A000000 		.4byte	.LVL50
+ 970 03cf C0000000 		.4byte	0xc0
+ 971 03d3 DE030000 		.4byte	0x3de
+ 972 03d7 0A       		.uleb128 0xa
+ 973 03d8 01       		.uleb128 0x1
+ 974 03d9 50       		.byte	0x50
+ 975 03da 02       		.uleb128 0x2
+ 976 03db 74       		.byte	0x74
+ 977 03dc 00       		.sleb128 0
+ 978 03dd 00       		.byte	0
+ 979 03de 0B       		.uleb128 0xb
+ 980 03df 1E000000 		.4byte	.LVL51
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckW6Rlm.s 			page 22
+
+
+ 981 03e3 7D010000 		.4byte	0x17d
+ 982 03e7 0C       		.uleb128 0xc
+ 983 03e8 26000000 		.4byte	.LVL52
+ 984 03ec 45050000 		.4byte	0x545
+ 985 03f0 0A       		.uleb128 0xa
+ 986 03f1 01       		.uleb128 0x1
+ 987 03f2 50       		.byte	0x50
+ 988 03f3 01       		.uleb128 0x1
+ 989 03f4 31       		.byte	0x31
+ 990 03f5 00       		.byte	0
+ 991 03f6 00       		.byte	0
+ 992 03f7 12       		.uleb128 0x12
+ 993 03f8 04       		.byte	0x4
+ 994 03f9 76000000 		.4byte	0x76
+ 995 03fd 0E       		.uleb128 0xe
+ 996 03fe 7D010000 		.4byte	.LASF24
+ 997 0402 01       		.byte	0x1
+ 998 0403 94       		.byte	0x94
+ 999 0404 00000000 		.4byte	.LFB69
+ 1000 0408 1E000000 		.4byte	.LFE69-.LFB69
+ 1001 040c 01       		.uleb128 0x1
+ 1002 040d 9C       		.byte	0x9c
+ 1003 040e 5D040000 		.4byte	0x45d
+ 1004 0412 10       		.uleb128 0x10
+ 1005 0413 2E020000 		.4byte	.LASF25
+ 1006 0417 01       		.byte	0x1
+ 1007 0418 94       		.byte	0x94
+ 1008 0419 76000000 		.4byte	0x76
+ 1009 041d 5C010000 		.4byte	.LLST10
+ 1010 0421 10       		.uleb128 0x10
+ 1011 0422 3E020000 		.4byte	.LASF18
+ 1012 0426 01       		.byte	0x1
+ 1013 0427 94       		.byte	0x94
+ 1014 0428 76000000 		.4byte	0x76
+ 1015 042c 7D010000 		.4byte	.LLST11
+ 1016 0430 10       		.uleb128 0x10
+ 1017 0431 E9000000 		.4byte	.LASF26
+ 1018 0435 01       		.byte	0x1
+ 1019 0436 94       		.byte	0x94
+ 1020 0437 F7030000 		.4byte	0x3f7
+ 1021 043b 9E010000 		.4byte	.LLST12
+ 1022 043f 08       		.uleb128 0x8
+ 1023 0440 6900     		.ascii	"i\000"
+ 1024 0442 01       		.byte	0x1
+ 1025 0443 96       		.byte	0x96
+ 1026 0444 76000000 		.4byte	0x76
+ 1027 0448 BF010000 		.4byte	.LLST13
+ 1028 044c 0C       		.uleb128 0xc
+ 1029 044d 16000000 		.4byte	.LVL56
+ 1030 0451 0B030000 		.4byte	0x30b
+ 1031 0455 0A       		.uleb128 0xa
+ 1032 0456 01       		.uleb128 0x1
+ 1033 0457 50       		.byte	0x50
+ 1034 0458 02       		.uleb128 0x2
+ 1035 0459 76       		.byte	0x76
+ 1036 045a 00       		.sleb128 0
+ 1037 045b 00       		.byte	0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckW6Rlm.s 			page 23
+
+
+ 1038 045c 00       		.byte	0
+ 1039 045d 0E       		.uleb128 0xe
+ 1040 045e 68020000 		.4byte	.LASF27
+ 1041 0462 01       		.byte	0x1
+ 1042 0463 AA       		.byte	0xaa
+ 1043 0464 00000000 		.4byte	.LFB70
+ 1044 0468 1E000000 		.4byte	.LFE70-.LFB70
+ 1045 046c 01       		.uleb128 0x1
+ 1046 046d 9C       		.byte	0x9c
+ 1047 046e BD040000 		.4byte	0x4bd
+ 1048 0472 10       		.uleb128 0x10
+ 1049 0473 2E020000 		.4byte	.LASF25
+ 1050 0477 01       		.byte	0x1
+ 1051 0478 AA       		.byte	0xaa
+ 1052 0479 76000000 		.4byte	0x76
+ 1053 047d EB010000 		.4byte	.LLST14
+ 1054 0481 10       		.uleb128 0x10
+ 1055 0482 3E020000 		.4byte	.LASF18
+ 1056 0486 01       		.byte	0x1
+ 1057 0487 AA       		.byte	0xaa
+ 1058 0488 76000000 		.4byte	0x76
+ 1059 048c 0C020000 		.4byte	.LLST15
+ 1060 0490 10       		.uleb128 0x10
+ 1061 0491 E9000000 		.4byte	.LASF26
+ 1062 0495 01       		.byte	0x1
+ 1063 0496 AA       		.byte	0xaa
+ 1064 0497 F7030000 		.4byte	0x3f7
+ 1065 049b 2D020000 		.4byte	.LLST16
+ 1066 049f 08       		.uleb128 0x8
+ 1067 04a0 6900     		.ascii	"i\000"
+ 1068 04a2 01       		.byte	0x1
+ 1069 04a3 AC       		.byte	0xac
+ 1070 04a4 76000000 		.4byte	0x76
+ 1071 04a8 4E020000 		.4byte	.LLST17
+ 1072 04ac 0C       		.uleb128 0xc
+ 1073 04ad 18000000 		.4byte	.LVL61
+ 1074 04b1 89020000 		.4byte	0x289
+ 1075 04b5 0A       		.uleb128 0xa
+ 1076 04b6 01       		.uleb128 0x1
+ 1077 04b7 50       		.byte	0x50
+ 1078 04b8 02       		.uleb128 0x2
+ 1079 04b9 76       		.byte	0x76
+ 1080 04ba 00       		.sleb128 0
+ 1081 04bb 00       		.byte	0
+ 1082 04bc 00       		.byte	0
+ 1083 04bd 0F       		.uleb128 0xf
+ 1084 04be A9000000 		.4byte	.LASF28
+ 1085 04c2 01       		.byte	0x1
+ 1086 04c3 C1       		.byte	0xc1
+ 1087 04c4 76000000 		.4byte	0x76
+ 1088 04c8 00000000 		.4byte	.LFB71
+ 1089 04cc 14000000 		.4byte	.LFE71-.LFB71
+ 1090 04d0 01       		.uleb128 0x1
+ 1091 04d1 9C       		.byte	0x9c
+ 1092 04d2 07050000 		.4byte	0x507
+ 1093 04d6 10       		.uleb128 0x10
+ 1094 04d7 A1020000 		.4byte	.LASF29
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckW6Rlm.s 			page 24
+
+
+ 1095 04db 01       		.byte	0x1
+ 1096 04dc C1       		.byte	0xc1
+ 1097 04dd 76000000 		.4byte	0x76
+ 1098 04e1 7A020000 		.4byte	.LLST18
+ 1099 04e5 10       		.uleb128 0x10
+ 1100 04e6 1D010000 		.4byte	.LASF30
+ 1101 04ea 01       		.byte	0x1
+ 1102 04eb C1       		.byte	0xc1
+ 1103 04ec 81000000 		.4byte	0x81
+ 1104 04f0 B4020000 		.4byte	.LLST19
+ 1105 04f4 0B       		.uleb128 0xb
+ 1106 04f5 0A000000 		.4byte	.LVL64
+ 1107 04f9 7D010000 		.4byte	0x17d
+ 1108 04fd 0B       		.uleb128 0xb
+ 1109 04fe 10000000 		.4byte	.LVL66
+ 1110 0502 C0000000 		.4byte	0xc0
+ 1111 0506 00       		.byte	0
+ 1112 0507 13       		.uleb128 0x13
+ 1113 0508 80020000 		.4byte	.LASF31
+ 1114 050c 06       		.byte	0x6
+ 1115 050d 33       		.byte	0x33
+ 1116 050e 18050000 		.4byte	0x518
+ 1117 0512 14       		.uleb128 0x14
+ 1118 0513 81000000 		.4byte	0x81
+ 1119 0517 00       		.byte	0
+ 1120 0518 13       		.uleb128 0x13
+ 1121 0519 9D010000 		.4byte	.LASF32
+ 1122 051d 07       		.byte	0x7
+ 1123 051e DA       		.byte	0xda
+ 1124 051f 29050000 		.4byte	0x529
+ 1125 0523 14       		.uleb128 0x14
+ 1126 0524 8D000000 		.4byte	0x8d
+ 1127 0528 00       		.byte	0
+ 1128 0529 13       		.uleb128 0x13
+ 1129 052a 00000000 		.4byte	.LASF33
+ 1130 052e 08       		.byte	0x8
+ 1131 052f 33       		.byte	0x33
+ 1132 0530 3A050000 		.4byte	0x53a
+ 1133 0534 14       		.uleb128 0x14
+ 1134 0535 81000000 		.4byte	0x81
+ 1135 0539 00       		.byte	0
+ 1136 053a 15       		.uleb128 0x15
+ 1137 053b 58020000 		.4byte	.LASF39
+ 1138 053f 09       		.byte	0x9
+ 1139 0540 32       		.byte	0x32
+ 1140 0541 81000000 		.4byte	0x81
+ 1141 0545 16       		.uleb128 0x16
+ 1142 0546 10020000 		.4byte	.LASF40
+ 1143 054a 0A       		.byte	0xa
+ 1144 054b 33       		.byte	0x33
+ 1145 054c 14       		.uleb128 0x14
+ 1146 054d 81000000 		.4byte	0x81
+ 1147 0551 00       		.byte	0
+ 1148 0552 00       		.byte	0
+ 1149              		.section	.debug_abbrev,"",%progbits
+ 1150              	.Ldebug_abbrev0:
+ 1151 0000 01       		.uleb128 0x1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckW6Rlm.s 			page 25
+
+
+ 1152 0001 11       		.uleb128 0x11
+ 1153 0002 01       		.byte	0x1
+ 1154 0003 25       		.uleb128 0x25
+ 1155 0004 0E       		.uleb128 0xe
+ 1156 0005 13       		.uleb128 0x13
+ 1157 0006 0B       		.uleb128 0xb
+ 1158 0007 03       		.uleb128 0x3
+ 1159 0008 0E       		.uleb128 0xe
+ 1160 0009 1B       		.uleb128 0x1b
+ 1161 000a 0E       		.uleb128 0xe
+ 1162 000b 55       		.uleb128 0x55
+ 1163 000c 17       		.uleb128 0x17
+ 1164 000d 11       		.uleb128 0x11
+ 1165 000e 01       		.uleb128 0x1
+ 1166 000f 10       		.uleb128 0x10
+ 1167 0010 17       		.uleb128 0x17
+ 1168 0011 00       		.byte	0
+ 1169 0012 00       		.byte	0
+ 1170 0013 02       		.uleb128 0x2
+ 1171 0014 24       		.uleb128 0x24
+ 1172 0015 00       		.byte	0
+ 1173 0016 0B       		.uleb128 0xb
+ 1174 0017 0B       		.uleb128 0xb
+ 1175 0018 3E       		.uleb128 0x3e
+ 1176 0019 0B       		.uleb128 0xb
+ 1177 001a 03       		.uleb128 0x3
+ 1178 001b 0E       		.uleb128 0xe
+ 1179 001c 00       		.byte	0
+ 1180 001d 00       		.byte	0
+ 1181 001e 03       		.uleb128 0x3
+ 1182 001f 16       		.uleb128 0x16
+ 1183 0020 00       		.byte	0
+ 1184 0021 03       		.uleb128 0x3
+ 1185 0022 0E       		.uleb128 0xe
+ 1186 0023 3A       		.uleb128 0x3a
+ 1187 0024 0B       		.uleb128 0xb
+ 1188 0025 3B       		.uleb128 0x3b
+ 1189 0026 0B       		.uleb128 0xb
+ 1190 0027 49       		.uleb128 0x49
+ 1191 0028 13       		.uleb128 0x13
+ 1192 0029 00       		.byte	0
+ 1193 002a 00       		.byte	0
+ 1194 002b 04       		.uleb128 0x4
+ 1195 002c 24       		.uleb128 0x24
+ 1196 002d 00       		.byte	0
+ 1197 002e 0B       		.uleb128 0xb
+ 1198 002f 0B       		.uleb128 0xb
+ 1199 0030 3E       		.uleb128 0x3e
+ 1200 0031 0B       		.uleb128 0xb
+ 1201 0032 03       		.uleb128 0x3
+ 1202 0033 08       		.uleb128 0x8
+ 1203 0034 00       		.byte	0
+ 1204 0035 00       		.byte	0
+ 1205 0036 05       		.uleb128 0x5
+ 1206 0037 16       		.uleb128 0x16
+ 1207 0038 00       		.byte	0
+ 1208 0039 03       		.uleb128 0x3
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckW6Rlm.s 			page 26
+
+
+ 1209 003a 0E       		.uleb128 0xe
+ 1210 003b 3A       		.uleb128 0x3a
+ 1211 003c 0B       		.uleb128 0xb
+ 1212 003d 3B       		.uleb128 0x3b
+ 1213 003e 05       		.uleb128 0x5
+ 1214 003f 49       		.uleb128 0x49
+ 1215 0040 13       		.uleb128 0x13
+ 1216 0041 00       		.byte	0
+ 1217 0042 00       		.byte	0
+ 1218 0043 06       		.uleb128 0x6
+ 1219 0044 2E       		.uleb128 0x2e
+ 1220 0045 01       		.byte	0x1
+ 1221 0046 03       		.uleb128 0x3
+ 1222 0047 0E       		.uleb128 0xe
+ 1223 0048 3A       		.uleb128 0x3a
+ 1224 0049 0B       		.uleb128 0xb
+ 1225 004a 3B       		.uleb128 0x3b
+ 1226 004b 0B       		.uleb128 0xb
+ 1227 004c 27       		.uleb128 0x27
+ 1228 004d 19       		.uleb128 0x19
+ 1229 004e 11       		.uleb128 0x11
+ 1230 004f 01       		.uleb128 0x1
+ 1231 0050 12       		.uleb128 0x12
+ 1232 0051 06       		.uleb128 0x6
+ 1233 0052 40       		.uleb128 0x40
+ 1234 0053 18       		.uleb128 0x18
+ 1235 0054 9742     		.uleb128 0x2117
+ 1236 0056 19       		.uleb128 0x19
+ 1237 0057 01       		.uleb128 0x1
+ 1238 0058 13       		.uleb128 0x13
+ 1239 0059 00       		.byte	0
+ 1240 005a 00       		.byte	0
+ 1241 005b 07       		.uleb128 0x7
+ 1242 005c 05       		.uleb128 0x5
+ 1243 005d 00       		.byte	0
+ 1244 005e 03       		.uleb128 0x3
+ 1245 005f 08       		.uleb128 0x8
+ 1246 0060 3A       		.uleb128 0x3a
+ 1247 0061 0B       		.uleb128 0xb
+ 1248 0062 3B       		.uleb128 0x3b
+ 1249 0063 0B       		.uleb128 0xb
+ 1250 0064 49       		.uleb128 0x49
+ 1251 0065 13       		.uleb128 0x13
+ 1252 0066 02       		.uleb128 0x2
+ 1253 0067 17       		.uleb128 0x17
+ 1254 0068 00       		.byte	0
+ 1255 0069 00       		.byte	0
+ 1256 006a 08       		.uleb128 0x8
+ 1257 006b 34       		.uleb128 0x34
+ 1258 006c 00       		.byte	0
+ 1259 006d 03       		.uleb128 0x3
+ 1260 006e 08       		.uleb128 0x8
+ 1261 006f 3A       		.uleb128 0x3a
+ 1262 0070 0B       		.uleb128 0xb
+ 1263 0071 3B       		.uleb128 0x3b
+ 1264 0072 0B       		.uleb128 0xb
+ 1265 0073 49       		.uleb128 0x49
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckW6Rlm.s 			page 27
+
+
+ 1266 0074 13       		.uleb128 0x13
+ 1267 0075 02       		.uleb128 0x2
+ 1268 0076 17       		.uleb128 0x17
+ 1269 0077 00       		.byte	0
+ 1270 0078 00       		.byte	0
+ 1271 0079 09       		.uleb128 0x9
+ 1272 007a 898201   		.uleb128 0x4109
+ 1273 007d 01       		.byte	0x1
+ 1274 007e 11       		.uleb128 0x11
+ 1275 007f 01       		.uleb128 0x1
+ 1276 0080 31       		.uleb128 0x31
+ 1277 0081 13       		.uleb128 0x13
+ 1278 0082 01       		.uleb128 0x1
+ 1279 0083 13       		.uleb128 0x13
+ 1280 0084 00       		.byte	0
+ 1281 0085 00       		.byte	0
+ 1282 0086 0A       		.uleb128 0xa
+ 1283 0087 8A8201   		.uleb128 0x410a
+ 1284 008a 00       		.byte	0
+ 1285 008b 02       		.uleb128 0x2
+ 1286 008c 18       		.uleb128 0x18
+ 1287 008d 9142     		.uleb128 0x2111
+ 1288 008f 18       		.uleb128 0x18
+ 1289 0090 00       		.byte	0
+ 1290 0091 00       		.byte	0
+ 1291 0092 0B       		.uleb128 0xb
+ 1292 0093 898201   		.uleb128 0x4109
+ 1293 0096 00       		.byte	0
+ 1294 0097 11       		.uleb128 0x11
+ 1295 0098 01       		.uleb128 0x1
+ 1296 0099 31       		.uleb128 0x31
+ 1297 009a 13       		.uleb128 0x13
+ 1298 009b 00       		.byte	0
+ 1299 009c 00       		.byte	0
+ 1300 009d 0C       		.uleb128 0xc
+ 1301 009e 898201   		.uleb128 0x4109
+ 1302 00a1 01       		.byte	0x1
+ 1303 00a2 11       		.uleb128 0x11
+ 1304 00a3 01       		.uleb128 0x1
+ 1305 00a4 31       		.uleb128 0x31
+ 1306 00a5 13       		.uleb128 0x13
+ 1307 00a6 00       		.byte	0
+ 1308 00a7 00       		.byte	0
+ 1309 00a8 0D       		.uleb128 0xd
+ 1310 00a9 2E       		.uleb128 0x2e
+ 1311 00aa 01       		.byte	0x1
+ 1312 00ab 03       		.uleb128 0x3
+ 1313 00ac 0E       		.uleb128 0xe
+ 1314 00ad 3A       		.uleb128 0x3a
+ 1315 00ae 0B       		.uleb128 0xb
+ 1316 00af 3B       		.uleb128 0x3b
+ 1317 00b0 0B       		.uleb128 0xb
+ 1318 00b1 27       		.uleb128 0x27
+ 1319 00b2 19       		.uleb128 0x19
+ 1320 00b3 49       		.uleb128 0x49
+ 1321 00b4 13       		.uleb128 0x13
+ 1322 00b5 11       		.uleb128 0x11
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckW6Rlm.s 			page 28
+
+
+ 1323 00b6 01       		.uleb128 0x1
+ 1324 00b7 12       		.uleb128 0x12
+ 1325 00b8 06       		.uleb128 0x6
+ 1326 00b9 40       		.uleb128 0x40
+ 1327 00ba 18       		.uleb128 0x18
+ 1328 00bb 9742     		.uleb128 0x2117
+ 1329 00bd 19       		.uleb128 0x19
+ 1330 00be 01       		.uleb128 0x1
+ 1331 00bf 13       		.uleb128 0x13
+ 1332 00c0 00       		.byte	0
+ 1333 00c1 00       		.byte	0
+ 1334 00c2 0E       		.uleb128 0xe
+ 1335 00c3 2E       		.uleb128 0x2e
+ 1336 00c4 01       		.byte	0x1
+ 1337 00c5 3F       		.uleb128 0x3f
+ 1338 00c6 19       		.uleb128 0x19
+ 1339 00c7 03       		.uleb128 0x3
+ 1340 00c8 0E       		.uleb128 0xe
+ 1341 00c9 3A       		.uleb128 0x3a
+ 1342 00ca 0B       		.uleb128 0xb
+ 1343 00cb 3B       		.uleb128 0x3b
+ 1344 00cc 0B       		.uleb128 0xb
+ 1345 00cd 27       		.uleb128 0x27
+ 1346 00ce 19       		.uleb128 0x19
+ 1347 00cf 11       		.uleb128 0x11
+ 1348 00d0 01       		.uleb128 0x1
+ 1349 00d1 12       		.uleb128 0x12
+ 1350 00d2 06       		.uleb128 0x6
+ 1351 00d3 40       		.uleb128 0x40
+ 1352 00d4 18       		.uleb128 0x18
+ 1353 00d5 9742     		.uleb128 0x2117
+ 1354 00d7 19       		.uleb128 0x19
+ 1355 00d8 01       		.uleb128 0x1
+ 1356 00d9 13       		.uleb128 0x13
+ 1357 00da 00       		.byte	0
+ 1358 00db 00       		.byte	0
+ 1359 00dc 0F       		.uleb128 0xf
+ 1360 00dd 2E       		.uleb128 0x2e
+ 1361 00de 01       		.byte	0x1
+ 1362 00df 3F       		.uleb128 0x3f
+ 1363 00e0 19       		.uleb128 0x19
+ 1364 00e1 03       		.uleb128 0x3
+ 1365 00e2 0E       		.uleb128 0xe
+ 1366 00e3 3A       		.uleb128 0x3a
+ 1367 00e4 0B       		.uleb128 0xb
+ 1368 00e5 3B       		.uleb128 0x3b
+ 1369 00e6 0B       		.uleb128 0xb
+ 1370 00e7 27       		.uleb128 0x27
+ 1371 00e8 19       		.uleb128 0x19
+ 1372 00e9 49       		.uleb128 0x49
+ 1373 00ea 13       		.uleb128 0x13
+ 1374 00eb 11       		.uleb128 0x11
+ 1375 00ec 01       		.uleb128 0x1
+ 1376 00ed 12       		.uleb128 0x12
+ 1377 00ee 06       		.uleb128 0x6
+ 1378 00ef 40       		.uleb128 0x40
+ 1379 00f0 18       		.uleb128 0x18
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckW6Rlm.s 			page 29
+
+
+ 1380 00f1 9742     		.uleb128 0x2117
+ 1381 00f3 19       		.uleb128 0x19
+ 1382 00f4 01       		.uleb128 0x1
+ 1383 00f5 13       		.uleb128 0x13
+ 1384 00f6 00       		.byte	0
+ 1385 00f7 00       		.byte	0
+ 1386 00f8 10       		.uleb128 0x10
+ 1387 00f9 05       		.uleb128 0x5
+ 1388 00fa 00       		.byte	0
+ 1389 00fb 03       		.uleb128 0x3
+ 1390 00fc 0E       		.uleb128 0xe
+ 1391 00fd 3A       		.uleb128 0x3a
+ 1392 00fe 0B       		.uleb128 0xb
+ 1393 00ff 3B       		.uleb128 0x3b
+ 1394 0100 0B       		.uleb128 0xb
+ 1395 0101 49       		.uleb128 0x49
+ 1396 0102 13       		.uleb128 0x13
+ 1397 0103 02       		.uleb128 0x2
+ 1398 0104 17       		.uleb128 0x17
+ 1399 0105 00       		.byte	0
+ 1400 0106 00       		.byte	0
+ 1401 0107 11       		.uleb128 0x11
+ 1402 0108 34       		.uleb128 0x34
+ 1403 0109 00       		.byte	0
+ 1404 010a 03       		.uleb128 0x3
+ 1405 010b 0E       		.uleb128 0xe
+ 1406 010c 3A       		.uleb128 0x3a
+ 1407 010d 0B       		.uleb128 0xb
+ 1408 010e 3B       		.uleb128 0x3b
+ 1409 010f 0B       		.uleb128 0xb
+ 1410 0110 49       		.uleb128 0x49
+ 1411 0111 13       		.uleb128 0x13
+ 1412 0112 02       		.uleb128 0x2
+ 1413 0113 17       		.uleb128 0x17
+ 1414 0114 00       		.byte	0
+ 1415 0115 00       		.byte	0
+ 1416 0116 12       		.uleb128 0x12
+ 1417 0117 0F       		.uleb128 0xf
+ 1418 0118 00       		.byte	0
+ 1419 0119 0B       		.uleb128 0xb
+ 1420 011a 0B       		.uleb128 0xb
+ 1421 011b 49       		.uleb128 0x49
+ 1422 011c 13       		.uleb128 0x13
+ 1423 011d 00       		.byte	0
+ 1424 011e 00       		.byte	0
+ 1425 011f 13       		.uleb128 0x13
+ 1426 0120 2E       		.uleb128 0x2e
+ 1427 0121 01       		.byte	0x1
+ 1428 0122 3F       		.uleb128 0x3f
+ 1429 0123 19       		.uleb128 0x19
+ 1430 0124 03       		.uleb128 0x3
+ 1431 0125 0E       		.uleb128 0xe
+ 1432 0126 3A       		.uleb128 0x3a
+ 1433 0127 0B       		.uleb128 0xb
+ 1434 0128 3B       		.uleb128 0x3b
+ 1435 0129 0B       		.uleb128 0xb
+ 1436 012a 27       		.uleb128 0x27
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckW6Rlm.s 			page 30
+
+
+ 1437 012b 19       		.uleb128 0x19
+ 1438 012c 3C       		.uleb128 0x3c
+ 1439 012d 19       		.uleb128 0x19
+ 1440 012e 01       		.uleb128 0x1
+ 1441 012f 13       		.uleb128 0x13
+ 1442 0130 00       		.byte	0
+ 1443 0131 00       		.byte	0
+ 1444 0132 14       		.uleb128 0x14
+ 1445 0133 05       		.uleb128 0x5
+ 1446 0134 00       		.byte	0
+ 1447 0135 49       		.uleb128 0x49
+ 1448 0136 13       		.uleb128 0x13
+ 1449 0137 00       		.byte	0
+ 1450 0138 00       		.byte	0
+ 1451 0139 15       		.uleb128 0x15
+ 1452 013a 2E       		.uleb128 0x2e
+ 1453 013b 00       		.byte	0
+ 1454 013c 3F       		.uleb128 0x3f
+ 1455 013d 19       		.uleb128 0x19
+ 1456 013e 03       		.uleb128 0x3
+ 1457 013f 0E       		.uleb128 0xe
+ 1458 0140 3A       		.uleb128 0x3a
+ 1459 0141 0B       		.uleb128 0xb
+ 1460 0142 3B       		.uleb128 0x3b
+ 1461 0143 0B       		.uleb128 0xb
+ 1462 0144 27       		.uleb128 0x27
+ 1463 0145 19       		.uleb128 0x19
+ 1464 0146 49       		.uleb128 0x49
+ 1465 0147 13       		.uleb128 0x13
+ 1466 0148 3C       		.uleb128 0x3c
+ 1467 0149 19       		.uleb128 0x19
+ 1468 014a 00       		.byte	0
+ 1469 014b 00       		.byte	0
+ 1470 014c 16       		.uleb128 0x16
+ 1471 014d 2E       		.uleb128 0x2e
+ 1472 014e 01       		.byte	0x1
+ 1473 014f 3F       		.uleb128 0x3f
+ 1474 0150 19       		.uleb128 0x19
+ 1475 0151 03       		.uleb128 0x3
+ 1476 0152 0E       		.uleb128 0xe
+ 1477 0153 3A       		.uleb128 0x3a
+ 1478 0154 0B       		.uleb128 0xb
+ 1479 0155 3B       		.uleb128 0x3b
+ 1480 0156 0B       		.uleb128 0xb
+ 1481 0157 27       		.uleb128 0x27
+ 1482 0158 19       		.uleb128 0x19
+ 1483 0159 3C       		.uleb128 0x3c
+ 1484 015a 19       		.uleb128 0x19
+ 1485 015b 00       		.byte	0
+ 1486 015c 00       		.byte	0
+ 1487 015d 00       		.byte	0
+ 1488              		.section	.debug_loc,"",%progbits
+ 1489              	.Ldebug_loc0:
+ 1490              	.LLST0:
+ 1491 0000 00000000 		.4byte	.LVL0
+ 1492 0004 04000000 		.4byte	.LVL1
+ 1493 0008 0100     		.2byte	0x1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckW6Rlm.s 			page 31
+
+
+ 1494 000a 50       		.byte	0x50
+ 1495 000b 04000000 		.4byte	.LVL1
+ 1496 000f 30000000 		.4byte	.LVL9
+ 1497 0013 0100     		.2byte	0x1
+ 1498 0015 55       		.byte	0x55
+ 1499 0016 36000000 		.4byte	.LVL10
+ 1500 001a 4A000000 		.4byte	.LVL14
+ 1501 001e 0100     		.2byte	0x1
+ 1502 0020 55       		.byte	0x55
+ 1503 0021 00000000 		.4byte	0
+ 1504 0025 00000000 		.4byte	0
+ 1505              	.LLST1:
+ 1506 0029 00000000 		.4byte	.LVL0
+ 1507 002d 06000000 		.4byte	.LVL2
+ 1508 0031 0200     		.2byte	0x2
+ 1509 0033 30       		.byte	0x30
+ 1510 0034 9F       		.byte	0x9f
+ 1511 0035 06000000 		.4byte	.LVL2
+ 1512 0039 28000000 		.4byte	.LVL7
+ 1513 003d 0500     		.2byte	0x5
+ 1514 003f 38       		.byte	0x38
+ 1515 0040 74       		.byte	0x74
+ 1516 0041 00       		.sleb128 0
+ 1517 0042 1C       		.byte	0x1c
+ 1518 0043 9F       		.byte	0x9f
+ 1519 0044 00000000 		.4byte	0
+ 1520 0048 00000000 		.4byte	0
+ 1521              	.LLST2:
+ 1522 004c 00000000 		.4byte	.LVL15
+ 1523 0050 06000000 		.4byte	.LVL16
+ 1524 0054 0200     		.2byte	0x2
+ 1525 0056 30       		.byte	0x30
+ 1526 0057 9F       		.byte	0x9f
+ 1527 0058 06000000 		.4byte	.LVL16
+ 1528 005c 2A000000 		.4byte	.LVL24
+ 1529 0060 0500     		.2byte	0x5
+ 1530 0062 38       		.byte	0x38
+ 1531 0063 75       		.byte	0x75
+ 1532 0064 00       		.sleb128 0
+ 1533 0065 1C       		.byte	0x1c
+ 1534 0066 9F       		.byte	0x9f
+ 1535 0067 00000000 		.4byte	0
+ 1536 006b 00000000 		.4byte	0
+ 1537              	.LLST3:
+ 1538 006f 00000000 		.4byte	.LVL15
+ 1539 0073 06000000 		.4byte	.LVL16
+ 1540 0077 0200     		.2byte	0x2
+ 1541 0079 30       		.byte	0x30
+ 1542 007a 9F       		.byte	0x9f
+ 1543 007b 06000000 		.4byte	.LVL16
+ 1544 007f 0E000000 		.4byte	.LVL18
+ 1545 0083 0100     		.2byte	0x1
+ 1546 0085 54       		.byte	0x54
+ 1547 0086 16000000 		.4byte	.LVL20
+ 1548 008a 4A000000 		.4byte	.LVL29
+ 1549 008e 0100     		.2byte	0x1
+ 1550 0090 54       		.byte	0x54
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckW6Rlm.s 			page 32
+
+
+ 1551 0091 00000000 		.4byte	0
+ 1552 0095 00000000 		.4byte	0
+ 1553              	.LLST4:
+ 1554 0099 00000000 		.4byte	.LVL33
+ 1555 009d 08000000 		.4byte	.LVL34
+ 1556 00a1 0100     		.2byte	0x1
+ 1557 00a3 50       		.byte	0x50
+ 1558 00a4 08000000 		.4byte	.LVL34
+ 1559 00a8 24000000 		.4byte	.LFE66
+ 1560 00ac 0400     		.2byte	0x4
+ 1561 00ae F3       		.byte	0xf3
+ 1562 00af 01       		.uleb128 0x1
+ 1563 00b0 50       		.byte	0x50
+ 1564 00b1 9F       		.byte	0x9f
+ 1565 00b2 00000000 		.4byte	0
+ 1566 00b6 00000000 		.4byte	0
+ 1567              	.LLST5:
+ 1568 00ba 00000000 		.4byte	.LVL33
+ 1569 00be 0D000000 		.4byte	.LVL35-1
+ 1570 00c2 0100     		.2byte	0x1
+ 1571 00c4 51       		.byte	0x51
+ 1572 00c5 0D000000 		.4byte	.LVL35-1
+ 1573 00c9 24000000 		.4byte	.LFE66
+ 1574 00cd 0400     		.2byte	0x4
+ 1575 00cf F3       		.byte	0xf3
+ 1576 00d0 01       		.uleb128 0x1
+ 1577 00d1 51       		.byte	0x51
+ 1578 00d2 9F       		.byte	0x9f
+ 1579 00d3 00000000 		.4byte	0
+ 1580 00d7 00000000 		.4byte	0
+ 1581              	.LLST6:
+ 1582 00db 00000000 		.4byte	.LVL39
+ 1583 00df 06000000 		.4byte	.LVL40
+ 1584 00e3 0100     		.2byte	0x1
+ 1585 00e5 50       		.byte	0x50
+ 1586 00e6 06000000 		.4byte	.LVL40
+ 1587 00ea 28000000 		.4byte	.LFE67
+ 1588 00ee 0400     		.2byte	0x4
+ 1589 00f0 F3       		.byte	0xf3
+ 1590 00f1 01       		.uleb128 0x1
+ 1591 00f2 50       		.byte	0x50
+ 1592 00f3 9F       		.byte	0x9f
+ 1593 00f4 00000000 		.4byte	0
+ 1594 00f8 00000000 		.4byte	0
+ 1595              	.LLST7:
+ 1596 00fc 1E000000 		.4byte	.LVL44
+ 1597 0100 26000000 		.4byte	.LVL46
+ 1598 0104 0100     		.2byte	0x1
+ 1599 0106 54       		.byte	0x54
+ 1600 0107 00000000 		.4byte	0
+ 1601 010b 00000000 		.4byte	0
+ 1602              	.LLST8:
+ 1603 010f 00000000 		.4byte	.LVL47
+ 1604 0113 06000000 		.4byte	.LVL48
+ 1605 0117 0100     		.2byte	0x1
+ 1606 0119 50       		.byte	0x50
+ 1607 011a 06000000 		.4byte	.LVL48
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckW6Rlm.s 			page 33
+
+
+ 1608 011e 2A000000 		.4byte	.LFE68
+ 1609 0122 0400     		.2byte	0x4
+ 1610 0124 F3       		.byte	0xf3
+ 1611 0125 01       		.uleb128 0x1
+ 1612 0126 50       		.byte	0x50
+ 1613 0127 9F       		.byte	0x9f
+ 1614 0128 00000000 		.4byte	0
+ 1615 012c 00000000 		.4byte	0
+ 1616              	.LLST9:
+ 1617 0130 00000000 		.4byte	.LVL47
+ 1618 0134 0B000000 		.4byte	.LVL49-1
+ 1619 0138 0100     		.2byte	0x1
+ 1620 013a 51       		.byte	0x51
+ 1621 013b 0B000000 		.4byte	.LVL49-1
+ 1622 013f 28000000 		.4byte	.LVL53
+ 1623 0143 0100     		.2byte	0x1
+ 1624 0145 55       		.byte	0x55
+ 1625 0146 28000000 		.4byte	.LVL53
+ 1626 014a 2A000000 		.4byte	.LFE68
+ 1627 014e 0400     		.2byte	0x4
+ 1628 0150 F3       		.byte	0xf3
+ 1629 0151 01       		.uleb128 0x1
+ 1630 0152 51       		.byte	0x51
+ 1631 0153 9F       		.byte	0x9f
+ 1632 0154 00000000 		.4byte	0
+ 1633 0158 00000000 		.4byte	0
+ 1634              	.LLST10:
+ 1635 015c 00000000 		.4byte	.LVL54
+ 1636 0160 0C000000 		.4byte	.LVL55
+ 1637 0164 0100     		.2byte	0x1
+ 1638 0166 50       		.byte	0x50
+ 1639 0167 0C000000 		.4byte	.LVL55
+ 1640 016b 1E000000 		.4byte	.LFE69
+ 1641 016f 0400     		.2byte	0x4
+ 1642 0171 F3       		.byte	0xf3
+ 1643 0172 01       		.uleb128 0x1
+ 1644 0173 50       		.byte	0x50
+ 1645 0174 9F       		.byte	0x9f
+ 1646 0175 00000000 		.4byte	0
+ 1647 0179 00000000 		.4byte	0
+ 1648              	.LLST11:
+ 1649 017d 00000000 		.4byte	.LVL54
+ 1650 0181 0C000000 		.4byte	.LVL55
+ 1651 0185 0100     		.2byte	0x1
+ 1652 0187 51       		.byte	0x51
+ 1653 0188 0C000000 		.4byte	.LVL55
+ 1654 018c 1E000000 		.4byte	.LFE69
+ 1655 0190 0400     		.2byte	0x4
+ 1656 0192 F3       		.byte	0xf3
+ 1657 0193 01       		.uleb128 0x1
+ 1658 0194 51       		.byte	0x51
+ 1659 0195 9F       		.byte	0x9f
+ 1660 0196 00000000 		.4byte	0
+ 1661 019a 00000000 		.4byte	0
+ 1662              	.LLST12:
+ 1663 019e 00000000 		.4byte	.LVL54
+ 1664 01a2 0C000000 		.4byte	.LVL55
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckW6Rlm.s 			page 34
+
+
+ 1665 01a6 0100     		.2byte	0x1
+ 1666 01a8 52       		.byte	0x52
+ 1667 01a9 0C000000 		.4byte	.LVL55
+ 1668 01ad 1E000000 		.4byte	.LFE69
+ 1669 01b1 0400     		.2byte	0x4
+ 1670 01b3 F3       		.byte	0xf3
+ 1671 01b4 01       		.uleb128 0x1
+ 1672 01b5 52       		.byte	0x52
+ 1673 01b6 9F       		.byte	0x9f
+ 1674 01b7 00000000 		.4byte	0
+ 1675 01bb 00000000 		.4byte	0
+ 1676              	.LLST13:
+ 1677 01bf 0C000000 		.4byte	.LVL55
+ 1678 01c3 18000000 		.4byte	.LVL57
+ 1679 01c7 0700     		.2byte	0x7
+ 1680 01c9 74       		.byte	0x74
+ 1681 01ca 00       		.sleb128 0
+ 1682 01cb F3       		.byte	0xf3
+ 1683 01cc 01       		.uleb128 0x1
+ 1684 01cd 52       		.byte	0x52
+ 1685 01ce 1C       		.byte	0x1c
+ 1686 01cf 9F       		.byte	0x9f
+ 1687 01d0 18000000 		.4byte	.LVL57
+ 1688 01d4 1A000000 		.4byte	.LVL58
+ 1689 01d8 0900     		.2byte	0x9
+ 1690 01da 74       		.byte	0x74
+ 1691 01db 00       		.sleb128 0
+ 1692 01dc F3       		.byte	0xf3
+ 1693 01dd 01       		.uleb128 0x1
+ 1694 01de 52       		.byte	0x52
+ 1695 01df 1C       		.byte	0x1c
+ 1696 01e0 23       		.byte	0x23
+ 1697 01e1 01       		.uleb128 0x1
+ 1698 01e2 9F       		.byte	0x9f
+ 1699 01e3 00000000 		.4byte	0
+ 1700 01e7 00000000 		.4byte	0
+ 1701              	.LLST14:
+ 1702 01eb 00000000 		.4byte	.LVL59
+ 1703 01ef 0C000000 		.4byte	.LVL60
+ 1704 01f3 0100     		.2byte	0x1
+ 1705 01f5 50       		.byte	0x50
+ 1706 01f6 0C000000 		.4byte	.LVL60
+ 1707 01fa 1E000000 		.4byte	.LFE70
+ 1708 01fe 0400     		.2byte	0x4
+ 1709 0200 F3       		.byte	0xf3
+ 1710 0201 01       		.uleb128 0x1
+ 1711 0202 50       		.byte	0x50
+ 1712 0203 9F       		.byte	0x9f
+ 1713 0204 00000000 		.4byte	0
+ 1714 0208 00000000 		.4byte	0
+ 1715              	.LLST15:
+ 1716 020c 00000000 		.4byte	.LVL59
+ 1717 0210 0C000000 		.4byte	.LVL60
+ 1718 0214 0100     		.2byte	0x1
+ 1719 0216 51       		.byte	0x51
+ 1720 0217 0C000000 		.4byte	.LVL60
+ 1721 021b 1E000000 		.4byte	.LFE70
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckW6Rlm.s 			page 35
+
+
+ 1722 021f 0400     		.2byte	0x4
+ 1723 0221 F3       		.byte	0xf3
+ 1724 0222 01       		.uleb128 0x1
+ 1725 0223 51       		.byte	0x51
+ 1726 0224 9F       		.byte	0x9f
+ 1727 0225 00000000 		.4byte	0
+ 1728 0229 00000000 		.4byte	0
+ 1729              	.LLST16:
+ 1730 022d 00000000 		.4byte	.LVL59
+ 1731 0231 0C000000 		.4byte	.LVL60
+ 1732 0235 0100     		.2byte	0x1
+ 1733 0237 52       		.byte	0x52
+ 1734 0238 0C000000 		.4byte	.LVL60
+ 1735 023c 1E000000 		.4byte	.LFE70
+ 1736 0240 0400     		.2byte	0x4
+ 1737 0242 F3       		.byte	0xf3
+ 1738 0243 01       		.uleb128 0x1
+ 1739 0244 52       		.byte	0x52
+ 1740 0245 9F       		.byte	0x9f
+ 1741 0246 00000000 		.4byte	0
+ 1742 024a 00000000 		.4byte	0
+ 1743              	.LLST17:
+ 1744 024e 0C000000 		.4byte	.LVL60
+ 1745 0252 18000000 		.4byte	.LVL61
+ 1746 0256 0700     		.2byte	0x7
+ 1747 0258 74       		.byte	0x74
+ 1748 0259 00       		.sleb128 0
+ 1749 025a F3       		.byte	0xf3
+ 1750 025b 01       		.uleb128 0x1
+ 1751 025c 52       		.byte	0x52
+ 1752 025d 1C       		.byte	0x1c
+ 1753 025e 9F       		.byte	0x9f
+ 1754 025f 18000000 		.4byte	.LVL61
+ 1755 0263 1A000000 		.4byte	.LVL62
+ 1756 0267 0900     		.2byte	0x9
+ 1757 0269 74       		.byte	0x74
+ 1758 026a 00       		.sleb128 0
+ 1759 026b F3       		.byte	0xf3
+ 1760 026c 01       		.uleb128 0x1
+ 1761 026d 52       		.byte	0x52
+ 1762 026e 1C       		.byte	0x1c
+ 1763 026f 23       		.byte	0x23
+ 1764 0270 01       		.uleb128 0x1
+ 1765 0271 9F       		.byte	0x9f
+ 1766 0272 00000000 		.4byte	0
+ 1767 0276 00000000 		.4byte	0
+ 1768              	.LLST18:
+ 1769 027a 00000000 		.4byte	.LVL63
+ 1770 027e 09000000 		.4byte	.LVL64-1
+ 1771 0282 0100     		.2byte	0x1
+ 1772 0284 50       		.byte	0x50
+ 1773 0285 09000000 		.4byte	.LVL64-1
+ 1774 0289 0C000000 		.4byte	.LVL65
+ 1775 028d 0400     		.2byte	0x4
+ 1776 028f F3       		.byte	0xf3
+ 1777 0290 01       		.uleb128 0x1
+ 1778 0291 50       		.byte	0x50
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckW6Rlm.s 			page 36
+
+
+ 1779 0292 9F       		.byte	0x9f
+ 1780 0293 0C000000 		.4byte	.LVL65
+ 1781 0297 0F000000 		.4byte	.LVL66-1
+ 1782 029b 0100     		.2byte	0x1
+ 1783 029d 50       		.byte	0x50
+ 1784 029e 0F000000 		.4byte	.LVL66-1
+ 1785 02a2 14000000 		.4byte	.LFE71
+ 1786 02a6 0400     		.2byte	0x4
+ 1787 02a8 F3       		.byte	0xf3
+ 1788 02a9 01       		.uleb128 0x1
+ 1789 02aa 50       		.byte	0x50
+ 1790 02ab 9F       		.byte	0x9f
+ 1791 02ac 00000000 		.4byte	0
+ 1792 02b0 00000000 		.4byte	0
+ 1793              	.LLST19:
+ 1794 02b4 00000000 		.4byte	.LVL63
+ 1795 02b8 09000000 		.4byte	.LVL64-1
+ 1796 02bc 0100     		.2byte	0x1
+ 1797 02be 51       		.byte	0x51
+ 1798 02bf 09000000 		.4byte	.LVL64-1
+ 1799 02c3 0C000000 		.4byte	.LVL65
+ 1800 02c7 0400     		.2byte	0x4
+ 1801 02c9 F3       		.byte	0xf3
+ 1802 02ca 01       		.uleb128 0x1
+ 1803 02cb 51       		.byte	0x51
+ 1804 02cc 9F       		.byte	0x9f
+ 1805 02cd 0C000000 		.4byte	.LVL65
+ 1806 02d1 0F000000 		.4byte	.LVL66-1
+ 1807 02d5 0100     		.2byte	0x1
+ 1808 02d7 51       		.byte	0x51
+ 1809 02d8 0F000000 		.4byte	.LVL66-1
+ 1810 02dc 14000000 		.4byte	.LFE71
+ 1811 02e0 0400     		.2byte	0x4
+ 1812 02e2 F3       		.byte	0xf3
+ 1813 02e3 01       		.uleb128 0x1
+ 1814 02e4 51       		.byte	0x51
+ 1815 02e5 9F       		.byte	0x9f
+ 1816 02e6 00000000 		.4byte	0
+ 1817 02ea 00000000 		.4byte	0
+ 1818              		.section	.debug_aranges,"",%progbits
+ 1819 0000 5C000000 		.4byte	0x5c
+ 1820 0004 0200     		.2byte	0x2
+ 1821 0006 00000000 		.4byte	.Ldebug_info0
+ 1822 000a 04       		.byte	0x4
+ 1823 000b 00       		.byte	0
+ 1824 000c 0000     		.2byte	0
+ 1825 000e 0000     		.2byte	0
+ 1826 0010 00000000 		.4byte	.LFB64
+ 1827 0014 4C000000 		.4byte	.LFE64-.LFB64
+ 1828 0018 00000000 		.4byte	.LFB65
+ 1829 001c 4C000000 		.4byte	.LFE65-.LFB65
+ 1830 0020 00000000 		.4byte	.LFB63
+ 1831 0024 16000000 		.4byte	.LFE63-.LFB63
+ 1832 0028 00000000 		.4byte	.LFB66
+ 1833 002c 24000000 		.4byte	.LFE66-.LFB66
+ 1834 0030 00000000 		.4byte	.LFB67
+ 1835 0034 28000000 		.4byte	.LFE67-.LFB67
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckW6Rlm.s 			page 37
+
+
+ 1836 0038 00000000 		.4byte	.LFB68
+ 1837 003c 2A000000 		.4byte	.LFE68-.LFB68
+ 1838 0040 00000000 		.4byte	.LFB69
+ 1839 0044 1E000000 		.4byte	.LFE69-.LFB69
+ 1840 0048 00000000 		.4byte	.LFB70
+ 1841 004c 1E000000 		.4byte	.LFE70-.LFB70
+ 1842 0050 00000000 		.4byte	.LFB71
+ 1843 0054 14000000 		.4byte	.LFE71-.LFB71
+ 1844 0058 00000000 		.4byte	0
+ 1845 005c 00000000 		.4byte	0
+ 1846              		.section	.debug_ranges,"",%progbits
+ 1847              	.Ldebug_ranges0:
+ 1848 0000 00000000 		.4byte	.LFB64
+ 1849 0004 4C000000 		.4byte	.LFE64
+ 1850 0008 00000000 		.4byte	.LFB65
+ 1851 000c 4C000000 		.4byte	.LFE65
+ 1852 0010 00000000 		.4byte	.LFB63
+ 1853 0014 16000000 		.4byte	.LFE63
+ 1854 0018 00000000 		.4byte	.LFB66
+ 1855 001c 24000000 		.4byte	.LFE66
+ 1856 0020 00000000 		.4byte	.LFB67
+ 1857 0024 28000000 		.4byte	.LFE67
+ 1858 0028 00000000 		.4byte	.LFB68
+ 1859 002c 2A000000 		.4byte	.LFE68
+ 1860 0030 00000000 		.4byte	.LFB69
+ 1861 0034 1E000000 		.4byte	.LFE69
+ 1862 0038 00000000 		.4byte	.LFB70
+ 1863 003c 1E000000 		.4byte	.LFE70
+ 1864 0040 00000000 		.4byte	.LFB71
+ 1865 0044 14000000 		.4byte	.LFE71
+ 1866 0048 00000000 		.4byte	0
+ 1867 004c 00000000 		.4byte	0
+ 1868              		.section	.debug_line,"",%progbits
+ 1869              	.Ldebug_line0:
+ 1870 0000 B6020000 		.section	.debug_str,"MS",%progbits,1
+ 1870      0200B401 
+ 1870      00000201 
+ 1870      FB0E0D00 
+ 1870      01010101 
+ 1871              	.LASF33:
+ 1872 0000 464C4153 		.ascii	"FLASH_MOSI_Write\000"
+ 1872      485F4D4F 
+ 1872      53495F57 
+ 1872      72697465 
+ 1872      00
+ 1873              	.LASF9:
+ 1874 0011 5F5F7569 		.ascii	"__uint8_t\000"
+ 1874      6E74385F 
+ 1874      7400
+ 1875              	.LASF34:
+ 1876 001b 474E5520 		.ascii	"GNU C 4.9.3 20150303 (release) [ARM/embedded-4_9-br"
+ 1876      4320342E 
+ 1876      392E3320 
+ 1876      32303135 
+ 1876      30333033 
+ 1877 004e 616E6368 		.ascii	"anch revision 221220] -mcpu=cortex-m0 -mthumb -g -O"
+ 1877      20726576 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckW6Rlm.s 			page 38
+
+
+ 1877      6973696F 
+ 1877      6E203232 
+ 1877      31323230 
+ 1878 0081 73202D66 		.ascii	"s -ffunction-sections -ffat-lto-objects\000"
+ 1878      66756E63 
+ 1878      74696F6E 
+ 1878      2D736563 
+ 1878      74696F6E 
+ 1879              	.LASF28:
+ 1880 00a9 464C4153 		.ascii	"FLASH_ReadWriteByte\000"
+ 1880      485F5265 
+ 1880      61645772 
+ 1880      69746542 
+ 1880      79746500 
+ 1881              	.LASF4:
+ 1882 00bd 6C6F6E67 		.ascii	"long int\000"
+ 1882      20696E74 
+ 1882      00
+ 1883              	.LASF20:
+ 1884 00c6 666C6173 		.ascii	"flash_spi_SetReg\000"
+ 1884      685F7370 
+ 1884      695F5365 
+ 1884      74526567 
+ 1884      00
+ 1885              	.LASF22:
+ 1886 00d7 666C6173 		.ascii	"flash_spi_GetReg2\000"
+ 1886      685F7370 
+ 1886      695F4765 
+ 1886      74526567 
+ 1886      3200
+ 1887              	.LASF26:
+ 1888 00e9 7265675F 		.ascii	"reg_value\000"
+ 1888      76616C75 
+ 1888      6500
+ 1889              	.LASF13:
+ 1890 00f3 666C6F61 		.ascii	"float\000"
+ 1890      7400
+ 1891              	.LASF38:
+ 1892 00f9 464C4153 		.ascii	"FLASH_SPI_Receive_Dat\000"
+ 1892      485F5350 
+ 1892      495F5265 
+ 1892      63656976 
+ 1892      655F4461 
+ 1893              	.LASF1:
+ 1894 010f 756E7369 		.ascii	"unsigned char\000"
+ 1894      676E6564 
+ 1894      20636861 
+ 1894      7200
+ 1895              	.LASF30:
+ 1896 011d 636D645F 		.ascii	"cmd_flag\000"
+ 1896      666C6167 
+ 1896      00
+ 1897              	.LASF5:
+ 1898 0126 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1898      20756E73 
+ 1898      69676E65 
+ 1898      6420696E 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckW6Rlm.s 			page 39
+
+
+ 1898      7400
+ 1899              	.LASF3:
+ 1900 0138 73686F72 		.ascii	"short unsigned int\000"
+ 1900      7420756E 
+ 1900      7369676E 
+ 1900      65642069 
+ 1900      6E7400
+ 1901              	.LASF37:
+ 1902 014b 464C4153 		.ascii	"FLASH_SPI_Send_Dat\000"
+ 1902      485F5350 
+ 1902      495F5365 
+ 1902      6E645F44 
+ 1902      617400
+ 1903              	.LASF21:
+ 1904 015e 666C6173 		.ascii	"flash_spi_GetReg\000"
+ 1904      685F7370 
+ 1904      695F4765 
+ 1904      74526567 
+ 1904      00
+ 1905              	.LASF14:
+ 1906 016f 646F7562 		.ascii	"double\000"
+ 1906      6C6500
+ 1907              	.LASF12:
+ 1908 0176 75696E74 		.ascii	"uint16\000"
+ 1908      313600
+ 1909              	.LASF24:
+ 1910 017d 464C4153 		.ascii	"FLASH_SPIRead_Sequence\000"
+ 1910      485F5350 
+ 1910      49526561 
+ 1910      645F5365 
+ 1910      7175656E 
+ 1911              	.LASF19:
+ 1912 0194 75635265 		.ascii	"ucRegVal\000"
+ 1912      6756616C 
+ 1912      00
+ 1913              	.LASF32:
+ 1914 019d 43794465 		.ascii	"CyDelayUs\000"
+ 1914      6C617955 
+ 1914      7300
+ 1915              	.LASF23:
+ 1916 01a7 464C4153 		.ascii	"FLASH_SPI_Init\000"
+ 1916      485F5350 
+ 1916      495F496E 
+ 1916      697400
+ 1917              	.LASF8:
+ 1918 01b6 756E7369 		.ascii	"unsigned int\000"
+ 1918      676E6564 
+ 1918      20696E74 
+ 1918      00
+ 1919              	.LASF35:
+ 1920 01c3 436F6465 		.ascii	"Code\\Device\\W25Q80\\flash_spi.c\000"
+ 1920      5C446576 
+ 1920      6963655C 
+ 1920      57323551 
+ 1920      38305C66 
+ 1921              	.LASF17:
+ 1922 01e2 494E5438 		.ascii	"INT8U\000"
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckW6Rlm.s 			page 40
+
+
+ 1922      5500
+ 1923              	.LASF7:
+ 1924 01e8 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1924      206C6F6E 
+ 1924      6720756E 
+ 1924      7369676E 
+ 1924      65642069 
+ 1925              	.LASF10:
+ 1926 01ff 75696E74 		.ascii	"uint8_t\000"
+ 1926      385F7400 
+ 1927              	.LASF16:
+ 1928 0207 73697A65 		.ascii	"sizetype\000"
+ 1928      74797065 
+ 1928      00
+ 1929              	.LASF40:
+ 1930 0210 464C4153 		.ascii	"FLASH_NCS_Write\000"
+ 1930      485F4E43 
+ 1930      535F5772 
+ 1930      69746500 
+ 1931              	.LASF6:
+ 1932 0220 6C6F6E67 		.ascii	"long long int\000"
+ 1932      206C6F6E 
+ 1932      6720696E 
+ 1932      7400
+ 1933              	.LASF25:
+ 1934 022e 73657175 		.ascii	"sequence_length\000"
+ 1934      656E6365 
+ 1934      5F6C656E 
+ 1934      67746800 
+ 1935              	.LASF18:
+ 1936 023e 75635265 		.ascii	"ucRegAddr\000"
+ 1936      67416464 
+ 1936      7200
+ 1937              	.LASF2:
+ 1938 0248 73686F72 		.ascii	"short int\000"
+ 1938      7420696E 
+ 1938      7400
+ 1939              	.LASF11:
+ 1940 0252 75696E74 		.ascii	"uint8\000"
+ 1940      3800
+ 1941              	.LASF39:
+ 1942 0258 464C4153 		.ascii	"FLASH_MISO_Read\000"
+ 1942      485F4D49 
+ 1942      534F5F52 
+ 1942      65616400 
+ 1943              	.LASF27:
+ 1944 0268 464C4153 		.ascii	"FLASH_SPIWrite_Sequence\000"
+ 1944      485F5350 
+ 1944      49577269 
+ 1944      74655F53 
+ 1944      65717565 
+ 1945              	.LASF31:
+ 1946 0280 464C4153 		.ascii	"FLASH_SCK_Write\000"
+ 1946      485F5343 
+ 1946      4B5F5772 
+ 1946      69746500 
+ 1947              	.LASF15:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckW6Rlm.s 			page 41
+
+
+ 1948 0290 63686172 		.ascii	"char\000"
+ 1948      00
+ 1949              	.LASF0:
+ 1950 0295 7369676E 		.ascii	"signed char\000"
+ 1950      65642063 
+ 1950      68617200 
+ 1951              	.LASF29:
+ 1952 02a1 74786461 		.ascii	"txdata\000"
+ 1952      746100
+ 1953              	.LASF36:
+ 1954 02a8 473A5C50 		.ascii	"G:\\Psoc4_prj\\7.rental_house\\18-04-11\\second_ima"
+ 1954      736F6334 
+ 1954      5F70726A 
+ 1954      5C372E72 
+ 1954      656E7461 
+ 1955 02d7 6765735B 		.ascii	"ges[4-9]\\EntranceGuard_171019-12.50\\EntranceGuard"
+ 1955      342D395D 
+ 1955      5C456E74 
+ 1955      72616E63 
+ 1955      65477561 
+ 1956 0308 2E637964 		.ascii	".cydsn\000"
+ 1956      736E00
+ 1957              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.9.3 20150303 (release) [ARM/embedded-4_9-br

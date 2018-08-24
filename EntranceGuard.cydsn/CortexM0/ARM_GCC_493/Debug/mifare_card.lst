@@ -1,0 +1,3145 @@
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 1
+
+
+   1              		.cpu cortex-m0
+   2              		.fpu softvfp
+   3              		.eabi_attribute 20, 1
+   4              		.eabi_attribute 21, 1
+   5              		.eabi_attribute 23, 3
+   6              		.eabi_attribute 24, 1
+   7              		.eabi_attribute 25, 1
+   8              		.eabi_attribute 26, 1
+   9              		.eabi_attribute 30, 4
+  10              		.eabi_attribute 34, 0
+  11              		.eabi_attribute 18, 4
+  12              		.code	16
+  13              		.file	"mifare_card.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.Mifare_Auth,"ax",%progbits
+  18              		.align	1
+  19              		.global	Mifare_Auth
+  20              		.code	16
+  21              		.thumb_func
+  22              		.type	Mifare_Auth, %function
+  23              	Mifare_Auth:
+  24              	.LFB63:
+  25              		.file 1 "Code\\Device\\FM175XX\\IOS14443\\mifare_card.c"
+   1:Code\Device\FM175XX\IOS14443/mifare_card.c **** /****************************************Copyright (c)*********************************************
+   2:Code\Device\FM175XX\IOS14443/mifare_card.c **** **                            Guangzhou ZLGMCU Technology Co., LTD
+   3:Code\Device\FM175XX\IOS14443/mifare_card.c **** **
+   4:Code\Device\FM175XX\IOS14443/mifare_card.c **** **                                 http://www.zlgmcu.com
+   5:Code\Device\FM175XX\IOS14443/mifare_card.c **** **
+   6:Code\Device\FM175XX\IOS14443/mifare_card.c **** **      ¹ãÖÝÖÜÁ¢¹¦µ¥Æ¬»ú¿Æ¼¼ÓÐÏÞ¹«Ë¾ËùÌá¹©µÄËùÓÐ·þÎñÄÚÈÝÖ¼ÔÚÐ­Öú¿Í»§¼ÓËÙ²úÆ·µÄÑÐ·¢½ø¶È£¬ÔÚ·þÎñ¹ý³ÌÖ
+   7:Code\Device\FM175XX\IOS14443/mifare_card.c **** **  µÄÈÎºÎ³ÌÐò¡¢ÎÄµµ¡¢²âÊÔ½á¹û¡¢·½°¸¡¢Ö§³ÖµÈ×ÊÁÏºÍÐÅÏ¢£¬¶¼½ö¹©²Î¿¼£¬¿Í»§ÓÐÈ¨²»Ê¹ÓÃ»ò×ÔÐÐ²Î¿¼ÐÞ¸Ä£¬±
+   8:Code\Device\FM175XX\IOS14443/mifare_card.c **** **  Ìá¹©ÈÎºÎµÄÍêÕûÐÔ¡¢¿É¿¿ÐÔµÈ±£Ö¤£¬ÈôÔÚ¿Í»§Ê¹ÓÃ¹ý³ÌÖÐÒòÈÎºÎÔ­ÒòÔì³ÉµÄÌØ±ðµÄ¡¢Å¼È»µÄ»ò¼ä½ÓµÄËðÊ§£¬±
+   9:Code\Device\FM175XX\IOS14443/mifare_card.c **** **  ³Ðµ£ÈÎºÎÔðÈÎ¡£
+  10:Code\Device\FM175XX\IOS14443/mifare_card.c **** **                                                                        ¡ª¡ª¹ãÖÝÖÜÁ¢¹¦µ¥Æ¬»ú¿Æ¼¼Ó
+  11:Code\Device\FM175XX\IOS14443/mifare_card.c **** **
+  12:Code\Device\FM175XX\IOS14443/mifare_card.c **** **--------------File Info--------------------------------------------------------------------------
+  13:Code\Device\FM175XX\IOS14443/mifare_card.c **** ** File name:           mifare_card.c
+  14:Code\Device\FM175XX\IOS14443/mifare_card.c **** ** Last modified Date:  2016-3-14
+  15:Code\Device\FM175XX\IOS14443/mifare_card.c **** ** Last Version:        V1.00
+  16:Code\Device\FM175XX\IOS14443/mifare_card.c **** ** Descriptions:        mifareÏµÁÐ¿¨Ïà¹Ø²Ù×÷
+  17:Code\Device\FM175XX\IOS14443/mifare_card.c **** **
+  18:Code\Device\FM175XX\IOS14443/mifare_card.c **** **-------------------------------------------------------------------------------------------------
+  19:Code\Device\FM175XX\IOS14443/mifare_card.c **** */
+  20:Code\Device\FM175XX\IOS14443/mifare_card.c **** #include "mifare_card.h"
+  21:Code\Device\FM175XX\IOS14443/mifare_card.c **** #include "fm175xx.h"
+  22:Code\Device\FM175XX\IOS14443/mifare_card.c **** #include "Utility.h"
+  23:Code\Device\FM175XX\IOS14443/mifare_card.c **** 
+  24:Code\Device\FM175XX\IOS14443/mifare_card.c **** 
+  25:Code\Device\FM175XX\IOS14443/mifare_card.c **** /**************************************************************************************************
+  26:Code\Device\FM175XX\IOS14443/mifare_card.c **** ** Function name:       Mifare_Auth    
+  27:Code\Device\FM175XX\IOS14443/mifare_card.c **** ** Descriptions:        mifare¿¨Æ¬Ð£Ñé
+  28:Code\Device\FM175XX\IOS14443/mifare_card.c **** ** input parameters:    mode£¬ÈÏÖ¤Ä£Ê½£¨0£ºkey AÈÏÖ¤£¬1£ºkey BÈÏÖ¤£©
+  29:Code\Device\FM175XX\IOS14443/mifare_card.c **** **                      sector£¬ÈÏÖ¤µÄÉÈÇøºÅ£¨0~15£©
+  30:Code\Device\FM175XX\IOS14443/mifare_card.c **** **                      *mifare_key£¬6×Ö½ÚÈÏÖ¤ÃÜÔ¿Êý×é
+  31:Code\Device\FM175XX\IOS14443/mifare_card.c **** **                      card_uid 4×Ö½Ú¿¨Æ¬UIDÊý×é    
+  32:Code\Device\FM175XX\IOS14443/mifare_card.c **** ** output parameters:   
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 2
+
+
+  33:Code\Device\FM175XX\IOS14443/mifare_card.c **** ** Returned value:      TRUE£º²Ù×÷³É¹¦ ERROR£º²Ù×÷Ê§°Ü    
+  34:Code\Device\FM175XX\IOS14443/mifare_card.c **** ***************************************************************************************************
+  35:Code\Device\FM175XX\IOS14443/mifare_card.c ****  uint8_t  Mifare_Auth(uint8_t  mode,uint8_t  sector,uint8_t  *mifare_key,uint8_t  *card_uid)
+  36:Code\Device\FM175XX\IOS14443/mifare_card.c **** {
+  26              		.loc 1 36 0
+  27              		.cfi_startproc
+  28              	.LVL0:
+  29 0000 10B5     		push	{r4, lr}
+  30              		.cfi_def_cfa_offset 8
+  31              		.cfi_offset 4, -8
+  32              		.cfi_offset 14, -4
+  33 0002 88B0     		sub	sp, sp, #32
+  34              		.cfi_def_cfa_offset 40
+  35 0004 05AC     		add	r4, sp, #20
+  37:Code\Device\FM175XX\IOS14443/mifare_card.c ****     uint8_t   send_buff[12],rece_buff[1],result;
+  38:Code\Device\FM175XX\IOS14443/mifare_card.c ****     uint32_t  rece_bitlen;
+  39:Code\Device\FM175XX\IOS14443/mifare_card.c ****     if(mode==0x0)
+  36              		.loc 1 39 0
+  37 0006 0028     		cmp	r0, #0
+  38 0008 01D0     		beq	.L6
+  40:Code\Device\FM175XX\IOS14443/mifare_card.c ****         send_buff[0]=0x60;                                              /* kayAÈÏÖ¤ 0x60           
+  41:Code\Device\FM175XX\IOS14443/mifare_card.c ****     if(mode==0x1)
+  39              		.loc 1 41 0
+  40 000a 0128     		cmp	r0, #1
+  41 000c 01D1     		bne	.L3
+  42              	.L6:
+  42:Code\Device\FM175XX\IOS14443/mifare_card.c ****         send_buff[0]=0x61;                                              /* keyBÈÏÖ¤                
+  43              		.loc 1 42 0
+  44 000e 6030     		add	r0, r0, #96
+  45              	.LVL1:
+  46 0010 2070     		strb	r0, [r4]
+  47              	.L3:
+  43:Code\Device\FM175XX\IOS14443/mifare_card.c ****     send_buff[1] = sector*4;
+  48              		.loc 1 43 0
+  49 0012 8900     		lsl	r1, r1, #2
+  50              	.LVL2:
+  51 0014 6170     		strb	r1, [r4, #1]
+  44:Code\Device\FM175XX\IOS14443/mifare_card.c ****     send_buff[2] = mifare_key[0];
+  52              		.loc 1 44 0
+  53 0016 1178     		ldrb	r1, [r2]
+  45:Code\Device\FM175XX\IOS14443/mifare_card.c ****     send_buff[3] = mifare_key[1];
+  46:Code\Device\FM175XX\IOS14443/mifare_card.c ****     send_buff[4] = mifare_key[2];
+  47:Code\Device\FM175XX\IOS14443/mifare_card.c ****     send_buff[5] = mifare_key[3];
+  48:Code\Device\FM175XX\IOS14443/mifare_card.c ****     send_buff[6] = mifare_key[4];
+  49:Code\Device\FM175XX\IOS14443/mifare_card.c ****     send_buff[7] = mifare_key[5];
+  50:Code\Device\FM175XX\IOS14443/mifare_card.c ****     send_buff[8] = card_uid[0];
+  51:Code\Device\FM175XX\IOS14443/mifare_card.c ****     send_buff[9] = card_uid[1];
+  52:Code\Device\FM175XX\IOS14443/mifare_card.c ****     send_buff[10] = card_uid[2];
+  53:Code\Device\FM175XX\IOS14443/mifare_card.c ****     send_buff[11] = card_uid[3];
+  54:Code\Device\FM175XX\IOS14443/mifare_card.c **** 
+  55:Code\Device\FM175XX\IOS14443/mifare_card.c ****     Pcd_SetTimer(1);
+  54              		.loc 1 55 0
+  55 0018 0120     		mov	r0, #1
+  44:Code\Device\FM175XX\IOS14443/mifare_card.c ****     send_buff[2] = mifare_key[0];
+  56              		.loc 1 44 0
+  57 001a A170     		strb	r1, [r4, #2]
+  45:Code\Device\FM175XX\IOS14443/mifare_card.c ****     send_buff[3] = mifare_key[1];
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 3
+
+
+  58              		.loc 1 45 0
+  59 001c 5178     		ldrb	r1, [r2, #1]
+  60 001e E170     		strb	r1, [r4, #3]
+  46:Code\Device\FM175XX\IOS14443/mifare_card.c ****     send_buff[5] = mifare_key[3];
+  61              		.loc 1 46 0
+  62 0020 9178     		ldrb	r1, [r2, #2]
+  63 0022 2171     		strb	r1, [r4, #4]
+  47:Code\Device\FM175XX\IOS14443/mifare_card.c ****     send_buff[6] = mifare_key[4];
+  64              		.loc 1 47 0
+  65 0024 D178     		ldrb	r1, [r2, #3]
+  66 0026 6171     		strb	r1, [r4, #5]
+  48:Code\Device\FM175XX\IOS14443/mifare_card.c ****     send_buff[7] = mifare_key[5];
+  67              		.loc 1 48 0
+  68 0028 1179     		ldrb	r1, [r2, #4]
+  49:Code\Device\FM175XX\IOS14443/mifare_card.c ****     send_buff[8] = card_uid[0];
+  69              		.loc 1 49 0
+  70 002a 5279     		ldrb	r2, [r2, #5]
+  71              	.LVL3:
+  48:Code\Device\FM175XX\IOS14443/mifare_card.c ****     send_buff[7] = mifare_key[5];
+  72              		.loc 1 48 0
+  73 002c A171     		strb	r1, [r4, #6]
+  49:Code\Device\FM175XX\IOS14443/mifare_card.c ****     send_buff[8] = card_uid[0];
+  74              		.loc 1 49 0
+  75 002e E271     		strb	r2, [r4, #7]
+  50:Code\Device\FM175XX\IOS14443/mifare_card.c ****     send_buff[9] = card_uid[1];
+  76              		.loc 1 50 0
+  77 0030 1A78     		ldrb	r2, [r3]
+  78 0032 2272     		strb	r2, [r4, #8]
+  51:Code\Device\FM175XX\IOS14443/mifare_card.c ****     send_buff[10] = card_uid[2];
+  79              		.loc 1 51 0
+  80 0034 5A78     		ldrb	r2, [r3, #1]
+  81 0036 6272     		strb	r2, [r4, #9]
+  52:Code\Device\FM175XX\IOS14443/mifare_card.c ****     send_buff[11] = card_uid[3];
+  82              		.loc 1 52 0
+  83 0038 9A78     		ldrb	r2, [r3, #2]
+  53:Code\Device\FM175XX\IOS14443/mifare_card.c **** 
+  84              		.loc 1 53 0
+  85 003a DB78     		ldrb	r3, [r3, #3]
+  86              	.LVL4:
+  52:Code\Device\FM175XX\IOS14443/mifare_card.c ****     send_buff[11] = card_uid[3];
+  87              		.loc 1 52 0
+  88 003c A272     		strb	r2, [r4, #10]
+  53:Code\Device\FM175XX\IOS14443/mifare_card.c **** 
+  89              		.loc 1 53 0
+  90 003e E372     		strb	r3, [r4, #11]
+  91              		.loc 1 55 0
+  92 0040 FFF7FEFF 		bl	Pcd_SetTimer
+  93              	.LVL5:
+  56:Code\Device\FM175XX\IOS14443/mifare_card.c ****     Clear_FIFO();
+  94              		.loc 1 56 0
+  95 0044 FFF7FEFF 		bl	Clear_FIFO
+  96              	.LVL6:
+  57:Code\Device\FM175XX\IOS14443/mifare_card.c ****     result =Pcd_Comm(MFAuthent,send_buff,12,rece_buff,&rece_bitlen);    /* AuthentÈÏÖ¤             
+  97              		.loc 1 57 0
+  98 0048 04AB     		add	r3, sp, #16
+  99 004a 0093     		str	r3, [sp]
+ 100 004c 211C     		mov	r1, r4
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 4
+
+
+ 101 004e 0E20     		mov	r0, #14
+ 102 0050 0C22     		mov	r2, #12
+ 103 0052 03AB     		add	r3, sp, #12
+ 104 0054 FFF7FEFF 		bl	Pcd_Comm
+ 105              	.LVL7:
+ 106 0058 041C     		mov	r4, r0
+ 107              	.LVL8:
+  58:Code\Device\FM175XX\IOS14443/mifare_card.c ****     if (result==TRUE) {
+  59:Code\Device\FM175XX\IOS14443/mifare_card.c ****         if(Read_Reg(Status2Reg)&0x08)                                   /* ÅÐ¶Ï¼ÓÃÜ±êÖ¾Î»£¬È·ÈÏÈÏÖ¤
+  60:Code\Device\FM175XX\IOS14443/mifare_card.c ****             return TRUE;
+  61:Code\Device\FM175XX\IOS14443/mifare_card.c ****         else
+  62:Code\Device\FM175XX\IOS14443/mifare_card.c ****             return FALSE;
+  63:Code\Device\FM175XX\IOS14443/mifare_card.c ****     }
+  64:Code\Device\FM175XX\IOS14443/mifare_card.c ****     return FALSE;
+ 108              		.loc 1 64 0
+ 109 005a 0020     		mov	r0, #0
+  58:Code\Device\FM175XX\IOS14443/mifare_card.c ****     if (result==TRUE) {
+ 110              		.loc 1 58 0
+ 111 005c 012C     		cmp	r4, #1
+ 112 005e 05D1     		bne	.L4
+  59:Code\Device\FM175XX\IOS14443/mifare_card.c ****             return TRUE;
+ 113              		.loc 1 59 0
+ 114 0060 0830     		add	r0, r0, #8
+ 115 0062 FFF7FEFF 		bl	Read_Reg
+ 116              	.LVL9:
+ 117 0066 C008     		lsr	r0, r0, #3
+ 118 0068 0440     		and	r4, r0
+ 119              	.LVL10:
+  60:Code\Device\FM175XX\IOS14443/mifare_card.c ****         else
+ 120              		.loc 1 60 0
+ 121 006a E0B2     		uxtb	r0, r4
+ 122              	.L4:
+  65:Code\Device\FM175XX\IOS14443/mifare_card.c **** }
+ 123              		.loc 1 65 0
+ 124 006c 08B0     		add	sp, sp, #32
+ 125              		@ sp needed
+ 126 006e 10BD     		pop	{r4, pc}
+ 127              		.cfi_endproc
+ 128              	.LFE63:
+ 129              		.size	Mifare_Auth, .-Mifare_Auth
+ 130              		.section	.text.Mifare_Blockread,"ax",%progbits
+ 131              		.align	1
+ 132              		.global	Mifare_Blockread
+ 133              		.code	16
+ 134              		.thumb_func
+ 135              		.type	Mifare_Blockread, %function
+ 136              	Mifare_Blockread:
+ 137              	.LFB65:
+  66:Code\Device\FM175XX\IOS14443/mifare_card.c **** 
+  67:Code\Device\FM175XX\IOS14443/mifare_card.c **** /**************************************************************************************************
+  68:Code\Device\FM175XX\IOS14443/mifare_card.c **** ** Function name:       Mifare_Blockset    
+  69:Code\Device\FM175XX\IOS14443/mifare_card.c **** ** Descriptions:        mifare¿¨ÉèÖÃ¿¨Æ¬¼ÆÊýÖµ
+  70:Code\Device\FM175XX\IOS14443/mifare_card.c **** ** input parameters:    block:¿éºÅ
+  71:Code\Device\FM175XX\IOS14443/mifare_card.c **** **                      buff:4×Ö½Ú³õÊ¼Öµ
+  72:Code\Device\FM175XX\IOS14443/mifare_card.c **** ** output parameters:   
+  73:Code\Device\FM175XX\IOS14443/mifare_card.c **** ** Returned value:      TRUE£º²Ù×÷³É¹¦ ERROR£º²Ù×÷Ê§°Ü    
+  74:Code\Device\FM175XX\IOS14443/mifare_card.c **** ***************************************************************************************************
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 5
+
+
+  75:Code\Device\FM175XX\IOS14443/mifare_card.c **** uint8_t  Mifare_Blockset(uint8_t  block,uint8_t  *buff)
+  76:Code\Device\FM175XX\IOS14443/mifare_card.c **** {
+  77:Code\Device\FM175XX\IOS14443/mifare_card.c ****     uint8_t   block_data[16],result;
+  78:Code\Device\FM175XX\IOS14443/mifare_card.c ****     block_data[0]=buff[3];
+  79:Code\Device\FM175XX\IOS14443/mifare_card.c ****     block_data[1]=buff[2];
+  80:Code\Device\FM175XX\IOS14443/mifare_card.c ****     block_data[2]=buff[1];
+  81:Code\Device\FM175XX\IOS14443/mifare_card.c ****     block_data[3]=buff[0];
+  82:Code\Device\FM175XX\IOS14443/mifare_card.c ****     block_data[4]=~buff[3];
+  83:Code\Device\FM175XX\IOS14443/mifare_card.c ****     block_data[5]=~buff[2];
+  84:Code\Device\FM175XX\IOS14443/mifare_card.c ****     block_data[6]=~buff[1];
+  85:Code\Device\FM175XX\IOS14443/mifare_card.c ****     block_data[7]=~buff[0];
+  86:Code\Device\FM175XX\IOS14443/mifare_card.c ****     block_data[8]=buff[3];
+  87:Code\Device\FM175XX\IOS14443/mifare_card.c ****     block_data[9]=buff[2];
+  88:Code\Device\FM175XX\IOS14443/mifare_card.c ****     block_data[10]=buff[1];
+  89:Code\Device\FM175XX\IOS14443/mifare_card.c ****     block_data[11]=buff[0];
+  90:Code\Device\FM175XX\IOS14443/mifare_card.c ****     block_data[12]=block;
+  91:Code\Device\FM175XX\IOS14443/mifare_card.c ****     block_data[13]=~block;
+  92:Code\Device\FM175XX\IOS14443/mifare_card.c ****     block_data[14]=block;
+  93:Code\Device\FM175XX\IOS14443/mifare_card.c ****     block_data[15]=~block;
+  94:Code\Device\FM175XX\IOS14443/mifare_card.c ****     result= Mifare_Blockwrite(block,block_data);
+  95:Code\Device\FM175XX\IOS14443/mifare_card.c ****     return result;
+  96:Code\Device\FM175XX\IOS14443/mifare_card.c **** }
+  97:Code\Device\FM175XX\IOS14443/mifare_card.c **** 
+  98:Code\Device\FM175XX\IOS14443/mifare_card.c **** /**************************************************************************************************
+  99:Code\Device\FM175XX\IOS14443/mifare_card.c **** ** Function name:       Mifare_Blockread    
+ 100:Code\Device\FM175XX\IOS14443/mifare_card.c **** ** Descriptions:        mifare¿¨¶ÁÈ¡¿éº¯Êý
+ 101:Code\Device\FM175XX\IOS14443/mifare_card.c **** ** input parameters:    block:¿éºÅ   0x00-0x3f       
+ 102:Code\Device\FM175XX\IOS14443/mifare_card.c **** ** output parameters:   buff:¶Á³ö16×Ö½ÚÊý¾Ý 
+ 103:Code\Device\FM175XX\IOS14443/mifare_card.c **** ** Returned value:      TRUE£º²Ù×÷³É¹¦ ERROR£º²Ù×÷Ê§°Ü    
+ 104:Code\Device\FM175XX\IOS14443/mifare_card.c **** ***************************************************************************************************
+ 105:Code\Device\FM175XX\IOS14443/mifare_card.c **** uint8_t  Mifare_Blockread(uint8_t  block,uint8_t  *buff)
+ 106:Code\Device\FM175XX\IOS14443/mifare_card.c **** {    
+ 138              		.loc 1 106 0
+ 139              		.cfi_startproc
+ 140              	.LVL11:
+ 141 0000 7FB5     		push	{r0, r1, r2, r3, r4, r5, r6, lr}
+ 142              		.cfi_def_cfa_offset 32
+ 143              		.cfi_offset 0, -32
+ 144              		.cfi_offset 1, -28
+ 145              		.cfi_offset 2, -24
+ 146              		.cfi_offset 3, -20
+ 147              		.cfi_offset 4, -16
+ 148              		.cfi_offset 5, -12
+ 149              		.cfi_offset 6, -8
+ 150              		.cfi_offset 14, -4
+ 151              		.loc 1 106 0
+ 152 0002 061C     		mov	r6, r0
+ 107:Code\Device\FM175XX\IOS14443/mifare_card.c ****     uint8_t   send_buff[2],result;
+ 108:Code\Device\FM175XX\IOS14443/mifare_card.c ****     uint32_t  rece_bitlen;
+ 109:Code\Device\FM175XX\IOS14443/mifare_card.c ****     Pcd_SetTimer(1);
+ 153              		.loc 1 109 0
+ 154 0004 0120     		mov	r0, #1
+ 155              	.LVL12:
+ 106:Code\Device\FM175XX\IOS14443/mifare_card.c ****     uint8_t   send_buff[2],result;
+ 156              		.loc 1 106 0
+ 157 0006 0D1C     		mov	r5, r1
+ 158              		.loc 1 109 0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 6
+
+
+ 159 0008 FFF7FEFF 		bl	Pcd_SetTimer
+ 160              	.LVL13:
+ 110:Code\Device\FM175XX\IOS14443/mifare_card.c ****     send_buff[0]=0x30;                                                  /* ¶Á²Ù×÷ÃüÁî              
+ 161              		.loc 1 110 0
+ 162 000c 3023     		mov	r3, #48
+ 163 000e 02AC     		add	r4, sp, #8
+ 164 0010 2370     		strb	r3, [r4]
+ 111:Code\Device\FM175XX\IOS14443/mifare_card.c ****     send_buff[1]=block;                                                 /* ¶Á²Ù×÷µØÖ·              
+ 165              		.loc 1 111 0
+ 166 0012 6670     		strb	r6, [r4, #1]
+ 112:Code\Device\FM175XX\IOS14443/mifare_card.c ****     Clear_FIFO();
+ 167              		.loc 1 112 0
+ 168 0014 FFF7FEFF 		bl	Clear_FIFO
+ 169              	.LVL14:
+ 113:Code\Device\FM175XX\IOS14443/mifare_card.c ****     result =Pcd_Comm(Transceive,send_buff,2,buff,&rece_bitlen);//
+ 170              		.loc 1 113 0
+ 171 0018 03AB     		add	r3, sp, #12
+ 172 001a 0093     		str	r3, [sp]
+ 173 001c 0222     		mov	r2, #2
+ 174 001e 2B1C     		mov	r3, r5
+ 175 0020 211C     		mov	r1, r4
+ 176 0022 0C20     		mov	r0, #12
+ 177 0024 FFF7FEFF 		bl	Pcd_Comm
+ 178              	.LVL15:
+ 114:Code\Device\FM175XX\IOS14443/mifare_card.c ****     if ((result!=TRUE )|(rece_bitlen!=16*8))                            /* ½ÓÊÕµ½µÄÊý¾Ý³¤¶ÈÎª16    
+ 179              		.loc 1 114 0
+ 180 0028 0138     		sub	r0, r0, #1
+ 181              	.LVL16:
+ 182 002a 431E     		sub	r3, r0, #1
+ 183 002c 9841     		sbc	r0, r0, r3
+ 184 002e 039B     		ldr	r3, [sp, #12]
+ 185 0030 803B     		sub	r3, r3, #128
+ 186 0032 5A1E     		sub	r2, r3, #1
+ 187 0034 9341     		sbc	r3, r3, r2
+ 188 0036 1843     		orr	r0, r3
+ 115:Code\Device\FM175XX\IOS14443/mifare_card.c ****         return FALSE;
+ 189              		.loc 1 115 0
+ 190 0038 0123     		mov	r3, #1
+ 191 003a 5840     		eor	r0, r3
+ 116:Code\Device\FM175XX\IOS14443/mifare_card.c ****     return TRUE;
+ 117:Code\Device\FM175XX\IOS14443/mifare_card.c **** }
+ 192              		.loc 1 117 0
+ 193 003c 04B0     		add	sp, sp, #16
+ 194              		@ sp needed
+ 195              	.LVL17:
+ 196 003e 70BD     		pop	{r4, r5, r6, pc}
+ 197              		.cfi_endproc
+ 198              	.LFE65:
+ 199              		.size	Mifare_Blockread, .-Mifare_Blockread
+ 200              		.section	.text.Mifare_Blockwrite,"ax",%progbits
+ 201              		.align	1
+ 202              		.global	Mifare_Blockwrite
+ 203              		.code	16
+ 204              		.thumb_func
+ 205              		.type	Mifare_Blockwrite, %function
+ 206              	Mifare_Blockwrite:
+ 207              	.LFB66:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 7
+
+
+ 118:Code\Device\FM175XX\IOS14443/mifare_card.c **** 
+ 119:Code\Device\FM175XX\IOS14443/mifare_card.c **** /**************************************************************************************************
+ 120:Code\Device\FM175XX\IOS14443/mifare_card.c **** ** Function name:       mifare_blockwrite    
+ 121:Code\Device\FM175XX\IOS14443/mifare_card.c **** ** Descriptions:        mifare¿¨Ð´¿éº¯Êý
+ 122:Code\Device\FM175XX\IOS14443/mifare_card.c **** ** input parameters:    block:¿éºÅ   0x00-0x3f    
+ 123:Code\Device\FM175XX\IOS14443/mifare_card.c **** **                      buff:¶Á³ö16×Ö½ÚÊý¾Ý 
+ 124:Code\Device\FM175XX\IOS14443/mifare_card.c **** ** output parameters:   
+ 125:Code\Device\FM175XX\IOS14443/mifare_card.c **** ** Returned value:      TRUE£º²Ù×÷³É¹¦ ERROR£º²Ù×÷Ê§°Ü    
+ 126:Code\Device\FM175XX\IOS14443/mifare_card.c **** ***************************************************************************************************
+ 127:Code\Device\FM175XX\IOS14443/mifare_card.c **** uint8_t  Mifare_Blockwrite(uint8_t  block,uint8_t  *buff)
+ 128:Code\Device\FM175XX\IOS14443/mifare_card.c **** {    
+ 208              		.loc 1 128 0
+ 209              		.cfi_startproc
+ 210              	.LVL18:
+ 211 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 212              		.cfi_def_cfa_offset 20
+ 213              		.cfi_offset 4, -20
+ 214              		.cfi_offset 5, -16
+ 215              		.cfi_offset 6, -12
+ 216              		.cfi_offset 7, -8
+ 217              		.cfi_offset 14, -4
+ 218 0002 051C     		mov	r5, r0
+ 219 0004 89B0     		sub	sp, sp, #36
+ 220              		.cfi_def_cfa_offset 56
+ 129:Code\Device\FM175XX\IOS14443/mifare_card.c ****     uint8_t   result,send_buff[16],rece_buff[1];
+ 130:Code\Device\FM175XX\IOS14443/mifare_card.c ****     uint32_t  rece_bitlen;
+ 131:Code\Device\FM175XX\IOS14443/mifare_card.c ****     Pcd_SetTimer(1);
+ 221              		.loc 1 131 0
+ 222 0006 0120     		mov	r0, #1
+ 223              	.LVL19:
+ 128:Code\Device\FM175XX\IOS14443/mifare_card.c ****     uint8_t   result,send_buff[16],rece_buff[1];
+ 224              		.loc 1 128 0
+ 225 0008 0F1C     		mov	r7, r1
+ 226              		.loc 1 131 0
+ 227 000a FFF7FEFF 		bl	Pcd_SetTimer
+ 228              	.LVL20:
+ 132:Code\Device\FM175XX\IOS14443/mifare_card.c ****     send_buff[0]=0xa0;                                                  /* Ð´¿éÃüÁî                
+ 229              		.loc 1 132 0
+ 230 000e A023     		mov	r3, #160
+ 231 0010 04AC     		add	r4, sp, #16
+ 133:Code\Device\FM175XX\IOS14443/mifare_card.c ****     send_buff[1]=block;                                                 /* ¿éµØÖ·                  
+ 232              		.loc 1 133 0
+ 233 0012 6570     		strb	r5, [r4, #1]
+ 134:Code\Device\FM175XX\IOS14443/mifare_card.c **** 
+ 135:Code\Device\FM175XX\IOS14443/mifare_card.c ****     Clear_FIFO();
+ 136:Code\Device\FM175XX\IOS14443/mifare_card.c ****     result =Pcd_Comm(Transceive,send_buff,2,rece_buff,&rece_bitlen);
+ 234              		.loc 1 136 0
+ 235 0014 03AE     		add	r6, sp, #12
+ 236 0016 02AD     		add	r5, sp, #8
+ 132:Code\Device\FM175XX\IOS14443/mifare_card.c ****     send_buff[1]=block;                                                 /* ¿éµØÖ·                  
+ 237              		.loc 1 132 0
+ 238 0018 2370     		strb	r3, [r4]
+ 135:Code\Device\FM175XX\IOS14443/mifare_card.c ****     result =Pcd_Comm(Transceive,send_buff,2,rece_buff,&rece_bitlen);
+ 239              		.loc 1 135 0
+ 240 001a FFF7FEFF 		bl	Clear_FIFO
+ 241              	.LVL21:
+ 242              		.loc 1 136 0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 8
+
+
+ 243 001e 0096     		str	r6, [sp]
+ 244 0020 0C20     		mov	r0, #12
+ 245 0022 211C     		mov	r1, r4
+ 246 0024 0222     		mov	r2, #2
+ 247 0026 2B1C     		mov	r3, r5
+ 248 0028 FFF7FEFF 		bl	Pcd_Comm
+ 249              	.LVL22:
+ 137:Code\Device\FM175XX\IOS14443/mifare_card.c ****     if ((result!=TRUE )|((rece_buff[0]&0x0F)!=0x0A))                      /* Èç¹ûÎ´½ÓÊÕµ½0x0A£¬±íÊ¾
+ 250              		.loc 1 137 0
+ 251 002c 0128     		cmp	r0, #1
+ 252 002e 1CD1     		bne	.L11
+ 253 0030 0F24     		mov	r4, #15
+ 254 0032 2B78     		ldrb	r3, [r5]
+ 255 0034 2340     		and	r3, r4
+ 256 0036 0A2B     		cmp	r3, #10
+ 257 0038 17D1     		bne	.L11
+ 138:Code\Device\FM175XX\IOS14443/mifare_card.c ****         return(FALSE);
+ 139:Code\Device\FM175XX\IOS14443/mifare_card.c **** 
+ 140:Code\Device\FM175XX\IOS14443/mifare_card.c ****     Pcd_SetTimer(5);
+ 258              		.loc 1 140 0
+ 259 003a 0430     		add	r0, r0, #4
+ 260              	.LVL23:
+ 261 003c FFF7FEFF 		bl	Pcd_SetTimer
+ 262              	.LVL24:
+ 141:Code\Device\FM175XX\IOS14443/mifare_card.c ****     Clear_FIFO();
+ 263              		.loc 1 141 0
+ 264 0040 FFF7FEFF 		bl	Clear_FIFO
+ 265              	.LVL25:
+ 142:Code\Device\FM175XX\IOS14443/mifare_card.c ****     result =Pcd_Comm(Transceive,buff,16,rece_buff,&rece_bitlen);
+ 266              		.loc 1 142 0
+ 267 0044 2B1C     		mov	r3, r5
+ 268 0046 0096     		str	r6, [sp]
+ 269 0048 0C20     		mov	r0, #12
+ 270 004a 391C     		mov	r1, r7
+ 271 004c 1022     		mov	r2, #16
+ 272 004e FFF7FEFF 		bl	Pcd_Comm
+ 273              	.LVL26:
+ 143:Code\Device\FM175XX\IOS14443/mifare_card.c ****     if ((result!=TRUE )|((rece_buff[0]&0x0F)!=0x0A))                    /* Èç¹ûÎ´½ÓÊÕµ½0x0A£¬±íÊ¾ÎÞ
+ 274              		.loc 1 143 0
+ 275 0052 0138     		sub	r0, r0, #1
+ 276              	.LVL27:
+ 277 0054 431E     		sub	r3, r0, #1
+ 278 0056 9841     		sbc	r0, r0, r3
+ 279 0058 2B78     		ldrb	r3, [r5]
+ 280 005a 1C40     		and	r4, r3
+ 281 005c 0A3C     		sub	r4, r4, #10
+ 282 005e 631E     		sub	r3, r4, #1
+ 283 0060 9C41     		sbc	r4, r4, r3
+ 284 0062 2043     		orr	r0, r4
+ 138:Code\Device\FM175XX\IOS14443/mifare_card.c **** 
+ 285              		.loc 1 138 0
+ 286 0064 0124     		mov	r4, #1
+ 287 0066 6040     		eor	r0, r4
+ 288 0068 00E0     		b	.L10
+ 289              	.LVL28:
+ 290              	.L11:
+ 291 006a 0020     		mov	r0, #0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 9
+
+
+ 292              	.LVL29:
+ 293              	.L10:
+ 144:Code\Device\FM175XX\IOS14443/mifare_card.c ****         return FALSE;
+ 145:Code\Device\FM175XX\IOS14443/mifare_card.c ****     return TRUE;
+ 146:Code\Device\FM175XX\IOS14443/mifare_card.c **** }
+ 294              		.loc 1 146 0
+ 295 006c 09B0     		add	sp, sp, #36
+ 296              		@ sp needed
+ 297              	.LVL30:
+ 298 006e F0BD     		pop	{r4, r5, r6, r7, pc}
+ 299              		.cfi_endproc
+ 300              	.LFE66:
+ 301              		.size	Mifare_Blockwrite, .-Mifare_Blockwrite
+ 302              		.section	.text.Mifare_Blockset,"ax",%progbits
+ 303              		.align	1
+ 304              		.global	Mifare_Blockset
+ 305              		.code	16
+ 306              		.thumb_func
+ 307              		.type	Mifare_Blockset, %function
+ 308              	Mifare_Blockset:
+ 309              	.LFB64:
+  76:Code\Device\FM175XX\IOS14443/mifare_card.c ****     uint8_t   block_data[16],result;
+ 310              		.loc 1 76 0
+ 311              		.cfi_startproc
+ 312              	.LVL31:
+ 313 0000 7FB5     		push	{r0, r1, r2, r3, r4, r5, r6, lr}
+ 314              		.cfi_def_cfa_offset 32
+ 315              		.cfi_offset 0, -32
+ 316              		.cfi_offset 1, -28
+ 317              		.cfi_offset 2, -24
+ 318              		.cfi_offset 3, -20
+ 319              		.cfi_offset 4, -16
+ 320              		.cfi_offset 5, -12
+ 321              		.cfi_offset 6, -8
+ 322              		.cfi_offset 14, -4
+  78:Code\Device\FM175XX\IOS14443/mifare_card.c ****     block_data[1]=buff[2];
+ 323              		.loc 1 78 0
+ 324 0002 6B46     		mov	r3, sp
+ 325 0004 CD78     		ldrb	r5, [r1, #3]
+  79:Code\Device\FM175XX\IOS14443/mifare_card.c ****     block_data[2]=buff[1];
+ 326              		.loc 1 79 0
+ 327 0006 8C78     		ldrb	r4, [r1, #2]
+  80:Code\Device\FM175XX\IOS14443/mifare_card.c ****     block_data[3]=buff[0];
+ 328              		.loc 1 80 0
+ 329 0008 4A78     		ldrb	r2, [r1, #1]
+  78:Code\Device\FM175XX\IOS14443/mifare_card.c ****     block_data[1]=buff[2];
+ 330              		.loc 1 78 0
+ 331 000a 1D70     		strb	r5, [r3]
+  79:Code\Device\FM175XX\IOS14443/mifare_card.c ****     block_data[2]=buff[1];
+ 332              		.loc 1 79 0
+ 333 000c 5C70     		strb	r4, [r3, #1]
+  80:Code\Device\FM175XX\IOS14443/mifare_card.c ****     block_data[3]=buff[0];
+ 334              		.loc 1 80 0
+ 335 000e 9A70     		strb	r2, [r3, #2]
+  81:Code\Device\FM175XX\IOS14443/mifare_card.c ****     block_data[4]=~buff[3];
+ 336              		.loc 1 81 0
+ 337 0010 0B78     		ldrb	r3, [r1]
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 10
+
+
+ 338 0012 6946     		mov	r1, sp
+ 339              	.LVL32:
+  82:Code\Device\FM175XX\IOS14443/mifare_card.c ****     block_data[5]=~buff[2];
+ 340              		.loc 1 82 0
+ 341 0014 6E46     		mov	r6, sp
+  81:Code\Device\FM175XX\IOS14443/mifare_card.c ****     block_data[4]=~buff[3];
+ 342              		.loc 1 81 0
+ 343 0016 CB70     		strb	r3, [r1, #3]
+  82:Code\Device\FM175XX\IOS14443/mifare_card.c ****     block_data[5]=~buff[2];
+ 344              		.loc 1 82 0
+ 345 0018 E943     		mvn	r1, r5
+ 346 001a 3171     		strb	r1, [r6, #4]
+  83:Code\Device\FM175XX\IOS14443/mifare_card.c ****     block_data[6]=~buff[1];
+ 347              		.loc 1 83 0
+ 348 001c E143     		mvn	r1, r4
+ 349 001e 7171     		strb	r1, [r6, #5]
+  84:Code\Device\FM175XX\IOS14443/mifare_card.c ****     block_data[7]=~buff[0];
+ 350              		.loc 1 84 0
+ 351 0020 D143     		mvn	r1, r2
+  89:Code\Device\FM175XX\IOS14443/mifare_card.c ****     block_data[12]=block;
+ 352              		.loc 1 89 0
+ 353 0022 F372     		strb	r3, [r6, #11]
+  84:Code\Device\FM175XX\IOS14443/mifare_card.c ****     block_data[7]=~buff[0];
+ 354              		.loc 1 84 0
+ 355 0024 B171     		strb	r1, [r6, #6]
+  85:Code\Device\FM175XX\IOS14443/mifare_card.c ****     block_data[8]=buff[3];
+ 356              		.loc 1 85 0
+ 357 0026 D943     		mvn	r1, r3
+  91:Code\Device\FM175XX\IOS14443/mifare_card.c ****     block_data[14]=block;
+ 358              		.loc 1 91 0
+ 359 0028 C343     		mvn	r3, r0
+  85:Code\Device\FM175XX\IOS14443/mifare_card.c ****     block_data[8]=buff[3];
+ 360              		.loc 1 85 0
+ 361 002a F171     		strb	r1, [r6, #7]
+  91:Code\Device\FM175XX\IOS14443/mifare_card.c ****     block_data[14]=block;
+ 362              		.loc 1 91 0
+ 363 002c DBB2     		uxtb	r3, r3
+  86:Code\Device\FM175XX\IOS14443/mifare_card.c ****     block_data[9]=buff[2];
+ 364              		.loc 1 86 0
+ 365 002e 6946     		mov	r1, sp
+ 366 0030 3572     		strb	r5, [r6, #8]
+  87:Code\Device\FM175XX\IOS14443/mifare_card.c ****     block_data[10]=buff[1];
+ 367              		.loc 1 87 0
+ 368 0032 7472     		strb	r4, [r6, #9]
+  88:Code\Device\FM175XX\IOS14443/mifare_card.c ****     block_data[11]=buff[0];
+ 369              		.loc 1 88 0
+ 370 0034 B272     		strb	r2, [r6, #10]
+  90:Code\Device\FM175XX\IOS14443/mifare_card.c ****     block_data[13]=~block;
+ 371              		.loc 1 90 0
+ 372 0036 3073     		strb	r0, [r6, #12]
+  91:Code\Device\FM175XX\IOS14443/mifare_card.c ****     block_data[14]=block;
+ 373              		.loc 1 91 0
+ 374 0038 7373     		strb	r3, [r6, #13]
+  92:Code\Device\FM175XX\IOS14443/mifare_card.c ****     block_data[15]=~block;
+ 375              		.loc 1 92 0
+ 376 003a B073     		strb	r0, [r6, #14]
+  93:Code\Device\FM175XX\IOS14443/mifare_card.c ****     result= Mifare_Blockwrite(block,block_data);
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 11
+
+
+ 377              		.loc 1 93 0
+ 378 003c F373     		strb	r3, [r6, #15]
+  94:Code\Device\FM175XX\IOS14443/mifare_card.c ****     return result;
+ 379              		.loc 1 94 0
+ 380 003e FFF7FEFF 		bl	Mifare_Blockwrite
+ 381              	.LVL33:
+  96:Code\Device\FM175XX\IOS14443/mifare_card.c **** 
+ 382              		.loc 1 96 0
+ 383 0042 04B0     		add	sp, sp, #16
+ 384              		@ sp needed
+ 385 0044 70BD     		pop	{r4, r5, r6, pc}
+ 386              		.cfi_endproc
+ 387              	.LFE64:
+ 388              		.size	Mifare_Blockset, .-Mifare_Blockset
+ 389              		.section	.text.Mifare_Blockinc,"ax",%progbits
+ 390              		.align	1
+ 391              		.global	Mifare_Blockinc
+ 392              		.code	16
+ 393              		.thumb_func
+ 394              		.type	Mifare_Blockinc, %function
+ 395              	Mifare_Blockinc:
+ 396              	.LFB67:
+ 147:Code\Device\FM175XX\IOS14443/mifare_card.c **** 
+ 148:Code\Device\FM175XX\IOS14443/mifare_card.c **** 
+ 149:Code\Device\FM175XX\IOS14443/mifare_card.c **** /**************************************************************************************************
+ 150:Code\Device\FM175XX\IOS14443/mifare_card.c **** ** Function name:       Mifare_Blockinc    
+ 151:Code\Device\FM175XX\IOS14443/mifare_card.c **** ** Descriptions:        mifare¿¨Æ¬ÔöÖµ²Ù×÷    
+ 152:Code\Device\FM175XX\IOS14443/mifare_card.c **** ** input parameters:    block:¿éºÅ   0x00-0x3f    
+ 153:Code\Device\FM175XX\IOS14443/mifare_card.c **** **                      buff:Ôö¼Ó4×Ö½ÚÊý¾Ý 
+ 154:Code\Device\FM175XX\IOS14443/mifare_card.c **** ** output parameters:   
+ 155:Code\Device\FM175XX\IOS14443/mifare_card.c **** ** Returned value:      TRUE£º²Ù×÷³É¹¦ ERROR£º²Ù×÷Ê§°Ü    
+ 156:Code\Device\FM175XX\IOS14443/mifare_card.c **** ***************************************************************************************************
+ 157:Code\Device\FM175XX\IOS14443/mifare_card.c **** uint8_t  Mifare_Blockinc(uint8_t  block,uint8_t  *buff)
+ 158:Code\Device\FM175XX\IOS14443/mifare_card.c **** {    
+ 397              		.loc 1 158 0
+ 398              		.cfi_startproc
+ 399              	.LVL34:
+ 400 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 401              		.cfi_def_cfa_offset 20
+ 402              		.cfi_offset 4, -20
+ 403              		.cfi_offset 5, -16
+ 404              		.cfi_offset 6, -12
+ 405              		.cfi_offset 7, -8
+ 406              		.cfi_offset 14, -4
+ 407 0002 041C     		mov	r4, r0
+ 408 0004 87B0     		sub	sp, sp, #28
+ 409              		.cfi_def_cfa_offset 48
+ 159:Code\Device\FM175XX\IOS14443/mifare_card.c ****     uint8_t   result,send_buff[2],rece_buff[1];
+ 160:Code\Device\FM175XX\IOS14443/mifare_card.c ****     uint32_t  rece_bitlen;
+ 161:Code\Device\FM175XX\IOS14443/mifare_card.c ****     Pcd_SetTimer(5);
+ 410              		.loc 1 161 0
+ 411 0006 0520     		mov	r0, #5
+ 412              	.LVL35:
+ 158:Code\Device\FM175XX\IOS14443/mifare_card.c ****     uint8_t   result,send_buff[2],rece_buff[1];
+ 413              		.loc 1 158 0
+ 414 0008 0E1C     		mov	r6, r1
+ 415              		.loc 1 161 0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 12
+
+
+ 416 000a FFF7FEFF 		bl	Pcd_SetTimer
+ 417              	.LVL36:
+ 162:Code\Device\FM175XX\IOS14443/mifare_card.c ****     send_buff[0]=0xc1;                                                  /* ÔöÖµ²Ù×÷ÃüÁî            
+ 418              		.loc 1 162 0
+ 419 000e C123     		mov	r3, #193
+ 420 0010 04AF     		add	r7, sp, #16
+ 163:Code\Device\FM175XX\IOS14443/mifare_card.c ****     send_buff[1]=block;                                                 /* ¿éµØÖ·                  
+ 421              		.loc 1 163 0
+ 422 0012 7C70     		strb	r4, [r7, #1]
+ 164:Code\Device\FM175XX\IOS14443/mifare_card.c ****     Clear_FIFO();
+ 165:Code\Device\FM175XX\IOS14443/mifare_card.c ****     result = Pcd_Comm(Transceive,send_buff,2,rece_buff,&rece_bitlen);
+ 423              		.loc 1 165 0
+ 424 0014 05AD     		add	r5, sp, #20
+ 425 0016 03AC     		add	r4, sp, #12
+ 162:Code\Device\FM175XX\IOS14443/mifare_card.c ****     send_buff[1]=block;                                                 /* ¿éµØÖ·                  
+ 426              		.loc 1 162 0
+ 427 0018 3B70     		strb	r3, [r7]
+ 164:Code\Device\FM175XX\IOS14443/mifare_card.c ****     Clear_FIFO();
+ 428              		.loc 1 164 0
+ 429 001a FFF7FEFF 		bl	Clear_FIFO
+ 430              	.LVL37:
+ 431              		.loc 1 165 0
+ 432 001e 0095     		str	r5, [sp]
+ 433 0020 0C20     		mov	r0, #12
+ 434 0022 391C     		mov	r1, r7
+ 435 0024 0222     		mov	r2, #2
+ 436 0026 231C     		mov	r3, r4
+ 437 0028 FFF7FEFF 		bl	Pcd_Comm
+ 438              	.LVL38:
+ 166:Code\Device\FM175XX\IOS14443/mifare_card.c ****     if ((result != TRUE )|((rece_buff[0]&0x0F) != 0x0A))                  /* Èç¹ûÎ´½ÓÊÕµ½0x0A£¬±íÊ¾
+ 439              		.loc 1 166 0
+ 440 002c 0128     		cmp	r0, #1
+ 441 002e 12D1     		bne	.L15
+ 442 0030 0F23     		mov	r3, #15
+ 443 0032 2278     		ldrb	r2, [r4]
+ 444 0034 1340     		and	r3, r2
+ 445 0036 0A2B     		cmp	r3, #10
+ 446 0038 0DD1     		bne	.L15
+ 167:Code\Device\FM175XX\IOS14443/mifare_card.c ****         return FALSE;
+ 168:Code\Device\FM175XX\IOS14443/mifare_card.c ****     Pcd_SetTimer(5);
+ 447              		.loc 1 168 0
+ 448 003a 0430     		add	r0, r0, #4
+ 449              	.LVL39:
+ 450 003c FFF7FEFF 		bl	Pcd_SetTimer
+ 451              	.LVL40:
+ 169:Code\Device\FM175XX\IOS14443/mifare_card.c ****     Clear_FIFO();
+ 452              		.loc 1 169 0
+ 453 0040 FFF7FEFF 		bl	Clear_FIFO
+ 454              	.LVL41:
+ 170:Code\Device\FM175XX\IOS14443/mifare_card.c ****     Pcd_Comm(Transceive,buff,4,rece_buff,&rece_bitlen);
+ 455              		.loc 1 170 0
+ 456 0044 0095     		str	r5, [sp]
+ 457 0046 0C20     		mov	r0, #12
+ 458 0048 311C     		mov	r1, r6
+ 459 004a 0422     		mov	r2, #4
+ 460 004c 231C     		mov	r3, r4
+ 461 004e FFF7FEFF 		bl	Pcd_Comm
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 13
+
+
+ 462              	.LVL42:
+ 171:Code\Device\FM175XX\IOS14443/mifare_card.c ****     return result;
+ 463              		.loc 1 171 0
+ 464 0052 0120     		mov	r0, #1
+ 465 0054 00E0     		b	.L14
+ 466              	.LVL43:
+ 467              	.L15:
+ 167:Code\Device\FM175XX\IOS14443/mifare_card.c ****     Pcd_SetTimer(5);
+ 468              		.loc 1 167 0
+ 469 0056 0020     		mov	r0, #0
+ 470              	.LVL44:
+ 471              	.L14:
+ 172:Code\Device\FM175XX\IOS14443/mifare_card.c **** }
+ 472              		.loc 1 172 0
+ 473 0058 07B0     		add	sp, sp, #28
+ 474              		@ sp needed
+ 475              	.LVL45:
+ 476 005a F0BD     		pop	{r4, r5, r6, r7, pc}
+ 477              		.cfi_endproc
+ 478              	.LFE67:
+ 479              		.size	Mifare_Blockinc, .-Mifare_Blockinc
+ 480              		.section	.text.Mifare_Blockdec,"ax",%progbits
+ 481              		.align	1
+ 482              		.global	Mifare_Blockdec
+ 483              		.code	16
+ 484              		.thumb_func
+ 485              		.type	Mifare_Blockdec, %function
+ 486              	Mifare_Blockdec:
+ 487              	.LFB68:
+ 173:Code\Device\FM175XX\IOS14443/mifare_card.c **** 
+ 174:Code\Device\FM175XX\IOS14443/mifare_card.c **** 
+ 175:Code\Device\FM175XX\IOS14443/mifare_card.c **** /**************************************************************************************************
+ 176:Code\Device\FM175XX\IOS14443/mifare_card.c **** ** Function name:       Mifare_Blockdec    
+ 177:Code\Device\FM175XX\IOS14443/mifare_card.c **** ** Descriptions:        mifare¿¨Æ¬¼õÖµ²Ù×÷    
+ 178:Code\Device\FM175XX\IOS14443/mifare_card.c **** ** input parameters:    block:¿éºÅ   0x00-0x3f    
+ 179:Code\Device\FM175XX\IOS14443/mifare_card.c **** **                      buff:¼õÉÙ4×Ö½ÚÊý¾Ý 
+ 180:Code\Device\FM175XX\IOS14443/mifare_card.c **** ** output parameters:   
+ 181:Code\Device\FM175XX\IOS14443/mifare_card.c **** ** Returned value:      TRUE£º²Ù×÷³É¹¦ ERROR£º²Ù×÷Ê§°Ü    
+ 182:Code\Device\FM175XX\IOS14443/mifare_card.c **** ***************************************************************************************************
+ 183:Code\Device\FM175XX\IOS14443/mifare_card.c **** uint8_t  Mifare_Blockdec(uint8_t  block,uint8_t  *buff)
+ 184:Code\Device\FM175XX\IOS14443/mifare_card.c **** {    
+ 488              		.loc 1 184 0
+ 489              		.cfi_startproc
+ 490              	.LVL46:
+ 491 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 492              		.cfi_def_cfa_offset 20
+ 493              		.cfi_offset 4, -20
+ 494              		.cfi_offset 5, -16
+ 495              		.cfi_offset 6, -12
+ 496              		.cfi_offset 7, -8
+ 497              		.cfi_offset 14, -4
+ 498 0002 041C     		mov	r4, r0
+ 499 0004 87B0     		sub	sp, sp, #28
+ 500              		.cfi_def_cfa_offset 48
+ 185:Code\Device\FM175XX\IOS14443/mifare_card.c ****     uint8_t   result,send_buff[2],rece_buff[1];
+ 186:Code\Device\FM175XX\IOS14443/mifare_card.c ****     uint32_t  rece_bitlen;
+ 187:Code\Device\FM175XX\IOS14443/mifare_card.c ****     Pcd_SetTimer(5);
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 14
+
+
+ 501              		.loc 1 187 0
+ 502 0006 0520     		mov	r0, #5
+ 503              	.LVL47:
+ 184:Code\Device\FM175XX\IOS14443/mifare_card.c ****     uint8_t   result,send_buff[2],rece_buff[1];
+ 504              		.loc 1 184 0
+ 505 0008 0E1C     		mov	r6, r1
+ 506              		.loc 1 187 0
+ 507 000a FFF7FEFF 		bl	Pcd_SetTimer
+ 508              	.LVL48:
+ 188:Code\Device\FM175XX\IOS14443/mifare_card.c ****     send_buff[0]=0xc0;
+ 509              		.loc 1 188 0
+ 510 000e C023     		mov	r3, #192
+ 511 0010 04AF     		add	r7, sp, #16
+ 189:Code\Device\FM175XX\IOS14443/mifare_card.c ****     send_buff[1]=block;                                                 /* ¿éµØÖ·                  
+ 512              		.loc 1 189 0
+ 513 0012 7C70     		strb	r4, [r7, #1]
+ 190:Code\Device\FM175XX\IOS14443/mifare_card.c ****     Clear_FIFO();
+ 191:Code\Device\FM175XX\IOS14443/mifare_card.c ****     result = Pcd_Comm(Transceive,send_buff,2,rece_buff,&rece_bitlen);
+ 514              		.loc 1 191 0
+ 515 0014 05AD     		add	r5, sp, #20
+ 516 0016 03AC     		add	r4, sp, #12
+ 188:Code\Device\FM175XX\IOS14443/mifare_card.c ****     send_buff[1]=block;                                                 /* ¿éµØÖ·                  
+ 517              		.loc 1 188 0
+ 518 0018 3B70     		strb	r3, [r7]
+ 190:Code\Device\FM175XX\IOS14443/mifare_card.c ****     Clear_FIFO();
+ 519              		.loc 1 190 0
+ 520 001a FFF7FEFF 		bl	Clear_FIFO
+ 521              	.LVL49:
+ 522              		.loc 1 191 0
+ 523 001e 0095     		str	r5, [sp]
+ 524 0020 0C20     		mov	r0, #12
+ 525 0022 391C     		mov	r1, r7
+ 526 0024 0222     		mov	r2, #2
+ 527 0026 231C     		mov	r3, r4
+ 528 0028 FFF7FEFF 		bl	Pcd_Comm
+ 529              	.LVL50:
+ 192:Code\Device\FM175XX\IOS14443/mifare_card.c ****     if ((result!=TRUE )|((rece_buff[0]&0x0F)!=0x0A))                      /* Èç¹ûÎ´½ÓÊÕµ½0x0A£¬±íÊ¾
+ 530              		.loc 1 192 0
+ 531 002c 0128     		cmp	r0, #1
+ 532 002e 12D1     		bne	.L18
+ 533 0030 0F23     		mov	r3, #15
+ 534 0032 2278     		ldrb	r2, [r4]
+ 535 0034 1340     		and	r3, r2
+ 536 0036 0A2B     		cmp	r3, #10
+ 537 0038 0DD1     		bne	.L18
+ 193:Code\Device\FM175XX\IOS14443/mifare_card.c ****         return FALSE;
+ 194:Code\Device\FM175XX\IOS14443/mifare_card.c ****     Pcd_SetTimer(5);
+ 538              		.loc 1 194 0
+ 539 003a 0430     		add	r0, r0, #4
+ 540              	.LVL51:
+ 541 003c FFF7FEFF 		bl	Pcd_SetTimer
+ 542              	.LVL52:
+ 195:Code\Device\FM175XX\IOS14443/mifare_card.c ****     Clear_FIFO();
+ 543              		.loc 1 195 0
+ 544 0040 FFF7FEFF 		bl	Clear_FIFO
+ 545              	.LVL53:
+ 196:Code\Device\FM175XX\IOS14443/mifare_card.c ****     Pcd_Comm(Transceive,buff,4,rece_buff,&rece_bitlen);
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 15
+
+
+ 546              		.loc 1 196 0
+ 547 0044 0095     		str	r5, [sp]
+ 548 0046 0C20     		mov	r0, #12
+ 549 0048 311C     		mov	r1, r6
+ 550 004a 0422     		mov	r2, #4
+ 551 004c 231C     		mov	r3, r4
+ 552 004e FFF7FEFF 		bl	Pcd_Comm
+ 553              	.LVL54:
+ 197:Code\Device\FM175XX\IOS14443/mifare_card.c ****     return result;
+ 554              		.loc 1 197 0
+ 555 0052 0120     		mov	r0, #1
+ 556 0054 00E0     		b	.L17
+ 557              	.LVL55:
+ 558              	.L18:
+ 193:Code\Device\FM175XX\IOS14443/mifare_card.c ****     Pcd_SetTimer(5);
+ 559              		.loc 1 193 0
+ 560 0056 0020     		mov	r0, #0
+ 561              	.LVL56:
+ 562              	.L17:
+ 198:Code\Device\FM175XX\IOS14443/mifare_card.c **** }
+ 563              		.loc 1 198 0
+ 564 0058 07B0     		add	sp, sp, #28
+ 565              		@ sp needed
+ 566              	.LVL57:
+ 567 005a F0BD     		pop	{r4, r5, r6, r7, pc}
+ 568              		.cfi_endproc
+ 569              	.LFE68:
+ 570              		.size	Mifare_Blockdec, .-Mifare_Blockdec
+ 571              		.section	.text.Mifare_Transfer,"ax",%progbits
+ 572              		.align	1
+ 573              		.global	Mifare_Transfer
+ 574              		.code	16
+ 575              		.thumb_func
+ 576              		.type	Mifare_Transfer, %function
+ 577              	Mifare_Transfer:
+ 578              	.LFB69:
+ 199:Code\Device\FM175XX\IOS14443/mifare_card.c **** 
+ 200:Code\Device\FM175XX\IOS14443/mifare_card.c **** 
+ 201:Code\Device\FM175XX\IOS14443/mifare_card.c **** /**************************************************************************************************
+ 202:Code\Device\FM175XX\IOS14443/mifare_card.c **** ** Function name:       Mifare_Transfer    
+ 203:Code\Device\FM175XX\IOS14443/mifare_card.c **** ** Descriptions:        mifare¿¨Æ¬´«Êä¿é
+ 204:Code\Device\FM175XX\IOS14443/mifare_card.c **** ** input parameters:    block:¿éºÅ   0x00-0x3f    
+ 205:Code\Device\FM175XX\IOS14443/mifare_card.c **** ** output parameters:   
+ 206:Code\Device\FM175XX\IOS14443/mifare_card.c **** ** Returned value:      TRUE£º²Ù×÷³É¹¦ ERROR£º²Ù×÷Ê§°Ü    
+ 207:Code\Device\FM175XX\IOS14443/mifare_card.c **** ***************************************************************************************************
+ 208:Code\Device\FM175XX\IOS14443/mifare_card.c **** uint8_t  Mifare_Transfer(uint8_t  block)
+ 209:Code\Device\FM175XX\IOS14443/mifare_card.c **** {    
+ 579              		.loc 1 209 0
+ 580              		.cfi_startproc
+ 581              	.LVL58:
+ 582 0000 30B5     		push	{r4, r5, lr}
+ 583              		.cfi_def_cfa_offset 12
+ 584              		.cfi_offset 4, -12
+ 585              		.cfi_offset 5, -8
+ 586              		.cfi_offset 14, -4
+ 587 0002 041C     		mov	r4, r0
+ 588 0004 87B0     		sub	sp, sp, #28
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 16
+
+
+ 589              		.cfi_def_cfa_offset 40
+ 210:Code\Device\FM175XX\IOS14443/mifare_card.c ****     uint8_t    result,send_buff[2],rece_buff[1];
+ 211:Code\Device\FM175XX\IOS14443/mifare_card.c ****     uint32_t   rece_bitlen;
+ 212:Code\Device\FM175XX\IOS14443/mifare_card.c ****     Pcd_SetTimer(5);
+ 590              		.loc 1 212 0
+ 591 0006 0520     		mov	r0, #5
+ 592              	.LVL59:
+ 593 0008 FFF7FEFF 		bl	Pcd_SetTimer
+ 594              	.LVL60:
+ 213:Code\Device\FM175XX\IOS14443/mifare_card.c ****     send_buff[0] = 0xb0;
+ 595              		.loc 1 213 0
+ 596 000c B023     		mov	r3, #176
+ 597 000e 04AD     		add	r5, sp, #16
+ 598 0010 2B70     		strb	r3, [r5]
+ 214:Code\Device\FM175XX\IOS14443/mifare_card.c ****     send_buff[1] = block;                                               /* ¿éµØÖ·                  
+ 599              		.loc 1 214 0
+ 600 0012 6C70     		strb	r4, [r5, #1]
+ 215:Code\Device\FM175XX\IOS14443/mifare_card.c ****     Clear_FIFO();
+ 601              		.loc 1 215 0
+ 602 0014 FFF7FEFF 		bl	Clear_FIFO
+ 603              	.LVL61:
+ 216:Code\Device\FM175XX\IOS14443/mifare_card.c ****     result=Pcd_Comm(Transceive,send_buff,2,rece_buff,&rece_bitlen);
+ 604              		.loc 1 216 0
+ 605 0018 03AC     		add	r4, sp, #12
+ 606 001a 05AB     		add	r3, sp, #20
+ 607 001c 0093     		str	r3, [sp]
+ 608 001e 291C     		mov	r1, r5
+ 609 0020 231C     		mov	r3, r4
+ 610 0022 0222     		mov	r2, #2
+ 611 0024 0C20     		mov	r0, #12
+ 612 0026 FFF7FEFF 		bl	Pcd_Comm
+ 613              	.LVL62:
+ 217:Code\Device\FM175XX\IOS14443/mifare_card.c ****     if ((result != TRUE )|((rece_buff[0]&0x0F) != 0x0A))                /* Èç¹ûÎ´½ÓÊÕµ½0x0A£¬±íÊ¾ÎÞ
+ 614              		.loc 1 217 0
+ 615 002a 0138     		sub	r0, r0, #1
+ 616              	.LVL63:
+ 617 002c 431E     		sub	r3, r0, #1
+ 618 002e 9841     		sbc	r0, r0, r3
+ 619 0030 0F23     		mov	r3, #15
+ 620 0032 2278     		ldrb	r2, [r4]
+ 621 0034 1340     		and	r3, r2
+ 622 0036 0A3B     		sub	r3, r3, #10
+ 623 0038 5A1E     		sub	r2, r3, #1
+ 624 003a 9341     		sbc	r3, r3, r2
+ 625 003c 1843     		orr	r0, r3
+ 218:Code\Device\FM175XX\IOS14443/mifare_card.c ****         return FALSE;
+ 626              		.loc 1 218 0
+ 627 003e 0123     		mov	r3, #1
+ 628 0040 5840     		eor	r0, r3
+ 219:Code\Device\FM175XX\IOS14443/mifare_card.c ****     return result;
+ 220:Code\Device\FM175XX\IOS14443/mifare_card.c **** }
+ 629              		.loc 1 220 0
+ 630 0042 07B0     		add	sp, sp, #28
+ 631              		@ sp needed
+ 632 0044 30BD     		pop	{r4, r5, pc}
+ 633              		.cfi_endproc
+ 634              	.LFE69:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 17
+
+
+ 635              		.size	Mifare_Transfer, .-Mifare_Transfer
+ 636              		.section	.text.Mifare_Restore,"ax",%progbits
+ 637              		.align	1
+ 638              		.global	Mifare_Restore
+ 639              		.code	16
+ 640              		.thumb_func
+ 641              		.type	Mifare_Restore, %function
+ 642              	Mifare_Restore:
+ 643              	.LFB70:
+ 221:Code\Device\FM175XX\IOS14443/mifare_card.c **** 
+ 222:Code\Device\FM175XX\IOS14443/mifare_card.c **** 
+ 223:Code\Device\FM175XX\IOS14443/mifare_card.c **** /**************************************************************************************************
+ 224:Code\Device\FM175XX\IOS14443/mifare_card.c **** ** Function name:       Mifare_Restore    
+ 225:Code\Device\FM175XX\IOS14443/mifare_card.c **** ** Descriptions:        mifare¿¨Æ¬´¢´æÃüÁî
+ 226:Code\Device\FM175XX\IOS14443/mifare_card.c **** ** input parameters:    block:¿éºÅ   0x00-0x3f    
+ 227:Code\Device\FM175XX\IOS14443/mifare_card.c **** ** output parameters:   
+ 228:Code\Device\FM175XX\IOS14443/mifare_card.c **** ** Returned value:      TRUE£º²Ù×÷³É¹¦ ERROR£º²Ù×÷Ê§°Ü    
+ 229:Code\Device\FM175XX\IOS14443/mifare_card.c **** ***************************************************************************************************
+ 230:Code\Device\FM175XX\IOS14443/mifare_card.c **** uint8_t  Mifare_Restore(uint8_t  block)
+ 231:Code\Device\FM175XX\IOS14443/mifare_card.c **** {    
+ 644              		.loc 1 231 0
+ 645              		.cfi_startproc
+ 646              	.LVL64:
+ 647 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 648              		.cfi_def_cfa_offset 20
+ 649              		.cfi_offset 4, -20
+ 650              		.cfi_offset 5, -16
+ 651              		.cfi_offset 6, -12
+ 652              		.cfi_offset 7, -8
+ 653              		.cfi_offset 14, -4
+ 654 0002 041C     		mov	r4, r0
+ 655 0004 87B0     		sub	sp, sp, #28
+ 656              		.cfi_def_cfa_offset 48
+ 232:Code\Device\FM175XX\IOS14443/mifare_card.c ****     uint8_t  result,send_buff[4],rece_buff[1];
+ 233:Code\Device\FM175XX\IOS14443/mifare_card.c ****     uint32_t  rece_bitlen;
+ 234:Code\Device\FM175XX\IOS14443/mifare_card.c ****     Pcd_SetTimer(5);
+ 657              		.loc 1 234 0
+ 658 0006 0520     		mov	r0, #5
+ 659              	.LVL65:
+ 660 0008 FFF7FEFF 		bl	Pcd_SetTimer
+ 661              	.LVL66:
+ 235:Code\Device\FM175XX\IOS14443/mifare_card.c ****     send_buff[0]=0xc2;
+ 662              		.loc 1 235 0
+ 663 000c C223     		mov	r3, #194
+ 664 000e 04AD     		add	r5, sp, #16
+ 236:Code\Device\FM175XX\IOS14443/mifare_card.c ****     send_buff[1]=block;                                                 /* ¿éµØÖ·                  
+ 237:Code\Device\FM175XX\IOS14443/mifare_card.c ****     Clear_FIFO();
+ 238:Code\Device\FM175XX\IOS14443/mifare_card.c ****     result = Pcd_Comm(Transceive,send_buff,2,rece_buff,&rece_bitlen);
+ 665              		.loc 1 238 0
+ 666 0010 03AE     		add	r6, sp, #12
+ 667 0012 05AF     		add	r7, sp, #20
+ 235:Code\Device\FM175XX\IOS14443/mifare_card.c ****     send_buff[0]=0xc2;
+ 668              		.loc 1 235 0
+ 669 0014 2B70     		strb	r3, [r5]
+ 236:Code\Device\FM175XX\IOS14443/mifare_card.c ****     send_buff[1]=block;                                                 /* ¿éµØÖ·                  
+ 670              		.loc 1 236 0
+ 671 0016 6C70     		strb	r4, [r5, #1]
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 18
+
+
+ 237:Code\Device\FM175XX\IOS14443/mifare_card.c ****     result = Pcd_Comm(Transceive,send_buff,2,rece_buff,&rece_bitlen);
+ 672              		.loc 1 237 0
+ 673 0018 FFF7FEFF 		bl	Clear_FIFO
+ 674              	.LVL67:
+ 675              		.loc 1 238 0
+ 676 001c 0097     		str	r7, [sp]
+ 677 001e 0C20     		mov	r0, #12
+ 678 0020 291C     		mov	r1, r5
+ 679 0022 0222     		mov	r2, #2
+ 680 0024 331C     		mov	r3, r6
+ 681 0026 FFF7FEFF 		bl	Pcd_Comm
+ 682              	.LVL68:
+ 239:Code\Device\FM175XX\IOS14443/mifare_card.c ****     if ((result != TRUE )|((rece_buff[0]&0x0F) != 0x0A))                  /* Èç¹ûÎ´½ÓÊÕµ½0x0A£¬±íÊ¾
+ 683              		.loc 1 239 0
+ 684 002a 0128     		cmp	r0, #1
+ 685 002c 1AD1     		bne	.L22
+ 686 002e 0F23     		mov	r3, #15
+ 687 0030 3478     		ldrb	r4, [r6]
+ 688 0032 1C40     		and	r4, r3
+ 689 0034 0A3C     		sub	r4, r4, #10
+ 690 0036 631E     		sub	r3, r4, #1
+ 691 0038 9C41     		sbc	r4, r4, r3
+ 692 003a E4B2     		uxtb	r4, r4
+ 693 003c 002C     		cmp	r4, #0
+ 694 003e 11D1     		bne	.L22
+ 240:Code\Device\FM175XX\IOS14443/mifare_card.c ****         return FALSE;
+ 241:Code\Device\FM175XX\IOS14443/mifare_card.c ****     Pcd_SetTimer(5);
+ 695              		.loc 1 241 0
+ 696 0040 0430     		add	r0, r0, #4
+ 697              	.LVL69:
+ 698 0042 FFF7FEFF 		bl	Pcd_SetTimer
+ 699              	.LVL70:
+ 242:Code\Device\FM175XX\IOS14443/mifare_card.c ****     send_buff[0]=0x00;
+ 700              		.loc 1 242 0
+ 701 0046 2C70     		strb	r4, [r5]
+ 243:Code\Device\FM175XX\IOS14443/mifare_card.c ****     send_buff[1]=0x00;
+ 702              		.loc 1 243 0
+ 703 0048 6C70     		strb	r4, [r5, #1]
+ 244:Code\Device\FM175XX\IOS14443/mifare_card.c ****     send_buff[2]=0x00;
+ 704              		.loc 1 244 0
+ 705 004a AC70     		strb	r4, [r5, #2]
+ 245:Code\Device\FM175XX\IOS14443/mifare_card.c ****     send_buff[3]=0x00;
+ 706              		.loc 1 245 0
+ 707 004c EC70     		strb	r4, [r5, #3]
+ 246:Code\Device\FM175XX\IOS14443/mifare_card.c ****     Clear_FIFO();
+ 708              		.loc 1 246 0
+ 709 004e FFF7FEFF 		bl	Clear_FIFO
+ 710              	.LVL71:
+ 247:Code\Device\FM175XX\IOS14443/mifare_card.c ****     Pcd_Comm(Transceive,send_buff,4,rece_buff,&rece_bitlen);
+ 711              		.loc 1 247 0
+ 712 0052 0097     		str	r7, [sp]
+ 713 0054 0C20     		mov	r0, #12
+ 714 0056 291C     		mov	r1, r5
+ 715 0058 0422     		mov	r2, #4
+ 716 005a 331C     		mov	r3, r6
+ 717 005c FFF7FEFF 		bl	Pcd_Comm
+ 718              	.LVL72:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 19
+
+
+ 248:Code\Device\FM175XX\IOS14443/mifare_card.c ****     return result;
+ 719              		.loc 1 248 0
+ 720 0060 0120     		mov	r0, #1
+ 721 0062 00E0     		b	.L21
+ 722              	.LVL73:
+ 723              	.L22:
+ 240:Code\Device\FM175XX\IOS14443/mifare_card.c ****     Pcd_SetTimer(5);
+ 724              		.loc 1 240 0
+ 725 0064 0020     		mov	r0, #0
+ 726              	.LVL74:
+ 727              	.L21:
+ 249:Code\Device\FM175XX\IOS14443/mifare_card.c **** }
+ 728              		.loc 1 249 0
+ 729 0066 07B0     		add	sp, sp, #28
+ 730              		@ sp needed
+ 731 0068 F0BD     		pop	{r4, r5, r6, r7, pc}
+ 732              		.cfi_endproc
+ 733              	.LFE70:
+ 734              		.size	Mifare_Restore, .-Mifare_Restore
+ 735              		.comm	ADCResultCenter,1,1
+ 736              		.text
+ 737              	.Letext0:
+ 738              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+ 739              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+ 740              		.file 4 ".\\Code\\Device\\FM175XX/fm175xx.h"
+ 741              		.file 5 ".\\Code\\Device\\FM175XX\\LPCD/lpcd_api.h"
+ 742              		.section	.debug_info,"",%progbits
+ 743              	.Ldebug_info0:
+ 744 0000 BF070000 		.4byte	0x7bf
+ 745 0004 0400     		.2byte	0x4
+ 746 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 747 000a 04       		.byte	0x4
+ 748 000b 01       		.uleb128 0x1
+ 749 000c 10000000 		.4byte	.LASF38
+ 750 0010 01       		.byte	0x1
+ 751 0011 33010000 		.4byte	.LASF39
+ 752 0015 93020000 		.4byte	.LASF40
+ 753 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 754 001d 00000000 		.4byte	0
+ 755 0021 00000000 		.4byte	.Ldebug_line0
+ 756 0025 02       		.uleb128 0x2
+ 757 0026 01       		.byte	0x1
+ 758 0027 06       		.byte	0x6
+ 759 0028 E3010000 		.4byte	.LASF0
+ 760 002c 03       		.uleb128 0x3
+ 761 002d 9E000000 		.4byte	.LASF5
+ 762 0031 02       		.byte	0x2
+ 763 0032 1D       		.byte	0x1d
+ 764 0033 37000000 		.4byte	0x37
+ 765 0037 02       		.uleb128 0x2
+ 766 0038 01       		.byte	0x1
+ 767 0039 08       		.byte	0x8
+ 768 003a CF000000 		.4byte	.LASF1
+ 769 003e 02       		.uleb128 0x2
+ 770 003f 02       		.byte	0x2
+ 771 0040 05       		.byte	0x5
+ 772 0041 57020000 		.4byte	.LASF2
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 20
+
+
+ 773 0045 02       		.uleb128 0x2
+ 774 0046 02       		.byte	0x2
+ 775 0047 07       		.byte	0x7
+ 776 0048 EF000000 		.4byte	.LASF3
+ 777 004c 02       		.uleb128 0x2
+ 778 004d 04       		.byte	0x4
+ 779 004e 05       		.byte	0x5
+ 780 004f 7C020000 		.4byte	.LASF4
+ 781 0053 03       		.uleb128 0x3
+ 782 0054 5E010000 		.4byte	.LASF6
+ 783 0058 02       		.byte	0x2
+ 784 0059 41       		.byte	0x41
+ 785 005a 5E000000 		.4byte	0x5e
+ 786 005e 02       		.uleb128 0x2
+ 787 005f 04       		.byte	0x4
+ 788 0060 07       		.byte	0x7
+ 789 0061 DD000000 		.4byte	.LASF7
+ 790 0065 02       		.uleb128 0x2
+ 791 0066 08       		.byte	0x8
+ 792 0067 05       		.byte	0x5
+ 793 0068 2C020000 		.4byte	.LASF8
+ 794 006c 02       		.uleb128 0x2
+ 795 006d 08       		.byte	0x8
+ 796 006e 07       		.byte	0x7
+ 797 006f A2010000 		.4byte	.LASF9
+ 798 0073 04       		.uleb128 0x4
+ 799 0074 04       		.byte	0x4
+ 800 0075 05       		.byte	0x5
+ 801 0076 696E7400 		.ascii	"int\000"
+ 802 007a 02       		.uleb128 0x2
+ 803 007b 04       		.byte	0x4
+ 804 007c 07       		.byte	0x7
+ 805 007d 95010000 		.4byte	.LASF10
+ 806 0081 03       		.uleb128 0x3
+ 807 0082 B9010000 		.4byte	.LASF11
+ 808 0086 03       		.byte	0x3
+ 809 0087 15       		.byte	0x15
+ 810 0088 2C000000 		.4byte	0x2c
+ 811 008c 03       		.uleb128 0x3
+ 812 008d 73020000 		.4byte	.LASF12
+ 813 0091 03       		.byte	0x3
+ 814 0092 2D       		.byte	0x2d
+ 815 0093 53000000 		.4byte	0x53
+ 816 0097 02       		.uleb128 0x2
+ 817 0098 04       		.byte	0x4
+ 818 0099 04       		.byte	0x4
+ 819 009a C3000000 		.4byte	.LASF13
+ 820 009e 02       		.uleb128 0x2
+ 821 009f 08       		.byte	0x8
+ 822 00a0 04       		.byte	0x4
+ 823 00a1 2C010000 		.4byte	.LASF14
+ 824 00a5 02       		.uleb128 0x2
+ 825 00a6 01       		.byte	0x1
+ 826 00a7 08       		.byte	0x8
+ 827 00a8 85020000 		.4byte	.LASF15
+ 828 00ac 02       		.uleb128 0x2
+ 829 00ad 04       		.byte	0x4
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 21
+
+
+ 830 00ae 07       		.byte	0x7
+ 831 00af 02020000 		.4byte	.LASF16
+ 832 00b3 05       		.uleb128 0x5
+ 833 00b4 D7010000 		.4byte	.LASF25
+ 834 00b8 01       		.byte	0x1
+ 835 00b9 23       		.byte	0x23
+ 836 00ba 81000000 		.4byte	0x81
+ 837 00be 00000000 		.4byte	.LFB63
+ 838 00c2 70000000 		.4byte	.LFE63-.LFB63
+ 839 00c6 01       		.uleb128 0x1
+ 840 00c7 9C       		.byte	0x9c
+ 841 00c8 98010000 		.4byte	0x198
+ 842 00cc 06       		.uleb128 0x6
+ 843 00cd D2010000 		.4byte	.LASF17
+ 844 00d1 01       		.byte	0x1
+ 845 00d2 23       		.byte	0x23
+ 846 00d3 81000000 		.4byte	0x81
+ 847 00d7 00000000 		.4byte	.LLST0
+ 848 00db 06       		.uleb128 0x6
+ 849 00dc 50020000 		.4byte	.LASF18
+ 850 00e0 01       		.byte	0x1
+ 851 00e1 23       		.byte	0x23
+ 852 00e2 81000000 		.4byte	0x81
+ 853 00e6 21000000 		.4byte	.LLST1
+ 854 00ea 06       		.uleb128 0x6
+ 855 00eb 1C010000 		.4byte	.LASF19
+ 856 00ef 01       		.byte	0x1
+ 857 00f0 23       		.byte	0x23
+ 858 00f1 98010000 		.4byte	0x198
+ 859 00f5 42000000 		.4byte	.LLST2
+ 860 00f9 06       		.uleb128 0x6
+ 861 00fa 47020000 		.4byte	.LASF20
+ 862 00fe 01       		.byte	0x1
+ 863 00ff 23       		.byte	0x23
+ 864 0100 98010000 		.4byte	0x198
+ 865 0104 63000000 		.4byte	.LLST3
+ 866 0108 07       		.uleb128 0x7
+ 867 0109 C1010000 		.4byte	.LASF21
+ 868 010d 01       		.byte	0x1
+ 869 010e 25       		.byte	0x25
+ 870 010f 9E010000 		.4byte	0x19e
+ 871 0113 02       		.uleb128 0x2
+ 872 0114 91       		.byte	0x91
+ 873 0115 6C       		.sleb128 -20
+ 874 0116 07       		.uleb128 0x7
+ 875 0117 F8010000 		.4byte	.LASF22
+ 876 011b 01       		.byte	0x1
+ 877 011c 25       		.byte	0x25
+ 878 011d AE010000 		.4byte	0x1ae
+ 879 0121 02       		.uleb128 0x2
+ 880 0122 91       		.byte	0x91
+ 881 0123 64       		.sleb128 -28
+ 882 0124 08       		.uleb128 0x8
+ 883 0125 CB010000 		.4byte	.LASF23
+ 884 0129 01       		.byte	0x1
+ 885 012a 25       		.byte	0x25
+ 886 012b 81000000 		.4byte	0x81
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 22
+
+
+ 887 012f 84000000 		.4byte	.LLST4
+ 888 0133 07       		.uleb128 0x7
+ 889 0134 79010000 		.4byte	.LASF24
+ 890 0138 01       		.byte	0x1
+ 891 0139 26       		.byte	0x26
+ 892 013a 8C000000 		.4byte	0x8c
+ 893 013e 02       		.uleb128 0x2
+ 894 013f 91       		.byte	0x91
+ 895 0140 68       		.sleb128 -24
+ 896 0141 09       		.uleb128 0x9
+ 897 0142 44000000 		.4byte	.LVL5
+ 898 0146 62070000 		.4byte	0x762
+ 899 014a 54010000 		.4byte	0x154
+ 900 014e 0A       		.uleb128 0xa
+ 901 014f 01       		.uleb128 0x1
+ 902 0150 50       		.byte	0x50
+ 903 0151 01       		.uleb128 0x1
+ 904 0152 31       		.byte	0x31
+ 905 0153 00       		.byte	0
+ 906 0154 0B       		.uleb128 0xb
+ 907 0155 48000000 		.4byte	.LVL6
+ 908 0159 77070000 		.4byte	0x777
+ 909 015d 09       		.uleb128 0x9
+ 910 015e 58000000 		.4byte	.LVL7
+ 911 0162 82070000 		.4byte	0x782
+ 912 0166 88010000 		.4byte	0x188
+ 913 016a 0A       		.uleb128 0xa
+ 914 016b 01       		.uleb128 0x1
+ 915 016c 53       		.byte	0x53
+ 916 016d 02       		.uleb128 0x2
+ 917 016e 91       		.byte	0x91
+ 918 016f 64       		.sleb128 -28
+ 919 0170 0A       		.uleb128 0xa
+ 920 0171 01       		.uleb128 0x1
+ 921 0172 52       		.byte	0x52
+ 922 0173 01       		.uleb128 0x1
+ 923 0174 3C       		.byte	0x3c
+ 924 0175 0A       		.uleb128 0xa
+ 925 0176 01       		.uleb128 0x1
+ 926 0177 51       		.byte	0x51
+ 927 0178 02       		.uleb128 0x2
+ 928 0179 74       		.byte	0x74
+ 929 017a 00       		.sleb128 0
+ 930 017b 0A       		.uleb128 0xa
+ 931 017c 01       		.uleb128 0x1
+ 932 017d 50       		.byte	0x50
+ 933 017e 01       		.uleb128 0x1
+ 934 017f 3E       		.byte	0x3e
+ 935 0180 0A       		.uleb128 0xa
+ 936 0181 02       		.uleb128 0x2
+ 937 0182 7D       		.byte	0x7d
+ 938 0183 00       		.sleb128 0
+ 939 0184 02       		.uleb128 0x2
+ 940 0185 91       		.byte	0x91
+ 941 0186 68       		.sleb128 -24
+ 942 0187 00       		.byte	0
+ 943 0188 0C       		.uleb128 0xc
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 23
+
+
+ 944 0189 66000000 		.4byte	.LVL9
+ 945 018d B1070000 		.4byte	0x7b1
+ 946 0191 0A       		.uleb128 0xa
+ 947 0192 01       		.uleb128 0x1
+ 948 0193 50       		.byte	0x50
+ 949 0194 01       		.uleb128 0x1
+ 950 0195 38       		.byte	0x38
+ 951 0196 00       		.byte	0
+ 952 0197 00       		.byte	0
+ 953 0198 0D       		.uleb128 0xd
+ 954 0199 04       		.byte	0x4
+ 955 019a 81000000 		.4byte	0x81
+ 956 019e 0E       		.uleb128 0xe
+ 957 019f 81000000 		.4byte	0x81
+ 958 01a3 AE010000 		.4byte	0x1ae
+ 959 01a7 0F       		.uleb128 0xf
+ 960 01a8 AC000000 		.4byte	0xac
+ 961 01ac 0B       		.byte	0xb
+ 962 01ad 00       		.byte	0
+ 963 01ae 0E       		.uleb128 0xe
+ 964 01af 81000000 		.4byte	0x81
+ 965 01b3 BE010000 		.4byte	0x1be
+ 966 01b7 0F       		.uleb128 0xf
+ 967 01b8 AC000000 		.4byte	0xac
+ 968 01bc 00       		.byte	0
+ 969 01bd 00       		.byte	0
+ 970 01be 05       		.uleb128 0x5
+ 971 01bf 1B020000 		.4byte	.LASF26
+ 972 01c3 01       		.byte	0x1
+ 973 01c4 69       		.byte	0x69
+ 974 01c5 81000000 		.4byte	0x81
+ 975 01c9 00000000 		.4byte	.LFB65
+ 976 01cd 40000000 		.4byte	.LFE65-.LFB65
+ 977 01d1 01       		.uleb128 0x1
+ 978 01d2 9C       		.byte	0x9c
+ 979 01d3 64020000 		.4byte	0x264
+ 980 01d7 06       		.uleb128 0x6
+ 981 01d8 C9000000 		.4byte	.LASF27
+ 982 01dc 01       		.byte	0x1
+ 983 01dd 69       		.byte	0x69
+ 984 01de 81000000 		.4byte	0x81
+ 985 01e2 97000000 		.4byte	.LLST5
+ 986 01e6 06       		.uleb128 0x6
+ 987 01e7 27010000 		.4byte	.LASF28
+ 988 01eb 01       		.byte	0x1
+ 989 01ec 69       		.byte	0x69
+ 990 01ed 98010000 		.4byte	0x198
+ 991 01f1 B8000000 		.4byte	.LLST6
+ 992 01f5 07       		.uleb128 0x7
+ 993 01f6 C1010000 		.4byte	.LASF21
+ 994 01fa 01       		.byte	0x1
+ 995 01fb 6B       		.byte	0x6b
+ 996 01fc 64020000 		.4byte	0x264
+ 997 0200 02       		.uleb128 0x2
+ 998 0201 91       		.byte	0x91
+ 999 0202 68       		.sleb128 -24
+ 1000 0203 08       		.uleb128 0x8
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 24
+
+
+ 1001 0204 CB010000 		.4byte	.LASF23
+ 1002 0208 01       		.byte	0x1
+ 1003 0209 6B       		.byte	0x6b
+ 1004 020a 81000000 		.4byte	0x81
+ 1005 020e E4000000 		.4byte	.LLST7
+ 1006 0212 07       		.uleb128 0x7
+ 1007 0213 79010000 		.4byte	.LASF24
+ 1008 0217 01       		.byte	0x1
+ 1009 0218 6C       		.byte	0x6c
+ 1010 0219 8C000000 		.4byte	0x8c
+ 1011 021d 02       		.uleb128 0x2
+ 1012 021e 91       		.byte	0x91
+ 1013 021f 6C       		.sleb128 -20
+ 1014 0220 09       		.uleb128 0x9
+ 1015 0221 0C000000 		.4byte	.LVL13
+ 1016 0225 62070000 		.4byte	0x762
+ 1017 0229 33020000 		.4byte	0x233
+ 1018 022d 0A       		.uleb128 0xa
+ 1019 022e 01       		.uleb128 0x1
+ 1020 022f 50       		.byte	0x50
+ 1021 0230 01       		.uleb128 0x1
+ 1022 0231 31       		.byte	0x31
+ 1023 0232 00       		.byte	0
+ 1024 0233 0B       		.uleb128 0xb
+ 1025 0234 18000000 		.4byte	.LVL14
+ 1026 0238 77070000 		.4byte	0x777
+ 1027 023c 0C       		.uleb128 0xc
+ 1028 023d 28000000 		.4byte	.LVL15
+ 1029 0241 82070000 		.4byte	0x782
+ 1030 0245 0A       		.uleb128 0xa
+ 1031 0246 01       		.uleb128 0x1
+ 1032 0247 53       		.byte	0x53
+ 1033 0248 02       		.uleb128 0x2
+ 1034 0249 75       		.byte	0x75
+ 1035 024a 00       		.sleb128 0
+ 1036 024b 0A       		.uleb128 0xa
+ 1037 024c 01       		.uleb128 0x1
+ 1038 024d 52       		.byte	0x52
+ 1039 024e 01       		.uleb128 0x1
+ 1040 024f 32       		.byte	0x32
+ 1041 0250 0A       		.uleb128 0xa
+ 1042 0251 01       		.uleb128 0x1
+ 1043 0252 51       		.byte	0x51
+ 1044 0253 02       		.uleb128 0x2
+ 1045 0254 74       		.byte	0x74
+ 1046 0255 00       		.sleb128 0
+ 1047 0256 0A       		.uleb128 0xa
+ 1048 0257 01       		.uleb128 0x1
+ 1049 0258 50       		.byte	0x50
+ 1050 0259 01       		.uleb128 0x1
+ 1051 025a 3C       		.byte	0x3c
+ 1052 025b 0A       		.uleb128 0xa
+ 1053 025c 02       		.uleb128 0x2
+ 1054 025d 7D       		.byte	0x7d
+ 1055 025e 00       		.sleb128 0
+ 1056 025f 02       		.uleb128 0x2
+ 1057 0260 91       		.byte	0x91
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 25
+
+
+ 1058 0261 6C       		.sleb128 -20
+ 1059 0262 00       		.byte	0
+ 1060 0263 00       		.byte	0
+ 1061 0264 0E       		.uleb128 0xe
+ 1062 0265 81000000 		.4byte	0x81
+ 1063 0269 74020000 		.4byte	0x274
+ 1064 026d 0F       		.uleb128 0xf
+ 1065 026e AC000000 		.4byte	0xac
+ 1066 0272 01       		.byte	0x1
+ 1067 0273 00       		.byte	0
+ 1068 0274 05       		.uleb128 0x5
+ 1069 0275 61020000 		.4byte	.LASF29
+ 1070 0279 01       		.byte	0x1
+ 1071 027a 7F       		.byte	0x7f
+ 1072 027b 81000000 		.4byte	0x81
+ 1073 027f 00000000 		.4byte	.LFB66
+ 1074 0283 70000000 		.4byte	.LFE66-.LFB66
+ 1075 0287 01       		.uleb128 0x1
+ 1076 0288 9C       		.byte	0x9c
+ 1077 0289 65030000 		.4byte	0x365
+ 1078 028d 06       		.uleb128 0x6
+ 1079 028e C9000000 		.4byte	.LASF27
+ 1080 0292 01       		.byte	0x1
+ 1081 0293 7F       		.byte	0x7f
+ 1082 0294 81000000 		.4byte	0x81
+ 1083 0298 F7000000 		.4byte	.LLST8
+ 1084 029c 06       		.uleb128 0x6
+ 1085 029d 27010000 		.4byte	.LASF28
+ 1086 02a1 01       		.byte	0x1
+ 1087 02a2 7F       		.byte	0x7f
+ 1088 02a3 98010000 		.4byte	0x198
+ 1089 02a7 18010000 		.4byte	.LLST9
+ 1090 02ab 08       		.uleb128 0x8
+ 1091 02ac CB010000 		.4byte	.LASF23
+ 1092 02b0 01       		.byte	0x1
+ 1093 02b1 81       		.byte	0x81
+ 1094 02b2 81000000 		.4byte	0x81
+ 1095 02b6 44010000 		.4byte	.LLST10
+ 1096 02ba 07       		.uleb128 0x7
+ 1097 02bb C1010000 		.4byte	.LASF21
+ 1098 02bf 01       		.byte	0x1
+ 1099 02c0 81       		.byte	0x81
+ 1100 02c1 65030000 		.4byte	0x365
+ 1101 02c5 02       		.uleb128 0x2
+ 1102 02c6 91       		.byte	0x91
+ 1103 02c7 58       		.sleb128 -40
+ 1104 02c8 07       		.uleb128 0x7
+ 1105 02c9 F8010000 		.4byte	.LASF22
+ 1106 02cd 01       		.byte	0x1
+ 1107 02ce 81       		.byte	0x81
+ 1108 02cf AE010000 		.4byte	0x1ae
+ 1109 02d3 02       		.uleb128 0x2
+ 1110 02d4 91       		.byte	0x91
+ 1111 02d5 50       		.sleb128 -48
+ 1112 02d6 07       		.uleb128 0x7
+ 1113 02d7 79010000 		.4byte	.LASF24
+ 1114 02db 01       		.byte	0x1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 26
+
+
+ 1115 02dc 82       		.byte	0x82
+ 1116 02dd 8C000000 		.4byte	0x8c
+ 1117 02e1 02       		.uleb128 0x2
+ 1118 02e2 91       		.byte	0x91
+ 1119 02e3 54       		.sleb128 -44
+ 1120 02e4 09       		.uleb128 0x9
+ 1121 02e5 0E000000 		.4byte	.LVL20
+ 1122 02e9 62070000 		.4byte	0x762
+ 1123 02ed F7020000 		.4byte	0x2f7
+ 1124 02f1 0A       		.uleb128 0xa
+ 1125 02f2 01       		.uleb128 0x1
+ 1126 02f3 50       		.byte	0x50
+ 1127 02f4 01       		.uleb128 0x1
+ 1128 02f5 31       		.byte	0x31
+ 1129 02f6 00       		.byte	0
+ 1130 02f7 0B       		.uleb128 0xb
+ 1131 02f8 1E000000 		.4byte	.LVL21
+ 1132 02fc 77070000 		.4byte	0x777
+ 1133 0300 09       		.uleb128 0x9
+ 1134 0301 2C000000 		.4byte	.LVL22
+ 1135 0305 82070000 		.4byte	0x782
+ 1136 0309 2B030000 		.4byte	0x32b
+ 1137 030d 0A       		.uleb128 0xa
+ 1138 030e 01       		.uleb128 0x1
+ 1139 030f 53       		.byte	0x53
+ 1140 0310 02       		.uleb128 0x2
+ 1141 0311 75       		.byte	0x75
+ 1142 0312 00       		.sleb128 0
+ 1143 0313 0A       		.uleb128 0xa
+ 1144 0314 01       		.uleb128 0x1
+ 1145 0315 52       		.byte	0x52
+ 1146 0316 01       		.uleb128 0x1
+ 1147 0317 32       		.byte	0x32
+ 1148 0318 0A       		.uleb128 0xa
+ 1149 0319 01       		.uleb128 0x1
+ 1150 031a 51       		.byte	0x51
+ 1151 031b 02       		.uleb128 0x2
+ 1152 031c 74       		.byte	0x74
+ 1153 031d 00       		.sleb128 0
+ 1154 031e 0A       		.uleb128 0xa
+ 1155 031f 01       		.uleb128 0x1
+ 1156 0320 50       		.byte	0x50
+ 1157 0321 01       		.uleb128 0x1
+ 1158 0322 3C       		.byte	0x3c
+ 1159 0323 0A       		.uleb128 0xa
+ 1160 0324 02       		.uleb128 0x2
+ 1161 0325 7D       		.byte	0x7d
+ 1162 0326 00       		.sleb128 0
+ 1163 0327 02       		.uleb128 0x2
+ 1164 0328 76       		.byte	0x76
+ 1165 0329 00       		.sleb128 0
+ 1166 032a 00       		.byte	0
+ 1167 032b 0B       		.uleb128 0xb
+ 1168 032c 40000000 		.4byte	.LVL24
+ 1169 0330 62070000 		.4byte	0x762
+ 1170 0334 0B       		.uleb128 0xb
+ 1171 0335 44000000 		.4byte	.LVL25
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 27
+
+
+ 1172 0339 77070000 		.4byte	0x777
+ 1173 033d 0C       		.uleb128 0xc
+ 1174 033e 52000000 		.4byte	.LVL26
+ 1175 0342 82070000 		.4byte	0x782
+ 1176 0346 0A       		.uleb128 0xa
+ 1177 0347 01       		.uleb128 0x1
+ 1178 0348 53       		.byte	0x53
+ 1179 0349 02       		.uleb128 0x2
+ 1180 034a 75       		.byte	0x75
+ 1181 034b 00       		.sleb128 0
+ 1182 034c 0A       		.uleb128 0xa
+ 1183 034d 01       		.uleb128 0x1
+ 1184 034e 52       		.byte	0x52
+ 1185 034f 01       		.uleb128 0x1
+ 1186 0350 40       		.byte	0x40
+ 1187 0351 0A       		.uleb128 0xa
+ 1188 0352 01       		.uleb128 0x1
+ 1189 0353 51       		.byte	0x51
+ 1190 0354 02       		.uleb128 0x2
+ 1191 0355 77       		.byte	0x77
+ 1192 0356 00       		.sleb128 0
+ 1193 0357 0A       		.uleb128 0xa
+ 1194 0358 01       		.uleb128 0x1
+ 1195 0359 50       		.byte	0x50
+ 1196 035a 01       		.uleb128 0x1
+ 1197 035b 3C       		.byte	0x3c
+ 1198 035c 0A       		.uleb128 0xa
+ 1199 035d 02       		.uleb128 0x2
+ 1200 035e 7D       		.byte	0x7d
+ 1201 035f 00       		.sleb128 0
+ 1202 0360 02       		.uleb128 0x2
+ 1203 0361 76       		.byte	0x76
+ 1204 0362 00       		.sleb128 0
+ 1205 0363 00       		.byte	0
+ 1206 0364 00       		.byte	0
+ 1207 0365 0E       		.uleb128 0xe
+ 1208 0366 81000000 		.4byte	0x81
+ 1209 036a 75030000 		.4byte	0x375
+ 1210 036e 0F       		.uleb128 0xf
+ 1211 036f AC000000 		.4byte	0xac
+ 1212 0373 0F       		.byte	0xf
+ 1213 0374 00       		.byte	0
+ 1214 0375 05       		.uleb128 0x5
+ 1215 0376 00000000 		.4byte	.LASF30
+ 1216 037a 01       		.byte	0x1
+ 1217 037b 4B       		.byte	0x4b
+ 1218 037c 81000000 		.4byte	0x81
+ 1219 0380 00000000 		.4byte	.LFB64
+ 1220 0384 46000000 		.4byte	.LFE64-.LFB64
+ 1221 0388 01       		.uleb128 0x1
+ 1222 0389 9C       		.byte	0x9c
+ 1223 038a D8030000 		.4byte	0x3d8
+ 1224 038e 06       		.uleb128 0x6
+ 1225 038f C9000000 		.4byte	.LASF27
+ 1226 0393 01       		.byte	0x1
+ 1227 0394 4B       		.byte	0x4b
+ 1228 0395 81000000 		.4byte	0x81
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 28
+
+
+ 1229 0399 6D010000 		.4byte	.LLST11
+ 1230 039d 06       		.uleb128 0x6
+ 1231 039e 27010000 		.4byte	.LASF28
+ 1232 03a2 01       		.byte	0x1
+ 1233 03a3 4B       		.byte	0x4b
+ 1234 03a4 98010000 		.4byte	0x198
+ 1235 03a8 8E010000 		.4byte	.LLST12
+ 1236 03ac 07       		.uleb128 0x7
+ 1237 03ad B8000000 		.4byte	.LASF31
+ 1238 03b1 01       		.byte	0x1
+ 1239 03b2 4D       		.byte	0x4d
+ 1240 03b3 65030000 		.4byte	0x365
+ 1241 03b7 02       		.uleb128 0x2
+ 1242 03b8 91       		.byte	0x91
+ 1243 03b9 60       		.sleb128 -32
+ 1244 03ba 07       		.uleb128 0x7
+ 1245 03bb CB010000 		.4byte	.LASF23
+ 1246 03bf 01       		.byte	0x1
+ 1247 03c0 4D       		.byte	0x4d
+ 1248 03c1 81000000 		.4byte	0x81
+ 1249 03c5 01       		.uleb128 0x1
+ 1250 03c6 50       		.byte	0x50
+ 1251 03c7 0C       		.uleb128 0xc
+ 1252 03c8 42000000 		.4byte	.LVL33
+ 1253 03cc 74020000 		.4byte	0x274
+ 1254 03d0 0A       		.uleb128 0xa
+ 1255 03d1 01       		.uleb128 0x1
+ 1256 03d2 51       		.byte	0x51
+ 1257 03d3 02       		.uleb128 0x2
+ 1258 03d4 76       		.byte	0x76
+ 1259 03d5 00       		.sleb128 0
+ 1260 03d6 00       		.byte	0
+ 1261 03d7 00       		.byte	0
+ 1262 03d8 05       		.uleb128 0x5
+ 1263 03d9 A8000000 		.4byte	.LASF32
+ 1264 03dd 01       		.byte	0x1
+ 1265 03de 9D       		.byte	0x9d
+ 1266 03df 81000000 		.4byte	0x81
+ 1267 03e3 00000000 		.4byte	.LFB67
+ 1268 03e7 5C000000 		.4byte	.LFE67-.LFB67
+ 1269 03eb 01       		.uleb128 0x1
+ 1270 03ec 9C       		.byte	0x9c
+ 1271 03ed C9040000 		.4byte	0x4c9
+ 1272 03f1 06       		.uleb128 0x6
+ 1273 03f2 C9000000 		.4byte	.LASF27
+ 1274 03f6 01       		.byte	0x1
+ 1275 03f7 9D       		.byte	0x9d
+ 1276 03f8 81000000 		.4byte	0x81
+ 1277 03fc AF010000 		.4byte	.LLST13
+ 1278 0400 06       		.uleb128 0x6
+ 1279 0401 27010000 		.4byte	.LASF28
+ 1280 0405 01       		.byte	0x1
+ 1281 0406 9D       		.byte	0x9d
+ 1282 0407 98010000 		.4byte	0x198
+ 1283 040b D0010000 		.4byte	.LLST14
+ 1284 040f 08       		.uleb128 0x8
+ 1285 0410 CB010000 		.4byte	.LASF23
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 29
+
+
+ 1286 0414 01       		.byte	0x1
+ 1287 0415 9F       		.byte	0x9f
+ 1288 0416 81000000 		.4byte	0x81
+ 1289 041a FC010000 		.4byte	.LLST15
+ 1290 041e 07       		.uleb128 0x7
+ 1291 041f C1010000 		.4byte	.LASF21
+ 1292 0423 01       		.byte	0x1
+ 1293 0424 9F       		.byte	0x9f
+ 1294 0425 64020000 		.4byte	0x264
+ 1295 0429 02       		.uleb128 0x2
+ 1296 042a 91       		.byte	0x91
+ 1297 042b 60       		.sleb128 -32
+ 1298 042c 07       		.uleb128 0x7
+ 1299 042d F8010000 		.4byte	.LASF22
+ 1300 0431 01       		.byte	0x1
+ 1301 0432 9F       		.byte	0x9f
+ 1302 0433 AE010000 		.4byte	0x1ae
+ 1303 0437 02       		.uleb128 0x2
+ 1304 0438 91       		.byte	0x91
+ 1305 0439 5C       		.sleb128 -36
+ 1306 043a 07       		.uleb128 0x7
+ 1307 043b 79010000 		.4byte	.LASF24
+ 1308 043f 01       		.byte	0x1
+ 1309 0440 A0       		.byte	0xa0
+ 1310 0441 8C000000 		.4byte	0x8c
+ 1311 0445 02       		.uleb128 0x2
+ 1312 0446 91       		.byte	0x91
+ 1313 0447 64       		.sleb128 -28
+ 1314 0448 09       		.uleb128 0x9
+ 1315 0449 0E000000 		.4byte	.LVL36
+ 1316 044d 62070000 		.4byte	0x762
+ 1317 0451 5B040000 		.4byte	0x45b
+ 1318 0455 0A       		.uleb128 0xa
+ 1319 0456 01       		.uleb128 0x1
+ 1320 0457 50       		.byte	0x50
+ 1321 0458 01       		.uleb128 0x1
+ 1322 0459 35       		.byte	0x35
+ 1323 045a 00       		.byte	0
+ 1324 045b 0B       		.uleb128 0xb
+ 1325 045c 1E000000 		.4byte	.LVL37
+ 1326 0460 77070000 		.4byte	0x777
+ 1327 0464 09       		.uleb128 0x9
+ 1328 0465 2C000000 		.4byte	.LVL38
+ 1329 0469 82070000 		.4byte	0x782
+ 1330 046d 8F040000 		.4byte	0x48f
+ 1331 0471 0A       		.uleb128 0xa
+ 1332 0472 01       		.uleb128 0x1
+ 1333 0473 53       		.byte	0x53
+ 1334 0474 02       		.uleb128 0x2
+ 1335 0475 74       		.byte	0x74
+ 1336 0476 00       		.sleb128 0
+ 1337 0477 0A       		.uleb128 0xa
+ 1338 0478 01       		.uleb128 0x1
+ 1339 0479 52       		.byte	0x52
+ 1340 047a 01       		.uleb128 0x1
+ 1341 047b 32       		.byte	0x32
+ 1342 047c 0A       		.uleb128 0xa
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 30
+
+
+ 1343 047d 01       		.uleb128 0x1
+ 1344 047e 51       		.byte	0x51
+ 1345 047f 02       		.uleb128 0x2
+ 1346 0480 77       		.byte	0x77
+ 1347 0481 00       		.sleb128 0
+ 1348 0482 0A       		.uleb128 0xa
+ 1349 0483 01       		.uleb128 0x1
+ 1350 0484 50       		.byte	0x50
+ 1351 0485 01       		.uleb128 0x1
+ 1352 0486 3C       		.byte	0x3c
+ 1353 0487 0A       		.uleb128 0xa
+ 1354 0488 02       		.uleb128 0x2
+ 1355 0489 7D       		.byte	0x7d
+ 1356 048a 00       		.sleb128 0
+ 1357 048b 02       		.uleb128 0x2
+ 1358 048c 75       		.byte	0x75
+ 1359 048d 00       		.sleb128 0
+ 1360 048e 00       		.byte	0
+ 1361 048f 0B       		.uleb128 0xb
+ 1362 0490 40000000 		.4byte	.LVL40
+ 1363 0494 62070000 		.4byte	0x762
+ 1364 0498 0B       		.uleb128 0xb
+ 1365 0499 44000000 		.4byte	.LVL41
+ 1366 049d 77070000 		.4byte	0x777
+ 1367 04a1 0C       		.uleb128 0xc
+ 1368 04a2 52000000 		.4byte	.LVL42
+ 1369 04a6 82070000 		.4byte	0x782
+ 1370 04aa 0A       		.uleb128 0xa
+ 1371 04ab 01       		.uleb128 0x1
+ 1372 04ac 53       		.byte	0x53
+ 1373 04ad 02       		.uleb128 0x2
+ 1374 04ae 74       		.byte	0x74
+ 1375 04af 00       		.sleb128 0
+ 1376 04b0 0A       		.uleb128 0xa
+ 1377 04b1 01       		.uleb128 0x1
+ 1378 04b2 52       		.byte	0x52
+ 1379 04b3 01       		.uleb128 0x1
+ 1380 04b4 34       		.byte	0x34
+ 1381 04b5 0A       		.uleb128 0xa
+ 1382 04b6 01       		.uleb128 0x1
+ 1383 04b7 51       		.byte	0x51
+ 1384 04b8 02       		.uleb128 0x2
+ 1385 04b9 76       		.byte	0x76
+ 1386 04ba 00       		.sleb128 0
+ 1387 04bb 0A       		.uleb128 0xa
+ 1388 04bc 01       		.uleb128 0x1
+ 1389 04bd 50       		.byte	0x50
+ 1390 04be 01       		.uleb128 0x1
+ 1391 04bf 3C       		.byte	0x3c
+ 1392 04c0 0A       		.uleb128 0xa
+ 1393 04c1 02       		.uleb128 0x2
+ 1394 04c2 7D       		.byte	0x7d
+ 1395 04c3 00       		.sleb128 0
+ 1396 04c4 02       		.uleb128 0x2
+ 1397 04c5 75       		.byte	0x75
+ 1398 04c6 00       		.sleb128 0
+ 1399 04c7 00       		.byte	0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 31
+
+
+ 1400 04c8 00       		.byte	0
+ 1401 04c9 05       		.uleb128 0x5
+ 1402 04ca 0B020000 		.4byte	.LASF33
+ 1403 04ce 01       		.byte	0x1
+ 1404 04cf B7       		.byte	0xb7
+ 1405 04d0 81000000 		.4byte	0x81
+ 1406 04d4 00000000 		.4byte	.LFB68
+ 1407 04d8 5C000000 		.4byte	.LFE68-.LFB68
+ 1408 04dc 01       		.uleb128 0x1
+ 1409 04dd 9C       		.byte	0x9c
+ 1410 04de BA050000 		.4byte	0x5ba
+ 1411 04e2 06       		.uleb128 0x6
+ 1412 04e3 C9000000 		.4byte	.LASF27
+ 1413 04e7 01       		.byte	0x1
+ 1414 04e8 B7       		.byte	0xb7
+ 1415 04e9 81000000 		.4byte	0x81
+ 1416 04ed 1A020000 		.4byte	.LLST16
+ 1417 04f1 06       		.uleb128 0x6
+ 1418 04f2 27010000 		.4byte	.LASF28
+ 1419 04f6 01       		.byte	0x1
+ 1420 04f7 B7       		.byte	0xb7
+ 1421 04f8 98010000 		.4byte	0x198
+ 1422 04fc 3B020000 		.4byte	.LLST17
+ 1423 0500 08       		.uleb128 0x8
+ 1424 0501 CB010000 		.4byte	.LASF23
+ 1425 0505 01       		.byte	0x1
+ 1426 0506 B9       		.byte	0xb9
+ 1427 0507 81000000 		.4byte	0x81
+ 1428 050b 67020000 		.4byte	.LLST18
+ 1429 050f 07       		.uleb128 0x7
+ 1430 0510 C1010000 		.4byte	.LASF21
+ 1431 0514 01       		.byte	0x1
+ 1432 0515 B9       		.byte	0xb9
+ 1433 0516 64020000 		.4byte	0x264
+ 1434 051a 02       		.uleb128 0x2
+ 1435 051b 91       		.byte	0x91
+ 1436 051c 60       		.sleb128 -32
+ 1437 051d 07       		.uleb128 0x7
+ 1438 051e F8010000 		.4byte	.LASF22
+ 1439 0522 01       		.byte	0x1
+ 1440 0523 B9       		.byte	0xb9
+ 1441 0524 AE010000 		.4byte	0x1ae
+ 1442 0528 02       		.uleb128 0x2
+ 1443 0529 91       		.byte	0x91
+ 1444 052a 5C       		.sleb128 -36
+ 1445 052b 07       		.uleb128 0x7
+ 1446 052c 79010000 		.4byte	.LASF24
+ 1447 0530 01       		.byte	0x1
+ 1448 0531 BA       		.byte	0xba
+ 1449 0532 8C000000 		.4byte	0x8c
+ 1450 0536 02       		.uleb128 0x2
+ 1451 0537 91       		.byte	0x91
+ 1452 0538 64       		.sleb128 -28
+ 1453 0539 09       		.uleb128 0x9
+ 1454 053a 0E000000 		.4byte	.LVL48
+ 1455 053e 62070000 		.4byte	0x762
+ 1456 0542 4C050000 		.4byte	0x54c
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 32
+
+
+ 1457 0546 0A       		.uleb128 0xa
+ 1458 0547 01       		.uleb128 0x1
+ 1459 0548 50       		.byte	0x50
+ 1460 0549 01       		.uleb128 0x1
+ 1461 054a 35       		.byte	0x35
+ 1462 054b 00       		.byte	0
+ 1463 054c 0B       		.uleb128 0xb
+ 1464 054d 1E000000 		.4byte	.LVL49
+ 1465 0551 77070000 		.4byte	0x777
+ 1466 0555 09       		.uleb128 0x9
+ 1467 0556 2C000000 		.4byte	.LVL50
+ 1468 055a 82070000 		.4byte	0x782
+ 1469 055e 80050000 		.4byte	0x580
+ 1470 0562 0A       		.uleb128 0xa
+ 1471 0563 01       		.uleb128 0x1
+ 1472 0564 53       		.byte	0x53
+ 1473 0565 02       		.uleb128 0x2
+ 1474 0566 74       		.byte	0x74
+ 1475 0567 00       		.sleb128 0
+ 1476 0568 0A       		.uleb128 0xa
+ 1477 0569 01       		.uleb128 0x1
+ 1478 056a 52       		.byte	0x52
+ 1479 056b 01       		.uleb128 0x1
+ 1480 056c 32       		.byte	0x32
+ 1481 056d 0A       		.uleb128 0xa
+ 1482 056e 01       		.uleb128 0x1
+ 1483 056f 51       		.byte	0x51
+ 1484 0570 02       		.uleb128 0x2
+ 1485 0571 77       		.byte	0x77
+ 1486 0572 00       		.sleb128 0
+ 1487 0573 0A       		.uleb128 0xa
+ 1488 0574 01       		.uleb128 0x1
+ 1489 0575 50       		.byte	0x50
+ 1490 0576 01       		.uleb128 0x1
+ 1491 0577 3C       		.byte	0x3c
+ 1492 0578 0A       		.uleb128 0xa
+ 1493 0579 02       		.uleb128 0x2
+ 1494 057a 7D       		.byte	0x7d
+ 1495 057b 00       		.sleb128 0
+ 1496 057c 02       		.uleb128 0x2
+ 1497 057d 75       		.byte	0x75
+ 1498 057e 00       		.sleb128 0
+ 1499 057f 00       		.byte	0
+ 1500 0580 0B       		.uleb128 0xb
+ 1501 0581 40000000 		.4byte	.LVL52
+ 1502 0585 62070000 		.4byte	0x762
+ 1503 0589 0B       		.uleb128 0xb
+ 1504 058a 44000000 		.4byte	.LVL53
+ 1505 058e 77070000 		.4byte	0x777
+ 1506 0592 0C       		.uleb128 0xc
+ 1507 0593 52000000 		.4byte	.LVL54
+ 1508 0597 82070000 		.4byte	0x782
+ 1509 059b 0A       		.uleb128 0xa
+ 1510 059c 01       		.uleb128 0x1
+ 1511 059d 53       		.byte	0x53
+ 1512 059e 02       		.uleb128 0x2
+ 1513 059f 74       		.byte	0x74
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 33
+
+
+ 1514 05a0 00       		.sleb128 0
+ 1515 05a1 0A       		.uleb128 0xa
+ 1516 05a2 01       		.uleb128 0x1
+ 1517 05a3 52       		.byte	0x52
+ 1518 05a4 01       		.uleb128 0x1
+ 1519 05a5 34       		.byte	0x34
+ 1520 05a6 0A       		.uleb128 0xa
+ 1521 05a7 01       		.uleb128 0x1
+ 1522 05a8 51       		.byte	0x51
+ 1523 05a9 02       		.uleb128 0x2
+ 1524 05aa 76       		.byte	0x76
+ 1525 05ab 00       		.sleb128 0
+ 1526 05ac 0A       		.uleb128 0xa
+ 1527 05ad 01       		.uleb128 0x1
+ 1528 05ae 50       		.byte	0x50
+ 1529 05af 01       		.uleb128 0x1
+ 1530 05b0 3C       		.byte	0x3c
+ 1531 05b1 0A       		.uleb128 0xa
+ 1532 05b2 02       		.uleb128 0x2
+ 1533 05b3 7D       		.byte	0x7d
+ 1534 05b4 00       		.sleb128 0
+ 1535 05b5 02       		.uleb128 0x2
+ 1536 05b6 75       		.byte	0x75
+ 1537 05b7 00       		.sleb128 0
+ 1538 05b8 00       		.byte	0
+ 1539 05b9 00       		.byte	0
+ 1540 05ba 05       		.uleb128 0x5
+ 1541 05bb 69010000 		.4byte	.LASF34
+ 1542 05bf 01       		.byte	0x1
+ 1543 05c0 D0       		.byte	0xd0
+ 1544 05c1 81000000 		.4byte	0x81
+ 1545 05c5 00000000 		.4byte	.LFB69
+ 1546 05c9 46000000 		.4byte	.LFE69-.LFB69
+ 1547 05cd 01       		.uleb128 0x1
+ 1548 05ce 9C       		.byte	0x9c
+ 1549 05cf 5F060000 		.4byte	0x65f
+ 1550 05d3 06       		.uleb128 0x6
+ 1551 05d4 C9000000 		.4byte	.LASF27
+ 1552 05d8 01       		.byte	0x1
+ 1553 05d9 D0       		.byte	0xd0
+ 1554 05da 81000000 		.4byte	0x81
+ 1555 05de 85020000 		.4byte	.LLST19
+ 1556 05e2 08       		.uleb128 0x8
+ 1557 05e3 CB010000 		.4byte	.LASF23
+ 1558 05e7 01       		.byte	0x1
+ 1559 05e8 D2       		.byte	0xd2
+ 1560 05e9 81000000 		.4byte	0x81
+ 1561 05ed A6020000 		.4byte	.LLST20
+ 1562 05f1 07       		.uleb128 0x7
+ 1563 05f2 C1010000 		.4byte	.LASF21
+ 1564 05f6 01       		.byte	0x1
+ 1565 05f7 D2       		.byte	0xd2
+ 1566 05f8 64020000 		.4byte	0x264
+ 1567 05fc 02       		.uleb128 0x2
+ 1568 05fd 91       		.byte	0x91
+ 1569 05fe 68       		.sleb128 -24
+ 1570 05ff 07       		.uleb128 0x7
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 34
+
+
+ 1571 0600 F8010000 		.4byte	.LASF22
+ 1572 0604 01       		.byte	0x1
+ 1573 0605 D2       		.byte	0xd2
+ 1574 0606 AE010000 		.4byte	0x1ae
+ 1575 060a 02       		.uleb128 0x2
+ 1576 060b 91       		.byte	0x91
+ 1577 060c 64       		.sleb128 -28
+ 1578 060d 07       		.uleb128 0x7
+ 1579 060e 79010000 		.4byte	.LASF24
+ 1580 0612 01       		.byte	0x1
+ 1581 0613 D3       		.byte	0xd3
+ 1582 0614 8C000000 		.4byte	0x8c
+ 1583 0618 02       		.uleb128 0x2
+ 1584 0619 91       		.byte	0x91
+ 1585 061a 6C       		.sleb128 -20
+ 1586 061b 09       		.uleb128 0x9
+ 1587 061c 0C000000 		.4byte	.LVL60
+ 1588 0620 62070000 		.4byte	0x762
+ 1589 0624 2E060000 		.4byte	0x62e
+ 1590 0628 0A       		.uleb128 0xa
+ 1591 0629 01       		.uleb128 0x1
+ 1592 062a 50       		.byte	0x50
+ 1593 062b 01       		.uleb128 0x1
+ 1594 062c 35       		.byte	0x35
+ 1595 062d 00       		.byte	0
+ 1596 062e 0B       		.uleb128 0xb
+ 1597 062f 18000000 		.4byte	.LVL61
+ 1598 0633 77070000 		.4byte	0x777
+ 1599 0637 0C       		.uleb128 0xc
+ 1600 0638 2A000000 		.4byte	.LVL62
+ 1601 063c 82070000 		.4byte	0x782
+ 1602 0640 0A       		.uleb128 0xa
+ 1603 0641 01       		.uleb128 0x1
+ 1604 0642 53       		.byte	0x53
+ 1605 0643 02       		.uleb128 0x2
+ 1606 0644 74       		.byte	0x74
+ 1607 0645 00       		.sleb128 0
+ 1608 0646 0A       		.uleb128 0xa
+ 1609 0647 01       		.uleb128 0x1
+ 1610 0648 52       		.byte	0x52
+ 1611 0649 01       		.uleb128 0x1
+ 1612 064a 32       		.byte	0x32
+ 1613 064b 0A       		.uleb128 0xa
+ 1614 064c 01       		.uleb128 0x1
+ 1615 064d 51       		.byte	0x51
+ 1616 064e 02       		.uleb128 0x2
+ 1617 064f 75       		.byte	0x75
+ 1618 0650 00       		.sleb128 0
+ 1619 0651 0A       		.uleb128 0xa
+ 1620 0652 01       		.uleb128 0x1
+ 1621 0653 50       		.byte	0x50
+ 1622 0654 01       		.uleb128 0x1
+ 1623 0655 3C       		.byte	0x3c
+ 1624 0656 0A       		.uleb128 0xa
+ 1625 0657 02       		.uleb128 0x2
+ 1626 0658 7D       		.byte	0x7d
+ 1627 0659 00       		.sleb128 0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 35
+
+
+ 1628 065a 02       		.uleb128 0x2
+ 1629 065b 91       		.byte	0x91
+ 1630 065c 6C       		.sleb128 -20
+ 1631 065d 00       		.byte	0
+ 1632 065e 00       		.byte	0
+ 1633 065f 05       		.uleb128 0x5
+ 1634 0660 02010000 		.4byte	.LASF35
+ 1635 0664 01       		.byte	0x1
+ 1636 0665 E6       		.byte	0xe6
+ 1637 0666 81000000 		.4byte	0x81
+ 1638 066a 00000000 		.4byte	.LFB70
+ 1639 066e 6A000000 		.4byte	.LFE70-.LFB70
+ 1640 0672 01       		.uleb128 0x1
+ 1641 0673 9C       		.byte	0x9c
+ 1642 0674 41070000 		.4byte	0x741
+ 1643 0678 06       		.uleb128 0x6
+ 1644 0679 C9000000 		.4byte	.LASF27
+ 1645 067d 01       		.byte	0x1
+ 1646 067e E6       		.byte	0xe6
+ 1647 067f 81000000 		.4byte	0x81
+ 1648 0683 B9020000 		.4byte	.LLST21
+ 1649 0687 08       		.uleb128 0x8
+ 1650 0688 CB010000 		.4byte	.LASF23
+ 1651 068c 01       		.byte	0x1
+ 1652 068d E8       		.byte	0xe8
+ 1653 068e 81000000 		.4byte	0x81
+ 1654 0692 DA020000 		.4byte	.LLST22
+ 1655 0696 07       		.uleb128 0x7
+ 1656 0697 C1010000 		.4byte	.LASF21
+ 1657 069b 01       		.byte	0x1
+ 1658 069c E8       		.byte	0xe8
+ 1659 069d 41070000 		.4byte	0x741
+ 1660 06a1 02       		.uleb128 0x2
+ 1661 06a2 91       		.byte	0x91
+ 1662 06a3 60       		.sleb128 -32
+ 1663 06a4 07       		.uleb128 0x7
+ 1664 06a5 F8010000 		.4byte	.LASF22
+ 1665 06a9 01       		.byte	0x1
+ 1666 06aa E8       		.byte	0xe8
+ 1667 06ab AE010000 		.4byte	0x1ae
+ 1668 06af 02       		.uleb128 0x2
+ 1669 06b0 91       		.byte	0x91
+ 1670 06b1 5C       		.sleb128 -36
+ 1671 06b2 07       		.uleb128 0x7
+ 1672 06b3 79010000 		.4byte	.LASF24
+ 1673 06b7 01       		.byte	0x1
+ 1674 06b8 E9       		.byte	0xe9
+ 1675 06b9 8C000000 		.4byte	0x8c
+ 1676 06bd 02       		.uleb128 0x2
+ 1677 06be 91       		.byte	0x91
+ 1678 06bf 64       		.sleb128 -28
+ 1679 06c0 09       		.uleb128 0x9
+ 1680 06c1 0C000000 		.4byte	.LVL66
+ 1681 06c5 62070000 		.4byte	0x762
+ 1682 06c9 D3060000 		.4byte	0x6d3
+ 1683 06cd 0A       		.uleb128 0xa
+ 1684 06ce 01       		.uleb128 0x1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 36
+
+
+ 1685 06cf 50       		.byte	0x50
+ 1686 06d0 01       		.uleb128 0x1
+ 1687 06d1 35       		.byte	0x35
+ 1688 06d2 00       		.byte	0
+ 1689 06d3 0B       		.uleb128 0xb
+ 1690 06d4 1C000000 		.4byte	.LVL67
+ 1691 06d8 77070000 		.4byte	0x777
+ 1692 06dc 09       		.uleb128 0x9
+ 1693 06dd 2A000000 		.4byte	.LVL68
+ 1694 06e1 82070000 		.4byte	0x782
+ 1695 06e5 07070000 		.4byte	0x707
+ 1696 06e9 0A       		.uleb128 0xa
+ 1697 06ea 01       		.uleb128 0x1
+ 1698 06eb 53       		.byte	0x53
+ 1699 06ec 02       		.uleb128 0x2
+ 1700 06ed 76       		.byte	0x76
+ 1701 06ee 00       		.sleb128 0
+ 1702 06ef 0A       		.uleb128 0xa
+ 1703 06f0 01       		.uleb128 0x1
+ 1704 06f1 52       		.byte	0x52
+ 1705 06f2 01       		.uleb128 0x1
+ 1706 06f3 32       		.byte	0x32
+ 1707 06f4 0A       		.uleb128 0xa
+ 1708 06f5 01       		.uleb128 0x1
+ 1709 06f6 51       		.byte	0x51
+ 1710 06f7 02       		.uleb128 0x2
+ 1711 06f8 75       		.byte	0x75
+ 1712 06f9 00       		.sleb128 0
+ 1713 06fa 0A       		.uleb128 0xa
+ 1714 06fb 01       		.uleb128 0x1
+ 1715 06fc 50       		.byte	0x50
+ 1716 06fd 01       		.uleb128 0x1
+ 1717 06fe 3C       		.byte	0x3c
+ 1718 06ff 0A       		.uleb128 0xa
+ 1719 0700 02       		.uleb128 0x2
+ 1720 0701 7D       		.byte	0x7d
+ 1721 0702 00       		.sleb128 0
+ 1722 0703 02       		.uleb128 0x2
+ 1723 0704 77       		.byte	0x77
+ 1724 0705 00       		.sleb128 0
+ 1725 0706 00       		.byte	0
+ 1726 0707 0B       		.uleb128 0xb
+ 1727 0708 46000000 		.4byte	.LVL70
+ 1728 070c 62070000 		.4byte	0x762
+ 1729 0710 0B       		.uleb128 0xb
+ 1730 0711 52000000 		.4byte	.LVL71
+ 1731 0715 77070000 		.4byte	0x777
+ 1732 0719 0C       		.uleb128 0xc
+ 1733 071a 60000000 		.4byte	.LVL72
+ 1734 071e 82070000 		.4byte	0x782
+ 1735 0722 0A       		.uleb128 0xa
+ 1736 0723 01       		.uleb128 0x1
+ 1737 0724 53       		.byte	0x53
+ 1738 0725 02       		.uleb128 0x2
+ 1739 0726 76       		.byte	0x76
+ 1740 0727 00       		.sleb128 0
+ 1741 0728 0A       		.uleb128 0xa
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 37
+
+
+ 1742 0729 01       		.uleb128 0x1
+ 1743 072a 52       		.byte	0x52
+ 1744 072b 01       		.uleb128 0x1
+ 1745 072c 34       		.byte	0x34
+ 1746 072d 0A       		.uleb128 0xa
+ 1747 072e 01       		.uleb128 0x1
+ 1748 072f 51       		.byte	0x51
+ 1749 0730 02       		.uleb128 0x2
+ 1750 0731 75       		.byte	0x75
+ 1751 0732 00       		.sleb128 0
+ 1752 0733 0A       		.uleb128 0xa
+ 1753 0734 01       		.uleb128 0x1
+ 1754 0735 50       		.byte	0x50
+ 1755 0736 01       		.uleb128 0x1
+ 1756 0737 3C       		.byte	0x3c
+ 1757 0738 0A       		.uleb128 0xa
+ 1758 0739 02       		.uleb128 0x2
+ 1759 073a 7D       		.byte	0x7d
+ 1760 073b 00       		.sleb128 0
+ 1761 073c 02       		.uleb128 0x2
+ 1762 073d 77       		.byte	0x77
+ 1763 073e 00       		.sleb128 0
+ 1764 073f 00       		.byte	0
+ 1765 0740 00       		.byte	0
+ 1766 0741 0E       		.uleb128 0xe
+ 1767 0742 81000000 		.4byte	0x81
+ 1768 0746 51070000 		.4byte	0x751
+ 1769 074a 0F       		.uleb128 0xf
+ 1770 074b AC000000 		.4byte	0xac
+ 1771 074f 03       		.byte	0x3
+ 1772 0750 00       		.byte	0
+ 1773 0751 10       		.uleb128 0x10
+ 1774 0752 85010000 		.4byte	.LASF41
+ 1775 0756 05       		.byte	0x5
+ 1776 0757 0A       		.byte	0xa
+ 1777 0758 81000000 		.4byte	0x81
+ 1778 075c 05       		.uleb128 0x5
+ 1779 075d 03       		.byte	0x3
+ 1780 075e 00000000 		.4byte	ADCResultCenter
+ 1781 0762 11       		.uleb128 0x11
+ 1782 0763 3A020000 		.4byte	.LASF36
+ 1783 0767 04       		.byte	0x4
+ 1784 0768 69       		.byte	0x69
+ 1785 0769 81000000 		.4byte	0x81
+ 1786 076d 77070000 		.4byte	0x777
+ 1787 0771 12       		.uleb128 0x12
+ 1788 0772 5E000000 		.4byte	0x5e
+ 1789 0776 00       		.byte	0
+ 1790 0777 13       		.uleb128 0x13
+ 1791 0778 11010000 		.4byte	.LASF42
+ 1792 077c 04       		.byte	0x4
+ 1793 077d 61       		.byte	0x61
+ 1794 077e 81000000 		.4byte	0x81
+ 1795 0782 11       		.uleb128 0x11
+ 1796 0783 8A020000 		.4byte	.LASF37
+ 1797 0787 04       		.byte	0x4
+ 1798 0788 5A       		.byte	0x5a
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 38
+
+
+ 1799 0789 81000000 		.4byte	0x81
+ 1800 078d AB070000 		.4byte	0x7ab
+ 1801 0791 12       		.uleb128 0x12
+ 1802 0792 81000000 		.4byte	0x81
+ 1803 0796 12       		.uleb128 0x12
+ 1804 0797 98010000 		.4byte	0x198
+ 1805 079b 12       		.uleb128 0x12
+ 1806 079c 81000000 		.4byte	0x81
+ 1807 07a0 12       		.uleb128 0x12
+ 1808 07a1 98010000 		.4byte	0x198
+ 1809 07a5 12       		.uleb128 0x12
+ 1810 07a6 AB070000 		.4byte	0x7ab
+ 1811 07aa 00       		.byte	0
+ 1812 07ab 0D       		.uleb128 0xd
+ 1813 07ac 04       		.byte	0x4
+ 1814 07ad 8C000000 		.4byte	0x8c
+ 1815 07b1 14       		.uleb128 0x14
+ 1816 07b2 EF010000 		.4byte	.LASF43
+ 1817 07b6 04       		.byte	0x4
+ 1818 07b7 5C       		.byte	0x5c
+ 1819 07b8 81000000 		.4byte	0x81
+ 1820 07bc 12       		.uleb128 0x12
+ 1821 07bd 81000000 		.4byte	0x81
+ 1822 07c1 00       		.byte	0
+ 1823 07c2 00       		.byte	0
+ 1824              		.section	.debug_abbrev,"",%progbits
+ 1825              	.Ldebug_abbrev0:
+ 1826 0000 01       		.uleb128 0x1
+ 1827 0001 11       		.uleb128 0x11
+ 1828 0002 01       		.byte	0x1
+ 1829 0003 25       		.uleb128 0x25
+ 1830 0004 0E       		.uleb128 0xe
+ 1831 0005 13       		.uleb128 0x13
+ 1832 0006 0B       		.uleb128 0xb
+ 1833 0007 03       		.uleb128 0x3
+ 1834 0008 0E       		.uleb128 0xe
+ 1835 0009 1B       		.uleb128 0x1b
+ 1836 000a 0E       		.uleb128 0xe
+ 1837 000b 55       		.uleb128 0x55
+ 1838 000c 17       		.uleb128 0x17
+ 1839 000d 11       		.uleb128 0x11
+ 1840 000e 01       		.uleb128 0x1
+ 1841 000f 10       		.uleb128 0x10
+ 1842 0010 17       		.uleb128 0x17
+ 1843 0011 00       		.byte	0
+ 1844 0012 00       		.byte	0
+ 1845 0013 02       		.uleb128 0x2
+ 1846 0014 24       		.uleb128 0x24
+ 1847 0015 00       		.byte	0
+ 1848 0016 0B       		.uleb128 0xb
+ 1849 0017 0B       		.uleb128 0xb
+ 1850 0018 3E       		.uleb128 0x3e
+ 1851 0019 0B       		.uleb128 0xb
+ 1852 001a 03       		.uleb128 0x3
+ 1853 001b 0E       		.uleb128 0xe
+ 1854 001c 00       		.byte	0
+ 1855 001d 00       		.byte	0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 39
+
+
+ 1856 001e 03       		.uleb128 0x3
+ 1857 001f 16       		.uleb128 0x16
+ 1858 0020 00       		.byte	0
+ 1859 0021 03       		.uleb128 0x3
+ 1860 0022 0E       		.uleb128 0xe
+ 1861 0023 3A       		.uleb128 0x3a
+ 1862 0024 0B       		.uleb128 0xb
+ 1863 0025 3B       		.uleb128 0x3b
+ 1864 0026 0B       		.uleb128 0xb
+ 1865 0027 49       		.uleb128 0x49
+ 1866 0028 13       		.uleb128 0x13
+ 1867 0029 00       		.byte	0
+ 1868 002a 00       		.byte	0
+ 1869 002b 04       		.uleb128 0x4
+ 1870 002c 24       		.uleb128 0x24
+ 1871 002d 00       		.byte	0
+ 1872 002e 0B       		.uleb128 0xb
+ 1873 002f 0B       		.uleb128 0xb
+ 1874 0030 3E       		.uleb128 0x3e
+ 1875 0031 0B       		.uleb128 0xb
+ 1876 0032 03       		.uleb128 0x3
+ 1877 0033 08       		.uleb128 0x8
+ 1878 0034 00       		.byte	0
+ 1879 0035 00       		.byte	0
+ 1880 0036 05       		.uleb128 0x5
+ 1881 0037 2E       		.uleb128 0x2e
+ 1882 0038 01       		.byte	0x1
+ 1883 0039 3F       		.uleb128 0x3f
+ 1884 003a 19       		.uleb128 0x19
+ 1885 003b 03       		.uleb128 0x3
+ 1886 003c 0E       		.uleb128 0xe
+ 1887 003d 3A       		.uleb128 0x3a
+ 1888 003e 0B       		.uleb128 0xb
+ 1889 003f 3B       		.uleb128 0x3b
+ 1890 0040 0B       		.uleb128 0xb
+ 1891 0041 27       		.uleb128 0x27
+ 1892 0042 19       		.uleb128 0x19
+ 1893 0043 49       		.uleb128 0x49
+ 1894 0044 13       		.uleb128 0x13
+ 1895 0045 11       		.uleb128 0x11
+ 1896 0046 01       		.uleb128 0x1
+ 1897 0047 12       		.uleb128 0x12
+ 1898 0048 06       		.uleb128 0x6
+ 1899 0049 40       		.uleb128 0x40
+ 1900 004a 18       		.uleb128 0x18
+ 1901 004b 9742     		.uleb128 0x2117
+ 1902 004d 19       		.uleb128 0x19
+ 1903 004e 01       		.uleb128 0x1
+ 1904 004f 13       		.uleb128 0x13
+ 1905 0050 00       		.byte	0
+ 1906 0051 00       		.byte	0
+ 1907 0052 06       		.uleb128 0x6
+ 1908 0053 05       		.uleb128 0x5
+ 1909 0054 00       		.byte	0
+ 1910 0055 03       		.uleb128 0x3
+ 1911 0056 0E       		.uleb128 0xe
+ 1912 0057 3A       		.uleb128 0x3a
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 40
+
+
+ 1913 0058 0B       		.uleb128 0xb
+ 1914 0059 3B       		.uleb128 0x3b
+ 1915 005a 0B       		.uleb128 0xb
+ 1916 005b 49       		.uleb128 0x49
+ 1917 005c 13       		.uleb128 0x13
+ 1918 005d 02       		.uleb128 0x2
+ 1919 005e 17       		.uleb128 0x17
+ 1920 005f 00       		.byte	0
+ 1921 0060 00       		.byte	0
+ 1922 0061 07       		.uleb128 0x7
+ 1923 0062 34       		.uleb128 0x34
+ 1924 0063 00       		.byte	0
+ 1925 0064 03       		.uleb128 0x3
+ 1926 0065 0E       		.uleb128 0xe
+ 1927 0066 3A       		.uleb128 0x3a
+ 1928 0067 0B       		.uleb128 0xb
+ 1929 0068 3B       		.uleb128 0x3b
+ 1930 0069 0B       		.uleb128 0xb
+ 1931 006a 49       		.uleb128 0x49
+ 1932 006b 13       		.uleb128 0x13
+ 1933 006c 02       		.uleb128 0x2
+ 1934 006d 18       		.uleb128 0x18
+ 1935 006e 00       		.byte	0
+ 1936 006f 00       		.byte	0
+ 1937 0070 08       		.uleb128 0x8
+ 1938 0071 34       		.uleb128 0x34
+ 1939 0072 00       		.byte	0
+ 1940 0073 03       		.uleb128 0x3
+ 1941 0074 0E       		.uleb128 0xe
+ 1942 0075 3A       		.uleb128 0x3a
+ 1943 0076 0B       		.uleb128 0xb
+ 1944 0077 3B       		.uleb128 0x3b
+ 1945 0078 0B       		.uleb128 0xb
+ 1946 0079 49       		.uleb128 0x49
+ 1947 007a 13       		.uleb128 0x13
+ 1948 007b 02       		.uleb128 0x2
+ 1949 007c 17       		.uleb128 0x17
+ 1950 007d 00       		.byte	0
+ 1951 007e 00       		.byte	0
+ 1952 007f 09       		.uleb128 0x9
+ 1953 0080 898201   		.uleb128 0x4109
+ 1954 0083 01       		.byte	0x1
+ 1955 0084 11       		.uleb128 0x11
+ 1956 0085 01       		.uleb128 0x1
+ 1957 0086 31       		.uleb128 0x31
+ 1958 0087 13       		.uleb128 0x13
+ 1959 0088 01       		.uleb128 0x1
+ 1960 0089 13       		.uleb128 0x13
+ 1961 008a 00       		.byte	0
+ 1962 008b 00       		.byte	0
+ 1963 008c 0A       		.uleb128 0xa
+ 1964 008d 8A8201   		.uleb128 0x410a
+ 1965 0090 00       		.byte	0
+ 1966 0091 02       		.uleb128 0x2
+ 1967 0092 18       		.uleb128 0x18
+ 1968 0093 9142     		.uleb128 0x2111
+ 1969 0095 18       		.uleb128 0x18
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 41
+
+
+ 1970 0096 00       		.byte	0
+ 1971 0097 00       		.byte	0
+ 1972 0098 0B       		.uleb128 0xb
+ 1973 0099 898201   		.uleb128 0x4109
+ 1974 009c 00       		.byte	0
+ 1975 009d 11       		.uleb128 0x11
+ 1976 009e 01       		.uleb128 0x1
+ 1977 009f 31       		.uleb128 0x31
+ 1978 00a0 13       		.uleb128 0x13
+ 1979 00a1 00       		.byte	0
+ 1980 00a2 00       		.byte	0
+ 1981 00a3 0C       		.uleb128 0xc
+ 1982 00a4 898201   		.uleb128 0x4109
+ 1983 00a7 01       		.byte	0x1
+ 1984 00a8 11       		.uleb128 0x11
+ 1985 00a9 01       		.uleb128 0x1
+ 1986 00aa 31       		.uleb128 0x31
+ 1987 00ab 13       		.uleb128 0x13
+ 1988 00ac 00       		.byte	0
+ 1989 00ad 00       		.byte	0
+ 1990 00ae 0D       		.uleb128 0xd
+ 1991 00af 0F       		.uleb128 0xf
+ 1992 00b0 00       		.byte	0
+ 1993 00b1 0B       		.uleb128 0xb
+ 1994 00b2 0B       		.uleb128 0xb
+ 1995 00b3 49       		.uleb128 0x49
+ 1996 00b4 13       		.uleb128 0x13
+ 1997 00b5 00       		.byte	0
+ 1998 00b6 00       		.byte	0
+ 1999 00b7 0E       		.uleb128 0xe
+ 2000 00b8 01       		.uleb128 0x1
+ 2001 00b9 01       		.byte	0x1
+ 2002 00ba 49       		.uleb128 0x49
+ 2003 00bb 13       		.uleb128 0x13
+ 2004 00bc 01       		.uleb128 0x1
+ 2005 00bd 13       		.uleb128 0x13
+ 2006 00be 00       		.byte	0
+ 2007 00bf 00       		.byte	0
+ 2008 00c0 0F       		.uleb128 0xf
+ 2009 00c1 21       		.uleb128 0x21
+ 2010 00c2 00       		.byte	0
+ 2011 00c3 49       		.uleb128 0x49
+ 2012 00c4 13       		.uleb128 0x13
+ 2013 00c5 2F       		.uleb128 0x2f
+ 2014 00c6 0B       		.uleb128 0xb
+ 2015 00c7 00       		.byte	0
+ 2016 00c8 00       		.byte	0
+ 2017 00c9 10       		.uleb128 0x10
+ 2018 00ca 34       		.uleb128 0x34
+ 2019 00cb 00       		.byte	0
+ 2020 00cc 03       		.uleb128 0x3
+ 2021 00cd 0E       		.uleb128 0xe
+ 2022 00ce 3A       		.uleb128 0x3a
+ 2023 00cf 0B       		.uleb128 0xb
+ 2024 00d0 3B       		.uleb128 0x3b
+ 2025 00d1 0B       		.uleb128 0xb
+ 2026 00d2 49       		.uleb128 0x49
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 42
+
+
+ 2027 00d3 13       		.uleb128 0x13
+ 2028 00d4 3F       		.uleb128 0x3f
+ 2029 00d5 19       		.uleb128 0x19
+ 2030 00d6 02       		.uleb128 0x2
+ 2031 00d7 18       		.uleb128 0x18
+ 2032 00d8 00       		.byte	0
+ 2033 00d9 00       		.byte	0
+ 2034 00da 11       		.uleb128 0x11
+ 2035 00db 2E       		.uleb128 0x2e
+ 2036 00dc 01       		.byte	0x1
+ 2037 00dd 3F       		.uleb128 0x3f
+ 2038 00de 19       		.uleb128 0x19
+ 2039 00df 03       		.uleb128 0x3
+ 2040 00e0 0E       		.uleb128 0xe
+ 2041 00e1 3A       		.uleb128 0x3a
+ 2042 00e2 0B       		.uleb128 0xb
+ 2043 00e3 3B       		.uleb128 0x3b
+ 2044 00e4 0B       		.uleb128 0xb
+ 2045 00e5 27       		.uleb128 0x27
+ 2046 00e6 19       		.uleb128 0x19
+ 2047 00e7 49       		.uleb128 0x49
+ 2048 00e8 13       		.uleb128 0x13
+ 2049 00e9 3C       		.uleb128 0x3c
+ 2050 00ea 19       		.uleb128 0x19
+ 2051 00eb 01       		.uleb128 0x1
+ 2052 00ec 13       		.uleb128 0x13
+ 2053 00ed 00       		.byte	0
+ 2054 00ee 00       		.byte	0
+ 2055 00ef 12       		.uleb128 0x12
+ 2056 00f0 05       		.uleb128 0x5
+ 2057 00f1 00       		.byte	0
+ 2058 00f2 49       		.uleb128 0x49
+ 2059 00f3 13       		.uleb128 0x13
+ 2060 00f4 00       		.byte	0
+ 2061 00f5 00       		.byte	0
+ 2062 00f6 13       		.uleb128 0x13
+ 2063 00f7 2E       		.uleb128 0x2e
+ 2064 00f8 00       		.byte	0
+ 2065 00f9 3F       		.uleb128 0x3f
+ 2066 00fa 19       		.uleb128 0x19
+ 2067 00fb 03       		.uleb128 0x3
+ 2068 00fc 0E       		.uleb128 0xe
+ 2069 00fd 3A       		.uleb128 0x3a
+ 2070 00fe 0B       		.uleb128 0xb
+ 2071 00ff 3B       		.uleb128 0x3b
+ 2072 0100 0B       		.uleb128 0xb
+ 2073 0101 27       		.uleb128 0x27
+ 2074 0102 19       		.uleb128 0x19
+ 2075 0103 49       		.uleb128 0x49
+ 2076 0104 13       		.uleb128 0x13
+ 2077 0105 3C       		.uleb128 0x3c
+ 2078 0106 19       		.uleb128 0x19
+ 2079 0107 00       		.byte	0
+ 2080 0108 00       		.byte	0
+ 2081 0109 14       		.uleb128 0x14
+ 2082 010a 2E       		.uleb128 0x2e
+ 2083 010b 01       		.byte	0x1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 43
+
+
+ 2084 010c 3F       		.uleb128 0x3f
+ 2085 010d 19       		.uleb128 0x19
+ 2086 010e 03       		.uleb128 0x3
+ 2087 010f 0E       		.uleb128 0xe
+ 2088 0110 3A       		.uleb128 0x3a
+ 2089 0111 0B       		.uleb128 0xb
+ 2090 0112 3B       		.uleb128 0x3b
+ 2091 0113 0B       		.uleb128 0xb
+ 2092 0114 27       		.uleb128 0x27
+ 2093 0115 19       		.uleb128 0x19
+ 2094 0116 49       		.uleb128 0x49
+ 2095 0117 13       		.uleb128 0x13
+ 2096 0118 3C       		.uleb128 0x3c
+ 2097 0119 19       		.uleb128 0x19
+ 2098 011a 00       		.byte	0
+ 2099 011b 00       		.byte	0
+ 2100 011c 00       		.byte	0
+ 2101              		.section	.debug_loc,"",%progbits
+ 2102              	.Ldebug_loc0:
+ 2103              	.LLST0:
+ 2104 0000 00000000 		.4byte	.LVL0
+ 2105 0004 10000000 		.4byte	.LVL1
+ 2106 0008 0100     		.2byte	0x1
+ 2107 000a 50       		.byte	0x50
+ 2108 000b 10000000 		.4byte	.LVL1
+ 2109 000f 70000000 		.4byte	.LFE63
+ 2110 0013 0400     		.2byte	0x4
+ 2111 0015 F3       		.byte	0xf3
+ 2112 0016 01       		.uleb128 0x1
+ 2113 0017 50       		.byte	0x50
+ 2114 0018 9F       		.byte	0x9f
+ 2115 0019 00000000 		.4byte	0
+ 2116 001d 00000000 		.4byte	0
+ 2117              	.LLST1:
+ 2118 0021 00000000 		.4byte	.LVL0
+ 2119 0025 14000000 		.4byte	.LVL2
+ 2120 0029 0100     		.2byte	0x1
+ 2121 002b 51       		.byte	0x51
+ 2122 002c 14000000 		.4byte	.LVL2
+ 2123 0030 70000000 		.4byte	.LFE63
+ 2124 0034 0400     		.2byte	0x4
+ 2125 0036 F3       		.byte	0xf3
+ 2126 0037 01       		.uleb128 0x1
+ 2127 0038 51       		.byte	0x51
+ 2128 0039 9F       		.byte	0x9f
+ 2129 003a 00000000 		.4byte	0
+ 2130 003e 00000000 		.4byte	0
+ 2131              	.LLST2:
+ 2132 0042 00000000 		.4byte	.LVL0
+ 2133 0046 2C000000 		.4byte	.LVL3
+ 2134 004a 0100     		.2byte	0x1
+ 2135 004c 52       		.byte	0x52
+ 2136 004d 2C000000 		.4byte	.LVL3
+ 2137 0051 70000000 		.4byte	.LFE63
+ 2138 0055 0400     		.2byte	0x4
+ 2139 0057 F3       		.byte	0xf3
+ 2140 0058 01       		.uleb128 0x1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 44
+
+
+ 2141 0059 52       		.byte	0x52
+ 2142 005a 9F       		.byte	0x9f
+ 2143 005b 00000000 		.4byte	0
+ 2144 005f 00000000 		.4byte	0
+ 2145              	.LLST3:
+ 2146 0063 00000000 		.4byte	.LVL0
+ 2147 0067 3C000000 		.4byte	.LVL4
+ 2148 006b 0100     		.2byte	0x1
+ 2149 006d 53       		.byte	0x53
+ 2150 006e 3C000000 		.4byte	.LVL4
+ 2151 0072 70000000 		.4byte	.LFE63
+ 2152 0076 0400     		.2byte	0x4
+ 2153 0078 F3       		.byte	0xf3
+ 2154 0079 01       		.uleb128 0x1
+ 2155 007a 53       		.byte	0x53
+ 2156 007b 9F       		.byte	0x9f
+ 2157 007c 00000000 		.4byte	0
+ 2158 0080 00000000 		.4byte	0
+ 2159              	.LLST4:
+ 2160 0084 5A000000 		.4byte	.LVL8
+ 2161 0088 6A000000 		.4byte	.LVL10
+ 2162 008c 0100     		.2byte	0x1
+ 2163 008e 54       		.byte	0x54
+ 2164 008f 00000000 		.4byte	0
+ 2165 0093 00000000 		.4byte	0
+ 2166              	.LLST5:
+ 2167 0097 00000000 		.4byte	.LVL11
+ 2168 009b 06000000 		.4byte	.LVL12
+ 2169 009f 0100     		.2byte	0x1
+ 2170 00a1 50       		.byte	0x50
+ 2171 00a2 06000000 		.4byte	.LVL12
+ 2172 00a6 40000000 		.4byte	.LFE65
+ 2173 00aa 0400     		.2byte	0x4
+ 2174 00ac F3       		.byte	0xf3
+ 2175 00ad 01       		.uleb128 0x1
+ 2176 00ae 50       		.byte	0x50
+ 2177 00af 9F       		.byte	0x9f
+ 2178 00b0 00000000 		.4byte	0
+ 2179 00b4 00000000 		.4byte	0
+ 2180              	.LLST6:
+ 2181 00b8 00000000 		.4byte	.LVL11
+ 2182 00bc 0B000000 		.4byte	.LVL13-1
+ 2183 00c0 0100     		.2byte	0x1
+ 2184 00c2 51       		.byte	0x51
+ 2185 00c3 0B000000 		.4byte	.LVL13-1
+ 2186 00c7 3E000000 		.4byte	.LVL17
+ 2187 00cb 0100     		.2byte	0x1
+ 2188 00cd 55       		.byte	0x55
+ 2189 00ce 3E000000 		.4byte	.LVL17
+ 2190 00d2 40000000 		.4byte	.LFE65
+ 2191 00d6 0400     		.2byte	0x4
+ 2192 00d8 F3       		.byte	0xf3
+ 2193 00d9 01       		.uleb128 0x1
+ 2194 00da 51       		.byte	0x51
+ 2195 00db 9F       		.byte	0x9f
+ 2196 00dc 00000000 		.4byte	0
+ 2197 00e0 00000000 		.4byte	0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 45
+
+
+ 2198              	.LLST7:
+ 2199 00e4 28000000 		.4byte	.LVL15
+ 2200 00e8 2A000000 		.4byte	.LVL16
+ 2201 00ec 0100     		.2byte	0x1
+ 2202 00ee 50       		.byte	0x50
+ 2203 00ef 00000000 		.4byte	0
+ 2204 00f3 00000000 		.4byte	0
+ 2205              	.LLST8:
+ 2206 00f7 00000000 		.4byte	.LVL18
+ 2207 00fb 08000000 		.4byte	.LVL19
+ 2208 00ff 0100     		.2byte	0x1
+ 2209 0101 50       		.byte	0x50
+ 2210 0102 08000000 		.4byte	.LVL19
+ 2211 0106 70000000 		.4byte	.LFE66
+ 2212 010a 0400     		.2byte	0x4
+ 2213 010c F3       		.byte	0xf3
+ 2214 010d 01       		.uleb128 0x1
+ 2215 010e 50       		.byte	0x50
+ 2216 010f 9F       		.byte	0x9f
+ 2217 0110 00000000 		.4byte	0
+ 2218 0114 00000000 		.4byte	0
+ 2219              	.LLST9:
+ 2220 0118 00000000 		.4byte	.LVL18
+ 2221 011c 0D000000 		.4byte	.LVL20-1
+ 2222 0120 0100     		.2byte	0x1
+ 2223 0122 51       		.byte	0x51
+ 2224 0123 0D000000 		.4byte	.LVL20-1
+ 2225 0127 6E000000 		.4byte	.LVL30
+ 2226 012b 0100     		.2byte	0x1
+ 2227 012d 57       		.byte	0x57
+ 2228 012e 6E000000 		.4byte	.LVL30
+ 2229 0132 70000000 		.4byte	.LFE66
+ 2230 0136 0400     		.2byte	0x4
+ 2231 0138 F3       		.byte	0xf3
+ 2232 0139 01       		.uleb128 0x1
+ 2233 013a 51       		.byte	0x51
+ 2234 013b 9F       		.byte	0x9f
+ 2235 013c 00000000 		.4byte	0
+ 2236 0140 00000000 		.4byte	0
+ 2237              	.LLST10:
+ 2238 0144 2C000000 		.4byte	.LVL22
+ 2239 0148 3C000000 		.4byte	.LVL23
+ 2240 014c 0100     		.2byte	0x1
+ 2241 014e 50       		.byte	0x50
+ 2242 014f 52000000 		.4byte	.LVL26
+ 2243 0153 54000000 		.4byte	.LVL27
+ 2244 0157 0100     		.2byte	0x1
+ 2245 0159 50       		.byte	0x50
+ 2246 015a 6A000000 		.4byte	.LVL28
+ 2247 015e 6C000000 		.4byte	.LVL29
+ 2248 0162 0100     		.2byte	0x1
+ 2249 0164 50       		.byte	0x50
+ 2250 0165 00000000 		.4byte	0
+ 2251 0169 00000000 		.4byte	0
+ 2252              	.LLST11:
+ 2253 016d 00000000 		.4byte	.LVL31
+ 2254 0171 41000000 		.4byte	.LVL33-1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 46
+
+
+ 2255 0175 0100     		.2byte	0x1
+ 2256 0177 50       		.byte	0x50
+ 2257 0178 41000000 		.4byte	.LVL33-1
+ 2258 017c 46000000 		.4byte	.LFE64
+ 2259 0180 0400     		.2byte	0x4
+ 2260 0182 F3       		.byte	0xf3
+ 2261 0183 01       		.uleb128 0x1
+ 2262 0184 50       		.byte	0x50
+ 2263 0185 9F       		.byte	0x9f
+ 2264 0186 00000000 		.4byte	0
+ 2265 018a 00000000 		.4byte	0
+ 2266              	.LLST12:
+ 2267 018e 00000000 		.4byte	.LVL31
+ 2268 0192 14000000 		.4byte	.LVL32
+ 2269 0196 0100     		.2byte	0x1
+ 2270 0198 51       		.byte	0x51
+ 2271 0199 14000000 		.4byte	.LVL32
+ 2272 019d 46000000 		.4byte	.LFE64
+ 2273 01a1 0400     		.2byte	0x4
+ 2274 01a3 F3       		.byte	0xf3
+ 2275 01a4 01       		.uleb128 0x1
+ 2276 01a5 51       		.byte	0x51
+ 2277 01a6 9F       		.byte	0x9f
+ 2278 01a7 00000000 		.4byte	0
+ 2279 01ab 00000000 		.4byte	0
+ 2280              	.LLST13:
+ 2281 01af 00000000 		.4byte	.LVL34
+ 2282 01b3 08000000 		.4byte	.LVL35
+ 2283 01b7 0100     		.2byte	0x1
+ 2284 01b9 50       		.byte	0x50
+ 2285 01ba 08000000 		.4byte	.LVL35
+ 2286 01be 5C000000 		.4byte	.LFE67
+ 2287 01c2 0400     		.2byte	0x4
+ 2288 01c4 F3       		.byte	0xf3
+ 2289 01c5 01       		.uleb128 0x1
+ 2290 01c6 50       		.byte	0x50
+ 2291 01c7 9F       		.byte	0x9f
+ 2292 01c8 00000000 		.4byte	0
+ 2293 01cc 00000000 		.4byte	0
+ 2294              	.LLST14:
+ 2295 01d0 00000000 		.4byte	.LVL34
+ 2296 01d4 0D000000 		.4byte	.LVL36-1
+ 2297 01d8 0100     		.2byte	0x1
+ 2298 01da 51       		.byte	0x51
+ 2299 01db 0D000000 		.4byte	.LVL36-1
+ 2300 01df 5A000000 		.4byte	.LVL45
+ 2301 01e3 0100     		.2byte	0x1
+ 2302 01e5 56       		.byte	0x56
+ 2303 01e6 5A000000 		.4byte	.LVL45
+ 2304 01ea 5C000000 		.4byte	.LFE67
+ 2305 01ee 0400     		.2byte	0x4
+ 2306 01f0 F3       		.byte	0xf3
+ 2307 01f1 01       		.uleb128 0x1
+ 2308 01f2 51       		.byte	0x51
+ 2309 01f3 9F       		.byte	0x9f
+ 2310 01f4 00000000 		.4byte	0
+ 2311 01f8 00000000 		.4byte	0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 47
+
+
+ 2312              	.LLST15:
+ 2313 01fc 2C000000 		.4byte	.LVL38
+ 2314 0200 3C000000 		.4byte	.LVL39
+ 2315 0204 0100     		.2byte	0x1
+ 2316 0206 50       		.byte	0x50
+ 2317 0207 56000000 		.4byte	.LVL43
+ 2318 020b 58000000 		.4byte	.LVL44
+ 2319 020f 0100     		.2byte	0x1
+ 2320 0211 50       		.byte	0x50
+ 2321 0212 00000000 		.4byte	0
+ 2322 0216 00000000 		.4byte	0
+ 2323              	.LLST16:
+ 2324 021a 00000000 		.4byte	.LVL46
+ 2325 021e 08000000 		.4byte	.LVL47
+ 2326 0222 0100     		.2byte	0x1
+ 2327 0224 50       		.byte	0x50
+ 2328 0225 08000000 		.4byte	.LVL47
+ 2329 0229 5C000000 		.4byte	.LFE68
+ 2330 022d 0400     		.2byte	0x4
+ 2331 022f F3       		.byte	0xf3
+ 2332 0230 01       		.uleb128 0x1
+ 2333 0231 50       		.byte	0x50
+ 2334 0232 9F       		.byte	0x9f
+ 2335 0233 00000000 		.4byte	0
+ 2336 0237 00000000 		.4byte	0
+ 2337              	.LLST17:
+ 2338 023b 00000000 		.4byte	.LVL46
+ 2339 023f 0D000000 		.4byte	.LVL48-1
+ 2340 0243 0100     		.2byte	0x1
+ 2341 0245 51       		.byte	0x51
+ 2342 0246 0D000000 		.4byte	.LVL48-1
+ 2343 024a 5A000000 		.4byte	.LVL57
+ 2344 024e 0100     		.2byte	0x1
+ 2345 0250 56       		.byte	0x56
+ 2346 0251 5A000000 		.4byte	.LVL57
+ 2347 0255 5C000000 		.4byte	.LFE68
+ 2348 0259 0400     		.2byte	0x4
+ 2349 025b F3       		.byte	0xf3
+ 2350 025c 01       		.uleb128 0x1
+ 2351 025d 51       		.byte	0x51
+ 2352 025e 9F       		.byte	0x9f
+ 2353 025f 00000000 		.4byte	0
+ 2354 0263 00000000 		.4byte	0
+ 2355              	.LLST18:
+ 2356 0267 2C000000 		.4byte	.LVL50
+ 2357 026b 3C000000 		.4byte	.LVL51
+ 2358 026f 0100     		.2byte	0x1
+ 2359 0271 50       		.byte	0x50
+ 2360 0272 56000000 		.4byte	.LVL55
+ 2361 0276 58000000 		.4byte	.LVL56
+ 2362 027a 0100     		.2byte	0x1
+ 2363 027c 50       		.byte	0x50
+ 2364 027d 00000000 		.4byte	0
+ 2365 0281 00000000 		.4byte	0
+ 2366              	.LLST19:
+ 2367 0285 00000000 		.4byte	.LVL58
+ 2368 0289 08000000 		.4byte	.LVL59
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 48
+
+
+ 2369 028d 0100     		.2byte	0x1
+ 2370 028f 50       		.byte	0x50
+ 2371 0290 08000000 		.4byte	.LVL59
+ 2372 0294 46000000 		.4byte	.LFE69
+ 2373 0298 0400     		.2byte	0x4
+ 2374 029a F3       		.byte	0xf3
+ 2375 029b 01       		.uleb128 0x1
+ 2376 029c 50       		.byte	0x50
+ 2377 029d 9F       		.byte	0x9f
+ 2378 029e 00000000 		.4byte	0
+ 2379 02a2 00000000 		.4byte	0
+ 2380              	.LLST20:
+ 2381 02a6 2A000000 		.4byte	.LVL62
+ 2382 02aa 2C000000 		.4byte	.LVL63
+ 2383 02ae 0100     		.2byte	0x1
+ 2384 02b0 50       		.byte	0x50
+ 2385 02b1 00000000 		.4byte	0
+ 2386 02b5 00000000 		.4byte	0
+ 2387              	.LLST21:
+ 2388 02b9 00000000 		.4byte	.LVL64
+ 2389 02bd 08000000 		.4byte	.LVL65
+ 2390 02c1 0100     		.2byte	0x1
+ 2391 02c3 50       		.byte	0x50
+ 2392 02c4 08000000 		.4byte	.LVL65
+ 2393 02c8 6A000000 		.4byte	.LFE70
+ 2394 02cc 0400     		.2byte	0x4
+ 2395 02ce F3       		.byte	0xf3
+ 2396 02cf 01       		.uleb128 0x1
+ 2397 02d0 50       		.byte	0x50
+ 2398 02d1 9F       		.byte	0x9f
+ 2399 02d2 00000000 		.4byte	0
+ 2400 02d6 00000000 		.4byte	0
+ 2401              	.LLST22:
+ 2402 02da 2A000000 		.4byte	.LVL68
+ 2403 02de 42000000 		.4byte	.LVL69
+ 2404 02e2 0100     		.2byte	0x1
+ 2405 02e4 50       		.byte	0x50
+ 2406 02e5 64000000 		.4byte	.LVL73
+ 2407 02e9 66000000 		.4byte	.LVL74
+ 2408 02ed 0100     		.2byte	0x1
+ 2409 02ef 50       		.byte	0x50
+ 2410 02f0 00000000 		.4byte	0
+ 2411 02f4 00000000 		.4byte	0
+ 2412              		.section	.debug_aranges,"",%progbits
+ 2413 0000 54000000 		.4byte	0x54
+ 2414 0004 0200     		.2byte	0x2
+ 2415 0006 00000000 		.4byte	.Ldebug_info0
+ 2416 000a 04       		.byte	0x4
+ 2417 000b 00       		.byte	0
+ 2418 000c 0000     		.2byte	0
+ 2419 000e 0000     		.2byte	0
+ 2420 0010 00000000 		.4byte	.LFB63
+ 2421 0014 70000000 		.4byte	.LFE63-.LFB63
+ 2422 0018 00000000 		.4byte	.LFB65
+ 2423 001c 40000000 		.4byte	.LFE65-.LFB65
+ 2424 0020 00000000 		.4byte	.LFB66
+ 2425 0024 70000000 		.4byte	.LFE66-.LFB66
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 49
+
+
+ 2426 0028 00000000 		.4byte	.LFB64
+ 2427 002c 46000000 		.4byte	.LFE64-.LFB64
+ 2428 0030 00000000 		.4byte	.LFB67
+ 2429 0034 5C000000 		.4byte	.LFE67-.LFB67
+ 2430 0038 00000000 		.4byte	.LFB68
+ 2431 003c 5C000000 		.4byte	.LFE68-.LFB68
+ 2432 0040 00000000 		.4byte	.LFB69
+ 2433 0044 46000000 		.4byte	.LFE69-.LFB69
+ 2434 0048 00000000 		.4byte	.LFB70
+ 2435 004c 6A000000 		.4byte	.LFE70-.LFB70
+ 2436 0050 00000000 		.4byte	0
+ 2437 0054 00000000 		.4byte	0
+ 2438              		.section	.debug_ranges,"",%progbits
+ 2439              	.Ldebug_ranges0:
+ 2440 0000 00000000 		.4byte	.LFB63
+ 2441 0004 70000000 		.4byte	.LFE63
+ 2442 0008 00000000 		.4byte	.LFB65
+ 2443 000c 40000000 		.4byte	.LFE65
+ 2444 0010 00000000 		.4byte	.LFB66
+ 2445 0014 70000000 		.4byte	.LFE66
+ 2446 0018 00000000 		.4byte	.LFB64
+ 2447 001c 46000000 		.4byte	.LFE64
+ 2448 0020 00000000 		.4byte	.LFB67
+ 2449 0024 5C000000 		.4byte	.LFE67
+ 2450 0028 00000000 		.4byte	.LFB68
+ 2451 002c 5C000000 		.4byte	.LFE68
+ 2452 0030 00000000 		.4byte	.LFB69
+ 2453 0034 46000000 		.4byte	.LFE69
+ 2454 0038 00000000 		.4byte	.LFB70
+ 2455 003c 6A000000 		.4byte	.LFE70
+ 2456 0040 00000000 		.4byte	0
+ 2457 0044 00000000 		.4byte	0
+ 2458              		.section	.debug_line,"",%progbits
+ 2459              	.Ldebug_line0:
+ 2460 0000 A2020000 		.section	.debug_str,"MS",%progbits,1
+ 2460      02008501 
+ 2460      00000201 
+ 2460      FB0E0D00 
+ 2460      01010101 
+ 2461              	.LASF30:
+ 2462 0000 4D696661 		.ascii	"Mifare_Blockset\000"
+ 2462      72655F42 
+ 2462      6C6F636B 
+ 2462      73657400 
+ 2463              	.LASF38:
+ 2464 0010 474E5520 		.ascii	"GNU C 4.9.3 20150303 (release) [ARM/embedded-4_9-br"
+ 2464      4320342E 
+ 2464      392E3320 
+ 2464      32303135 
+ 2464      30333033 
+ 2465 0043 616E6368 		.ascii	"anch revision 221220] -mcpu=cortex-m0 -mthumb -g -O"
+ 2465      20726576 
+ 2465      6973696F 
+ 2465      6E203232 
+ 2465      31323230 
+ 2466 0076 73202D66 		.ascii	"s -ffunction-sections -ffat-lto-objects\000"
+ 2466      66756E63 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 50
+
+
+ 2466      74696F6E 
+ 2466      2D736563 
+ 2466      74696F6E 
+ 2467              	.LASF5:
+ 2468 009e 5F5F7569 		.ascii	"__uint8_t\000"
+ 2468      6E74385F 
+ 2468      7400
+ 2469              	.LASF32:
+ 2470 00a8 4D696661 		.ascii	"Mifare_Blockinc\000"
+ 2470      72655F42 
+ 2470      6C6F636B 
+ 2470      696E6300 
+ 2471              	.LASF31:
+ 2472 00b8 626C6F63 		.ascii	"block_data\000"
+ 2472      6B5F6461 
+ 2472      746100
+ 2473              	.LASF13:
+ 2474 00c3 666C6F61 		.ascii	"float\000"
+ 2474      7400
+ 2475              	.LASF27:
+ 2476 00c9 626C6F63 		.ascii	"block\000"
+ 2476      6B00
+ 2477              	.LASF1:
+ 2478 00cf 756E7369 		.ascii	"unsigned char\000"
+ 2478      676E6564 
+ 2478      20636861 
+ 2478      7200
+ 2479              	.LASF7:
+ 2480 00dd 6C6F6E67 		.ascii	"long unsigned int\000"
+ 2480      20756E73 
+ 2480      69676E65 
+ 2480      6420696E 
+ 2480      7400
+ 2481              	.LASF3:
+ 2482 00ef 73686F72 		.ascii	"short unsigned int\000"
+ 2482      7420756E 
+ 2482      7369676E 
+ 2482      65642069 
+ 2482      6E7400
+ 2483              	.LASF35:
+ 2484 0102 4D696661 		.ascii	"Mifare_Restore\000"
+ 2484      72655F52 
+ 2484      6573746F 
+ 2484      726500
+ 2485              	.LASF42:
+ 2486 0111 436C6561 		.ascii	"Clear_FIFO\000"
+ 2486      725F4649 
+ 2486      464F00
+ 2487              	.LASF19:
+ 2488 011c 6D696661 		.ascii	"mifare_key\000"
+ 2488      72655F6B 
+ 2488      657900
+ 2489              	.LASF28:
+ 2490 0127 62756666 		.ascii	"buff\000"
+ 2490      00
+ 2491              	.LASF14:
+ 2492 012c 646F7562 		.ascii	"double\000"
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 51
+
+
+ 2492      6C6500
+ 2493              	.LASF39:
+ 2494 0133 436F6465 		.ascii	"Code\\Device\\FM175XX\\IOS14443\\mifare_card.c\000"
+ 2494      5C446576 
+ 2494      6963655C 
+ 2494      464D3137 
+ 2494      3558585C 
+ 2495              	.LASF6:
+ 2496 015e 5F5F7569 		.ascii	"__uint32_t\000"
+ 2496      6E743332 
+ 2496      5F7400
+ 2497              	.LASF34:
+ 2498 0169 4D696661 		.ascii	"Mifare_Transfer\000"
+ 2498      72655F54 
+ 2498      72616E73 
+ 2498      66657200 
+ 2499              	.LASF24:
+ 2500 0179 72656365 		.ascii	"rece_bitlen\000"
+ 2500      5F626974 
+ 2500      6C656E00 
+ 2501              	.LASF41:
+ 2502 0185 41444352 		.ascii	"ADCResultCenter\000"
+ 2502      6573756C 
+ 2502      7443656E 
+ 2502      74657200 
+ 2503              	.LASF10:
+ 2504 0195 756E7369 		.ascii	"unsigned int\000"
+ 2504      676E6564 
+ 2504      20696E74 
+ 2504      00
+ 2505              	.LASF9:
+ 2506 01a2 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 2506      206C6F6E 
+ 2506      6720756E 
+ 2506      7369676E 
+ 2506      65642069 
+ 2507              	.LASF11:
+ 2508 01b9 75696E74 		.ascii	"uint8_t\000"
+ 2508      385F7400 
+ 2509              	.LASF21:
+ 2510 01c1 73656E64 		.ascii	"send_buff\000"
+ 2510      5F627566 
+ 2510      6600
+ 2511              	.LASF23:
+ 2512 01cb 72657375 		.ascii	"result\000"
+ 2512      6C7400
+ 2513              	.LASF17:
+ 2514 01d2 6D6F6465 		.ascii	"mode\000"
+ 2514      00
+ 2515              	.LASF25:
+ 2516 01d7 4D696661 		.ascii	"Mifare_Auth\000"
+ 2516      72655F41 
+ 2516      75746800 
+ 2517              	.LASF0:
+ 2518 01e3 7369676E 		.ascii	"signed char\000"
+ 2518      65642063 
+ 2518      68617200 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 52
+
+
+ 2519              	.LASF43:
+ 2520 01ef 52656164 		.ascii	"Read_Reg\000"
+ 2520      5F526567 
+ 2520      00
+ 2521              	.LASF22:
+ 2522 01f8 72656365 		.ascii	"rece_buff\000"
+ 2522      5F627566 
+ 2522      6600
+ 2523              	.LASF16:
+ 2524 0202 73697A65 		.ascii	"sizetype\000"
+ 2524      74797065 
+ 2524      00
+ 2525              	.LASF33:
+ 2526 020b 4D696661 		.ascii	"Mifare_Blockdec\000"
+ 2526      72655F42 
+ 2526      6C6F636B 
+ 2526      64656300 
+ 2527              	.LASF26:
+ 2528 021b 4D696661 		.ascii	"Mifare_Blockread\000"
+ 2528      72655F42 
+ 2528      6C6F636B 
+ 2528      72656164 
+ 2528      00
+ 2529              	.LASF8:
+ 2530 022c 6C6F6E67 		.ascii	"long long int\000"
+ 2530      206C6F6E 
+ 2530      6720696E 
+ 2530      7400
+ 2531              	.LASF36:
+ 2532 023a 5063645F 		.ascii	"Pcd_SetTimer\000"
+ 2532      53657454 
+ 2532      696D6572 
+ 2532      00
+ 2533              	.LASF20:
+ 2534 0247 63617264 		.ascii	"card_uid\000"
+ 2534      5F756964 
+ 2534      00
+ 2535              	.LASF18:
+ 2536 0250 73656374 		.ascii	"sector\000"
+ 2536      6F7200
+ 2537              	.LASF2:
+ 2538 0257 73686F72 		.ascii	"short int\000"
+ 2538      7420696E 
+ 2538      7400
+ 2539              	.LASF29:
+ 2540 0261 4D696661 		.ascii	"Mifare_Blockwrite\000"
+ 2540      72655F42 
+ 2540      6C6F636B 
+ 2540      77726974 
+ 2540      6500
+ 2541              	.LASF12:
+ 2542 0273 75696E74 		.ascii	"uint32_t\000"
+ 2542      33325F74 
+ 2542      00
+ 2543              	.LASF4:
+ 2544 027c 6C6F6E67 		.ascii	"long int\000"
+ 2544      20696E74 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtfyDk.s 			page 53
+
+
+ 2544      00
+ 2545              	.LASF15:
+ 2546 0285 63686172 		.ascii	"char\000"
+ 2546      00
+ 2547              	.LASF37:
+ 2548 028a 5063645F 		.ascii	"Pcd_Comm\000"
+ 2548      436F6D6D 
+ 2548      00
+ 2549              	.LASF40:
+ 2550 0293 473A5C50 		.ascii	"G:\\Psoc4_prj\\7.rental_house\\18-04-11\\second_ima"
+ 2550      736F6334 
+ 2550      5F70726A 
+ 2550      5C372E72 
+ 2550      656E7461 
+ 2551 02c2 6765735B 		.ascii	"ges[4-9]\\EntranceGuard_171019-12.50\\EntranceGuard"
+ 2551      342D395D 
+ 2551      5C456E74 
+ 2551      72616E63 
+ 2551      65477561 
+ 2552 02f3 2E637964 		.ascii	".cydsn\000"
+ 2552      736E00
+ 2553              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.9.3 20150303 (release) [ARM/embedded-4_9-br

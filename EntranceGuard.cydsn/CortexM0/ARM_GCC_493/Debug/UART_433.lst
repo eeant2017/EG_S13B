@@ -1,0 +1,1661 @@
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccwJcpWN.s 			page 1
+
+
+   1              		.cpu cortex-m0
+   2              		.fpu softvfp
+   3              		.eabi_attribute 20, 1
+   4              		.eabi_attribute 21, 1
+   5              		.eabi_attribute 23, 3
+   6              		.eabi_attribute 24, 1
+   7              		.eabi_attribute 25, 1
+   8              		.eabi_attribute 26, 1
+   9              		.eabi_attribute 30, 4
+  10              		.eabi_attribute 34, 0
+  11              		.eabi_attribute 18, 4
+  12              		.code	16
+  13              		.file	"UART_433.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.UART_433_Init,"ax",%progbits
+  18              		.align	1
+  19              		.global	UART_433_Init
+  20              		.code	16
+  21              		.thumb_func
+  22              		.type	UART_433_Init, %function
+  23              	UART_433_Init:
+  24              	.LFB2:
+  25              		.file 1 "Generated_Source\\PSoC4\\UART_433.c"
+   1:Generated_Source\PSoC4/UART_433.c **** /***************************************************************************//**
+   2:Generated_Source\PSoC4/UART_433.c **** * \file UART_433.c
+   3:Generated_Source\PSoC4/UART_433.c **** * \version 3.20
+   4:Generated_Source\PSoC4/UART_433.c **** *
+   5:Generated_Source\PSoC4/UART_433.c **** * \brief
+   6:Generated_Source\PSoC4/UART_433.c **** *  This file provides the source code to the API for the SCB Component.
+   7:Generated_Source\PSoC4/UART_433.c **** *
+   8:Generated_Source\PSoC4/UART_433.c **** * Note:
+   9:Generated_Source\PSoC4/UART_433.c **** *
+  10:Generated_Source\PSoC4/UART_433.c **** *******************************************************************************
+  11:Generated_Source\PSoC4/UART_433.c **** * \copyright
+  12:Generated_Source\PSoC4/UART_433.c **** * Copyright 2013-2016, Cypress Semiconductor Corporation.  All rights reserved.
+  13:Generated_Source\PSoC4/UART_433.c **** * You may use this file only in accordance with the license, terms, conditions,
+  14:Generated_Source\PSoC4/UART_433.c **** * disclaimers, and limitations in the end user license agreement accompanying
+  15:Generated_Source\PSoC4/UART_433.c **** * the software package with which this file was provided.
+  16:Generated_Source\PSoC4/UART_433.c **** *******************************************************************************/
+  17:Generated_Source\PSoC4/UART_433.c **** 
+  18:Generated_Source\PSoC4/UART_433.c **** #include "UART_433_PVT.h"
+  19:Generated_Source\PSoC4/UART_433.c **** 
+  20:Generated_Source\PSoC4/UART_433.c **** #if (UART_433_SCB_MODE_I2C_INC)
+  21:Generated_Source\PSoC4/UART_433.c ****     #include "UART_433_I2C_PVT.h"
+  22:Generated_Source\PSoC4/UART_433.c **** #endif /* (UART_433_SCB_MODE_I2C_INC) */
+  23:Generated_Source\PSoC4/UART_433.c **** 
+  24:Generated_Source\PSoC4/UART_433.c **** #if (UART_433_SCB_MODE_EZI2C_INC)
+  25:Generated_Source\PSoC4/UART_433.c ****     #include "UART_433_EZI2C_PVT.h"
+  26:Generated_Source\PSoC4/UART_433.c **** #endif /* (UART_433_SCB_MODE_EZI2C_INC) */
+  27:Generated_Source\PSoC4/UART_433.c **** 
+  28:Generated_Source\PSoC4/UART_433.c **** #if (UART_433_SCB_MODE_SPI_INC || UART_433_SCB_MODE_UART_INC)
+  29:Generated_Source\PSoC4/UART_433.c ****     #include "UART_433_SPI_UART_PVT.h"
+  30:Generated_Source\PSoC4/UART_433.c **** #endif /* (UART_433_SCB_MODE_SPI_INC || UART_433_SCB_MODE_UART_INC) */
+  31:Generated_Source\PSoC4/UART_433.c **** 
+  32:Generated_Source\PSoC4/UART_433.c **** 
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccwJcpWN.s 			page 2
+
+
+  33:Generated_Source\PSoC4/UART_433.c **** /***************************************
+  34:Generated_Source\PSoC4/UART_433.c **** *    Run Time Configuration Vars
+  35:Generated_Source\PSoC4/UART_433.c **** ***************************************/
+  36:Generated_Source\PSoC4/UART_433.c **** 
+  37:Generated_Source\PSoC4/UART_433.c **** /* Stores internal component configuration for Unconfigured mode */
+  38:Generated_Source\PSoC4/UART_433.c **** #if (UART_433_SCB_MODE_UNCONFIG_CONST_CFG)
+  39:Generated_Source\PSoC4/UART_433.c ****     /* Common configuration variables */
+  40:Generated_Source\PSoC4/UART_433.c ****     uint8 UART_433_scbMode = UART_433_SCB_MODE_UNCONFIG;
+  41:Generated_Source\PSoC4/UART_433.c ****     uint8 UART_433_scbEnableWake;
+  42:Generated_Source\PSoC4/UART_433.c ****     uint8 UART_433_scbEnableIntr;
+  43:Generated_Source\PSoC4/UART_433.c **** 
+  44:Generated_Source\PSoC4/UART_433.c ****     /* I2C configuration variables */
+  45:Generated_Source\PSoC4/UART_433.c ****     uint8 UART_433_mode;
+  46:Generated_Source\PSoC4/UART_433.c ****     uint8 UART_433_acceptAddr;
+  47:Generated_Source\PSoC4/UART_433.c **** 
+  48:Generated_Source\PSoC4/UART_433.c ****     /* SPI/UART configuration variables */
+  49:Generated_Source\PSoC4/UART_433.c ****     volatile uint8 * UART_433_rxBuffer;
+  50:Generated_Source\PSoC4/UART_433.c ****     uint8  UART_433_rxDataBits;
+  51:Generated_Source\PSoC4/UART_433.c ****     uint32 UART_433_rxBufferSize;
+  52:Generated_Source\PSoC4/UART_433.c **** 
+  53:Generated_Source\PSoC4/UART_433.c ****     volatile uint8 * UART_433_txBuffer;
+  54:Generated_Source\PSoC4/UART_433.c ****     uint8  UART_433_txDataBits;
+  55:Generated_Source\PSoC4/UART_433.c ****     uint32 UART_433_txBufferSize;
+  56:Generated_Source\PSoC4/UART_433.c **** 
+  57:Generated_Source\PSoC4/UART_433.c ****     /* EZI2C configuration variables */
+  58:Generated_Source\PSoC4/UART_433.c ****     uint8 UART_433_numberOfAddr;
+  59:Generated_Source\PSoC4/UART_433.c ****     uint8 UART_433_subAddrSize;
+  60:Generated_Source\PSoC4/UART_433.c **** #endif /* (UART_433_SCB_MODE_UNCONFIG_CONST_CFG) */
+  61:Generated_Source\PSoC4/UART_433.c **** 
+  62:Generated_Source\PSoC4/UART_433.c **** 
+  63:Generated_Source\PSoC4/UART_433.c **** /***************************************
+  64:Generated_Source\PSoC4/UART_433.c **** *     Common SCB Vars
+  65:Generated_Source\PSoC4/UART_433.c **** ***************************************/
+  66:Generated_Source\PSoC4/UART_433.c **** /**
+  67:Generated_Source\PSoC4/UART_433.c **** * \addtogroup group_general
+  68:Generated_Source\PSoC4/UART_433.c **** * \{
+  69:Generated_Source\PSoC4/UART_433.c **** */
+  70:Generated_Source\PSoC4/UART_433.c **** 
+  71:Generated_Source\PSoC4/UART_433.c **** /** UART_433_initVar indicates whether the UART_433 
+  72:Generated_Source\PSoC4/UART_433.c **** *  component has been initialized. The variable is initialized to 0 
+  73:Generated_Source\PSoC4/UART_433.c **** *  and set to 1 the first time SCB_Start() is called. This allows 
+  74:Generated_Source\PSoC4/UART_433.c **** *  the component to restart without reinitialization after the first 
+  75:Generated_Source\PSoC4/UART_433.c **** *  call to the UART_433_Start() routine.
+  76:Generated_Source\PSoC4/UART_433.c **** *
+  77:Generated_Source\PSoC4/UART_433.c **** *  If re-initialization of the component is required, then the 
+  78:Generated_Source\PSoC4/UART_433.c **** *  UART_433_Init() function can be called before the 
+  79:Generated_Source\PSoC4/UART_433.c **** *  UART_433_Start() or UART_433_Enable() function.
+  80:Generated_Source\PSoC4/UART_433.c **** */
+  81:Generated_Source\PSoC4/UART_433.c **** uint8 UART_433_initVar = 0u;
+  82:Generated_Source\PSoC4/UART_433.c **** 
+  83:Generated_Source\PSoC4/UART_433.c **** 
+  84:Generated_Source\PSoC4/UART_433.c **** #if (! (UART_433_SCB_MODE_I2C_CONST_CFG || \
+  85:Generated_Source\PSoC4/UART_433.c ****         UART_433_SCB_MODE_EZI2C_CONST_CFG))
+  86:Generated_Source\PSoC4/UART_433.c ****     /** This global variable stores TX interrupt sources after 
+  87:Generated_Source\PSoC4/UART_433.c ****     * UART_433_Stop() is called. Only these TX interrupt sources 
+  88:Generated_Source\PSoC4/UART_433.c ****     * will be restored on a subsequent UART_433_Enable() call.
+  89:Generated_Source\PSoC4/UART_433.c ****     */
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccwJcpWN.s 			page 3
+
+
+  90:Generated_Source\PSoC4/UART_433.c ****     uint16 UART_433_IntrTxMask = 0u;
+  91:Generated_Source\PSoC4/UART_433.c **** #endif /* (! (UART_433_SCB_MODE_I2C_CONST_CFG || \
+  92:Generated_Source\PSoC4/UART_433.c ****               UART_433_SCB_MODE_EZI2C_CONST_CFG)) */
+  93:Generated_Source\PSoC4/UART_433.c **** /** \} globals */
+  94:Generated_Source\PSoC4/UART_433.c **** 
+  95:Generated_Source\PSoC4/UART_433.c **** #if (UART_433_SCB_IRQ_INTERNAL)
+  96:Generated_Source\PSoC4/UART_433.c **** #if !defined (CY_REMOVE_UART_433_CUSTOM_INTR_HANDLER)
+  97:Generated_Source\PSoC4/UART_433.c ****     void (*UART_433_customIntrHandler)(void) = NULL;
+  98:Generated_Source\PSoC4/UART_433.c **** #endif /* !defined (CY_REMOVE_UART_433_CUSTOM_INTR_HANDLER) */
+  99:Generated_Source\PSoC4/UART_433.c **** #endif /* (UART_433_SCB_IRQ_INTERNAL) */
+ 100:Generated_Source\PSoC4/UART_433.c **** 
+ 101:Generated_Source\PSoC4/UART_433.c **** 
+ 102:Generated_Source\PSoC4/UART_433.c **** /***************************************
+ 103:Generated_Source\PSoC4/UART_433.c **** *    Private Function Prototypes
+ 104:Generated_Source\PSoC4/UART_433.c **** ***************************************/
+ 105:Generated_Source\PSoC4/UART_433.c **** 
+ 106:Generated_Source\PSoC4/UART_433.c **** static void UART_433_ScbEnableIntr(void);
+ 107:Generated_Source\PSoC4/UART_433.c **** static void UART_433_ScbModeStop(void);
+ 108:Generated_Source\PSoC4/UART_433.c **** static void UART_433_ScbModePostEnable(void);
+ 109:Generated_Source\PSoC4/UART_433.c **** 
+ 110:Generated_Source\PSoC4/UART_433.c **** 
+ 111:Generated_Source\PSoC4/UART_433.c **** /*******************************************************************************
+ 112:Generated_Source\PSoC4/UART_433.c **** * Function Name: UART_433_Init
+ 113:Generated_Source\PSoC4/UART_433.c **** ****************************************************************************//**
+ 114:Generated_Source\PSoC4/UART_433.c **** *
+ 115:Generated_Source\PSoC4/UART_433.c **** *  Initializes the UART_433 component to operate in one of the selected
+ 116:Generated_Source\PSoC4/UART_433.c **** *  configurations: I2C, SPI, UART or EZI2C.
+ 117:Generated_Source\PSoC4/UART_433.c **** *  When the configuration is set to "Unconfigured SCB", this function does
+ 118:Generated_Source\PSoC4/UART_433.c **** *  not do any initialization. Use mode-specific initialization APIs instead:
+ 119:Generated_Source\PSoC4/UART_433.c **** *  UART_433_I2CInit, UART_433_SpiInit, 
+ 120:Generated_Source\PSoC4/UART_433.c **** *  UART_433_UartInit or UART_433_EzI2CInit.
+ 121:Generated_Source\PSoC4/UART_433.c **** *
+ 122:Generated_Source\PSoC4/UART_433.c **** *******************************************************************************/
+ 123:Generated_Source\PSoC4/UART_433.c **** void UART_433_Init(void)
+ 124:Generated_Source\PSoC4/UART_433.c **** {
+  26              		.loc 1 124 0
+  27              		.cfi_startproc
+  28 0000 08B5     		push	{r3, lr}
+  29              		.cfi_def_cfa_offset 8
+  30              		.cfi_offset 3, -8
+  31              		.cfi_offset 14, -4
+ 125:Generated_Source\PSoC4/UART_433.c **** #if (UART_433_SCB_MODE_UNCONFIG_CONST_CFG)
+ 126:Generated_Source\PSoC4/UART_433.c ****     if (UART_433_SCB_MODE_UNCONFIG_RUNTM_CFG)
+ 127:Generated_Source\PSoC4/UART_433.c ****     {
+ 128:Generated_Source\PSoC4/UART_433.c ****         UART_433_initVar = 0u;
+ 129:Generated_Source\PSoC4/UART_433.c ****     }
+ 130:Generated_Source\PSoC4/UART_433.c ****     else
+ 131:Generated_Source\PSoC4/UART_433.c ****     {
+ 132:Generated_Source\PSoC4/UART_433.c ****         /* Initialization was done before this function call */
+ 133:Generated_Source\PSoC4/UART_433.c ****     }
+ 134:Generated_Source\PSoC4/UART_433.c **** 
+ 135:Generated_Source\PSoC4/UART_433.c **** #elif (UART_433_SCB_MODE_I2C_CONST_CFG)
+ 136:Generated_Source\PSoC4/UART_433.c ****     UART_433_I2CInit();
+ 137:Generated_Source\PSoC4/UART_433.c **** 
+ 138:Generated_Source\PSoC4/UART_433.c **** #elif (UART_433_SCB_MODE_SPI_CONST_CFG)
+ 139:Generated_Source\PSoC4/UART_433.c ****     UART_433_SpiInit();
+ 140:Generated_Source\PSoC4/UART_433.c **** 
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccwJcpWN.s 			page 4
+
+
+ 141:Generated_Source\PSoC4/UART_433.c **** #elif (UART_433_SCB_MODE_UART_CONST_CFG)
+ 142:Generated_Source\PSoC4/UART_433.c ****     UART_433_UartInit();
+  32              		.loc 1 142 0
+  33 0002 FFF7FEFF 		bl	UART_433_UartInit
+  34              	.LVL0:
+ 143:Generated_Source\PSoC4/UART_433.c **** 
+ 144:Generated_Source\PSoC4/UART_433.c **** #elif (UART_433_SCB_MODE_EZI2C_CONST_CFG)
+ 145:Generated_Source\PSoC4/UART_433.c ****     UART_433_EzI2CInit();
+ 146:Generated_Source\PSoC4/UART_433.c **** 
+ 147:Generated_Source\PSoC4/UART_433.c **** #endif /* (UART_433_SCB_MODE_UNCONFIG_CONST_CFG) */
+ 148:Generated_Source\PSoC4/UART_433.c **** }
+  35              		.loc 1 148 0
+  36              		@ sp needed
+  37 0006 08BD     		pop	{r3, pc}
+  38              		.cfi_endproc
+  39              	.LFE2:
+  40              		.size	UART_433_Init, .-UART_433_Init
+  41              		.section	.text.UART_433_Enable,"ax",%progbits
+  42              		.align	1
+  43              		.global	UART_433_Enable
+  44              		.code	16
+  45              		.thumb_func
+  46              		.type	UART_433_Enable, %function
+  47              	UART_433_Enable:
+  48              	.LFB3:
+ 149:Generated_Source\PSoC4/UART_433.c **** 
+ 150:Generated_Source\PSoC4/UART_433.c **** 
+ 151:Generated_Source\PSoC4/UART_433.c **** /*******************************************************************************
+ 152:Generated_Source\PSoC4/UART_433.c **** * Function Name: UART_433_Enable
+ 153:Generated_Source\PSoC4/UART_433.c **** ****************************************************************************//**
+ 154:Generated_Source\PSoC4/UART_433.c **** *
+ 155:Generated_Source\PSoC4/UART_433.c **** *  Enables UART_433 component operation: activates the hardware and 
+ 156:Generated_Source\PSoC4/UART_433.c **** *  internal interrupt. It also restores TX interrupt sources disabled after the 
+ 157:Generated_Source\PSoC4/UART_433.c **** *  UART_433_Stop() function was called (note that level-triggered TX 
+ 158:Generated_Source\PSoC4/UART_433.c **** *  interrupt sources remain disabled to not cause code lock-up).
+ 159:Generated_Source\PSoC4/UART_433.c **** *  For I2C and EZI2C modes the interrupt is internal and mandatory for 
+ 160:Generated_Source\PSoC4/UART_433.c **** *  operation. For SPI and UART modes the interrupt can be configured as none, 
+ 161:Generated_Source\PSoC4/UART_433.c **** *  internal or external.
+ 162:Generated_Source\PSoC4/UART_433.c **** *  The UART_433 configuration should be not changed when the component
+ 163:Generated_Source\PSoC4/UART_433.c **** *  is enabled. Any configuration changes should be made after disabling the 
+ 164:Generated_Source\PSoC4/UART_433.c **** *  component.
+ 165:Generated_Source\PSoC4/UART_433.c **** *  When configuration is set to ¡°Unconfigured UART_433¡±, the component 
+ 166:Generated_Source\PSoC4/UART_433.c **** *  must first be initialized to operate in one of the following configurations: 
+ 167:Generated_Source\PSoC4/UART_433.c **** *  I2C, SPI, UART or EZ I2C, using the mode-specific initialization API. 
+ 168:Generated_Source\PSoC4/UART_433.c **** *  Otherwise this function does not enable the component.
+ 169:Generated_Source\PSoC4/UART_433.c **** *
+ 170:Generated_Source\PSoC4/UART_433.c **** *******************************************************************************/
+ 171:Generated_Source\PSoC4/UART_433.c **** void UART_433_Enable(void)
+ 172:Generated_Source\PSoC4/UART_433.c **** {
+  49              		.loc 1 172 0
+  50              		.cfi_startproc
+ 173:Generated_Source\PSoC4/UART_433.c **** #if (UART_433_SCB_MODE_UNCONFIG_CONST_CFG)
+ 174:Generated_Source\PSoC4/UART_433.c ****     /* Enable SCB block, only if it is already configured */
+ 175:Generated_Source\PSoC4/UART_433.c ****     if (!UART_433_SCB_MODE_UNCONFIG_RUNTM_CFG)
+ 176:Generated_Source\PSoC4/UART_433.c ****     {
+ 177:Generated_Source\PSoC4/UART_433.c ****         UART_433_CTRL_REG |= UART_433_CTRL_ENABLED;
+ 178:Generated_Source\PSoC4/UART_433.c **** 
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccwJcpWN.s 			page 5
+
+
+ 179:Generated_Source\PSoC4/UART_433.c ****         UART_433_ScbEnableIntr();
+ 180:Generated_Source\PSoC4/UART_433.c **** 
+ 181:Generated_Source\PSoC4/UART_433.c ****         /* Call PostEnable function specific to current operation mode */
+ 182:Generated_Source\PSoC4/UART_433.c ****         UART_433_ScbModePostEnable();
+ 183:Generated_Source\PSoC4/UART_433.c ****     }
+ 184:Generated_Source\PSoC4/UART_433.c **** #else
+ 185:Generated_Source\PSoC4/UART_433.c ****     UART_433_CTRL_REG |= UART_433_CTRL_ENABLED;
+  51              		.loc 1 185 0
+  52 0000 8021     		mov	r1, #128
+  53 0002 044A     		ldr	r2, .L3
+ 172:Generated_Source\PSoC4/UART_433.c **** #if (UART_433_SCB_MODE_UNCONFIG_CONST_CFG)
+  54              		.loc 1 172 0
+  55 0004 08B5     		push	{r3, lr}
+  56              		.cfi_def_cfa_offset 8
+  57              		.cfi_offset 3, -8
+  58              		.cfi_offset 14, -4
+  59              		.loc 1 185 0
+  60 0006 1368     		ldr	r3, [r2]
+  61 0008 0906     		lsl	r1, r1, #24
+  62 000a 0B43     		orr	r3, r1
+  63 000c 1360     		str	r3, [r2]
+  64              	.LBB10:
+  65              	.LBB11:
+ 186:Generated_Source\PSoC4/UART_433.c **** 
+ 187:Generated_Source\PSoC4/UART_433.c ****     UART_433_ScbEnableIntr();
+ 188:Generated_Source\PSoC4/UART_433.c **** 
+ 189:Generated_Source\PSoC4/UART_433.c ****     /* Call PostEnable function specific to current operation mode */
+ 190:Generated_Source\PSoC4/UART_433.c ****     UART_433_ScbModePostEnable();
+ 191:Generated_Source\PSoC4/UART_433.c **** #endif /* (UART_433_SCB_MODE_UNCONFIG_CONST_CFG) */
+ 192:Generated_Source\PSoC4/UART_433.c **** }
+ 193:Generated_Source\PSoC4/UART_433.c **** 
+ 194:Generated_Source\PSoC4/UART_433.c **** 
+ 195:Generated_Source\PSoC4/UART_433.c **** /*******************************************************************************
+ 196:Generated_Source\PSoC4/UART_433.c **** * Function Name: UART_433_Start
+ 197:Generated_Source\PSoC4/UART_433.c **** ****************************************************************************//**
+ 198:Generated_Source\PSoC4/UART_433.c **** *
+ 199:Generated_Source\PSoC4/UART_433.c **** *  Invokes UART_433_Init() and UART_433_Enable().
+ 200:Generated_Source\PSoC4/UART_433.c **** *  After this function call, the component is enabled and ready for operation.
+ 201:Generated_Source\PSoC4/UART_433.c **** *  When configuration is set to "Unconfigured SCB", the component must first be
+ 202:Generated_Source\PSoC4/UART_433.c **** *  initialized to operate in one of the following configurations: I2C, SPI, UART
+ 203:Generated_Source\PSoC4/UART_433.c **** *  or EZI2C. Otherwise this function does not enable the component.
+ 204:Generated_Source\PSoC4/UART_433.c **** *
+ 205:Generated_Source\PSoC4/UART_433.c **** * \globalvars
+ 206:Generated_Source\PSoC4/UART_433.c **** *  UART_433_initVar - used to check initial configuration, modified
+ 207:Generated_Source\PSoC4/UART_433.c **** *  on first function call.
+ 208:Generated_Source\PSoC4/UART_433.c **** *
+ 209:Generated_Source\PSoC4/UART_433.c **** *******************************************************************************/
+ 210:Generated_Source\PSoC4/UART_433.c **** void UART_433_Start(void)
+ 211:Generated_Source\PSoC4/UART_433.c **** {
+ 212:Generated_Source\PSoC4/UART_433.c ****     if (0u == UART_433_initVar)
+ 213:Generated_Source\PSoC4/UART_433.c ****     {
+ 214:Generated_Source\PSoC4/UART_433.c ****         UART_433_Init();
+ 215:Generated_Source\PSoC4/UART_433.c ****         UART_433_initVar = 1u; /* Component was initialized */
+ 216:Generated_Source\PSoC4/UART_433.c ****     }
+ 217:Generated_Source\PSoC4/UART_433.c **** 
+ 218:Generated_Source\PSoC4/UART_433.c ****     UART_433_Enable();
+ 219:Generated_Source\PSoC4/UART_433.c **** }
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccwJcpWN.s 			page 6
+
+
+ 220:Generated_Source\PSoC4/UART_433.c **** 
+ 221:Generated_Source\PSoC4/UART_433.c **** 
+ 222:Generated_Source\PSoC4/UART_433.c **** /*******************************************************************************
+ 223:Generated_Source\PSoC4/UART_433.c **** * Function Name: UART_433_Stop
+ 224:Generated_Source\PSoC4/UART_433.c **** ****************************************************************************//**
+ 225:Generated_Source\PSoC4/UART_433.c **** *
+ 226:Generated_Source\PSoC4/UART_433.c **** *  Disables the UART_433 component: disable the hardware and internal 
+ 227:Generated_Source\PSoC4/UART_433.c **** *  interrupt. It also disables all TX interrupt sources so as not to cause an 
+ 228:Generated_Source\PSoC4/UART_433.c **** *  unexpected interrupt trigger because after the component is enabled, the 
+ 229:Generated_Source\PSoC4/UART_433.c **** *  TX FIFO is empty.
+ 230:Generated_Source\PSoC4/UART_433.c **** *  Refer to the function UART_433_Enable() for the interrupt 
+ 231:Generated_Source\PSoC4/UART_433.c **** *  configuration details.
+ 232:Generated_Source\PSoC4/UART_433.c **** *  This function disables the SCB component without checking to see if 
+ 233:Generated_Source\PSoC4/UART_433.c **** *  communication is in progress. Before calling this function it may be 
+ 234:Generated_Source\PSoC4/UART_433.c **** *  necessary to check the status of communication to make sure communication 
+ 235:Generated_Source\PSoC4/UART_433.c **** *  is complete. If this is not done then communication could be stopped mid 
+ 236:Generated_Source\PSoC4/UART_433.c **** *  byte and corrupted data could result.
+ 237:Generated_Source\PSoC4/UART_433.c **** *
+ 238:Generated_Source\PSoC4/UART_433.c **** *******************************************************************************/
+ 239:Generated_Source\PSoC4/UART_433.c **** void UART_433_Stop(void)
+ 240:Generated_Source\PSoC4/UART_433.c **** {
+ 241:Generated_Source\PSoC4/UART_433.c **** #if (UART_433_SCB_IRQ_INTERNAL)
+ 242:Generated_Source\PSoC4/UART_433.c ****     UART_433_DisableInt();
+ 243:Generated_Source\PSoC4/UART_433.c **** #endif /* (UART_433_SCB_IRQ_INTERNAL) */
+ 244:Generated_Source\PSoC4/UART_433.c **** 
+ 245:Generated_Source\PSoC4/UART_433.c ****     /* Call Stop function specific to current operation mode */
+ 246:Generated_Source\PSoC4/UART_433.c ****     UART_433_ScbModeStop();
+ 247:Generated_Source\PSoC4/UART_433.c **** 
+ 248:Generated_Source\PSoC4/UART_433.c ****     /* Disable SCB IP */
+ 249:Generated_Source\PSoC4/UART_433.c ****     UART_433_CTRL_REG &= (uint32) ~UART_433_CTRL_ENABLED;
+ 250:Generated_Source\PSoC4/UART_433.c **** 
+ 251:Generated_Source\PSoC4/UART_433.c ****     /* Disable all TX interrupt sources so as not to cause an unexpected
+ 252:Generated_Source\PSoC4/UART_433.c ****     * interrupt trigger after the component will be enabled because the 
+ 253:Generated_Source\PSoC4/UART_433.c ****     * TX FIFO is empty.
+ 254:Generated_Source\PSoC4/UART_433.c ****     * For SCB IP v0, it is critical as it does not mask-out interrupt
+ 255:Generated_Source\PSoC4/UART_433.c ****     * sources when it is disabled. This can cause a code lock-up in the
+ 256:Generated_Source\PSoC4/UART_433.c ****     * interrupt handler because TX FIFO cannot be loaded after the block
+ 257:Generated_Source\PSoC4/UART_433.c ****     * is disabled.
+ 258:Generated_Source\PSoC4/UART_433.c ****     */
+ 259:Generated_Source\PSoC4/UART_433.c ****     UART_433_SetTxInterruptMode(UART_433_NO_INTR_SOURCES);
+ 260:Generated_Source\PSoC4/UART_433.c **** 
+ 261:Generated_Source\PSoC4/UART_433.c **** #if (UART_433_SCB_IRQ_INTERNAL)
+ 262:Generated_Source\PSoC4/UART_433.c ****     UART_433_ClearPendingInt();
+ 263:Generated_Source\PSoC4/UART_433.c **** #endif /* (UART_433_SCB_IRQ_INTERNAL) */
+ 264:Generated_Source\PSoC4/UART_433.c **** }
+ 265:Generated_Source\PSoC4/UART_433.c **** 
+ 266:Generated_Source\PSoC4/UART_433.c **** 
+ 267:Generated_Source\PSoC4/UART_433.c **** /*******************************************************************************
+ 268:Generated_Source\PSoC4/UART_433.c **** * Function Name: UART_433_SetRxFifoLevel
+ 269:Generated_Source\PSoC4/UART_433.c **** ****************************************************************************//**
+ 270:Generated_Source\PSoC4/UART_433.c **** *
+ 271:Generated_Source\PSoC4/UART_433.c **** *  Sets level in the RX FIFO to generate a RX level interrupt.
+ 272:Generated_Source\PSoC4/UART_433.c **** *  When the RX FIFO has more entries than the RX FIFO level an RX level
+ 273:Generated_Source\PSoC4/UART_433.c **** *  interrupt request is generated.
+ 274:Generated_Source\PSoC4/UART_433.c **** *
+ 275:Generated_Source\PSoC4/UART_433.c **** *  \param level: Level in the RX FIFO to generate RX level interrupt.
+ 276:Generated_Source\PSoC4/UART_433.c **** *   The range of valid level values is between 0 and RX FIFO depth - 1.
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccwJcpWN.s 			page 7
+
+
+ 277:Generated_Source\PSoC4/UART_433.c **** *
+ 278:Generated_Source\PSoC4/UART_433.c **** *******************************************************************************/
+ 279:Generated_Source\PSoC4/UART_433.c **** void UART_433_SetRxFifoLevel(uint32 level)
+ 280:Generated_Source\PSoC4/UART_433.c **** {
+ 281:Generated_Source\PSoC4/UART_433.c ****     uint32 rxFifoCtrl;
+ 282:Generated_Source\PSoC4/UART_433.c **** 
+ 283:Generated_Source\PSoC4/UART_433.c ****     rxFifoCtrl = UART_433_RX_FIFO_CTRL_REG;
+ 284:Generated_Source\PSoC4/UART_433.c **** 
+ 285:Generated_Source\PSoC4/UART_433.c ****     rxFifoCtrl &= ((uint32) ~UART_433_RX_FIFO_CTRL_TRIGGER_LEVEL_MASK); /* Clear level mask bits */
+ 286:Generated_Source\PSoC4/UART_433.c ****     rxFifoCtrl |= ((uint32) (UART_433_RX_FIFO_CTRL_TRIGGER_LEVEL_MASK & level));
+ 287:Generated_Source\PSoC4/UART_433.c **** 
+ 288:Generated_Source\PSoC4/UART_433.c ****     UART_433_RX_FIFO_CTRL_REG = rxFifoCtrl;
+ 289:Generated_Source\PSoC4/UART_433.c **** }
+ 290:Generated_Source\PSoC4/UART_433.c **** 
+ 291:Generated_Source\PSoC4/UART_433.c **** 
+ 292:Generated_Source\PSoC4/UART_433.c **** /*******************************************************************************
+ 293:Generated_Source\PSoC4/UART_433.c **** * Function Name: UART_433_SetTxFifoLevel
+ 294:Generated_Source\PSoC4/UART_433.c **** ****************************************************************************//**
+ 295:Generated_Source\PSoC4/UART_433.c **** *
+ 296:Generated_Source\PSoC4/UART_433.c **** *  Sets level in the TX FIFO to generate a TX level interrupt.
+ 297:Generated_Source\PSoC4/UART_433.c **** *  When the TX FIFO has less entries than the TX FIFO level an TX level
+ 298:Generated_Source\PSoC4/UART_433.c **** *  interrupt request is generated.
+ 299:Generated_Source\PSoC4/UART_433.c **** *
+ 300:Generated_Source\PSoC4/UART_433.c **** *  \param level: Level in the TX FIFO to generate TX level interrupt.
+ 301:Generated_Source\PSoC4/UART_433.c **** *   The range of valid level values is between 0 and TX FIFO depth - 1.
+ 302:Generated_Source\PSoC4/UART_433.c **** *
+ 303:Generated_Source\PSoC4/UART_433.c **** *******************************************************************************/
+ 304:Generated_Source\PSoC4/UART_433.c **** void UART_433_SetTxFifoLevel(uint32 level)
+ 305:Generated_Source\PSoC4/UART_433.c **** {
+ 306:Generated_Source\PSoC4/UART_433.c ****     uint32 txFifoCtrl;
+ 307:Generated_Source\PSoC4/UART_433.c **** 
+ 308:Generated_Source\PSoC4/UART_433.c ****     txFifoCtrl = UART_433_TX_FIFO_CTRL_REG;
+ 309:Generated_Source\PSoC4/UART_433.c **** 
+ 310:Generated_Source\PSoC4/UART_433.c ****     txFifoCtrl &= ((uint32) ~UART_433_TX_FIFO_CTRL_TRIGGER_LEVEL_MASK); /* Clear level mask bits */
+ 311:Generated_Source\PSoC4/UART_433.c ****     txFifoCtrl |= ((uint32) (UART_433_TX_FIFO_CTRL_TRIGGER_LEVEL_MASK & level));
+ 312:Generated_Source\PSoC4/UART_433.c **** 
+ 313:Generated_Source\PSoC4/UART_433.c ****     UART_433_TX_FIFO_CTRL_REG = txFifoCtrl;
+ 314:Generated_Source\PSoC4/UART_433.c **** }
+ 315:Generated_Source\PSoC4/UART_433.c **** 
+ 316:Generated_Source\PSoC4/UART_433.c **** 
+ 317:Generated_Source\PSoC4/UART_433.c **** #if (UART_433_SCB_IRQ_INTERNAL)
+ 318:Generated_Source\PSoC4/UART_433.c ****     /*******************************************************************************
+ 319:Generated_Source\PSoC4/UART_433.c ****     * Function Name: UART_433_SetCustomInterruptHandler
+ 320:Generated_Source\PSoC4/UART_433.c ****     ****************************************************************************//**
+ 321:Generated_Source\PSoC4/UART_433.c ****     *
+ 322:Generated_Source\PSoC4/UART_433.c ****     *  Registers a function to be called by the internal interrupt handler.
+ 323:Generated_Source\PSoC4/UART_433.c ****     *  First the function that is registered is called, then the internal interrupt
+ 324:Generated_Source\PSoC4/UART_433.c ****     *  handler performs any operation such as software buffer management functions
+ 325:Generated_Source\PSoC4/UART_433.c ****     *  before the interrupt returns.  It is the user's responsibility not to break
+ 326:Generated_Source\PSoC4/UART_433.c ****     *  the software buffer operations. Only one custom handler is supported, which
+ 327:Generated_Source\PSoC4/UART_433.c ****     *  is the function provided by the most recent call.
+ 328:Generated_Source\PSoC4/UART_433.c ****     *  At the initialization time no custom handler is registered.
+ 329:Generated_Source\PSoC4/UART_433.c ****     *
+ 330:Generated_Source\PSoC4/UART_433.c ****     *  \param func: Pointer to the function to register.
+ 331:Generated_Source\PSoC4/UART_433.c ****     *        The value NULL indicates to remove the current custom interrupt
+ 332:Generated_Source\PSoC4/UART_433.c ****     *        handler.
+ 333:Generated_Source\PSoC4/UART_433.c ****     *
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccwJcpWN.s 			page 8
+
+
+ 334:Generated_Source\PSoC4/UART_433.c ****     *******************************************************************************/
+ 335:Generated_Source\PSoC4/UART_433.c ****     void UART_433_SetCustomInterruptHandler(void (*func)(void))
+ 336:Generated_Source\PSoC4/UART_433.c ****     {
+ 337:Generated_Source\PSoC4/UART_433.c ****     #if !defined (CY_REMOVE_UART_433_CUSTOM_INTR_HANDLER)
+ 338:Generated_Source\PSoC4/UART_433.c ****         UART_433_customIntrHandler = func; /* Register interrupt handler */
+ 339:Generated_Source\PSoC4/UART_433.c ****     #else
+ 340:Generated_Source\PSoC4/UART_433.c ****         if (NULL != func)
+ 341:Generated_Source\PSoC4/UART_433.c ****         {
+ 342:Generated_Source\PSoC4/UART_433.c ****             /* Suppress compiler warning */
+ 343:Generated_Source\PSoC4/UART_433.c ****         }
+ 344:Generated_Source\PSoC4/UART_433.c ****     #endif /* !defined (CY_REMOVE_UART_433_CUSTOM_INTR_HANDLER) */
+ 345:Generated_Source\PSoC4/UART_433.c ****     }
+ 346:Generated_Source\PSoC4/UART_433.c **** #endif /* (UART_433_SCB_IRQ_INTERNAL) */
+ 347:Generated_Source\PSoC4/UART_433.c **** 
+ 348:Generated_Source\PSoC4/UART_433.c **** 
+ 349:Generated_Source\PSoC4/UART_433.c **** /*******************************************************************************
+ 350:Generated_Source\PSoC4/UART_433.c **** * Function Name: UART_433_ScbModeEnableIntr
+ 351:Generated_Source\PSoC4/UART_433.c **** ****************************************************************************//**
+ 352:Generated_Source\PSoC4/UART_433.c **** *
+ 353:Generated_Source\PSoC4/UART_433.c **** *  Enables an interrupt for a specific mode.
+ 354:Generated_Source\PSoC4/UART_433.c **** *
+ 355:Generated_Source\PSoC4/UART_433.c **** *******************************************************************************/
+ 356:Generated_Source\PSoC4/UART_433.c **** static void UART_433_ScbEnableIntr(void)
+ 357:Generated_Source\PSoC4/UART_433.c **** {
+ 358:Generated_Source\PSoC4/UART_433.c **** #if (UART_433_SCB_IRQ_INTERNAL)
+ 359:Generated_Source\PSoC4/UART_433.c ****     /* Enable interrupt in NVIC */
+ 360:Generated_Source\PSoC4/UART_433.c ****     #if (UART_433_SCB_MODE_UNCONFIG_CONST_CFG)
+ 361:Generated_Source\PSoC4/UART_433.c ****         if (0u != UART_433_scbEnableIntr)
+ 362:Generated_Source\PSoC4/UART_433.c ****         {
+ 363:Generated_Source\PSoC4/UART_433.c ****             UART_433_EnableInt();
+ 364:Generated_Source\PSoC4/UART_433.c ****         }
+ 365:Generated_Source\PSoC4/UART_433.c **** 
+ 366:Generated_Source\PSoC4/UART_433.c ****     #else
+ 367:Generated_Source\PSoC4/UART_433.c ****         UART_433_EnableInt();
+ 368:Generated_Source\PSoC4/UART_433.c **** 
+ 369:Generated_Source\PSoC4/UART_433.c ****     #endif /* (UART_433_SCB_MODE_UNCONFIG_CONST_CFG) */
+ 370:Generated_Source\PSoC4/UART_433.c **** #endif /* (UART_433_SCB_IRQ_INTERNAL) */
+ 371:Generated_Source\PSoC4/UART_433.c **** }
+ 372:Generated_Source\PSoC4/UART_433.c **** 
+ 373:Generated_Source\PSoC4/UART_433.c **** 
+ 374:Generated_Source\PSoC4/UART_433.c **** /*******************************************************************************
+ 375:Generated_Source\PSoC4/UART_433.c **** * Function Name: UART_433_ScbModePostEnable
+ 376:Generated_Source\PSoC4/UART_433.c **** ****************************************************************************//**
+ 377:Generated_Source\PSoC4/UART_433.c **** *
+ 378:Generated_Source\PSoC4/UART_433.c **** *  Calls the PostEnable function for a specific operation mode.
+ 379:Generated_Source\PSoC4/UART_433.c **** *
+ 380:Generated_Source\PSoC4/UART_433.c **** *******************************************************************************/
+ 381:Generated_Source\PSoC4/UART_433.c **** static void UART_433_ScbModePostEnable(void)
+ 382:Generated_Source\PSoC4/UART_433.c **** {
+ 383:Generated_Source\PSoC4/UART_433.c **** #if (UART_433_SCB_MODE_UNCONFIG_CONST_CFG)
+ 384:Generated_Source\PSoC4/UART_433.c **** #if (!UART_433_CY_SCBIP_V1)
+ 385:Generated_Source\PSoC4/UART_433.c ****     if (UART_433_SCB_MODE_SPI_RUNTM_CFG)
+ 386:Generated_Source\PSoC4/UART_433.c ****     {
+ 387:Generated_Source\PSoC4/UART_433.c ****         UART_433_SpiPostEnable();
+ 388:Generated_Source\PSoC4/UART_433.c ****     }
+ 389:Generated_Source\PSoC4/UART_433.c ****     else if (UART_433_SCB_MODE_UART_RUNTM_CFG)
+ 390:Generated_Source\PSoC4/UART_433.c ****     {
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccwJcpWN.s 			page 9
+
+
+ 391:Generated_Source\PSoC4/UART_433.c ****         UART_433_UartPostEnable();
+ 392:Generated_Source\PSoC4/UART_433.c ****     }
+ 393:Generated_Source\PSoC4/UART_433.c ****     else
+ 394:Generated_Source\PSoC4/UART_433.c ****     {
+ 395:Generated_Source\PSoC4/UART_433.c ****         /* Unknown mode: do nothing */
+ 396:Generated_Source\PSoC4/UART_433.c ****     }
+ 397:Generated_Source\PSoC4/UART_433.c **** #endif /* (!UART_433_CY_SCBIP_V1) */
+ 398:Generated_Source\PSoC4/UART_433.c **** 
+ 399:Generated_Source\PSoC4/UART_433.c **** #elif (UART_433_SCB_MODE_SPI_CONST_CFG)
+ 400:Generated_Source\PSoC4/UART_433.c ****     UART_433_SpiPostEnable();
+ 401:Generated_Source\PSoC4/UART_433.c **** 
+ 402:Generated_Source\PSoC4/UART_433.c **** #elif (UART_433_SCB_MODE_UART_CONST_CFG)
+ 403:Generated_Source\PSoC4/UART_433.c ****     UART_433_UartPostEnable();
+  66              		.loc 1 403 0
+  67 000e FFF7FEFF 		bl	UART_433_UartPostEnable
+  68              	.LVL1:
+  69              	.LBE11:
+  70              	.LBE10:
+ 192:Generated_Source\PSoC4/UART_433.c **** 
+  71              		.loc 1 192 0
+  72              		@ sp needed
+  73 0012 08BD     		pop	{r3, pc}
+  74              	.L4:
+  75              		.align	2
+  76              	.L3:
+  77 0014 00002440 		.word	1076101120
+  78              		.cfi_endproc
+  79              	.LFE3:
+  80              		.size	UART_433_Enable, .-UART_433_Enable
+  81              		.section	.text.UART_433_Start,"ax",%progbits
+  82              		.align	1
+  83              		.global	UART_433_Start
+  84              		.code	16
+  85              		.thumb_func
+  86              		.type	UART_433_Start, %function
+  87              	UART_433_Start:
+  88              	.LFB4:
+ 211:Generated_Source\PSoC4/UART_433.c ****     if (0u == UART_433_initVar)
+  89              		.loc 1 211 0
+  90              		.cfi_startproc
+  91 0000 10B5     		push	{r4, lr}
+  92              		.cfi_def_cfa_offset 8
+  93              		.cfi_offset 4, -8
+  94              		.cfi_offset 14, -4
+ 212:Generated_Source\PSoC4/UART_433.c ****     {
+  95              		.loc 1 212 0
+  96 0002 054C     		ldr	r4, .L8
+  97 0004 2378     		ldrb	r3, [r4]
+  98 0006 002B     		cmp	r3, #0
+  99 0008 03D1     		bne	.L6
+ 100              	.LBB12:
+ 101              	.LBB13:
+ 142:Generated_Source\PSoC4/UART_433.c **** 
+ 102              		.loc 1 142 0
+ 103 000a FFF7FEFF 		bl	UART_433_UartInit
+ 104              	.LVL2:
+ 105              	.LBE13:
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccwJcpWN.s 			page 10
+
+
+ 106              	.LBE12:
+ 215:Generated_Source\PSoC4/UART_433.c ****     }
+ 107              		.loc 1 215 0
+ 108 000e 0123     		mov	r3, #1
+ 109 0010 2370     		strb	r3, [r4]
+ 110              	.L6:
+ 218:Generated_Source\PSoC4/UART_433.c **** }
+ 111              		.loc 1 218 0
+ 112 0012 FFF7FEFF 		bl	UART_433_Enable
+ 113              	.LVL3:
+ 219:Generated_Source\PSoC4/UART_433.c **** 
+ 114              		.loc 1 219 0
+ 115              		@ sp needed
+ 116 0016 10BD     		pop	{r4, pc}
+ 117              	.L9:
+ 118              		.align	2
+ 119              	.L8:
+ 120 0018 00000000 		.word	.LANCHOR0
+ 121              		.cfi_endproc
+ 122              	.LFE4:
+ 123              		.size	UART_433_Start, .-UART_433_Start
+ 124              		.section	.text.UART_433_Stop,"ax",%progbits
+ 125              		.align	1
+ 126              		.global	UART_433_Stop
+ 127              		.code	16
+ 128              		.thumb_func
+ 129              		.type	UART_433_Stop, %function
+ 130              	UART_433_Stop:
+ 131              	.LFB5:
+ 240:Generated_Source\PSoC4/UART_433.c **** #if (UART_433_SCB_IRQ_INTERNAL)
+ 132              		.loc 1 240 0
+ 133              		.cfi_startproc
+ 134 0000 08B5     		push	{r3, lr}
+ 135              		.cfi_def_cfa_offset 8
+ 136              		.cfi_offset 3, -8
+ 137              		.cfi_offset 14, -4
+ 138              	.LBB14:
+ 139              	.LBB15:
+ 404:Generated_Source\PSoC4/UART_433.c **** 
+ 405:Generated_Source\PSoC4/UART_433.c **** #else
+ 406:Generated_Source\PSoC4/UART_433.c ****     /* Unknown mode: do nothing */
+ 407:Generated_Source\PSoC4/UART_433.c **** #endif /* (UART_433_SCB_MODE_UNCONFIG_CONST_CFG) */
+ 408:Generated_Source\PSoC4/UART_433.c **** }
+ 409:Generated_Source\PSoC4/UART_433.c **** 
+ 410:Generated_Source\PSoC4/UART_433.c **** 
+ 411:Generated_Source\PSoC4/UART_433.c **** /*******************************************************************************
+ 412:Generated_Source\PSoC4/UART_433.c **** * Function Name: UART_433_ScbModeStop
+ 413:Generated_Source\PSoC4/UART_433.c **** ****************************************************************************//**
+ 414:Generated_Source\PSoC4/UART_433.c **** *
+ 415:Generated_Source\PSoC4/UART_433.c **** *  Calls the Stop function for a specific operation mode.
+ 416:Generated_Source\PSoC4/UART_433.c **** *
+ 417:Generated_Source\PSoC4/UART_433.c **** *******************************************************************************/
+ 418:Generated_Source\PSoC4/UART_433.c **** static void UART_433_ScbModeStop(void)
+ 419:Generated_Source\PSoC4/UART_433.c **** {
+ 420:Generated_Source\PSoC4/UART_433.c **** #if (UART_433_SCB_MODE_UNCONFIG_CONST_CFG)
+ 421:Generated_Source\PSoC4/UART_433.c ****     if (UART_433_SCB_MODE_I2C_RUNTM_CFG)
+ 422:Generated_Source\PSoC4/UART_433.c ****     {
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccwJcpWN.s 			page 11
+
+
+ 423:Generated_Source\PSoC4/UART_433.c ****         UART_433_I2CStop();
+ 424:Generated_Source\PSoC4/UART_433.c ****     }
+ 425:Generated_Source\PSoC4/UART_433.c ****     else if (UART_433_SCB_MODE_EZI2C_RUNTM_CFG)
+ 426:Generated_Source\PSoC4/UART_433.c ****     {
+ 427:Generated_Source\PSoC4/UART_433.c ****         UART_433_EzI2CStop();
+ 428:Generated_Source\PSoC4/UART_433.c ****     }
+ 429:Generated_Source\PSoC4/UART_433.c **** #if (!UART_433_CY_SCBIP_V1)
+ 430:Generated_Source\PSoC4/UART_433.c ****     else if (UART_433_SCB_MODE_SPI_RUNTM_CFG)
+ 431:Generated_Source\PSoC4/UART_433.c ****     {
+ 432:Generated_Source\PSoC4/UART_433.c ****         UART_433_SpiStop();
+ 433:Generated_Source\PSoC4/UART_433.c ****     }
+ 434:Generated_Source\PSoC4/UART_433.c ****     else if (UART_433_SCB_MODE_UART_RUNTM_CFG)
+ 435:Generated_Source\PSoC4/UART_433.c ****     {
+ 436:Generated_Source\PSoC4/UART_433.c ****         UART_433_UartStop();
+ 437:Generated_Source\PSoC4/UART_433.c ****     }
+ 438:Generated_Source\PSoC4/UART_433.c **** #endif /* (!UART_433_CY_SCBIP_V1) */
+ 439:Generated_Source\PSoC4/UART_433.c ****     else
+ 440:Generated_Source\PSoC4/UART_433.c ****     {
+ 441:Generated_Source\PSoC4/UART_433.c ****         /* Unknown mode: do nothing */
+ 442:Generated_Source\PSoC4/UART_433.c ****     }
+ 443:Generated_Source\PSoC4/UART_433.c **** #elif (UART_433_SCB_MODE_I2C_CONST_CFG)
+ 444:Generated_Source\PSoC4/UART_433.c ****     UART_433_I2CStop();
+ 445:Generated_Source\PSoC4/UART_433.c **** 
+ 446:Generated_Source\PSoC4/UART_433.c **** #elif (UART_433_SCB_MODE_EZI2C_CONST_CFG)
+ 447:Generated_Source\PSoC4/UART_433.c ****     UART_433_EzI2CStop();
+ 448:Generated_Source\PSoC4/UART_433.c **** 
+ 449:Generated_Source\PSoC4/UART_433.c **** #elif (UART_433_SCB_MODE_SPI_CONST_CFG)
+ 450:Generated_Source\PSoC4/UART_433.c ****     UART_433_SpiStop();
+ 451:Generated_Source\PSoC4/UART_433.c **** 
+ 452:Generated_Source\PSoC4/UART_433.c **** #elif (UART_433_SCB_MODE_UART_CONST_CFG)
+ 453:Generated_Source\PSoC4/UART_433.c ****     UART_433_UartStop();
+ 140              		.loc 1 453 0
+ 141 0002 FFF7FEFF 		bl	UART_433_UartStop
+ 142              	.LVL4:
+ 143              	.LBE15:
+ 144              	.LBE14:
+ 249:Generated_Source\PSoC4/UART_433.c **** 
+ 145              		.loc 1 249 0
+ 146 0006 044A     		ldr	r2, .L11
+ 264:Generated_Source\PSoC4/UART_433.c **** 
+ 147              		.loc 1 264 0
+ 148              		@ sp needed
+ 249:Generated_Source\PSoC4/UART_433.c **** 
+ 149              		.loc 1 249 0
+ 150 0008 1368     		ldr	r3, [r2]
+ 151 000a 5B00     		lsl	r3, r3, #1
+ 152 000c 5B08     		lsr	r3, r3, #1
+ 153 000e 1360     		str	r3, [r2]
+ 259:Generated_Source\PSoC4/UART_433.c **** 
+ 154              		.loc 1 259 0
+ 155 0010 0022     		mov	r2, #0
+ 156 0012 024B     		ldr	r3, .L11+4
+ 157 0014 1A60     		str	r2, [r3]
+ 264:Generated_Source\PSoC4/UART_433.c **** 
+ 158              		.loc 1 264 0
+ 159 0016 08BD     		pop	{r3, pc}
+ 160              	.L12:
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccwJcpWN.s 			page 12
+
+
+ 161              		.align	2
+ 162              	.L11:
+ 163 0018 00002440 		.word	1076101120
+ 164 001c 880F2440 		.word	1076105096
+ 165              		.cfi_endproc
+ 166              	.LFE5:
+ 167              		.size	UART_433_Stop, .-UART_433_Stop
+ 168              		.section	.text.UART_433_SetRxFifoLevel,"ax",%progbits
+ 169              		.align	1
+ 170              		.global	UART_433_SetRxFifoLevel
+ 171              		.code	16
+ 172              		.thumb_func
+ 173              		.type	UART_433_SetRxFifoLevel, %function
+ 174              	UART_433_SetRxFifoLevel:
+ 175              	.LFB6:
+ 280:Generated_Source\PSoC4/UART_433.c ****     uint32 rxFifoCtrl;
+ 176              		.loc 1 280 0
+ 177              		.cfi_startproc
+ 178              	.LVL5:
+ 285:Generated_Source\PSoC4/UART_433.c ****     rxFifoCtrl |= ((uint32) (UART_433_RX_FIFO_CTRL_TRIGGER_LEVEL_MASK & level));
+ 179              		.loc 1 285 0
+ 180 0000 0F22     		mov	r2, #15
+ 283:Generated_Source\PSoC4/UART_433.c **** 
+ 181              		.loc 1 283 0
+ 182 0002 0349     		ldr	r1, .L14
+ 286:Generated_Source\PSoC4/UART_433.c **** 
+ 183              		.loc 1 286 0
+ 184 0004 1040     		and	r0, r2
+ 185              	.LVL6:
+ 283:Generated_Source\PSoC4/UART_433.c **** 
+ 186              		.loc 1 283 0
+ 187 0006 0B68     		ldr	r3, [r1]
+ 188              	.LVL7:
+ 289:Generated_Source\PSoC4/UART_433.c **** 
+ 189              		.loc 1 289 0
+ 190              		@ sp needed
+ 285:Generated_Source\PSoC4/UART_433.c ****     rxFifoCtrl |= ((uint32) (UART_433_RX_FIFO_CTRL_TRIGGER_LEVEL_MASK & level));
+ 191              		.loc 1 285 0
+ 192 0008 9343     		bic	r3, r2
+ 193              	.LVL8:
+ 286:Generated_Source\PSoC4/UART_433.c **** 
+ 194              		.loc 1 286 0
+ 195 000a 1843     		orr	r0, r3
+ 196              	.LVL9:
+ 288:Generated_Source\PSoC4/UART_433.c **** }
+ 197              		.loc 1 288 0
+ 198 000c 0860     		str	r0, [r1]
+ 289:Generated_Source\PSoC4/UART_433.c **** 
+ 199              		.loc 1 289 0
+ 200 000e 7047     		bx	lr
+ 201              	.L15:
+ 202              		.align	2
+ 203              	.L14:
+ 204 0010 04032440 		.word	1076101892
+ 205              		.cfi_endproc
+ 206              	.LFE6:
+ 207              		.size	UART_433_SetRxFifoLevel, .-UART_433_SetRxFifoLevel
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccwJcpWN.s 			page 13
+
+
+ 208              		.section	.text.UART_433_SetTxFifoLevel,"ax",%progbits
+ 209              		.align	1
+ 210              		.global	UART_433_SetTxFifoLevel
+ 211              		.code	16
+ 212              		.thumb_func
+ 213              		.type	UART_433_SetTxFifoLevel, %function
+ 214              	UART_433_SetTxFifoLevel:
+ 215              	.LFB7:
+ 305:Generated_Source\PSoC4/UART_433.c ****     uint32 txFifoCtrl;
+ 216              		.loc 1 305 0
+ 217              		.cfi_startproc
+ 218              	.LVL10:
+ 310:Generated_Source\PSoC4/UART_433.c ****     txFifoCtrl |= ((uint32) (UART_433_TX_FIFO_CTRL_TRIGGER_LEVEL_MASK & level));
+ 219              		.loc 1 310 0
+ 220 0000 0F22     		mov	r2, #15
+ 308:Generated_Source\PSoC4/UART_433.c **** 
+ 221              		.loc 1 308 0
+ 222 0002 0349     		ldr	r1, .L17
+ 311:Generated_Source\PSoC4/UART_433.c **** 
+ 223              		.loc 1 311 0
+ 224 0004 1040     		and	r0, r2
+ 225              	.LVL11:
+ 308:Generated_Source\PSoC4/UART_433.c **** 
+ 226              		.loc 1 308 0
+ 227 0006 0B68     		ldr	r3, [r1]
+ 228              	.LVL12:
+ 314:Generated_Source\PSoC4/UART_433.c **** 
+ 229              		.loc 1 314 0
+ 230              		@ sp needed
+ 310:Generated_Source\PSoC4/UART_433.c ****     txFifoCtrl |= ((uint32) (UART_433_TX_FIFO_CTRL_TRIGGER_LEVEL_MASK & level));
+ 231              		.loc 1 310 0
+ 232 0008 9343     		bic	r3, r2
+ 233              	.LVL13:
+ 311:Generated_Source\PSoC4/UART_433.c **** 
+ 234              		.loc 1 311 0
+ 235 000a 1843     		orr	r0, r3
+ 236              	.LVL14:
+ 313:Generated_Source\PSoC4/UART_433.c **** }
+ 237              		.loc 1 313 0
+ 238 000c 0860     		str	r0, [r1]
+ 314:Generated_Source\PSoC4/UART_433.c **** 
+ 239              		.loc 1 314 0
+ 240 000e 7047     		bx	lr
+ 241              	.L18:
+ 242              		.align	2
+ 243              	.L17:
+ 244 0010 04022440 		.word	1076101636
+ 245              		.cfi_endproc
+ 246              	.LFE7:
+ 247              		.size	UART_433_SetTxFifoLevel, .-UART_433_SetTxFifoLevel
+ 248              		.global	UART_433_IntrTxMask
+ 249              		.global	UART_433_initVar
+ 250              		.bss
+ 251              		.align	1
+ 252              		.set	.LANCHOR0,. + 0
+ 253              		.type	UART_433_initVar, %object
+ 254              		.size	UART_433_initVar, 1
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccwJcpWN.s 			page 14
+
+
+ 255              	UART_433_initVar:
+ 256 0000 00       		.space	1
+ 257 0001 00       		.space	1
+ 258              		.type	UART_433_IntrTxMask, %object
+ 259              		.size	UART_433_IntrTxMask, 2
+ 260              	UART_433_IntrTxMask:
+ 261 0002 0000     		.space	2
+ 262              		.text
+ 263              	.Letext0:
+ 264              		.file 2 "Generated_Source\\PSoC4/cytypes.h"
+ 265              		.file 3 "Generated_Source\\PSoC4\\UART_433_SPI_UART_PVT.h"
+ 266              		.section	.debug_info,"",%progbits
+ 267              	.Ldebug_info0:
+ 268 0000 38020000 		.4byte	0x238
+ 269 0004 0400     		.2byte	0x4
+ 270 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 271 000a 04       		.byte	0x4
+ 272 000b 01       		.uleb128 0x1
+ 273 000c 9C000000 		.4byte	.LASF34
+ 274 0010 01       		.byte	0x1
+ 275 0011 62010000 		.4byte	.LASF35
+ 276 0015 00000000 		.4byte	.LASF36
+ 277 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 278 001d 00000000 		.4byte	0
+ 279 0021 00000000 		.4byte	.Ldebug_line0
+ 280 0025 02       		.uleb128 0x2
+ 281 0026 01       		.byte	0x1
+ 282 0027 06       		.byte	0x6
+ 283 0028 EA020000 		.4byte	.LASF0
+ 284 002c 02       		.uleb128 0x2
+ 285 002d 01       		.byte	0x1
+ 286 002e 08       		.byte	0x8
+ 287 002f B7010000 		.4byte	.LASF1
+ 288 0033 02       		.uleb128 0x2
+ 289 0034 02       		.byte	0x2
+ 290 0035 05       		.byte	0x5
+ 291 0036 B5020000 		.4byte	.LASF2
+ 292 003a 02       		.uleb128 0x2
+ 293 003b 02       		.byte	0x2
+ 294 003c 07       		.byte	0x7
+ 295 003d 4F010000 		.4byte	.LASF3
+ 296 0041 02       		.uleb128 0x2
+ 297 0042 04       		.byte	0x4
+ 298 0043 05       		.byte	0x5
+ 299 0044 CA020000 		.4byte	.LASF4
+ 300 0048 02       		.uleb128 0x2
+ 301 0049 04       		.byte	0x4
+ 302 004a 07       		.byte	0x7
+ 303 004b 2B020000 		.4byte	.LASF5
+ 304 004f 02       		.uleb128 0x2
+ 305 0050 08       		.byte	0x8
+ 306 0051 05       		.byte	0x5
+ 307 0052 94020000 		.4byte	.LASF6
+ 308 0056 02       		.uleb128 0x2
+ 309 0057 08       		.byte	0x8
+ 310 0058 07       		.byte	0x7
+ 311 0059 4A020000 		.4byte	.LASF7
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccwJcpWN.s 			page 15
+
+
+ 312 005d 03       		.uleb128 0x3
+ 313 005e 04       		.byte	0x4
+ 314 005f 05       		.byte	0x5
+ 315 0060 696E7400 		.ascii	"int\000"
+ 316 0064 02       		.uleb128 0x2
+ 317 0065 04       		.byte	0x4
+ 318 0066 07       		.byte	0x7
+ 319 0067 3D020000 		.4byte	.LASF8
+ 320 006b 04       		.uleb128 0x4
+ 321 006c DD010000 		.4byte	.LASF9
+ 322 0070 02       		.byte	0x2
+ 323 0071 B901     		.2byte	0x1b9
+ 324 0073 2C000000 		.4byte	0x2c
+ 325 0077 04       		.uleb128 0x4
+ 326 0078 0D020000 		.4byte	.LASF10
+ 327 007c 02       		.byte	0x2
+ 328 007d BA01     		.2byte	0x1ba
+ 329 007f 3A000000 		.4byte	0x3a
+ 330 0083 04       		.uleb128 0x4
+ 331 0084 24020000 		.4byte	.LASF11
+ 332 0088 02       		.byte	0x2
+ 333 0089 BB01     		.2byte	0x1bb
+ 334 008b 48000000 		.4byte	0x48
+ 335 008f 02       		.uleb128 0x2
+ 336 0090 04       		.byte	0x4
+ 337 0091 04       		.byte	0x4
+ 338 0092 9F010000 		.4byte	.LASF12
+ 339 0096 02       		.uleb128 0x2
+ 340 0097 08       		.byte	0x8
+ 341 0098 04       		.byte	0x4
+ 342 0099 F7010000 		.4byte	.LASF13
+ 343 009d 02       		.uleb128 0x2
+ 344 009e 01       		.byte	0x1
+ 345 009f 08       		.byte	0x8
+ 346 00a0 A2020000 		.4byte	.LASF14
+ 347 00a4 04       		.uleb128 0x4
+ 348 00a5 8B000000 		.4byte	.LASF15
+ 349 00a9 02       		.byte	0x2
+ 350 00aa 6502     		.2byte	0x265
+ 351 00ac B0000000 		.4byte	0xb0
+ 352 00b0 05       		.uleb128 0x5
+ 353 00b1 83000000 		.4byte	0x83
+ 354 00b5 02       		.uleb128 0x2
+ 355 00b6 04       		.byte	0x4
+ 356 00b7 07       		.byte	0x7
+ 357 00b8 8B020000 		.4byte	.LASF16
+ 358 00bc 06       		.uleb128 0x6
+ 359 00bd D3020000 		.4byte	.LASF17
+ 360 00c1 01       		.byte	0x1
+ 361 00c2 6401     		.2byte	0x164
+ 362 00c4 01       		.byte	0x1
+ 363 00c5 06       		.uleb128 0x6
+ 364 00c6 84010000 		.4byte	.LASF18
+ 365 00ca 01       		.byte	0x1
+ 366 00cb 7D01     		.2byte	0x17d
+ 367 00cd 01       		.byte	0x1
+ 368 00ce 07       		.uleb128 0x7
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccwJcpWN.s 			page 16
+
+
+ 369 00cf A7020000 		.4byte	.LASF30
+ 370 00d3 01       		.byte	0x1
+ 371 00d4 7B       		.byte	0x7b
+ 372 00d5 01       		.byte	0x1
+ 373 00d6 06       		.uleb128 0x6
+ 374 00d7 0E030000 		.4byte	.LASF19
+ 375 00db 01       		.byte	0x1
+ 376 00dc A201     		.2byte	0x1a2
+ 377 00de 01       		.byte	0x1
+ 378 00df 08       		.uleb128 0x8
+ 379 00e0 CE000000 		.4byte	0xce
+ 380 00e4 00000000 		.4byte	.LFB2
+ 381 00e8 08000000 		.4byte	.LFE2-.LFB2
+ 382 00ec 01       		.uleb128 0x1
+ 383 00ed 9C       		.byte	0x9c
+ 384 00ee FC000000 		.4byte	0xfc
+ 385 00f2 09       		.uleb128 0x9
+ 386 00f3 06000000 		.4byte	.LVL0
+ 387 00f7 26020000 		.4byte	0x226
+ 388 00fb 00       		.byte	0
+ 389 00fc 0A       		.uleb128 0xa
+ 390 00fd 14020000 		.4byte	.LASF20
+ 391 0101 01       		.byte	0x1
+ 392 0102 AB       		.byte	0xab
+ 393 0103 00000000 		.4byte	.LFB3
+ 394 0107 18000000 		.4byte	.LFE3-.LFB3
+ 395 010b 01       		.uleb128 0x1
+ 396 010c 9C       		.byte	0x9c
+ 397 010d 2B010000 		.4byte	0x12b
+ 398 0111 0B       		.uleb128 0xb
+ 399 0112 C5000000 		.4byte	0xc5
+ 400 0116 0E000000 		.4byte	.LBB10
+ 401 011a 04000000 		.4byte	.LBE10-.LBB10
+ 402 011e 01       		.byte	0x1
+ 403 011f BE       		.byte	0xbe
+ 404 0120 09       		.uleb128 0x9
+ 405 0121 12000000 		.4byte	.LVL1
+ 406 0125 2D020000 		.4byte	0x22d
+ 407 0129 00       		.byte	0
+ 408 012a 00       		.byte	0
+ 409 012b 0A       		.uleb128 0xa
+ 410 012c FE010000 		.4byte	.LASF21
+ 411 0130 01       		.byte	0x1
+ 412 0131 D2       		.byte	0xd2
+ 413 0132 00000000 		.4byte	.LFB4
+ 414 0136 1C000000 		.4byte	.LFE4-.LFB4
+ 415 013a 01       		.uleb128 0x1
+ 416 013b 9C       		.byte	0x9c
+ 417 013c 67010000 		.4byte	0x167
+ 418 0140 0C       		.uleb128 0xc
+ 419 0141 CE000000 		.4byte	0xce
+ 420 0145 0A000000 		.4byte	.LBB12
+ 421 0149 04000000 		.4byte	.LBE12-.LBB12
+ 422 014d 01       		.byte	0x1
+ 423 014e D6       		.byte	0xd6
+ 424 014f 5D010000 		.4byte	0x15d
+ 425 0153 09       		.uleb128 0x9
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccwJcpWN.s 			page 17
+
+
+ 426 0154 0E000000 		.4byte	.LVL2
+ 427 0158 26020000 		.4byte	0x226
+ 428 015c 00       		.byte	0
+ 429 015d 09       		.uleb128 0x9
+ 430 015e 16000000 		.4byte	.LVL3
+ 431 0162 FC000000 		.4byte	0xfc
+ 432 0166 00       		.byte	0
+ 433 0167 0A       		.uleb128 0xa
+ 434 0168 30010000 		.4byte	.LASF22
+ 435 016c 01       		.byte	0x1
+ 436 016d EF       		.byte	0xef
+ 437 016e 00000000 		.4byte	.LFB5
+ 438 0172 20000000 		.4byte	.LFE5-.LFB5
+ 439 0176 01       		.uleb128 0x1
+ 440 0177 9C       		.byte	0x9c
+ 441 0178 96010000 		.4byte	0x196
+ 442 017c 0B       		.uleb128 0xb
+ 443 017d D6000000 		.4byte	0xd6
+ 444 0181 02000000 		.4byte	.LBB14
+ 445 0185 04000000 		.4byte	.LBE14-.LBB14
+ 446 0189 01       		.byte	0x1
+ 447 018a F6       		.byte	0xf6
+ 448 018b 09       		.uleb128 0x9
+ 449 018c 06000000 		.4byte	.LVL4
+ 450 0190 34020000 		.4byte	0x234
+ 451 0194 00       		.byte	0
+ 452 0195 00       		.byte	0
+ 453 0196 0D       		.uleb128 0xd
+ 454 0197 C5010000 		.4byte	.LASF23
+ 455 019b 01       		.byte	0x1
+ 456 019c 1701     		.2byte	0x117
+ 457 019e 00000000 		.4byte	.LFB6
+ 458 01a2 14000000 		.4byte	.LFE6-.LFB6
+ 459 01a6 01       		.uleb128 0x1
+ 460 01a7 9C       		.byte	0x9c
+ 461 01a8 CD010000 		.4byte	0x1cd
+ 462 01ac 0E       		.uleb128 0xe
+ 463 01ad 2A010000 		.4byte	.LASF25
+ 464 01b1 01       		.byte	0x1
+ 465 01b2 1701     		.2byte	0x117
+ 466 01b4 83000000 		.4byte	0x83
+ 467 01b8 00000000 		.4byte	.LLST0
+ 468 01bc 0F       		.uleb128 0xf
+ 469 01bd BF020000 		.4byte	.LASF26
+ 470 01c1 01       		.byte	0x1
+ 471 01c2 1901     		.2byte	0x119
+ 472 01c4 83000000 		.4byte	0x83
+ 473 01c8 21000000 		.4byte	.LLST1
+ 474 01cc 00       		.byte	0
+ 475 01cd 0D       		.uleb128 0xd
+ 476 01ce 73020000 		.4byte	.LASF24
+ 477 01d2 01       		.byte	0x1
+ 478 01d3 3001     		.2byte	0x130
+ 479 01d5 00000000 		.4byte	.LFB7
+ 480 01d9 14000000 		.4byte	.LFE7-.LFB7
+ 481 01dd 01       		.uleb128 0x1
+ 482 01de 9C       		.byte	0x9c
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccwJcpWN.s 			page 18
+
+
+ 483 01df 04020000 		.4byte	0x204
+ 484 01e3 0E       		.uleb128 0xe
+ 485 01e4 2A010000 		.4byte	.LASF25
+ 486 01e8 01       		.byte	0x1
+ 487 01e9 3001     		.2byte	0x130
+ 488 01eb 83000000 		.4byte	0x83
+ 489 01ef 3F000000 		.4byte	.LLST2
+ 490 01f3 0F       		.uleb128 0xf
+ 491 01f4 91000000 		.4byte	.LASF27
+ 492 01f8 01       		.byte	0x1
+ 493 01f9 3201     		.2byte	0x132
+ 494 01fb 83000000 		.4byte	0x83
+ 495 01ff 60000000 		.4byte	.LLST3
+ 496 0203 00       		.byte	0
+ 497 0204 10       		.uleb128 0x10
+ 498 0205 3E010000 		.4byte	.LASF28
+ 499 0209 01       		.byte	0x1
+ 500 020a 51       		.byte	0x51
+ 501 020b 6B000000 		.4byte	0x6b
+ 502 020f 05       		.uleb128 0x5
+ 503 0210 03       		.byte	0x3
+ 504 0211 00000000 		.4byte	UART_433_initVar
+ 505 0215 10       		.uleb128 0x10
+ 506 0216 E3010000 		.4byte	.LASF29
+ 507 021a 01       		.byte	0x1
+ 508 021b 5A       		.byte	0x5a
+ 509 021c 77000000 		.4byte	0x77
+ 510 0220 05       		.uleb128 0x5
+ 511 0221 03       		.byte	0x3
+ 512 0222 00000000 		.4byte	UART_433_IntrTxMask
+ 513 0226 11       		.uleb128 0x11
+ 514 0227 A5010000 		.4byte	.LASF31
+ 515 022b 03       		.byte	0x3
+ 516 022c 50       		.byte	0x50
+ 517 022d 11       		.uleb128 0x11
+ 518 022e F6020000 		.4byte	.LASF32
+ 519 0232 03       		.byte	0x3
+ 520 0233 4C       		.byte	0x4c
+ 521 0234 11       		.uleb128 0x11
+ 522 0235 61020000 		.4byte	.LASF33
+ 523 0239 03       		.byte	0x3
+ 524 023a 4D       		.byte	0x4d
+ 525 023b 00       		.byte	0
+ 526              		.section	.debug_abbrev,"",%progbits
+ 527              	.Ldebug_abbrev0:
+ 528 0000 01       		.uleb128 0x1
+ 529 0001 11       		.uleb128 0x11
+ 530 0002 01       		.byte	0x1
+ 531 0003 25       		.uleb128 0x25
+ 532 0004 0E       		.uleb128 0xe
+ 533 0005 13       		.uleb128 0x13
+ 534 0006 0B       		.uleb128 0xb
+ 535 0007 03       		.uleb128 0x3
+ 536 0008 0E       		.uleb128 0xe
+ 537 0009 1B       		.uleb128 0x1b
+ 538 000a 0E       		.uleb128 0xe
+ 539 000b 55       		.uleb128 0x55
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccwJcpWN.s 			page 19
+
+
+ 540 000c 17       		.uleb128 0x17
+ 541 000d 11       		.uleb128 0x11
+ 542 000e 01       		.uleb128 0x1
+ 543 000f 10       		.uleb128 0x10
+ 544 0010 17       		.uleb128 0x17
+ 545 0011 00       		.byte	0
+ 546 0012 00       		.byte	0
+ 547 0013 02       		.uleb128 0x2
+ 548 0014 24       		.uleb128 0x24
+ 549 0015 00       		.byte	0
+ 550 0016 0B       		.uleb128 0xb
+ 551 0017 0B       		.uleb128 0xb
+ 552 0018 3E       		.uleb128 0x3e
+ 553 0019 0B       		.uleb128 0xb
+ 554 001a 03       		.uleb128 0x3
+ 555 001b 0E       		.uleb128 0xe
+ 556 001c 00       		.byte	0
+ 557 001d 00       		.byte	0
+ 558 001e 03       		.uleb128 0x3
+ 559 001f 24       		.uleb128 0x24
+ 560 0020 00       		.byte	0
+ 561 0021 0B       		.uleb128 0xb
+ 562 0022 0B       		.uleb128 0xb
+ 563 0023 3E       		.uleb128 0x3e
+ 564 0024 0B       		.uleb128 0xb
+ 565 0025 03       		.uleb128 0x3
+ 566 0026 08       		.uleb128 0x8
+ 567 0027 00       		.byte	0
+ 568 0028 00       		.byte	0
+ 569 0029 04       		.uleb128 0x4
+ 570 002a 16       		.uleb128 0x16
+ 571 002b 00       		.byte	0
+ 572 002c 03       		.uleb128 0x3
+ 573 002d 0E       		.uleb128 0xe
+ 574 002e 3A       		.uleb128 0x3a
+ 575 002f 0B       		.uleb128 0xb
+ 576 0030 3B       		.uleb128 0x3b
+ 577 0031 05       		.uleb128 0x5
+ 578 0032 49       		.uleb128 0x49
+ 579 0033 13       		.uleb128 0x13
+ 580 0034 00       		.byte	0
+ 581 0035 00       		.byte	0
+ 582 0036 05       		.uleb128 0x5
+ 583 0037 35       		.uleb128 0x35
+ 584 0038 00       		.byte	0
+ 585 0039 49       		.uleb128 0x49
+ 586 003a 13       		.uleb128 0x13
+ 587 003b 00       		.byte	0
+ 588 003c 00       		.byte	0
+ 589 003d 06       		.uleb128 0x6
+ 590 003e 2E       		.uleb128 0x2e
+ 591 003f 00       		.byte	0
+ 592 0040 03       		.uleb128 0x3
+ 593 0041 0E       		.uleb128 0xe
+ 594 0042 3A       		.uleb128 0x3a
+ 595 0043 0B       		.uleb128 0xb
+ 596 0044 3B       		.uleb128 0x3b
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccwJcpWN.s 			page 20
+
+
+ 597 0045 05       		.uleb128 0x5
+ 598 0046 27       		.uleb128 0x27
+ 599 0047 19       		.uleb128 0x19
+ 600 0048 20       		.uleb128 0x20
+ 601 0049 0B       		.uleb128 0xb
+ 602 004a 00       		.byte	0
+ 603 004b 00       		.byte	0
+ 604 004c 07       		.uleb128 0x7
+ 605 004d 2E       		.uleb128 0x2e
+ 606 004e 00       		.byte	0
+ 607 004f 3F       		.uleb128 0x3f
+ 608 0050 19       		.uleb128 0x19
+ 609 0051 03       		.uleb128 0x3
+ 610 0052 0E       		.uleb128 0xe
+ 611 0053 3A       		.uleb128 0x3a
+ 612 0054 0B       		.uleb128 0xb
+ 613 0055 3B       		.uleb128 0x3b
+ 614 0056 0B       		.uleb128 0xb
+ 615 0057 27       		.uleb128 0x27
+ 616 0058 19       		.uleb128 0x19
+ 617 0059 20       		.uleb128 0x20
+ 618 005a 0B       		.uleb128 0xb
+ 619 005b 00       		.byte	0
+ 620 005c 00       		.byte	0
+ 621 005d 08       		.uleb128 0x8
+ 622 005e 2E       		.uleb128 0x2e
+ 623 005f 01       		.byte	0x1
+ 624 0060 31       		.uleb128 0x31
+ 625 0061 13       		.uleb128 0x13
+ 626 0062 11       		.uleb128 0x11
+ 627 0063 01       		.uleb128 0x1
+ 628 0064 12       		.uleb128 0x12
+ 629 0065 06       		.uleb128 0x6
+ 630 0066 40       		.uleb128 0x40
+ 631 0067 18       		.uleb128 0x18
+ 632 0068 9742     		.uleb128 0x2117
+ 633 006a 19       		.uleb128 0x19
+ 634 006b 01       		.uleb128 0x1
+ 635 006c 13       		.uleb128 0x13
+ 636 006d 00       		.byte	0
+ 637 006e 00       		.byte	0
+ 638 006f 09       		.uleb128 0x9
+ 639 0070 898201   		.uleb128 0x4109
+ 640 0073 00       		.byte	0
+ 641 0074 11       		.uleb128 0x11
+ 642 0075 01       		.uleb128 0x1
+ 643 0076 31       		.uleb128 0x31
+ 644 0077 13       		.uleb128 0x13
+ 645 0078 00       		.byte	0
+ 646 0079 00       		.byte	0
+ 647 007a 0A       		.uleb128 0xa
+ 648 007b 2E       		.uleb128 0x2e
+ 649 007c 01       		.byte	0x1
+ 650 007d 3F       		.uleb128 0x3f
+ 651 007e 19       		.uleb128 0x19
+ 652 007f 03       		.uleb128 0x3
+ 653 0080 0E       		.uleb128 0xe
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccwJcpWN.s 			page 21
+
+
+ 654 0081 3A       		.uleb128 0x3a
+ 655 0082 0B       		.uleb128 0xb
+ 656 0083 3B       		.uleb128 0x3b
+ 657 0084 0B       		.uleb128 0xb
+ 658 0085 27       		.uleb128 0x27
+ 659 0086 19       		.uleb128 0x19
+ 660 0087 11       		.uleb128 0x11
+ 661 0088 01       		.uleb128 0x1
+ 662 0089 12       		.uleb128 0x12
+ 663 008a 06       		.uleb128 0x6
+ 664 008b 40       		.uleb128 0x40
+ 665 008c 18       		.uleb128 0x18
+ 666 008d 9742     		.uleb128 0x2117
+ 667 008f 19       		.uleb128 0x19
+ 668 0090 01       		.uleb128 0x1
+ 669 0091 13       		.uleb128 0x13
+ 670 0092 00       		.byte	0
+ 671 0093 00       		.byte	0
+ 672 0094 0B       		.uleb128 0xb
+ 673 0095 1D       		.uleb128 0x1d
+ 674 0096 01       		.byte	0x1
+ 675 0097 31       		.uleb128 0x31
+ 676 0098 13       		.uleb128 0x13
+ 677 0099 11       		.uleb128 0x11
+ 678 009a 01       		.uleb128 0x1
+ 679 009b 12       		.uleb128 0x12
+ 680 009c 06       		.uleb128 0x6
+ 681 009d 58       		.uleb128 0x58
+ 682 009e 0B       		.uleb128 0xb
+ 683 009f 59       		.uleb128 0x59
+ 684 00a0 0B       		.uleb128 0xb
+ 685 00a1 00       		.byte	0
+ 686 00a2 00       		.byte	0
+ 687 00a3 0C       		.uleb128 0xc
+ 688 00a4 1D       		.uleb128 0x1d
+ 689 00a5 01       		.byte	0x1
+ 690 00a6 31       		.uleb128 0x31
+ 691 00a7 13       		.uleb128 0x13
+ 692 00a8 11       		.uleb128 0x11
+ 693 00a9 01       		.uleb128 0x1
+ 694 00aa 12       		.uleb128 0x12
+ 695 00ab 06       		.uleb128 0x6
+ 696 00ac 58       		.uleb128 0x58
+ 697 00ad 0B       		.uleb128 0xb
+ 698 00ae 59       		.uleb128 0x59
+ 699 00af 0B       		.uleb128 0xb
+ 700 00b0 01       		.uleb128 0x1
+ 701 00b1 13       		.uleb128 0x13
+ 702 00b2 00       		.byte	0
+ 703 00b3 00       		.byte	0
+ 704 00b4 0D       		.uleb128 0xd
+ 705 00b5 2E       		.uleb128 0x2e
+ 706 00b6 01       		.byte	0x1
+ 707 00b7 3F       		.uleb128 0x3f
+ 708 00b8 19       		.uleb128 0x19
+ 709 00b9 03       		.uleb128 0x3
+ 710 00ba 0E       		.uleb128 0xe
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccwJcpWN.s 			page 22
+
+
+ 711 00bb 3A       		.uleb128 0x3a
+ 712 00bc 0B       		.uleb128 0xb
+ 713 00bd 3B       		.uleb128 0x3b
+ 714 00be 05       		.uleb128 0x5
+ 715 00bf 27       		.uleb128 0x27
+ 716 00c0 19       		.uleb128 0x19
+ 717 00c1 11       		.uleb128 0x11
+ 718 00c2 01       		.uleb128 0x1
+ 719 00c3 12       		.uleb128 0x12
+ 720 00c4 06       		.uleb128 0x6
+ 721 00c5 40       		.uleb128 0x40
+ 722 00c6 18       		.uleb128 0x18
+ 723 00c7 9742     		.uleb128 0x2117
+ 724 00c9 19       		.uleb128 0x19
+ 725 00ca 01       		.uleb128 0x1
+ 726 00cb 13       		.uleb128 0x13
+ 727 00cc 00       		.byte	0
+ 728 00cd 00       		.byte	0
+ 729 00ce 0E       		.uleb128 0xe
+ 730 00cf 05       		.uleb128 0x5
+ 731 00d0 00       		.byte	0
+ 732 00d1 03       		.uleb128 0x3
+ 733 00d2 0E       		.uleb128 0xe
+ 734 00d3 3A       		.uleb128 0x3a
+ 735 00d4 0B       		.uleb128 0xb
+ 736 00d5 3B       		.uleb128 0x3b
+ 737 00d6 05       		.uleb128 0x5
+ 738 00d7 49       		.uleb128 0x49
+ 739 00d8 13       		.uleb128 0x13
+ 740 00d9 02       		.uleb128 0x2
+ 741 00da 17       		.uleb128 0x17
+ 742 00db 00       		.byte	0
+ 743 00dc 00       		.byte	0
+ 744 00dd 0F       		.uleb128 0xf
+ 745 00de 34       		.uleb128 0x34
+ 746 00df 00       		.byte	0
+ 747 00e0 03       		.uleb128 0x3
+ 748 00e1 0E       		.uleb128 0xe
+ 749 00e2 3A       		.uleb128 0x3a
+ 750 00e3 0B       		.uleb128 0xb
+ 751 00e4 3B       		.uleb128 0x3b
+ 752 00e5 05       		.uleb128 0x5
+ 753 00e6 49       		.uleb128 0x49
+ 754 00e7 13       		.uleb128 0x13
+ 755 00e8 02       		.uleb128 0x2
+ 756 00e9 17       		.uleb128 0x17
+ 757 00ea 00       		.byte	0
+ 758 00eb 00       		.byte	0
+ 759 00ec 10       		.uleb128 0x10
+ 760 00ed 34       		.uleb128 0x34
+ 761 00ee 00       		.byte	0
+ 762 00ef 03       		.uleb128 0x3
+ 763 00f0 0E       		.uleb128 0xe
+ 764 00f1 3A       		.uleb128 0x3a
+ 765 00f2 0B       		.uleb128 0xb
+ 766 00f3 3B       		.uleb128 0x3b
+ 767 00f4 0B       		.uleb128 0xb
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccwJcpWN.s 			page 23
+
+
+ 768 00f5 49       		.uleb128 0x49
+ 769 00f6 13       		.uleb128 0x13
+ 770 00f7 3F       		.uleb128 0x3f
+ 771 00f8 19       		.uleb128 0x19
+ 772 00f9 02       		.uleb128 0x2
+ 773 00fa 18       		.uleb128 0x18
+ 774 00fb 00       		.byte	0
+ 775 00fc 00       		.byte	0
+ 776 00fd 11       		.uleb128 0x11
+ 777 00fe 2E       		.uleb128 0x2e
+ 778 00ff 00       		.byte	0
+ 779 0100 3F       		.uleb128 0x3f
+ 780 0101 19       		.uleb128 0x19
+ 781 0102 03       		.uleb128 0x3
+ 782 0103 0E       		.uleb128 0xe
+ 783 0104 3A       		.uleb128 0x3a
+ 784 0105 0B       		.uleb128 0xb
+ 785 0106 3B       		.uleb128 0x3b
+ 786 0107 0B       		.uleb128 0xb
+ 787 0108 27       		.uleb128 0x27
+ 788 0109 19       		.uleb128 0x19
+ 789 010a 3C       		.uleb128 0x3c
+ 790 010b 19       		.uleb128 0x19
+ 791 010c 00       		.byte	0
+ 792 010d 00       		.byte	0
+ 793 010e 00       		.byte	0
+ 794              		.section	.debug_loc,"",%progbits
+ 795              	.Ldebug_loc0:
+ 796              	.LLST0:
+ 797 0000 00000000 		.4byte	.LVL5
+ 798 0004 06000000 		.4byte	.LVL6
+ 799 0008 0100     		.2byte	0x1
+ 800 000a 50       		.byte	0x50
+ 801 000b 06000000 		.4byte	.LVL6
+ 802 000f 14000000 		.4byte	.LFE6
+ 803 0013 0400     		.2byte	0x4
+ 804 0015 F3       		.byte	0xf3
+ 805 0016 01       		.uleb128 0x1
+ 806 0017 50       		.byte	0x50
+ 807 0018 9F       		.byte	0x9f
+ 808 0019 00000000 		.4byte	0
+ 809 001d 00000000 		.4byte	0
+ 810              	.LLST1:
+ 811 0021 08000000 		.4byte	.LVL7
+ 812 0025 0C000000 		.4byte	.LVL9
+ 813 0029 0100     		.2byte	0x1
+ 814 002b 53       		.byte	0x53
+ 815 002c 0C000000 		.4byte	.LVL9
+ 816 0030 14000000 		.4byte	.LFE6
+ 817 0034 0100     		.2byte	0x1
+ 818 0036 50       		.byte	0x50
+ 819 0037 00000000 		.4byte	0
+ 820 003b 00000000 		.4byte	0
+ 821              	.LLST2:
+ 822 003f 00000000 		.4byte	.LVL10
+ 823 0043 06000000 		.4byte	.LVL11
+ 824 0047 0100     		.2byte	0x1
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccwJcpWN.s 			page 24
+
+
+ 825 0049 50       		.byte	0x50
+ 826 004a 06000000 		.4byte	.LVL11
+ 827 004e 14000000 		.4byte	.LFE7
+ 828 0052 0400     		.2byte	0x4
+ 829 0054 F3       		.byte	0xf3
+ 830 0055 01       		.uleb128 0x1
+ 831 0056 50       		.byte	0x50
+ 832 0057 9F       		.byte	0x9f
+ 833 0058 00000000 		.4byte	0
+ 834 005c 00000000 		.4byte	0
+ 835              	.LLST3:
+ 836 0060 08000000 		.4byte	.LVL12
+ 837 0064 0C000000 		.4byte	.LVL14
+ 838 0068 0100     		.2byte	0x1
+ 839 006a 53       		.byte	0x53
+ 840 006b 0C000000 		.4byte	.LVL14
+ 841 006f 14000000 		.4byte	.LFE7
+ 842 0073 0100     		.2byte	0x1
+ 843 0075 50       		.byte	0x50
+ 844 0076 00000000 		.4byte	0
+ 845 007a 00000000 		.4byte	0
+ 846              		.section	.debug_aranges,"",%progbits
+ 847 0000 44000000 		.4byte	0x44
+ 848 0004 0200     		.2byte	0x2
+ 849 0006 00000000 		.4byte	.Ldebug_info0
+ 850 000a 04       		.byte	0x4
+ 851 000b 00       		.byte	0
+ 852 000c 0000     		.2byte	0
+ 853 000e 0000     		.2byte	0
+ 854 0010 00000000 		.4byte	.LFB2
+ 855 0014 08000000 		.4byte	.LFE2-.LFB2
+ 856 0018 00000000 		.4byte	.LFB3
+ 857 001c 18000000 		.4byte	.LFE3-.LFB3
+ 858 0020 00000000 		.4byte	.LFB4
+ 859 0024 1C000000 		.4byte	.LFE4-.LFB4
+ 860 0028 00000000 		.4byte	.LFB5
+ 861 002c 20000000 		.4byte	.LFE5-.LFB5
+ 862 0030 00000000 		.4byte	.LFB6
+ 863 0034 14000000 		.4byte	.LFE6-.LFB6
+ 864 0038 00000000 		.4byte	.LFB7
+ 865 003c 14000000 		.4byte	.LFE7-.LFB7
+ 866 0040 00000000 		.4byte	0
+ 867 0044 00000000 		.4byte	0
+ 868              		.section	.debug_ranges,"",%progbits
+ 869              	.Ldebug_ranges0:
+ 870 0000 00000000 		.4byte	.LFB2
+ 871 0004 08000000 		.4byte	.LFE2
+ 872 0008 00000000 		.4byte	.LFB3
+ 873 000c 18000000 		.4byte	.LFE3
+ 874 0010 00000000 		.4byte	.LFB4
+ 875 0014 1C000000 		.4byte	.LFE4
+ 876 0018 00000000 		.4byte	.LFB5
+ 877 001c 20000000 		.4byte	.LFE5
+ 878 0020 00000000 		.4byte	.LFB6
+ 879 0024 14000000 		.4byte	.LFE6
+ 880 0028 00000000 		.4byte	.LFB7
+ 881 002c 14000000 		.4byte	.LFE7
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccwJcpWN.s 			page 25
+
+
+ 882 0030 00000000 		.4byte	0
+ 883 0034 00000000 		.4byte	0
+ 884              		.section	.debug_line,"",%progbits
+ 885              	.Ldebug_line0:
+ 886 0000 0A010000 		.section	.debug_str,"MS",%progbits,1
+ 886      02006000 
+ 886      00000201 
+ 886      FB0E0D00 
+ 886      01010101 
+ 887              	.LASF36:
+ 888 0000 433A5C55 		.ascii	"C:\\Users\\zhiantec\\Documents\\Tencent Files\\1241"
+ 888      73657273 
+ 888      5C7A6869 
+ 888      616E7465 
+ 888      635C446F 
+ 889 002e 39333938 		.ascii	"939835\\FileRecv\\MobileFile\\second_images[4-8]\\E"
+ 889      33355C46 
+ 889      696C6552 
+ 889      6563765C 
+ 889      4D6F6269 
+ 890 005d 6E747261 		.ascii	"ntranceGuard_171019-12.50\\EntranceGuard.cydsn\000"
+ 890      6E636547 
+ 890      75617264 
+ 890      5F313731 
+ 890      3031392D 
+ 891              	.LASF15:
+ 892 008b 72656733 		.ascii	"reg32\000"
+ 892      3200
+ 893              	.LASF27:
+ 894 0091 74784669 		.ascii	"txFifoCtrl\000"
+ 894      666F4374 
+ 894      726C00
+ 895              	.LASF34:
+ 896 009c 474E5520 		.ascii	"GNU C 4.9.3 20150303 (release) [ARM/embedded-4_9-br"
+ 896      4320342E 
+ 896      392E3320 
+ 896      32303135 
+ 896      30333033 
+ 897 00cf 616E6368 		.ascii	"anch revision 221220] -mcpu=cortex-m0 -mthumb -g -O"
+ 897      20726576 
+ 897      6973696F 
+ 897      6E203232 
+ 897      31323230 
+ 898 0102 73202D66 		.ascii	"s -ffunction-sections -ffat-lto-objects\000"
+ 898      66756E63 
+ 898      74696F6E 
+ 898      2D736563 
+ 898      74696F6E 
+ 899              	.LASF25:
+ 900 012a 6C657665 		.ascii	"level\000"
+ 900      6C00
+ 901              	.LASF22:
+ 902 0130 55415254 		.ascii	"UART_433_Stop\000"
+ 902      5F343333 
+ 902      5F53746F 
+ 902      7000
+ 903              	.LASF28:
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccwJcpWN.s 			page 26
+
+
+ 904 013e 55415254 		.ascii	"UART_433_initVar\000"
+ 904      5F343333 
+ 904      5F696E69 
+ 904      74566172 
+ 904      00
+ 905              	.LASF3:
+ 906 014f 73686F72 		.ascii	"short unsigned int\000"
+ 906      7420756E 
+ 906      7369676E 
+ 906      65642069 
+ 906      6E7400
+ 907              	.LASF35:
+ 908 0162 47656E65 		.ascii	"Generated_Source\\PSoC4\\UART_433.c\000"
+ 908      72617465 
+ 908      645F536F 
+ 908      75726365 
+ 908      5C50536F 
+ 909              	.LASF18:
+ 910 0184 55415254 		.ascii	"UART_433_ScbModePostEnable\000"
+ 910      5F343333 
+ 910      5F536362 
+ 910      4D6F6465 
+ 910      506F7374 
+ 911              	.LASF12:
+ 912 019f 666C6F61 		.ascii	"float\000"
+ 912      7400
+ 913              	.LASF31:
+ 914 01a5 55415254 		.ascii	"UART_433_UartInit\000"
+ 914      5F343333 
+ 914      5F556172 
+ 914      74496E69 
+ 914      7400
+ 915              	.LASF1:
+ 916 01b7 756E7369 		.ascii	"unsigned char\000"
+ 916      676E6564 
+ 916      20636861 
+ 916      7200
+ 917              	.LASF23:
+ 918 01c5 55415254 		.ascii	"UART_433_SetRxFifoLevel\000"
+ 918      5F343333 
+ 918      5F536574 
+ 918      52784669 
+ 918      666F4C65 
+ 919              	.LASF9:
+ 920 01dd 75696E74 		.ascii	"uint8\000"
+ 920      3800
+ 921              	.LASF29:
+ 922 01e3 55415254 		.ascii	"UART_433_IntrTxMask\000"
+ 922      5F343333 
+ 922      5F496E74 
+ 922      7254784D 
+ 922      61736B00 
+ 923              	.LASF13:
+ 924 01f7 646F7562 		.ascii	"double\000"
+ 924      6C6500
+ 925              	.LASF21:
+ 926 01fe 55415254 		.ascii	"UART_433_Start\000"
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccwJcpWN.s 			page 27
+
+
+ 926      5F343333 
+ 926      5F537461 
+ 926      727400
+ 927              	.LASF10:
+ 928 020d 75696E74 		.ascii	"uint16\000"
+ 928      313600
+ 929              	.LASF20:
+ 930 0214 55415254 		.ascii	"UART_433_Enable\000"
+ 930      5F343333 
+ 930      5F456E61 
+ 930      626C6500 
+ 931              	.LASF11:
+ 932 0224 75696E74 		.ascii	"uint32\000"
+ 932      333200
+ 933              	.LASF5:
+ 934 022b 6C6F6E67 		.ascii	"long unsigned int\000"
+ 934      20756E73 
+ 934      69676E65 
+ 934      6420696E 
+ 934      7400
+ 935              	.LASF8:
+ 936 023d 756E7369 		.ascii	"unsigned int\000"
+ 936      676E6564 
+ 936      20696E74 
+ 936      00
+ 937              	.LASF7:
+ 938 024a 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 938      206C6F6E 
+ 938      6720756E 
+ 938      7369676E 
+ 938      65642069 
+ 939              	.LASF33:
+ 940 0261 55415254 		.ascii	"UART_433_UartStop\000"
+ 940      5F343333 
+ 940      5F556172 
+ 940      7453746F 
+ 940      7000
+ 941              	.LASF24:
+ 942 0273 55415254 		.ascii	"UART_433_SetTxFifoLevel\000"
+ 942      5F343333 
+ 942      5F536574 
+ 942      54784669 
+ 942      666F4C65 
+ 943              	.LASF16:
+ 944 028b 73697A65 		.ascii	"sizetype\000"
+ 944      74797065 
+ 944      00
+ 945              	.LASF6:
+ 946 0294 6C6F6E67 		.ascii	"long long int\000"
+ 946      206C6F6E 
+ 946      6720696E 
+ 946      7400
+ 947              	.LASF14:
+ 948 02a2 63686172 		.ascii	"char\000"
+ 948      00
+ 949              	.LASF30:
+ 950 02a7 55415254 		.ascii	"UART_433_Init\000"
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccwJcpWN.s 			page 28
+
+
+ 950      5F343333 
+ 950      5F496E69 
+ 950      7400
+ 951              	.LASF2:
+ 952 02b5 73686F72 		.ascii	"short int\000"
+ 952      7420696E 
+ 952      7400
+ 953              	.LASF26:
+ 954 02bf 72784669 		.ascii	"rxFifoCtrl\000"
+ 954      666F4374 
+ 954      726C00
+ 955              	.LASF4:
+ 956 02ca 6C6F6E67 		.ascii	"long int\000"
+ 956      20696E74 
+ 956      00
+ 957              	.LASF17:
+ 958 02d3 55415254 		.ascii	"UART_433_ScbEnableIntr\000"
+ 958      5F343333 
+ 958      5F536362 
+ 958      456E6162 
+ 958      6C65496E 
+ 959              	.LASF0:
+ 960 02ea 7369676E 		.ascii	"signed char\000"
+ 960      65642063 
+ 960      68617200 
+ 961              	.LASF32:
+ 962 02f6 55415254 		.ascii	"UART_433_UartPostEnable\000"
+ 962      5F343333 
+ 962      5F556172 
+ 962      74506F73 
+ 962      74456E61 
+ 963              	.LASF19:
+ 964 030e 55415254 		.ascii	"UART_433_ScbModeStop\000"
+ 964      5F343333 
+ 964      5F536362 
+ 964      4D6F6465 
+ 964      53746F70 
+ 965              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.9.3 20150303 (release) [ARM/embedded-4_9-br

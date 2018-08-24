@@ -1,0 +1,12 @@
+G:/Psoc4_prj/7.rental_house/bootloader_tst/PrISM_Led01/BLE_OTA_External_Memory_Bootloader01/BLE_OTA_External_Memory_Bootloader01.cydsn/CortexM0/ARM_GCC_493/Debug/CyBootAsmGnu.o : G:/Psoc4_prj/7.rental_house/bootloader_tst/PrISM_Led01/BLE_OTA_External_Memory_Bootloader01/BLE_OTA_External_Memory_Bootloader01.cydsn/Generated_Source/PSoC4/CyBootAsmGnu.s G:/Psoc4_prj/7.rental_house/bootloader_tst/PrISM_Led01/BLE_OTA_External_Memory_Bootloader01/BLE_OTA_External_Memory_Bootloader01.cydsn/Generated_Source/PSoC4/cydevicegnu_trm.inc G:/Psoc4_prj/7.rental_house/bootloader_tst/PrISM_Led01/BLE_OTA_External_Memory_Bootloader01/BLE_OTA_External_Memory_Bootloader01.cydsn/Generated_Source/PSoC4/cyfittergnu.inc 
+
+G:/Psoc4_prj/7.rental_house/bootloader_tst/PrISM_Led01/BLE_OTA_External_Memory_Bootloader01/BLE_OTA_External_Memory_Bootloader01.cydsn/Generated_Source/PSoC4/CyBootAsmGnu.s : 
+
+G:/Psoc4_prj/7.rental_house/bootloader_tst/PrISM_Led01/BLE_OTA_External_Memory_Bootloader01/BLE_OTA_External_Memory_Bootloader01.cydsn/Generated_Source/PSoC4/cydevicegnu_trm.inc : 
+
+G:/Psoc4_prj/7.rental_house/bootloader_tst/PrISM_Led01/BLE_OTA_External_Memory_Bootloader01/BLE_OTA_External_Memory_Bootloader01.cydsn/Generated_Source/PSoC4/cyfittergnu.inc : 
+
+G:/Psoc4_prj/7.rental_house/bootloader_tst/PrISM_Led01/BLE_OTA_External_Memory_Bootloader01/BLE_OTA_External_Memory_Bootloader01.cydsn/CortexM0/ARM_GCC_493/Debug/UART_AsmGnu.o : G:/Psoc4_prj/7.rental_house/bootloader_tst/PrISM_Led01/BLE_OTA_External_Memory_Bootloader01/BLE_OTA_External_Memory_Bootloader01.cydsn/Generated_Source/PSoC4/UART_AsmGnu.s G:/Psoc4_prj/7.rental_house/bootloader_tst/PrISM_Led01/BLE_OTA_External_Memory_Bootloader01/BLE_OTA_External_Memory_Bootloader01.cydsn/Generated_Source/PSoC4/cydevicegnu_trm.inc G:/Psoc4_prj/7.rental_house/bootloader_tst/PrISM_Led01/BLE_OTA_External_Memory_Bootloader01/BLE_OTA_External_Memory_Bootloader01.cydsn/Generated_Source/PSoC4/cyfittergnu.inc 
+
+G:/Psoc4_prj/7.rental_house/bootloader_tst/PrISM_Led01/BLE_OTA_External_Memory_Bootloader01/BLE_OTA_External_Memory_Bootloader01.cydsn/Generated_Source/PSoC4/UART_AsmGnu.s : 
+

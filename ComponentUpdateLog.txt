@@ -1,0 +1,25 @@
+Last Modified Date & Time: 04/23/2018 14:08:44
+
+BLE_OTA_External_Memory_Bootloader01: BLE_OTA_External_Memory_Bootloader01.cydwr
+	cy_boot [v5.40] to [v5.60]
+	cy_lfclk [v1.10] to [v1.20]
+	LIN_Dynamic [v3.40] to [v4.0]
+
+BLE_OTA_External_Memory_Bootloader01: TopDesign.cysch
+	BLE [v3.10] to [v3.40]
+	Bootloader [v1.50] to [v1.60]
+	EMI_I2CM [v3.20] to [v4.0]
+
+EntranceGuard: EntranceGuard.cydwr
+	cy_boot [v5.50] to [v5.60]
+	cy_lfclk [v1.10] to [v1.20]
+	LIN_Dynamic [v3.40] to [v4.0]
+
+EntranceGuard: TopDesign.cysch
+	BLE [v3.10] to [v3.40]
+	Bootloadable [v1.30] to [v1.60]
+	WDT [v2.0] to [v2.10]
+	RTC [v1.10] to [v1.20]
+	UART_433 [v3.20] to [v4.0]
+
+

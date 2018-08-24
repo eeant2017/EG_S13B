@@ -1,0 +1,809 @@
+--------------- Rebuild Started: 03/08/2018 09:57:23 Project: EntranceGuard, Configuration: ARM GCC 4.9-2015-q1-update Debug ---------------
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\aes.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\Aesecb.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\crypt.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\crc16check.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\utc.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\Bluetooth.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\mifare_card.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\NTAG.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\type_a.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\type_b.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\lpcd_api.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\lpcd_regctrl.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\spi.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\Utility.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\card.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\fm175xx.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\flash_spi.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\user_data.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\w25qxx.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\AtProtocol.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\Uart433.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\CmdProtocol.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\UserRTC.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\voice.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\UserWDT.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\main.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\debug.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\isr.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\OTAMandatory.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\OTAOptional.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\cyfitter_cfg.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\cymetadata.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\Cm0Start.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\CyBootAsmGnu.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\CyFlash.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\CyLib.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\cyPm.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\cyutils.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\CyLFClk.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\UART_433.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\UART_433_SPI_UART.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\UART_433_SPI_UART_INT.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\UART_433_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\UART_433_UART.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\UART_433_BOOT.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\UART_433_UART_BOOT.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\RTC.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\FM_NCS.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\FM_NCS_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\FM_SCK.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\FM_SCK_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\FM_MISO.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\FM_MISO_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\FM_MOSI.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\FM_MOSI_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\FM_RST.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\FM_RST_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\FM_INT.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\FM_INT_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\FM_INT_ISR.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\LED_RED.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\LED_RED_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\LED_GREEN.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\LED_GREEN_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\cmd433_INT_ISR.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\Clock_1.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\Timer_INT_ISR.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\Timer_100ms.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\Timer_100ms_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\LED_BLUE.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\LED_BLUE_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\GPRS_PWRKEY.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\GPRS_PWRKEY_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\TIMER.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\TIMER_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\Clock.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\PWM_BEEP.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\PWM_BEEP_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\DOOR_OPEN.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\DOOR_OPEN_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\KEY_OPEN.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\KEY_OPEN_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\FIRE_OPEN.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\FIRE_OPEN_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\DEFEND_ALARM.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\DEFEND_ALARM_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\GPRS_RESET.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\GPRS_RESET_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\GPRS_STATE.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\GPRS_STATE_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\FLASH_NCS.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\FLASH_NCS_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\FLASH_SCK.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\FLASH_SCK_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\FLASH_MISO.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\FLASH_MISO_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\FLASH_MOSI.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\FLASH_MOSI_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\UART_433_SCBCLK.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\UART_433_tx.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\UART_433_tx_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\UART_433_rx.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\UART_433_rx_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\WDT_ISR.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\cybootloader.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\Bootloadable.o"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\EntranceGuard.hex"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\EntranceGuard.elf"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\EntranceGuard.map"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\EntranceGuard.cyacd"
+Deleting file ".\EntranceGuard.cycdx"
+Deleting file ".\EntranceGuard.svd"
+Deleting file ".\EntranceGuard.rpt"
+Deleting file ".\EntranceGuard_timing.html"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\.deps\SOURCE_C__ARM_GCC_GENERIC.P"
+Deleting file ".\CortexM0\ARM_GCC_493\Debug\.deps\SOURCE_ASM__ARM_GCC_GENERIC.P"
+cydsfit.exe -.appdatapath "C:\Users\Administrator\AppData\Local\Cypress Semiconductor\PSoC Creator\4.0" -.fdsnotice -.fdswarpdepfile=warp_dependencies.txt -.fdselabdepfile=elab_dependencies.txt -.fdsbldfile=generated_files.txt -.fdsreffile=referenced_files.txt -p G:\Psoc4_prj\7.rental_house\18-02-08\EntranceGuard_171019-12.50\EntranceGuard.cydsn\EntranceGuard.cyprj -d CYBL10573-56LQXI -s G:\Psoc4_prj\7.rental_house\18-02-08\EntranceGuard_171019-12.50\EntranceGuard.cydsn\Generated_Source\PSoC4 -- -yv2 -q10 -ygs -o2 -v3 -.fftcfgtype=LE
+Elaborating Design...
+HDL Generation...
+Synthesis...
+Tech Mapping...
+Analog Placement...
+Analog Routing...
+Analog Code Generation...
+Digital Placement...
+Digital Routing...
+Bitstream Generation...
+Bitstream Verification...
+Static timing analysis...
+API Generation...
+Dependency Generation...
+Cleanup...
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/aes.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Code\Common\crypt\aes.c -o .\CortexM0\ARM_GCC_493\Debug\aes.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/Aesecb.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Code\Common\crypt\Aesecb.c -o .\CortexM0\ARM_GCC_493\Debug\Aesecb.o
+Code\Common\crypt\Aesecb.c: In function 'bt_lock_crypto':
+Code\Common\crypt\Aesecb.c:91:4: warning: implicit declaration of function 'AES128_ECB_encrypt' [-Wimplicit-function-declaration]
+    AES128_ECB_encrypt(&in[i], key);
+    ^
+Code\Common\crypt\Aesecb.c:93:4: warning: implicit declaration of function 'AES128_ECB_decrypt' [-Wimplicit-function-declaration]
+    AES128_ECB_decrypt(&in[i], key, &out[i]);
+    ^
+In file included from Code\Common\crypt\Aesecb.c:5:0:
+Code\Common\crypt\Aesecb.c: In function 'crypto_test':
+Code\Common\crypt\align.h:4:53: warning: suggest parentheses around '+' in operand of '&' [-Wparentheses]
+ #define ALIGN_X(v, align_num) ((v) + (align_num-1)) & (~(align_num-1))
+                                                     ^
+Code\Common\crypt\Aesecb.c:123:20: note: in expansion of macro 'ALIGN_X'
+  uint8 cipher_text[ALIGN_X(sizeof(plain_text), 27)/27*4 + sizeof(plain_text)];
+                    ^
+Code\Common\crypt\Aesecb.c: In function 'bt_lock_close_crypto':
+Code\Common\crypt\Aesecb.c:109:1: warning: control reaches end of non-void function [-Wreturn-type]
+ }
+ ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/crypt.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Code\Common\crypt\crypt.c -o .\CortexM0\ARM_GCC_493\Debug\crypt.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/crc16check.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Code\Common\crc16check.c -o .\CortexM0\ARM_GCC_493\Debug\crc16check.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/utc.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Code\Common\utc.c -o .\CortexM0\ARM_GCC_493\Debug\utc.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/Bluetooth.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Code\Device\BLE\Bluetooth.c -o .\CortexM0\ARM_GCC_493\Debug\Bluetooth.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/mifare_card.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Code\Device\FM175XX\IOS14443\mifare_card.c -o .\CortexM0\ARM_GCC_493\Debug\mifare_card.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/NTAG.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Code\Device\FM175XX\IOS14443\NTAG.c -o .\CortexM0\ARM_GCC_493\Debug\NTAG.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/type_a.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Code\Device\FM175XX\IOS14443\type_a.c -o .\CortexM0\ARM_GCC_493\Debug\type_a.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/type_b.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Code\Device\FM175XX\IOS14443\type_b.c -o .\CortexM0\ARM_GCC_493\Debug\type_b.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/lpcd_api.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Code\Device\FM175XX\LPCD\lpcd_api.c -o .\CortexM0\ARM_GCC_493\Debug\lpcd_api.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/lpcd_regctrl.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Code\Device\FM175XX\LPCD\lpcd_regctrl.c -o .\CortexM0\ARM_GCC_493\Debug\lpcd_regctrl.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/spi.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Code\Device\FM175XX\SPI\spi.c -o .\CortexM0\ARM_GCC_493\Debug\spi.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/Utility.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Code\Device\FM175XX\Utility\Utility.c -o .\CortexM0\ARM_GCC_493\Debug\Utility.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/card.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Code\Device\FM175XX\card.c -o .\CortexM0\ARM_GCC_493\Debug\card.o
+Code\Device\FM175XX\card.c: In function 'detect_nfc_card_continus':
+Code\Device\FM175XX\card.c:82:30: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+    DBG_SOFT_PrintfHex(card_id, 8,16);
+                              ^
+Code\Device\FM175XX\card.c:82:33: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+    DBG_SOFT_PrintfHex(card_id, 8,16);
+                                 ^
+Code\Device\FM175XX\card.c:82:22: warning: statement with no effect [-Wunused-value]
+    DBG_SOFT_PrintfHex(card_id, 8,16);
+                      ^
+Code\Device\FM175XX\card.c: In function 'CardBlock_Wr':
+Code\Device\FM175XX\card.c:280:18: warning: statement with no effect [-Wunused-value]
+   DBG_SOFT_PutStr("Auth OK!\r\n");
+                  ^
+Code\Device\FM175XX\card.c:285:18: warning: statement with no effect [-Wunused-value]
+   DBG_SOFT_PutStr("Auth Err!\r\n");
+                  ^
+Code\Device\FM175XX\card.c:291:18: warning: statement with no effect [-Wunused-value]
+   DBG_SOFT_PutStr("Read OK!\r\n");
+                  ^
+Code\Device\FM175XX\card.c:292:31: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+   DBG_SOFT_PrintfHex(blockData,16,16);
+                               ^
+Code\Device\FM175XX\card.c:292:34: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+   DBG_SOFT_PrintfHex(blockData,16,16);
+                                  ^
+Code\Device\FM175XX\card.c:292:21: warning: statement with no effect [-Wunused-value]
+   DBG_SOFT_PrintfHex(blockData,16,16);
+                     ^
+Code\Device\FM175XX\card.c:297:18: warning: statement with no effect [-Wunused-value]
+   DBG_SOFT_PutStr("Read Err!\r\n");
+                  ^
+Code\Device\FM175XX\card.c:310:18: warning: statement with no effect [-Wunused-value]
+   DBG_SOFT_PutStr("Write OK!\r\n");
+                  ^
+Code\Device\FM175XX\card.c:315:18: warning: statement with no effect [-Wunused-value]
+   DBG_SOFT_PutStr("Write Err!\r\n");
+                  ^
+Code\Device\FM175XX\card.c: In function 'CardBlock_Rd':
+Code\Device\FM175XX\card.c:382:18: warning: statement with no effect [-Wunused-value]
+   DBG_SOFT_PutStr("Auth Err!\r\n");     
+                  ^
+Code\Device\FM175XX\card.c:396:18: warning: statement with no effect [-Wunused-value]
+   DBG_SOFT_PutStr("Read Err!\r\n");     
+                  ^
+Code\Device\FM175XX\card.c: In function 'CardInfoUpdate':
+Code\Device\FM175XX\card.c:456:17: warning: statement with no effect [-Wunused-value]
+  DBG_SOFT_PutStr("Step1 CardBlock_Rd TIMESTAMP_BLK:\n");
+                 ^
+Code\Device\FM175XX\card.c:457:28: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(tmp_buf,16,16);
+                            ^
+Code\Device\FM175XX\card.c:457:31: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(tmp_buf,16,16);
+                               ^
+Code\Device\FM175XX\card.c:457:20: warning: statement with no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(tmp_buf,16,16);
+                    ^
+Code\Device\FM175XX\card.c:462:18: warning: statement with no effect [-Wunused-value]
+   DBG_SOFT_PutStr("mem_var = 0!\n");
+                  ^
+Code\Device\FM175XX\card.c:476:18: warning: statement with no effect [-Wunused-value]
+   DBG_SOFT_PutStr("mem_var = ");
+                  ^
+Code\Device\FM175XX\card.c:477:39: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+   DBG_SOFT_PrintfHex((uint8 *)&mem_var,1,16);
+                                       ^
+Code\Device\FM175XX\card.c:477:41: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+   DBG_SOFT_PrintfHex((uint8 *)&mem_var,1,16);
+                                         ^
+Code\Device\FM175XX\card.c:477:21: warning: statement with no effect [-Wunused-value]
+   DBG_SOFT_PrintfHex((uint8 *)&mem_var,1,16);
+                     ^
+Code\Device\FM175XX\card.c:481:19: warning: statement with no effect [-Wunused-value]
+    DBG_SOFT_PutStr("mem_var = IC_curvar Branch\n");
+                   ^
+Code\Device\FM175XX\card.c:489:19: warning: statement with no effect [-Wunused-value]
+    DBG_SOFT_PutStr("mem_var = IC_curvar+1 Branch\n");
+                   ^
+Code\Device\FM175XX\card.c:495:19: warning: statement with no effect [-Wunused-value]
+    DBG_SOFT_PutStr("Other Branch\n");
+                   ^
+Code\Device\FM175XX\card.c:503:18: warning: statement with no effect [-Wunused-value]
+   DBG_SOFT_PutStr("Step2 CardBlock_Rd TIMESTAMP_BLK:\n");
+                  ^
+Code\Device\FM175XX\card.c:504:29: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+   DBG_SOFT_PrintfHex(tmp_buf,16,16);
+                             ^
+Code\Device\FM175XX\card.c:504:32: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+   DBG_SOFT_PrintfHex(tmp_buf,16,16);
+                                ^
+Code\Device\FM175XX\card.c:504:21: warning: statement with no effect [-Wunused-value]
+   DBG_SOFT_PrintfHex(tmp_buf,16,16);
+                     ^
+Code\Device\FM175XX\card.c:506:18: warning: statement with no effect [-Wunused-value]
+   DBG_SOFT_PutStr("RD Back IC_curvar = ");
+                  ^
+Code\Device\FM175XX\card.c:507:41: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+   DBG_SOFT_PrintfHex((uint8 *)&IC_curvar,1,16);
+                                         ^
+Code\Device\FM175XX\card.c:507:43: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+   DBG_SOFT_PrintfHex((uint8 *)&IC_curvar,1,16);
+                                           ^
+Code\Device\FM175XX\card.c:507:21: warning: statement with no effect [-Wunused-value]
+   DBG_SOFT_PrintfHex((uint8 *)&IC_curvar,1,16);
+                     ^
+Code\Device\FM175XX\card.c:508:18: warning: statement with no effect [-Wunused-value]
+   DBG_SOFT_PutStr("Cur mem_var = ");
+                  ^
+Code\Device\FM175XX\card.c:509:39: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+   DBG_SOFT_PrintfHex((uint8 *)&mem_var,1,16);
+                                       ^
+Code\Device\FM175XX\card.c:509:41: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+   DBG_SOFT_PrintfHex((uint8 *)&mem_var,1,16);
+                                         ^
+Code\Device\FM175XX\card.c:509:21: warning: statement with no effect [-Wunused-value]
+   DBG_SOFT_PrintfHex((uint8 *)&mem_var,1,16);
+                     ^
+Code\Device\FM175XX\card.c: In function 'CardScan':
+Code\Device\FM175XX\card.c:591:18: warning: statement with no effect [-Wunused-value]
+   DBG_SOFT_PutStr("\nScaned Card:"); 
+                  ^
+Code\Device\FM175XX\card.c:592:30: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+   DBG_SOFT_PrintfHex(picc_uid,8,16);
+                              ^
+Code\Device\FM175XX\card.c:592:32: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+   DBG_SOFT_PrintfHex(picc_uid,8,16);
+                                ^
+Code\Device\FM175XX\card.c:592:21: warning: statement with no effect [-Wunused-value]
+   DBG_SOFT_PrintfHex(picc_uid,8,16);
+                     ^
+Code\Device\FM175XX\card.c:607:17: warning: statement with no effect [-Wunused-value]
+  DBG_SOFT_PutStr("\nScaned Card: IsCardLegality 1 OK!\n");
+                 ^
+Code\Device\FM175XX\card.c:611:18: warning: statement with no effect [-Wunused-value]
+   DBG_SOFT_PutStr("CardInfoUpdate OK!\n");
+                  ^
+Code\Device\FM175XX\card.c:617:18: warning: statement with no effect [-Wunused-value]
+   DBG_SOFT_PutStr("CardInfoUpdate ERR!\n");
+                  ^
+Code\Device\FM175XX\card.c: In function 'CardRead':
+Code\Device\FM175XX\card.c:643:18: warning: statement with no effect [-Wunused-value]
+   DBG_SOFT_PutStr("\nCardRead Card uid:"); 
+                  ^
+Code\Device\FM175XX\card.c:644:30: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+   DBG_SOFT_PrintfHex(picc_uid,8,16);
+                              ^
+Code\Device\FM175XX\card.c:644:32: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+   DBG_SOFT_PrintfHex(picc_uid,8,16);
+                                ^
+Code\Device\FM175XX\card.c:644:21: warning: statement with no effect [-Wunused-value]
+   DBG_SOFT_PrintfHex(picc_uid,8,16);
+                     ^
+Code\Device\FM175XX\card.c:661:17: warning: statement with no effect [-Wunused-value]
+  DBG_SOFT_PutStr("\nCardRead Scaned Card: IsCardLegality 1 OK!\n");
+                 ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/fm175xx.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Code\Device\FM175XX\fm175xx.c -o .\CortexM0\ARM_GCC_493\Debug\fm175xx.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/flash_spi.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Code\Device\W25Q80\flash_spi.c -o .\CortexM0\ARM_GCC_493\Debug\flash_spi.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/user_data.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Code\Device\W25Q80\user_data.c -o .\CortexM0\ARM_GCC_493\Debug\user_data.o
+Code\Device\W25Q80\user_data.c: In function 'UserData_Judge_If_Open':
+Code\Device\W25Q80\user_data.c:440:19: warning: statement with no effect [-Wunused-value]
+    DBG_SOFT_PutStr("\nUID OK!"); 
+                   ^
+Code\Device\W25Q80\user_data.c:445:19: warning: statement with no effect [-Wunused-value]
+    DBG_SOFT_PutStr("\nOut of date!"); 
+                   ^
+Code\Device\W25Q80\user_data.c:451:18: warning: statement with no effect [-Wunused-value]
+   DBG_SOFT_PutStr("\nNo UID!"); 
+                  ^
+Code\Device\W25Q80\user_data.c: In function 'FindAndSet_UploadTime_UploadFlag':
+Code\Device\W25Q80\user_data.c:860:20: warning: statement with no effect [-Wunused-value]
+     DBG_SOFT_PutStr("\n===>back upload open date :<===\n");
+                    ^
+Code\Device\W25Q80\user_data.c: In function 'Clear_AllOPeninfo':
+Code\Device\W25Q80\user_data.c:1100:17: warning: statement with no effect [-Wunused-value]
+  DBG_SOFT_PutStr("\r\n Read open date:\r\n");
+                 ^
+Code\Device\W25Q80\user_data.c:1101:29: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(opendate,256,17);
+                             ^
+Code\Device\W25Q80\user_data.c:1101:33: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(opendate,256,17);
+                                 ^
+Code\Device\W25Q80\user_data.c:1101:20: warning: statement with no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(opendate,256,17);
+                    ^
+Code\Device\W25Q80\user_data.c:1103:17: warning: statement with no effect [-Wunused-value]
+  DBG_SOFT_PutStr("\r\n Read open flag:\r\n");
+                 ^
+Code\Device\W25Q80\user_data.c:1104:34: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(opendate_flag,64,16);
+                                  ^
+Code\Device\W25Q80\user_data.c:1104:37: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(opendate_flag,64,16);
+                                     ^
+Code\Device\W25Q80\user_data.c:1104:20: warning: statement with no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(opendate_flag,64,16);
+                    ^
+Code\Device\W25Q80\user_data.c:1106:17: warning: statement with no effect [-Wunused-value]
+  DBG_SOFT_PutStr("\r\n Read open qty:\r\n");
+                 ^
+Code\Device\W25Q80\user_data.c:1107:33: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(opendate_qty,8,16);
+                                 ^
+Code\Device\W25Q80\user_data.c:1107:35: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(opendate_qty,8,16);
+                                   ^
+Code\Device\W25Q80\user_data.c:1107:20: warning: statement with no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(opendate_qty,8,16);
+                    ^
+Code\Device\W25Q80\user_data.c: In function 'test_Flash':
+Code\Device\W25Q80\user_data.c:1121:17: warning: statement with no effect [-Wunused-value]
+  DBG_SOFT_PutStr("\r\n userflag:\r\n");
+                 ^
+Code\Device\W25Q80\user_data.c:1122:29: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(userflag,16,16);
+                             ^
+Code\Device\W25Q80\user_data.c:1122:32: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(userflag,16,16);
+                                ^
+Code\Device\W25Q80\user_data.c:1122:20: warning: statement with no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(userflag,16,16);
+                    ^
+Code\Device\W25Q80\user_data.c:1124:17: warning: statement with no effect [-Wunused-value]
+  DBG_SOFT_PutStr("\r\n userinfo:\r\n");
+                 ^
+Code\Device\W25Q80\user_data.c:1125:29: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(userinfo,96,16);
+                             ^
+Code\Device\W25Q80\user_data.c:1125:32: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(userinfo,96,16);
+                                ^
+Code\Device\W25Q80\user_data.c:1125:20: warning: statement with no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(userinfo,96,16);
+                    ^
+Code\Device\W25Q80\user_data.c:1136:17: warning: statement with no effect [-Wunused-value]
+  DBG_SOFT_PutStr("\r\n Read open date:\r\n");
+                 ^
+Code\Device\W25Q80\user_data.c:1137:29: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(opendate,512,17);
+                             ^
+Code\Device\W25Q80\user_data.c:1137:33: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(opendate,512,17);
+                                 ^
+Code\Device\W25Q80\user_data.c:1137:20: warning: statement with no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(opendate,512,17);
+                    ^
+Code\Device\W25Q80\user_data.c:1139:17: warning: statement with no effect [-Wunused-value]
+  DBG_SOFT_PutStr("\r\n Read open flag:\r\n");
+                 ^
+Code\Device\W25Q80\user_data.c:1140:34: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(opendate_flag,64,16);
+                                  ^
+Code\Device\W25Q80\user_data.c:1140:37: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(opendate_flag,64,16);
+                                     ^
+Code\Device\W25Q80\user_data.c:1140:20: warning: statement with no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(opendate_flag,64,16);
+                    ^
+Code\Device\W25Q80\user_data.c:1142:17: warning: statement with no effect [-Wunused-value]
+  DBG_SOFT_PutStr("\r\n Read open qty:\r\n");
+                 ^
+Code\Device\W25Q80\user_data.c:1143:33: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(opendate_qty,8,16);
+                                 ^
+Code\Device\W25Q80\user_data.c:1143:35: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(opendate_qty,8,16);
+                                   ^
+Code\Device\W25Q80\user_data.c:1143:20: warning: statement with no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(opendate_qty,8,16);
+                    ^
+Code\Device\W25Q80\user_data.c: In function 'test_readopeninfo':
+Code\Device\W25Q80\user_data.c:1150:17: warning: statement with no effect [-Wunused-value]
+  DBG_SOFT_PutStr("\r\n Read openinfor test:\r\n");
+                 ^
+Code\Device\W25Q80\user_data.c:1151:30: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(&open_tmp,16,16);
+                              ^
+Code\Device\W25Q80\user_data.c:1151:33: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(&open_tmp,16,16);
+                                 ^
+Code\Device\W25Q80\user_data.c:1151:20: warning: statement with no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(&open_tmp,16,16);
+                    ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/w25qxx.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Code\Device\W25Q80\w25qxx.c -o .\CortexM0\ARM_GCC_493\Debug\w25qxx.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/AtProtocol.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Code\Device\GPRS\AtProtocol.c -o .\CortexM0\ARM_GCC_493\Debug\AtProtocol.o
+Code\Device\GPRS\AtProtocol.c: In function 'GPRS_Send_ConnectServer':
+Code\Device\GPRS\AtProtocol.c:139:9: warning: unknown escape sequence: '\,'
+  printf("AT+IPSTART=\"%s\"\,\"%s\"\,%s\r\n", tcp, ip, port);
+         ^
+Code\Device\GPRS\AtProtocol.c:139:9: warning: unknown escape sequence: '\,'
+Code\Device\GPRS\AtProtocol.c: In function 'GPRS_QueryCREG':
+Code\Device\GPRS\AtProtocol.c:304:19: warning: statement with no effect [-Wunused-value]
+    DBG_SOFT_PutStr("\nCREG:");
+                   ^
+Code\Device\GPRS\AtProtocol.c:305:26: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+    DBG_SOFT_PrintfHex(tmp,2,16);
+                          ^
+Code\Device\GPRS\AtProtocol.c:305:28: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+    DBG_SOFT_PrintfHex(tmp,2,16);
+                            ^
+Code\Device\GPRS\AtProtocol.c:305:22: warning: statement with no effect [-Wunused-value]
+    DBG_SOFT_PrintfHex(tmp,2,16);
+                      ^
+Code\Device\GPRS\AtProtocol.c: In function 'GPRS_QueryRssi':
+Code\Device\GPRS\AtProtocol.c:336:19: warning: statement with no effect [-Wunused-value]
+    DBG_SOFT_PutStr("\nRssi:");
+                   ^
+Code\Device\GPRS\AtProtocol.c:337:27: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+    DBG_SOFT_PrintfHex(temp,2,16);
+                           ^
+Code\Device\GPRS\AtProtocol.c:337:29: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+    DBG_SOFT_PrintfHex(temp,2,16);
+                             ^
+Code\Device\GPRS\AtProtocol.c:337:22: warning: statement with no effect [-Wunused-value]
+    DBG_SOFT_PrintfHex(temp,2,16);
+                      ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/Uart433.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Code\Device\GPRS\Uart433.c -o .\CortexM0\ARM_GCC_493\Debug\Uart433.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/CmdProtocol.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Code\UserApp\Protocol\CmdProtocol.c -o .\CortexM0\ARM_GCC_493\Debug\CmdProtocol.o
+Code\UserApp\Protocol\CmdProtocol.c: In function 'Endpoint_exchange':
+Code\UserApp\Protocol\CmdProtocol.c:87:17: warning: statement with no effect [-Wunused-value]
+  DBG_SOFT_PutStr("Endpoint_exchange1:\n");
+                 ^
+Code\UserApp\Protocol\CmdProtocol.c:88:30: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(card_data,8,16);
+                              ^
+Code\UserApp\Protocol\CmdProtocol.c:88:32: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(card_data,8,16);
+                                ^
+Code\UserApp\Protocol\CmdProtocol.c:88:20: warning: statement with no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(card_data,8,16);
+                    ^
+Code\UserApp\Protocol\CmdProtocol.c:101:17: warning: statement with no effect [-Wunused-value]
+  DBG_SOFT_PutStr("Endpoint_exchange2:\n");
+                 ^
+Code\UserApp\Protocol\CmdProtocol.c:102:30: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(card_data,8,16);
+                              ^
+Code\UserApp\Protocol\CmdProtocol.c:102:32: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(card_data,8,16);
+                                ^
+Code\UserApp\Protocol\CmdProtocol.c:102:20: warning: statement with no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(card_data,8,16);
+                    ^
+Code\UserApp\Protocol\CmdProtocol.c: In function 'Protocol_SendAckPacket':
+Code\UserApp\Protocol\CmdProtocol.c:568:17: warning: statement with no effect [-Wunused-value]
+  DBG_SOFT_PutStr("\r\n AppResponseBuf:\r\n");
+                 ^
+Code\UserApp\Protocol\CmdProtocol.c:569:35: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(AppResponseBuf,250,16);
+                                   ^
+Code\UserApp\Protocol\CmdProtocol.c:569:39: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(AppResponseBuf,250,16);
+                                       ^
+Code\UserApp\Protocol\CmdProtocol.c:569:20: warning: statement with no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(AppResponseBuf,250,16);
+                    ^
+Code\UserApp\Protocol\CmdProtocol.c: In function 'Protocol_CmdReadUID':
+Code\UserApp\Protocol\CmdProtocol.c:721:17: warning: statement with no effect [-Wunused-value]
+  DBG_SOFT_PutStr("\nProtocol_CmdReadUID\n");
+                 ^
+Code\UserApp\Protocol\CmdProtocol.c: In function 'Protocol_CmdSendOpenInfo':
+Code\UserApp\Protocol\CmdProtocol.c:1031:18: warning: statement with no effect [-Wunused-value]
+   DBG_SOFT_PutStr("\r\n 07 reponse err:\r\n");
+                  ^
+Code\UserApp\Protocol\CmdProtocol.c:1032:31: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+   DBG_SOFT_PrintfHex(&ret_code,1,16);  
+                               ^
+Code\UserApp\Protocol\CmdProtocol.c:1032:33: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+   DBG_SOFT_PrintfHex(&ret_code,1,16);  
+                                 ^
+Code\UserApp\Protocol\CmdProtocol.c:1032:21: warning: statement with no effect [-Wunused-value]
+   DBG_SOFT_PrintfHex(&ret_code,1,16);  
+                     ^
+Code\UserApp\Protocol\CmdProtocol.c: In function 'Protocol_CmdSendWarnInfo':
+Code\UserApp\Protocol\CmdProtocol.c:1155:8: warning: unused variable 'nCmdPackLen' [-Wunused-variable]
+  uint8 nCmdPackLen= (RecBuf[2] << 8) + RecBuf[3] + 4;
+        ^
+Code\UserApp\Protocol\CmdProtocol.c:1154:9: warning: unused variable 'pstr' [-Wunused-variable]
+  uint8 *pstr = RecBuf;
+         ^
+Code\UserApp\Protocol\CmdProtocol.c: In function 'Protocol_CmdParse':
+Code\UserApp\Protocol\CmdProtocol.c:1611:18: warning: statement with no effect [-Wunused-value]
+   DBG_SOFT_PutStr("\nGPRSCmdParseFlag2 chanel\n");
+                  ^
+Code\UserApp\Protocol\CmdProtocol.c:1612:34: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+   DBG_SOFT_PrintfHex(GPRSCmd_buf2, 32, 16);
+                                  ^
+Code\UserApp\Protocol\CmdProtocol.c:1612:38: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+   DBG_SOFT_PrintfHex(GPRSCmd_buf2, 32, 16);
+                                      ^
+Code\UserApp\Protocol\CmdProtocol.c:1612:21: warning: statement with no effect [-Wunused-value]
+   DBG_SOFT_PrintfHex(GPRSCmd_buf2, 32, 16);
+                     ^
+Code\UserApp\Protocol\CmdProtocol.c:1620:18: warning: statement with no effect [-Wunused-value]
+   DBG_SOFT_PutStr("\nGPRSCmdParseFlag1 chanel\n");
+                  ^
+Code\UserApp\Protocol\CmdProtocol.c:1621:34: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+   DBG_SOFT_PrintfHex(GPRSCmd_buf1, 32, 16);
+                                  ^
+Code\UserApp\Protocol\CmdProtocol.c:1621:38: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+   DBG_SOFT_PrintfHex(GPRSCmd_buf1, 32, 16);
+                                      ^
+Code\UserApp\Protocol\CmdProtocol.c:1621:21: warning: statement with no effect [-Wunused-value]
+   DBG_SOFT_PrintfHex(GPRSCmd_buf1, 32, 16);
+                     ^
+Code\UserApp\Protocol\CmdProtocol.c:1634:17: warning: statement with no effect [-Wunused-value]
+  DBG_SOFT_PutStr("\nProtocol_CmdParse-->Cmd:");
+                 ^
+Code\UserApp\Protocol\CmdProtocol.c:1635:35: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(TempCmdBuf + 6, 1, 16);
+                                   ^
+Code\UserApp\Protocol\CmdProtocol.c:1635:38: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(TempCmdBuf + 6, 1, 16);
+                                      ^
+Code\UserApp\Protocol\CmdProtocol.c:1635:20: warning: statement with no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(TempCmdBuf + 6, 1, 16);
+                    ^
+Code\UserApp\Protocol\CmdProtocol.c:1637:31: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(TempCmdBuf, CmdPacketTotalSize+4, 16);
+                               ^
+Code\UserApp\Protocol\CmdProtocol.c:1637:53: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(TempCmdBuf, CmdPacketTotalSize+4, 16);
+                                                     ^
+Code\UserApp\Protocol\CmdProtocol.c:1637:20: warning: statement with no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(TempCmdBuf, CmdPacketTotalSize+4, 16);
+                    ^
+Code\UserApp\Protocol\CmdProtocol.c:1638:17: warning: statement with no effect [-Wunused-value]
+  DBG_SOFT_PutStr("\n");
+                 ^
+Code\UserApp\Protocol\CmdProtocol.c:1643:18: warning: statement with no effect [-Wunused-value]
+   DBG_SOFT_PutStr("\nCrc Err!\n");
+                  ^
+Code\UserApp\Protocol\CmdProtocol.c:1646:17: warning: statement with no effect [-Wunused-value]
+  DBG_SOFT_PutStr("\nCrc Ok!\n");
+                 ^
+Code\UserApp\Protocol\CmdProtocol.c: In function 'Protocol_CmdParse_BLE':
+Code\UserApp\Protocol\CmdProtocol.c:1733:17: warning: statement with no effect [-Wunused-value]
+  DBG_SOFT_PutStr("\nProtocol_CmdParse_BLE-->Cmd:");
+                 ^
+Code\UserApp\Protocol\CmdProtocol.c:1734:35: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(TempCmdBuf + 6, 1, 16);
+                                   ^
+Code\UserApp\Protocol\CmdProtocol.c:1734:38: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(TempCmdBuf + 6, 1, 16);
+                                      ^
+Code\UserApp\Protocol\CmdProtocol.c:1734:20: warning: statement with no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(TempCmdBuf + 6, 1, 16);
+                    ^
+Code\UserApp\Protocol\CmdProtocol.c:1738:17: warning: statement with no effect [-Wunused-value]
+  DBG_SOFT_PutStr("\n");
+                 ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/UserRTC.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Code\Device\RTC\UserRTC.c -o .\CortexM0\ARM_GCC_493\Debug\UserRTC.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/voice.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Code\UserApp\Voice\voice.c -o .\CortexM0\ARM_GCC_493\Debug\voice.o
+Code\UserApp\Voice\voice.c: In function 'BeepPlay_Delay':
+Code\UserApp\Voice\voice.c:61:9: warning: implicit declaration of function 'CyBle_ProcessEvents' [-Wimplicit-function-declaration]
+         CyBle_ProcessEvents();
+         ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/UserWDT.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Code\Device\WDT\UserWDT.c -o .\CortexM0\ARM_GCC_493\Debug\UserWDT.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/main.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c main.c -o .\CortexM0\ARM_GCC_493\Debug\main.o
+main.c: In function 'Updatealarm_check':
+main.c:573:18: warning: statement with no effect [-Wunused-value]
+   DBG_SOFT_PutStr("\npolling update info:\n");
+                  ^
+main.c:577:25: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+   DBG_SOFT_PrintfHex(tmp,3,16);
+                         ^
+main.c:577:27: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+   DBG_SOFT_PrintfHex(tmp,3,16);
+                           ^
+main.c:577:21: warning: statement with no effect [-Wunused-value]
+   DBG_SOFT_PrintfHex(tmp,3,16);
+                     ^
+main.c: In function 'CARD_Tick':
+main.c:1164:17: warning: statement with no effect [-Wunused-value]
+  DBG_SOFT_PutStr("\nGet Card UID:"); 
+                 ^
+main.c:1165:28: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(card_id,8,16);
+                            ^
+main.c:1165:30: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(card_id,8,16);
+                              ^
+main.c:1165:20: warning: statement with no effect [-Wunused-value]
+  DBG_SOFT_PrintfHex(card_id,8,16);
+                    ^
+main.c:1206:1: warning: label 'Err_Check' defined but not used [-Wunused-label]
+ Err_Check:
+ ^
+main.c: In function 'KeyOpen_Tick':
+main.c:1363:20: warning: statement with no effect [-Wunused-value]
+     DBG_SOFT_PutStr("\nKeyopen upload\n");
+                    ^
+main.c: In function 'UploadOpenInfo_Tick':
+main.c:1524:19: warning: statement with no effect [-Wunused-value]
+    DBG_SOFT_PutStr("\n after find loop,i = ");
+                   ^
+main.c:1525:25: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+    DBG_SOFT_PrintfHex(&i,1,16);  
+                         ^
+main.c:1525:27: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+    DBG_SOFT_PrintfHex(&i,1,16);  
+                           ^
+main.c:1525:22: warning: statement with no effect [-Wunused-value]
+    DBG_SOFT_PrintfHex(&i,1,16);  
+                      ^
+main.c:1534:21: warning: statement with no effect [-Wunused-value]
+      DBG_SOFT_PutStr("\npolling_stop: ");
+                     ^
+main.c:1535:44: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+      DBG_SOFT_PrintfHex(&uploadpolling_stop,1,16);
+                                            ^
+main.c:1535:46: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+      DBG_SOFT_PrintfHex(&uploadpolling_stop,1,16);
+                                              ^
+main.c:1535:24: warning: statement with no effect [-Wunused-value]
+      DBG_SOFT_PrintfHex(&uploadpolling_stop,1,16);
+                        ^
+main.c:1537:20: warning: statement with no effect [-Wunused-value]
+     DBG_SOFT_PutStr("\nsend_upload_open_info loop,page_offset= ");
+                    ^
+main.c:1538:43: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+    DBG_SOFT_PrintfHex(&openinfopage_offset,1,16);
+                                           ^
+main.c:1538:45: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+    DBG_SOFT_PrintfHex(&openinfopage_offset,1,16);
+                                             ^
+main.c:1538:22: warning: statement with no effect [-Wunused-value]
+    DBG_SOFT_PrintfHex(&openinfopage_offset,1,16);
+                      ^
+main.c:1549:21: warning: statement with no effect [-Wunused-value]
+      DBG_SOFT_PutStr("\nset opendateflag锛?);
+                     ^
+main.c:1550:49: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+      DBG_SOFT_PrintfHex((uint8 *)&uploadflag_cnt,1,16);
+                                                 ^
+main.c:1550:51: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+      DBG_SOFT_PrintfHex((uint8 *)&uploadflag_cnt,1,16);
+                                                   ^
+main.c:1550:24: warning: statement with no effect [-Wunused-value]
+      DBG_SOFT_PrintfHex((uint8 *)&uploadflag_cnt,1,16);
+                        ^
+main.c:1561:20: warning: statement with no effect [-Wunused-value]
+     DBG_SOFT_PutStr("\n repet_info :\n");
+                    ^
+main.c:1562:44: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+     DBG_SOFT_PrintfHex((uint8 *)&repet_info,sizeof(open_door_t),16);
+                                            ^
+main.c:1562:64: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+     DBG_SOFT_PrintfHex((uint8 *)&repet_info,sizeof(open_door_t),16);
+                                                                ^
+main.c:1562:23: warning: statement with no effect [-Wunused-value]
+     DBG_SOFT_PrintfHex((uint8 *)&repet_info,sizeof(open_door_t),16);
+                       ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/debug.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c debug.c -o .\CortexM0\ARM_GCC_493\Debug\debug.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/isr.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Code\UserApp\isr.c -o .\CortexM0\ARM_GCC_493\Debug\isr.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/OTAMandatory.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c OTAMandatory.c -o .\CortexM0\ARM_GCC_493\Debug\OTAMandatory.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/OTAOptional.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c OTAOptional.c -o .\CortexM0\ARM_GCC_493\Debug\OTAOptional.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/cyfitter_cfg.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\cyfitter_cfg.c -o .\CortexM0\ARM_GCC_493\Debug\cyfitter_cfg.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/cymetadata.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\cymetadata.c -o .\CortexM0\ARM_GCC_493\Debug\cymetadata.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/Cm0Start.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\Cm0Start.c -o .\CortexM0\ARM_GCC_493\Debug\Cm0Start.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/CyFlash.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\CyFlash.c -o .\CortexM0\ARM_GCC_493\Debug\CyFlash.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/CyLib.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\CyLib.c -o .\CortexM0\ARM_GCC_493\Debug\CyLib.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/cyPm.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\cyPm.c -o .\CortexM0\ARM_GCC_493\Debug\cyPm.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/cyutils.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\cyutils.c -o .\CortexM0\ARM_GCC_493\Debug\cyutils.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/CyLFClk.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\CyLFClk.c -o .\CortexM0\ARM_GCC_493\Debug\CyLFClk.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/UART_433.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\UART_433.c -o .\CortexM0\ARM_GCC_493\Debug\UART_433.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/UART_433_SPI_UART.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\UART_433_SPI_UART.c -o .\CortexM0\ARM_GCC_493\Debug\UART_433_SPI_UART.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/UART_433_SPI_UART_INT.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\UART_433_SPI_UART_INT.c -o .\CortexM0\ARM_GCC_493\Debug\UART_433_SPI_UART_INT.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/UART_433_PM.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\UART_433_PM.c -o .\CortexM0\ARM_GCC_493\Debug\UART_433_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/UART_433_UART.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\UART_433_UART.c -o .\CortexM0\ARM_GCC_493\Debug\UART_433_UART.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/UART_433_BOOT.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\UART_433_BOOT.c -o .\CortexM0\ARM_GCC_493\Debug\UART_433_BOOT.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/UART_433_UART_BOOT.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\UART_433_UART_BOOT.c -o .\CortexM0\ARM_GCC_493\Debug\UART_433_UART_BOOT.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/RTC.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\RTC.c -o .\CortexM0\ARM_GCC_493\Debug\RTC.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/FM_NCS.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\FM_NCS.c -o .\CortexM0\ARM_GCC_493\Debug\FM_NCS.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/FM_NCS_PM.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\FM_NCS_PM.c -o .\CortexM0\ARM_GCC_493\Debug\FM_NCS_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/FM_SCK.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\FM_SCK.c -o .\CortexM0\ARM_GCC_493\Debug\FM_SCK.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/FM_SCK_PM.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\FM_SCK_PM.c -o .\CortexM0\ARM_GCC_493\Debug\FM_SCK_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/FM_MISO.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\FM_MISO.c -o .\CortexM0\ARM_GCC_493\Debug\FM_MISO.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/FM_MISO_PM.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\FM_MISO_PM.c -o .\CortexM0\ARM_GCC_493\Debug\FM_MISO_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/FM_MOSI.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\FM_MOSI.c -o .\CortexM0\ARM_GCC_493\Debug\FM_MOSI.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/FM_MOSI_PM.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\FM_MOSI_PM.c -o .\CortexM0\ARM_GCC_493\Debug\FM_MOSI_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/FM_RST.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\FM_RST.c -o .\CortexM0\ARM_GCC_493\Debug\FM_RST.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/FM_RST_PM.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\FM_RST_PM.c -o .\CortexM0\ARM_GCC_493\Debug\FM_RST_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/FM_INT.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\FM_INT.c -o .\CortexM0\ARM_GCC_493\Debug\FM_INT.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/FM_INT_PM.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\FM_INT_PM.c -o .\CortexM0\ARM_GCC_493\Debug\FM_INT_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/FM_INT_ISR.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\FM_INT_ISR.c -o .\CortexM0\ARM_GCC_493\Debug\FM_INT_ISR.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/LED_RED.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\LED_RED.c -o .\CortexM0\ARM_GCC_493\Debug\LED_RED.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/LED_RED_PM.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\LED_RED_PM.c -o .\CortexM0\ARM_GCC_493\Debug\LED_RED_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/LED_GREEN.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\LED_GREEN.c -o .\CortexM0\ARM_GCC_493\Debug\LED_GREEN.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/LED_GREEN_PM.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\LED_GREEN_PM.c -o .\CortexM0\ARM_GCC_493\Debug\LED_GREEN_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/cmd433_INT_ISR.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\cmd433_INT_ISR.c -o .\CortexM0\ARM_GCC_493\Debug\cmd433_INT_ISR.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/Clock_1.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\Clock_1.c -o .\CortexM0\ARM_GCC_493\Debug\Clock_1.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/Timer_INT_ISR.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\Timer_INT_ISR.c -o .\CortexM0\ARM_GCC_493\Debug\Timer_INT_ISR.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/Timer_100ms.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\Timer_100ms.c -o .\CortexM0\ARM_GCC_493\Debug\Timer_100ms.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/Timer_100ms_PM.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\Timer_100ms_PM.c -o .\CortexM0\ARM_GCC_493\Debug\Timer_100ms_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/LED_BLUE.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\LED_BLUE.c -o .\CortexM0\ARM_GCC_493\Debug\LED_BLUE.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/LED_BLUE_PM.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\LED_BLUE_PM.c -o .\CortexM0\ARM_GCC_493\Debug\LED_BLUE_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/GPRS_PWRKEY.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\GPRS_PWRKEY.c -o .\CortexM0\ARM_GCC_493\Debug\GPRS_PWRKEY.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/GPRS_PWRKEY_PM.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\GPRS_PWRKEY_PM.c -o .\CortexM0\ARM_GCC_493\Debug\GPRS_PWRKEY_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/TIMER.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\TIMER.c -o .\CortexM0\ARM_GCC_493\Debug\TIMER.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/TIMER_PM.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\TIMER_PM.c -o .\CortexM0\ARM_GCC_493\Debug\TIMER_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/Clock.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\Clock.c -o .\CortexM0\ARM_GCC_493\Debug\Clock.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/PWM_BEEP.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\PWM_BEEP.c -o .\CortexM0\ARM_GCC_493\Debug\PWM_BEEP.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/PWM_BEEP_PM.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\PWM_BEEP_PM.c -o .\CortexM0\ARM_GCC_493\Debug\PWM_BEEP_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/DOOR_OPEN.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\DOOR_OPEN.c -o .\CortexM0\ARM_GCC_493\Debug\DOOR_OPEN.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/DOOR_OPEN_PM.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\DOOR_OPEN_PM.c -o .\CortexM0\ARM_GCC_493\Debug\DOOR_OPEN_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/KEY_OPEN.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\KEY_OPEN.c -o .\CortexM0\ARM_GCC_493\Debug\KEY_OPEN.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/KEY_OPEN_PM.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\KEY_OPEN_PM.c -o .\CortexM0\ARM_GCC_493\Debug\KEY_OPEN_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/FIRE_OPEN.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\FIRE_OPEN.c -o .\CortexM0\ARM_GCC_493\Debug\FIRE_OPEN.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/FIRE_OPEN_PM.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\FIRE_OPEN_PM.c -o .\CortexM0\ARM_GCC_493\Debug\FIRE_OPEN_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/DEFEND_ALARM.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\DEFEND_ALARM.c -o .\CortexM0\ARM_GCC_493\Debug\DEFEND_ALARM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/DEFEND_ALARM_PM.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\DEFEND_ALARM_PM.c -o .\CortexM0\ARM_GCC_493\Debug\DEFEND_ALARM_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/GPRS_RESET.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\GPRS_RESET.c -o .\CortexM0\ARM_GCC_493\Debug\GPRS_RESET.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/GPRS_RESET_PM.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\GPRS_RESET_PM.c -o .\CortexM0\ARM_GCC_493\Debug\GPRS_RESET_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/GPRS_STATE.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\GPRS_STATE.c -o .\CortexM0\ARM_GCC_493\Debug\GPRS_STATE.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/GPRS_STATE_PM.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\GPRS_STATE_PM.c -o .\CortexM0\ARM_GCC_493\Debug\GPRS_STATE_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/FLASH_NCS.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\FLASH_NCS.c -o .\CortexM0\ARM_GCC_493\Debug\FLASH_NCS.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/FLASH_NCS_PM.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\FLASH_NCS_PM.c -o .\CortexM0\ARM_GCC_493\Debug\FLASH_NCS_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/FLASH_SCK.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\FLASH_SCK.c -o .\CortexM0\ARM_GCC_493\Debug\FLASH_SCK.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/FLASH_SCK_PM.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\FLASH_SCK_PM.c -o .\CortexM0\ARM_GCC_493\Debug\FLASH_SCK_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/FLASH_MISO.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\FLASH_MISO.c -o .\CortexM0\ARM_GCC_493\Debug\FLASH_MISO.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/FLASH_MISO_PM.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\FLASH_MISO_PM.c -o .\CortexM0\ARM_GCC_493\Debug\FLASH_MISO_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/FLASH_MOSI.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\FLASH_MOSI.c -o .\CortexM0\ARM_GCC_493\Debug\FLASH_MOSI.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/FLASH_MOSI_PM.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\FLASH_MOSI_PM.c -o .\CortexM0\ARM_GCC_493\Debug\FLASH_MOSI_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/UART_433_SCBCLK.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\UART_433_SCBCLK.c -o .\CortexM0\ARM_GCC_493\Debug\UART_433_SCBCLK.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/UART_433_tx.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\UART_433_tx.c -o .\CortexM0\ARM_GCC_493\Debug\UART_433_tx.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/UART_433_tx_PM.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\UART_433_tx_PM.c -o .\CortexM0\ARM_GCC_493\Debug\UART_433_tx_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/UART_433_rx.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\UART_433_rx.c -o .\CortexM0\ARM_GCC_493\Debug\UART_433_rx.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/UART_433_rx_PM.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\UART_433_rx_PM.c -o .\CortexM0\ARM_GCC_493\Debug\UART_433_rx_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/WDT_ISR.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\WDT_ISR.c -o .\CortexM0\ARM_GCC_493\Debug\WDT_ISR.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/cybootloader.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\cybootloader.c -o .\CortexM0\ARM_GCC_493\Debug\cybootloader.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I.\Code -I.\Code\Common -I.\Code\Common\crypt -I.\Code\Device\BLE -I.\Code\Device\RTC -I.\Code\Device\WDT -I.\Code\Device\GPRS -I.\Code\Device\W25Q80 -I.\Code\Device\FM175XX -I.\Code\Device\FM175XX\IOS14443 -I.\Code\Device\FM175XX\ISO15693 -I.\Code\Device\FM175XX\LPCD -I.\Code\Device\FM175XX\SPI -I.\Code\Device\FM175XX\Utility -I.\Code\UserApp -I.\Code\UserApp\Protocol -I.\Code\UserApp\Voice -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_493\Debug/Bootloadable.lst -g -D DEBUG -Wall -ffunction-sections -Os -ffat-lto-objects -c Generated_Source\PSoC4\Bootloadable.c -o .\CortexM0\ARM_GCC_493\Debug\Bootloadable.o
+arm-none-eabi-as.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -alh=.\CortexM0\ARM_GCC_493\Debug/CyBootAsmGnu.lst -g -W -o .\CortexM0\ARM_GCC_493\Debug\CyBootAsmGnu.o Generated_Source\PSoC4\CyBootAsmGnu.s
+arm-none-eabi-ar.exe -rs .\CortexM0\ARM_GCC_493\Debug\EntranceGuard.a .\CortexM0\ARM_GCC_493\Debug\cyfitter_cfg.o .\CortexM0\ARM_GCC_493\Debug\CyFlash.o .\CortexM0\ARM_GCC_493\Debug\CyLib.o .\CortexM0\ARM_GCC_493\Debug\cyPm.o .\CortexM0\ARM_GCC_493\Debug\cyutils.o .\CortexM0\ARM_GCC_493\Debug\CyLFClk.o .\CortexM0\ARM_GCC_493\Debug\UART_433.o .\CortexM0\ARM_GCC_493\Debug\UART_433_SPI_UART.o .\CortexM0\ARM_GCC_493\Debug\UART_433_SPI_UART_INT.o .\CortexM0\ARM_GCC_493\Debug\UART_433_PM.o .\CortexM0\ARM_GCC_493\Debug\UART_433_UART.o .\CortexM0\ARM_GCC_493\Debug\UART_433_BOOT.o .\CortexM0\ARM_GCC_493\Debug\UART_433_UART_BOOT.o .\CortexM0\ARM_GCC_493\Debug\RTC.o .\CortexM0\ARM_GCC_493\Debug\FM_NCS.o .\CortexM0\ARM_GCC_493\Debug\FM_NCS_PM.o .\CortexM0\ARM_GCC_493\Debug\FM_SCK.o .\CortexM0\ARM_GCC_493\Debug\FM_SCK_PM.o .\CortexM0\ARM_GCC_493\Debug\FM_MISO.o .\CortexM0\ARM_GCC_493\Debug\FM_MISO_PM.o .\CortexM0\ARM_GCC_493\Debug\FM_MOSI.o .\CortexM0\ARM_GCC_493\Debug\FM_MOSI_PM.o .\CortexM0\ARM_GCC_493\Debug\FM_RST.o .\CortexM0\ARM_GCC_493\Debug\FM_RST_PM.o .\CortexM0\ARM_GCC_493\Debug\FM_INT.o .\CortexM0\ARM_GCC_493\Debug\FM_INT_PM.o .\CortexM0\ARM_GCC_493\Debug\FM_INT_ISR.o .\CortexM0\ARM_GCC_493\Debug\LED_RED.o .\CortexM0\ARM_GCC_493\Debug\LED_RED_PM.o .\CortexM0\ARM_GCC_493\Debug\LED_GREEN.o .\CortexM0\ARM_GCC_493\Debug\LED_GREEN_PM.o .\CortexM0\ARM_GCC_493\Debug\cmd433_INT_ISR.o .\CortexM0\ARM_GCC_493\Debug\Clock_1.o .\CortexM0\ARM_GCC_493\Debug\Timer_INT_ISR.o .\CortexM0\ARM_GCC_493\Debug\Timer_100ms.o .\CortexM0\ARM_GCC_493\Debug\Timer_100ms_PM.o .\CortexM0\ARM_GCC_493\Debug\LED_BLUE.o .\CortexM0\ARM_GCC_493\Debug\LED_BLUE_PM.o .\CortexM0\ARM_GCC_493\Debug\GPRS_PWRKEY.o .\CortexM0\ARM_GCC_493\Debug\GPRS_PWRKEY_PM.o .\CortexM0\ARM_GCC_493\Debug\TIMER.o .\CortexM0\ARM_GCC_493\Debug\TIMER_PM.o .\CortexM0\ARM_GCC_493\Debug\Clock.o .\CortexM0\ARM_GCC_493\Debug\PWM_BEEP.o .\CortexM0\ARM_GCC_493\Debug\PWM_BEEP_PM.o .\CortexM0\ARM_GCC_493\Debug\DOOR_OPEN.o .\CortexM0\ARM_GCC_493\Debug\DOOR_OPEN_PM.o .\CortexM0\ARM_GCC_493\Debug\KEY_OPEN.o .\CortexM0\ARM_GCC_493\Debug\KEY_OPEN_PM.o .\CortexM0\ARM_GCC_493\Debug\FIRE_OPEN.o .\CortexM0\ARM_GCC_493\Debug\FIRE_OPEN_PM.o .\CortexM0\ARM_GCC_493\Debug\DEFEND_ALARM.o .\CortexM0\ARM_GCC_493\Debug\DEFEND_ALARM_PM.o .\CortexM0\ARM_GCC_493\Debug\GPRS_RESET.o .\CortexM0\ARM_GCC_493\Debug\GPRS_RESET_PM.o .\CortexM0\ARM_GCC_493\Debug\GPRS_STATE.o .\CortexM0\ARM_GCC_493\Debug\GPRS_STATE_PM.o .\CortexM0\ARM_GCC_493\Debug\FLASH_NCS.o .\CortexM0\ARM_GCC_493\Debug\FLASH_NCS_PM.o .\CortexM0\ARM_GCC_493\Debug\FLASH_SCK.o .\CortexM0\ARM_GCC_493\Debug\FLASH_SCK_PM.o .\CortexM0\ARM_GCC_493\Debug\FLASH_MISO.o .\CortexM0\ARM_GCC_493\Debug\FLASH_MISO_PM.o .\CortexM0\ARM_GCC_493\Debug\FLASH_MOSI.o .\CortexM0\ARM_GCC_493\Debug\FLASH_MOSI_PM.o .\CortexM0\ARM_GCC_493\Debug\UART_433_SCBCLK.o .\CortexM0\ARM_GCC_493\Debug\UART_433_tx.o .\CortexM0\ARM_GCC_493\Debug\UART_433_tx_PM.o .\CortexM0\ARM_GCC_493\Debug\UART_433_rx.o .\CortexM0\ARM_GCC_493\Debug\UART_433_rx_PM.o .\CortexM0\ARM_GCC_493\Debug\WDT_ISR.o .\CortexM0\ARM_GCC_493\Debug\Bootloadable.o .\CortexM0\ARM_GCC_493\Debug\CyBootAsmGnu.o
+arm-none-eabi-ar.exe: creating .\CortexM0\ARM_GCC_493\Debug\EntranceGuard.a
+arm-none-eabi-gcc.exe -Wl,--start-group -o .\CortexM0\ARM_GCC_493\Debug\EntranceGuard.elf .\CortexM0\ARM_GCC_493\Debug\aes.o .\CortexM0\ARM_GCC_493\Debug\Aesecb.o .\CortexM0\ARM_GCC_493\Debug\crypt.o .\CortexM0\ARM_GCC_493\Debug\crc16check.o .\CortexM0\ARM_GCC_493\Debug\utc.o .\CortexM0\ARM_GCC_493\Debug\Bluetooth.o .\CortexM0\ARM_GCC_493\Debug\mifare_card.o .\CortexM0\ARM_GCC_493\Debug\NTAG.o .\CortexM0\ARM_GCC_493\Debug\type_a.o .\CortexM0\ARM_GCC_493\Debug\type_b.o .\CortexM0\ARM_GCC_493\Debug\lpcd_api.o .\CortexM0\ARM_GCC_493\Debug\lpcd_regctrl.o .\CortexM0\ARM_GCC_493\Debug\spi.o .\CortexM0\ARM_GCC_493\Debug\Utility.o .\CortexM0\ARM_GCC_493\Debug\card.o .\CortexM0\ARM_GCC_493\Debug\fm175xx.o .\CortexM0\ARM_GCC_493\Debug\flash_spi.o .\CortexM0\ARM_GCC_493\Debug\user_data.o .\CortexM0\ARM_GCC_493\Debug\w25qxx.o .\CortexM0\ARM_GCC_493\Debug\AtProtocol.o .\CortexM0\ARM_GCC_493\Debug\Uart433.o .\CortexM0\ARM_GCC_493\Debug\CmdProtocol.o .\CortexM0\ARM_GCC_493\Debug\UserRTC.o .\CortexM0\ARM_GCC_493\Debug\voice.o .\CortexM0\ARM_GCC_493\Debug\UserWDT.o .\CortexM0\ARM_GCC_493\Debug\main.o .\CortexM0\ARM_GCC_493\Debug\debug.o .\CortexM0\ARM_GCC_493\Debug\isr.o .\CortexM0\ARM_GCC_493\Debug\OTAMandatory.o .\CortexM0\ARM_GCC_493\Debug\OTAOptional.o .\CortexM0\ARM_GCC_493\Debug\cymetadata.o .\CortexM0\ARM_GCC_493\Debug\Cm0Start.o .\CortexM0\ARM_GCC_493\Debug\cybootloader.o .\CortexM0\ARM_GCC_493\Debug\EntranceGuard.a "C:\Program Files (x86)\Cypress\PSoC Creator\4.0\PSoC Creator\psoc\content\cycomponentlibrary\CyComponentLibrary.cylib\CortexM0\ARM_GCC_493\Debug\CyComponentLibrary.a" -mcpu=cortex-m0 -mthumb -g -ffunction-sections -Os -ffat-lto-objects -L Generated_Source\PSoC4 -L .\LinkerScripts -Wl,-Map,.\CortexM0\ARM_GCC_493\Debug/EntranceGuard.map -T .\LinkerScripts\cm0gcc.ld -specs=nano.specs -Wl,--gc-sections -Wl,--end-group
+cyelftool.exe -B G:\Psoc4_prj\7.rental_house\18-02-08\EntranceGuard_171019-12.50\EntranceGuard.cydsn\CortexM0\ARM_GCC_493\Debug\EntranceGuard.elf --flash_row_size 256 --flash_size 262144 --flash_array_size 131072
+cyelftool.exe -S G:\Psoc4_prj\7.rental_house\18-02-08\EntranceGuard_171019-12.50\EntranceGuard.cydsn\CortexM0\ARM_GCC_493\Debug\EntranceGuard.elf
+Flash used: 120864 of 262144 bytes (46.1%). Bootloader: 90112 bytes. Application: 30496 bytes. Metadata: 256 bytes.
+SRAM used: 17648 of 32768 bytes (53.9%). Stack: 2048 bytes. Heap: 1024 bytes.
+--------------- Rebuild Succeeded: 03/08/2018 09:57:52 ---------------

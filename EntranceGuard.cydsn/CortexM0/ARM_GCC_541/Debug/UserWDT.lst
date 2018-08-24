@@ -1,0 +1,843 @@
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cczTZohT.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m0
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"UserWDT.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.WDT_Start,"ax",%progbits
+  20              		.align	1
+  21              		.global	WDT_Start
+  22              		.code	16
+  23              		.thumb_func
+  24              		.type	WDT_Start, %function
+  25              	WDT_Start:
+  26              	.LFB63:
+  27              		.file 1 "Code\\Device\\WDT\\UserWDT.c"
+   1:Code\Device\WDT/UserWDT.c **** //*************************************************************************************************
+   2:Code\Device\WDT/UserWDT.c **** // File name		: UserWDT.c
+   3:Code\Device\WDT/UserWDT.c **** // Description		: 看门狗配置的相关函数
+   4:Code\Device\WDT/UserWDT.c **** // Author			: Keno
+   5:Code\Device\WDT/UserWDT.c **** // Date				: 2016.8.8
+   6:Code\Device\WDT/UserWDT.c **** // Version			: V02
+   7:Code\Device\WDT/UserWDT.c **** //-------------------------------------------------------------------------------------------------
+   8:Code\Device\WDT/UserWDT.c **** // Info				: 
+   9:Code\Device\WDT/UserWDT.c **** //*************************************************************************************************
+  10:Code\Device\WDT/UserWDT.c **** #include "UserWDT.h"
+  11:Code\Device\WDT/UserWDT.c **** 
+  12:Code\Device\WDT/UserWDT.c **** 
+  13:Code\Device\WDT/UserWDT.c **** 
+  14:Code\Device\WDT/UserWDT.c **** //*************************************************************************************************
+  15:Code\Device\WDT/UserWDT.c **** // Function name	: SetSysRTCTime
+  16:Code\Device\WDT/UserWDT.c **** // Description		: 设置系统RTC时间
+  17:Code\Device\WDT/UserWDT.c **** // Parameter		: *arr	: 
+  18:Code\Device\WDT/UserWDT.c **** //					: size	
+  19:Code\Device\WDT/UserWDT.c **** // Return			: none
+  20:Code\Device\WDT/UserWDT.c **** //-------------------------------------------------------------------------------------------------
+  21:Code\Device\WDT/UserWDT.c **** // Info				: 
+  22:Code\Device\WDT/UserWDT.c **** //*************************************************************************************************
+  23:Code\Device\WDT/UserWDT.c **** void WDT_Start(void)
+  24:Code\Device\WDT/UserWDT.c **** {  
+  28              		.loc 1 24 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32 0000 10B5     		push	{r4, lr}
+  33              		.cfi_def_cfa_offset 8
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cczTZohT.s 			page 2
+
+
+  34              		.cfi_offset 4, -8
+  35              		.cfi_offset 14, -4
+  25:Code\Device\WDT/UserWDT.c **** 	#if 0  //关闭wdt
+  26:Code\Device\WDT/UserWDT.c **** 	/* Set WDT counter 0 to generate interrupt on match */
+  27:Code\Device\WDT/UserWDT.c **** 	CySysWdtWriteMode(CY_SYS_WDT_COUNTER0, CY_SYS_WDT_MODE_INT);
+  28:Code\Device\WDT/UserWDT.c **** 	CySysWdtWriteMatch(CY_SYS_WDT_COUNTER0, WDT_COUNT0_MATCH);
+  29:Code\Device\WDT/UserWDT.c **** 	CySysWdtWriteClearOnMatch(CY_SYS_WDT_COUNTER0, 1u);
+  30:Code\Device\WDT/UserWDT.c **** 	CySysWdtEnable(CY_SYS_WDT_COUNTER0_MASK);
+  31:Code\Device\WDT/UserWDT.c **** 	#endif
+  32:Code\Device\WDT/UserWDT.c **** 	
+  33:Code\Device\WDT/UserWDT.c **** 	#if 1
+  34:Code\Device\WDT/UserWDT.c **** 	CySysWdtWriteMode(CY_SYS_WDT_COUNTER0, CY_SYS_WDT_MODE_INT);
+  36              		.loc 1 34 0
+  37 0002 0121     		movs	r1, #1
+  38 0004 0020     		movs	r0, #0
+  39 0006 FFF7FEFF 		bl	CySysWdtSetMode
+  40              	.LVL0:
+  35:Code\Device\WDT/UserWDT.c **** 	CySysWdtWriteMatch(CY_SYS_WDT_COUNTER0, WDT_COUNT0_MATCH);
+  41              		.loc 1 35 0
+  42 000a 0E49     		ldr	r1, .L2
+  43 000c 0020     		movs	r0, #0
+  44 000e FFF7FEFF 		bl	CySysWdtSetMatch
+  45              	.LVL1:
+  36:Code\Device\WDT/UserWDT.c **** 	CySysWdtWriteClearOnMatch(CY_SYS_WDT_COUNTER0, 1u);	
+  46              		.loc 1 36 0
+  47 0012 0121     		movs	r1, #1
+  48 0014 0020     		movs	r0, #0
+  49 0016 FFF7FEFF 		bl	CySysWdtSetClearOnMatch
+  50              	.LVL2:
+  37:Code\Device\WDT/UserWDT.c **** 	
+  38:Code\Device\WDT/UserWDT.c **** 	/* Enable WDT counters 0 and 1 cascade */
+  39:Code\Device\WDT/UserWDT.c **** 	CySysWdtWriteCascade(CY_SYS_WDT_CASCADE_01);
+  51              		.loc 1 39 0
+  52 001a 0820     		movs	r0, #8
+  53 001c FFF7FEFF 		bl	CySysWdtSetCascade
+  54              	.LVL3:
+  40:Code\Device\WDT/UserWDT.c ****     
+  41:Code\Device\WDT/UserWDT.c **** 	/* Set WDT counter 1 to generate reset on match */
+  42:Code\Device\WDT/UserWDT.c **** 	CySysWdtWriteMatch(CY_SYS_WDT_COUNTER1, WDT_COUNT1_MATCH);
+  55              		.loc 1 42 0
+  56 0020 0521     		movs	r1, #5
+  57 0022 0120     		movs	r0, #1
+  58 0024 FFF7FEFF 		bl	CySysWdtSetMatch
+  59              	.LVL4:
+  43:Code\Device\WDT/UserWDT.c **** 	CySysWdtWriteMode(CY_SYS_WDT_COUNTER1, CY_SYS_WDT_MODE_RESET);
+  60              		.loc 1 43 0
+  61 0028 0221     		movs	r1, #2
+  62 002a 0120     		movs	r0, #1
+  63 002c FFF7FEFF 		bl	CySysWdtSetMode
+  64              	.LVL5:
+  44:Code\Device\WDT/UserWDT.c ****     CySysWdtWriteClearOnMatch(CY_SYS_WDT_COUNTER1, 1u);
+  65              		.loc 1 44 0
+  66 0030 0121     		movs	r1, #1
+  67 0032 0800     		movs	r0, r1
+  68 0034 FFF7FEFF 		bl	CySysWdtSetClearOnMatch
+  69              	.LVL6:
+  45:Code\Device\WDT/UserWDT.c **** 	
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cczTZohT.s 			page 3
+
+
+  46:Code\Device\WDT/UserWDT.c **** 	/* Enable WDT counters 0 and 1 */
+  47:Code\Device\WDT/UserWDT.c **** 	CySysWdtEnable(CY_SYS_WDT_COUNTER0_MASK | CY_SYS_WDT_COUNTER1_MASK);
+  70              		.loc 1 47 0
+  71 0038 0220     		movs	r0, #2
+  72 003a FF30     		adds	r0, r0, #255
+  73 003c FFF7FEFF 		bl	CySysWdtEnable
+  74              	.LVL7:
+  48:Code\Device\WDT/UserWDT.c **** 	#endif
+  49:Code\Device\WDT/UserWDT.c **** }
+  75              		.loc 1 49 0
+  76              		@ sp needed
+  77 0040 10BD     		pop	{r4, pc}
+  78              	.L3:
+  79 0042 C046     		.align	2
+  80              	.L2:
+  81 0044 FF7F0000 		.word	32767
+  82              		.cfi_endproc
+  83              	.LFE63:
+  84              		.size	WDT_Start, .-WDT_Start
+  85              		.section	.text.WDT_FeedDog,"ax",%progbits
+  86              		.align	1
+  87              		.global	WDT_FeedDog
+  88              		.code	16
+  89              		.thumb_func
+  90              		.type	WDT_FeedDog, %function
+  91              	WDT_FeedDog:
+  92              	.LFB64:
+  50:Code\Device\WDT/UserWDT.c **** 
+  51:Code\Device\WDT/UserWDT.c **** //*************************************************************************************************
+  52:Code\Device\WDT/UserWDT.c **** // Function name	: WDT_FeedDog
+  53:Code\Device\WDT/UserWDT.c **** // Description		: 设置系统RTC时间
+  54:Code\Device\WDT/UserWDT.c **** // Parameter		: *arr	: 
+  55:Code\Device\WDT/UserWDT.c **** //					: size	
+  56:Code\Device\WDT/UserWDT.c **** // Return			: none
+  57:Code\Device\WDT/UserWDT.c **** //-------------------------------------------------------------------------------------------------
+  58:Code\Device\WDT/UserWDT.c **** // Info				: 
+  59:Code\Device\WDT/UserWDT.c **** //*************************************************************************************************
+  60:Code\Device\WDT/UserWDT.c **** void WDT_FeedDog(void)
+  61:Code\Device\WDT/UserWDT.c **** {
+  93              		.loc 1 61 0
+  94              		.cfi_startproc
+  95              		@ args = 0, pretend = 0, frame = 0
+  96              		@ frame_needed = 0, uses_anonymous_args = 0
+  97 0000 10B5     		push	{r4, lr}
+  98              		.cfi_def_cfa_offset 8
+  99              		.cfi_offset 4, -8
+ 100              		.cfi_offset 14, -4
+  62:Code\Device\WDT/UserWDT.c **** 	CySysWatchdogFeed(CY_SYS_WDT_COUNTER1);
+ 101              		.loc 1 62 0
+ 102 0002 0120     		movs	r0, #1
+ 103 0004 FFF7FEFF 		bl	CySysWatchdogFeed
+ 104              	.LVL8:
+  63:Code\Device\WDT/UserWDT.c **** }
+ 105              		.loc 1 63 0
+ 106              		@ sp needed
+ 107 0008 10BD     		pop	{r4, pc}
+ 108              		.cfi_endproc
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cczTZohT.s 			page 4
+
+
+ 109              	.LFE64:
+ 110              		.size	WDT_FeedDog, .-WDT_FeedDog
+ 111              		.text
+ 112              	.Letext0:
+ 113              		.file 2 "Generated_Source\\PSoC4/cytypes.h"
+ 114              		.file 3 "Generated_Source\\PSoC4/CyLFClk.h"
+ 115              		.file 4 "Generated_Source\\PSoC4/RTC.h"
+ 116              		.section	.debug_info,"",%progbits
+ 117              	.Ldebug_info0:
+ 118 0000 FC010000 		.4byte	0x1fc
+ 119 0004 0400     		.2byte	0x4
+ 120 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 121 000a 04       		.byte	0x4
+ 122 000b 01       		.uleb128 0x1
+ 123 000c 75000000 		.4byte	.LASF24
+ 124 0010 0C       		.byte	0xc
+ 125 0011 0F020000 		.4byte	.LASF25
+ 126 0015 22000000 		.4byte	.LASF26
+ 127 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 128 001d 00000000 		.4byte	0
+ 129 0021 00000000 		.4byte	.Ldebug_line0
+ 130 0025 02       		.uleb128 0x2
+ 131 0026 01       		.byte	0x1
+ 132 0027 06       		.byte	0x6
+ 133 0028 E2010000 		.4byte	.LASF0
+ 134 002c 02       		.uleb128 0x2
+ 135 002d 01       		.byte	0x1
+ 136 002e 08       		.byte	0x8
+ 137 002f 7E010000 		.4byte	.LASF1
+ 138 0033 02       		.uleb128 0x2
+ 139 0034 02       		.byte	0x2
+ 140 0035 05       		.byte	0x5
+ 141 0036 FE010000 		.4byte	.LASF2
+ 142 003a 02       		.uleb128 0x2
+ 143 003b 02       		.byte	0x2
+ 144 003c 07       		.byte	0x7
+ 145 003d 44010000 		.4byte	.LASF3
+ 146 0041 02       		.uleb128 0x2
+ 147 0042 04       		.byte	0x4
+ 148 0043 05       		.byte	0x5
+ 149 0044 91010000 		.4byte	.LASF4
+ 150 0048 02       		.uleb128 0x2
+ 151 0049 04       		.byte	0x4
+ 152 004a 07       		.byte	0x7
+ 153 004b B3010000 		.4byte	.LASF5
+ 154 004f 02       		.uleb128 0x2
+ 155 0050 08       		.byte	0x8
+ 156 0051 05       		.byte	0x5
+ 157 0052 00000000 		.4byte	.LASF6
+ 158 0056 02       		.uleb128 0x2
+ 159 0057 08       		.byte	0x8
+ 160 0058 07       		.byte	0x7
+ 161 0059 2D010000 		.4byte	.LASF7
+ 162 005d 03       		.uleb128 0x3
+ 163 005e 04       		.byte	0x4
+ 164 005f 05       		.byte	0x5
+ 165 0060 696E7400 		.ascii	"int\000"
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cczTZohT.s 			page 5
+
+
+ 166 0064 02       		.uleb128 0x2
+ 167 0065 04       		.byte	0x4
+ 168 0066 07       		.byte	0x7
+ 169 0067 15000000 		.4byte	.LASF8
+ 170 006b 04       		.uleb128 0x4
+ 171 006c 08020000 		.4byte	.LASF9
+ 172 0070 02       		.byte	0x2
+ 173 0071 D301     		.2byte	0x1d3
+ 174 0073 3A000000 		.4byte	0x3a
+ 175 0077 04       		.uleb128 0x4
+ 176 0078 0E000000 		.4byte	.LASF10
+ 177 007c 02       		.byte	0x2
+ 178 007d D401     		.2byte	0x1d4
+ 179 007f 48000000 		.4byte	0x48
+ 180 0083 02       		.uleb128 0x2
+ 181 0084 04       		.byte	0x4
+ 182 0085 04       		.byte	0x4
+ 183 0086 F8010000 		.4byte	.LASF11
+ 184 008a 02       		.uleb128 0x2
+ 185 008b 08       		.byte	0x8
+ 186 008c 04       		.byte	0x4
+ 187 008d AC010000 		.4byte	.LASF12
+ 188 0091 02       		.uleb128 0x2
+ 189 0092 01       		.byte	0x1
+ 190 0093 08       		.byte	0x8
+ 191 0094 8C010000 		.4byte	.LASF13
+ 192 0098 02       		.uleb128 0x2
+ 193 0099 08       		.byte	0x8
+ 194 009a 04       		.byte	0x4
+ 195 009b C5010000 		.4byte	.LASF14
+ 196 009f 02       		.uleb128 0x2
+ 197 00a0 04       		.byte	0x4
+ 198 00a1 07       		.byte	0x7
+ 199 00a2 39020000 		.4byte	.LASF15
+ 200 00a6 05       		.uleb128 0x5
+ 201 00a7 EE010000 		.4byte	.LASF16
+ 202 00ab 01       		.byte	0x1
+ 203 00ac 17       		.byte	0x17
+ 204 00ad 00000000 		.4byte	.LFB63
+ 205 00b1 48000000 		.4byte	.LFE63-.LFB63
+ 206 00b5 01       		.uleb128 0x1
+ 207 00b6 9C       		.byte	0x9c
+ 208 00b7 72010000 		.4byte	0x172
+ 209 00bb 06       		.uleb128 0x6
+ 210 00bc 0A000000 		.4byte	.LVL0
+ 211 00c0 BD010000 		.4byte	0x1bd
+ 212 00c4 D3000000 		.4byte	0xd3
+ 213 00c8 07       		.uleb128 0x7
+ 214 00c9 01       		.uleb128 0x1
+ 215 00ca 50       		.byte	0x50
+ 216 00cb 01       		.uleb128 0x1
+ 217 00cc 30       		.byte	0x30
+ 218 00cd 07       		.uleb128 0x7
+ 219 00ce 01       		.uleb128 0x1
+ 220 00cf 51       		.byte	0x51
+ 221 00d0 01       		.uleb128 0x1
+ 222 00d1 31       		.byte	0x31
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cczTZohT.s 			page 6
+
+
+ 223 00d2 00       		.byte	0
+ 224 00d3 06       		.uleb128 0x6
+ 225 00d4 12000000 		.4byte	.LVL1
+ 226 00d8 C8010000 		.4byte	0x1c8
+ 227 00dc ED000000 		.4byte	0xed
+ 228 00e0 07       		.uleb128 0x7
+ 229 00e1 01       		.uleb128 0x1
+ 230 00e2 50       		.byte	0x50
+ 231 00e3 01       		.uleb128 0x1
+ 232 00e4 30       		.byte	0x30
+ 233 00e5 07       		.uleb128 0x7
+ 234 00e6 01       		.uleb128 0x1
+ 235 00e7 51       		.byte	0x51
+ 236 00e8 03       		.uleb128 0x3
+ 237 00e9 0A       		.byte	0xa
+ 238 00ea FF7F     		.2byte	0x7fff
+ 239 00ec 00       		.byte	0
+ 240 00ed 06       		.uleb128 0x6
+ 241 00ee 1A000000 		.4byte	.LVL2
+ 242 00f2 D3010000 		.4byte	0x1d3
+ 243 00f6 05010000 		.4byte	0x105
+ 244 00fa 07       		.uleb128 0x7
+ 245 00fb 01       		.uleb128 0x1
+ 246 00fc 50       		.byte	0x50
+ 247 00fd 01       		.uleb128 0x1
+ 248 00fe 30       		.byte	0x30
+ 249 00ff 07       		.uleb128 0x7
+ 250 0100 01       		.uleb128 0x1
+ 251 0101 51       		.byte	0x51
+ 252 0102 01       		.uleb128 0x1
+ 253 0103 31       		.byte	0x31
+ 254 0104 00       		.byte	0
+ 255 0105 06       		.uleb128 0x6
+ 256 0106 20000000 		.4byte	.LVL3
+ 257 010a DE010000 		.4byte	0x1de
+ 258 010e 18010000 		.4byte	0x118
+ 259 0112 07       		.uleb128 0x7
+ 260 0113 01       		.uleb128 0x1
+ 261 0114 50       		.byte	0x50
+ 262 0115 01       		.uleb128 0x1
+ 263 0116 38       		.byte	0x38
+ 264 0117 00       		.byte	0
+ 265 0118 06       		.uleb128 0x6
+ 266 0119 28000000 		.4byte	.LVL4
+ 267 011d C8010000 		.4byte	0x1c8
+ 268 0121 30010000 		.4byte	0x130
+ 269 0125 07       		.uleb128 0x7
+ 270 0126 01       		.uleb128 0x1
+ 271 0127 50       		.byte	0x50
+ 272 0128 01       		.uleb128 0x1
+ 273 0129 31       		.byte	0x31
+ 274 012a 07       		.uleb128 0x7
+ 275 012b 01       		.uleb128 0x1
+ 276 012c 51       		.byte	0x51
+ 277 012d 01       		.uleb128 0x1
+ 278 012e 35       		.byte	0x35
+ 279 012f 00       		.byte	0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cczTZohT.s 			page 7
+
+
+ 280 0130 06       		.uleb128 0x6
+ 281 0131 30000000 		.4byte	.LVL5
+ 282 0135 BD010000 		.4byte	0x1bd
+ 283 0139 48010000 		.4byte	0x148
+ 284 013d 07       		.uleb128 0x7
+ 285 013e 01       		.uleb128 0x1
+ 286 013f 50       		.byte	0x50
+ 287 0140 01       		.uleb128 0x1
+ 288 0141 31       		.byte	0x31
+ 289 0142 07       		.uleb128 0x7
+ 290 0143 01       		.uleb128 0x1
+ 291 0144 51       		.byte	0x51
+ 292 0145 01       		.uleb128 0x1
+ 293 0146 32       		.byte	0x32
+ 294 0147 00       		.byte	0
+ 295 0148 06       		.uleb128 0x6
+ 296 0149 38000000 		.4byte	.LVL6
+ 297 014d D3010000 		.4byte	0x1d3
+ 298 0151 60010000 		.4byte	0x160
+ 299 0155 07       		.uleb128 0x7
+ 300 0156 01       		.uleb128 0x1
+ 301 0157 50       		.byte	0x50
+ 302 0158 01       		.uleb128 0x1
+ 303 0159 31       		.byte	0x31
+ 304 015a 07       		.uleb128 0x7
+ 305 015b 01       		.uleb128 0x1
+ 306 015c 51       		.byte	0x51
+ 307 015d 01       		.uleb128 0x1
+ 308 015e 31       		.byte	0x31
+ 309 015f 00       		.byte	0
+ 310 0160 08       		.uleb128 0x8
+ 311 0161 40000000 		.4byte	.LVL7
+ 312 0165 E9010000 		.4byte	0x1e9
+ 313 0169 07       		.uleb128 0x7
+ 314 016a 01       		.uleb128 0x1
+ 315 016b 50       		.byte	0x50
+ 316 016c 03       		.uleb128 0x3
+ 317 016d 0A       		.byte	0xa
+ 318 016e 0101     		.2byte	0x101
+ 319 0170 00       		.byte	0
+ 320 0171 00       		.byte	0
+ 321 0172 05       		.uleb128 0x5
+ 322 0173 42020000 		.4byte	.LASF17
+ 323 0177 01       		.byte	0x1
+ 324 0178 3C       		.byte	0x3c
+ 325 0179 00000000 		.4byte	.LFB64
+ 326 017d 0A000000 		.4byte	.LFE64-.LFB64
+ 327 0181 01       		.uleb128 0x1
+ 328 0182 9C       		.byte	0x9c
+ 329 0183 97010000 		.4byte	0x197
+ 330 0187 08       		.uleb128 0x8
+ 331 0188 08000000 		.4byte	.LVL8
+ 332 018c F4010000 		.4byte	0x1f4
+ 333 0190 07       		.uleb128 0x7
+ 334 0191 01       		.uleb128 0x1
+ 335 0192 50       		.byte	0x50
+ 336 0193 01       		.uleb128 0x1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cczTZohT.s 			page 8
+
+
+ 337 0194 31       		.byte	0x31
+ 338 0195 00       		.byte	0
+ 339 0196 00       		.byte	0
+ 340 0197 09       		.uleb128 0x9
+ 341 0198 A7010000 		.4byte	0x1a7
+ 342 019c A7010000 		.4byte	0x1a7
+ 343 01a0 0A       		.uleb128 0xa
+ 344 01a1 9F000000 		.4byte	0x9f
+ 345 01a5 0B       		.byte	0xb
+ 346 01a6 00       		.byte	0
+ 347 01a7 0B       		.uleb128 0xb
+ 348 01a8 6B000000 		.4byte	0x6b
+ 349 01ac 0C       		.uleb128 0xc
+ 350 01ad 16010000 		.4byte	.LASF27
+ 351 01b1 04       		.byte	0x4
+ 352 01b2 E001     		.2byte	0x1e0
+ 353 01b4 B8010000 		.4byte	0x1b8
+ 354 01b8 0B       		.uleb128 0xb
+ 355 01b9 97010000 		.4byte	0x197
+ 356 01bd 0D       		.uleb128 0xd
+ 357 01be 29020000 		.4byte	.LASF18
+ 358 01c2 29020000 		.4byte	.LASF18
+ 359 01c6 03       		.byte	0x3
+ 360 01c7 67       		.byte	0x67
+ 361 01c8 0D       		.uleb128 0xd
+ 362 01c9 D1010000 		.4byte	.LASF19
+ 363 01cd D1010000 		.4byte	.LASF19
+ 364 01d1 03       		.byte	0x3
+ 365 01d2 70       		.byte	0x70
+ 366 01d3 0D       		.uleb128 0xd
+ 367 01d4 57010000 		.4byte	.LASF20
+ 368 01d8 57010000 		.4byte	.LASF20
+ 369 01dc 03       		.byte	0x3
+ 370 01dd 6A       		.byte	0x6a
+ 371 01de 0D       		.uleb128 0xd
+ 372 01df 03010000 		.4byte	.LASF21
+ 373 01e3 03010000 		.4byte	.LASF21
+ 374 01e7 03       		.byte	0x3
+ 375 01e8 6E       		.byte	0x6e
+ 376 01e9 0D       		.uleb128 0xd
+ 377 01ea 6F010000 		.4byte	.LASF22
+ 378 01ee 6F010000 		.4byte	.LASF22
+ 379 01f2 03       		.byte	0x3
+ 380 01f3 6C       		.byte	0x6c
+ 381 01f4 0D       		.uleb128 0xd
+ 382 01f5 9A010000 		.4byte	.LASF23
+ 383 01f9 9A010000 		.4byte	.LASF23
+ 384 01fd 03       		.byte	0x3
+ 385 01fe 7C       		.byte	0x7c
+ 386 01ff 00       		.byte	0
+ 387              		.section	.debug_abbrev,"",%progbits
+ 388              	.Ldebug_abbrev0:
+ 389 0000 01       		.uleb128 0x1
+ 390 0001 11       		.uleb128 0x11
+ 391 0002 01       		.byte	0x1
+ 392 0003 25       		.uleb128 0x25
+ 393 0004 0E       		.uleb128 0xe
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cczTZohT.s 			page 9
+
+
+ 394 0005 13       		.uleb128 0x13
+ 395 0006 0B       		.uleb128 0xb
+ 396 0007 03       		.uleb128 0x3
+ 397 0008 0E       		.uleb128 0xe
+ 398 0009 1B       		.uleb128 0x1b
+ 399 000a 0E       		.uleb128 0xe
+ 400 000b 55       		.uleb128 0x55
+ 401 000c 17       		.uleb128 0x17
+ 402 000d 11       		.uleb128 0x11
+ 403 000e 01       		.uleb128 0x1
+ 404 000f 10       		.uleb128 0x10
+ 405 0010 17       		.uleb128 0x17
+ 406 0011 00       		.byte	0
+ 407 0012 00       		.byte	0
+ 408 0013 02       		.uleb128 0x2
+ 409 0014 24       		.uleb128 0x24
+ 410 0015 00       		.byte	0
+ 411 0016 0B       		.uleb128 0xb
+ 412 0017 0B       		.uleb128 0xb
+ 413 0018 3E       		.uleb128 0x3e
+ 414 0019 0B       		.uleb128 0xb
+ 415 001a 03       		.uleb128 0x3
+ 416 001b 0E       		.uleb128 0xe
+ 417 001c 00       		.byte	0
+ 418 001d 00       		.byte	0
+ 419 001e 03       		.uleb128 0x3
+ 420 001f 24       		.uleb128 0x24
+ 421 0020 00       		.byte	0
+ 422 0021 0B       		.uleb128 0xb
+ 423 0022 0B       		.uleb128 0xb
+ 424 0023 3E       		.uleb128 0x3e
+ 425 0024 0B       		.uleb128 0xb
+ 426 0025 03       		.uleb128 0x3
+ 427 0026 08       		.uleb128 0x8
+ 428 0027 00       		.byte	0
+ 429 0028 00       		.byte	0
+ 430 0029 04       		.uleb128 0x4
+ 431 002a 16       		.uleb128 0x16
+ 432 002b 00       		.byte	0
+ 433 002c 03       		.uleb128 0x3
+ 434 002d 0E       		.uleb128 0xe
+ 435 002e 3A       		.uleb128 0x3a
+ 436 002f 0B       		.uleb128 0xb
+ 437 0030 3B       		.uleb128 0x3b
+ 438 0031 05       		.uleb128 0x5
+ 439 0032 49       		.uleb128 0x49
+ 440 0033 13       		.uleb128 0x13
+ 441 0034 00       		.byte	0
+ 442 0035 00       		.byte	0
+ 443 0036 05       		.uleb128 0x5
+ 444 0037 2E       		.uleb128 0x2e
+ 445 0038 01       		.byte	0x1
+ 446 0039 3F       		.uleb128 0x3f
+ 447 003a 19       		.uleb128 0x19
+ 448 003b 03       		.uleb128 0x3
+ 449 003c 0E       		.uleb128 0xe
+ 450 003d 3A       		.uleb128 0x3a
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cczTZohT.s 			page 10
+
+
+ 451 003e 0B       		.uleb128 0xb
+ 452 003f 3B       		.uleb128 0x3b
+ 453 0040 0B       		.uleb128 0xb
+ 454 0041 27       		.uleb128 0x27
+ 455 0042 19       		.uleb128 0x19
+ 456 0043 11       		.uleb128 0x11
+ 457 0044 01       		.uleb128 0x1
+ 458 0045 12       		.uleb128 0x12
+ 459 0046 06       		.uleb128 0x6
+ 460 0047 40       		.uleb128 0x40
+ 461 0048 18       		.uleb128 0x18
+ 462 0049 9742     		.uleb128 0x2117
+ 463 004b 19       		.uleb128 0x19
+ 464 004c 01       		.uleb128 0x1
+ 465 004d 13       		.uleb128 0x13
+ 466 004e 00       		.byte	0
+ 467 004f 00       		.byte	0
+ 468 0050 06       		.uleb128 0x6
+ 469 0051 898201   		.uleb128 0x4109
+ 470 0054 01       		.byte	0x1
+ 471 0055 11       		.uleb128 0x11
+ 472 0056 01       		.uleb128 0x1
+ 473 0057 31       		.uleb128 0x31
+ 474 0058 13       		.uleb128 0x13
+ 475 0059 01       		.uleb128 0x1
+ 476 005a 13       		.uleb128 0x13
+ 477 005b 00       		.byte	0
+ 478 005c 00       		.byte	0
+ 479 005d 07       		.uleb128 0x7
+ 480 005e 8A8201   		.uleb128 0x410a
+ 481 0061 00       		.byte	0
+ 482 0062 02       		.uleb128 0x2
+ 483 0063 18       		.uleb128 0x18
+ 484 0064 9142     		.uleb128 0x2111
+ 485 0066 18       		.uleb128 0x18
+ 486 0067 00       		.byte	0
+ 487 0068 00       		.byte	0
+ 488 0069 08       		.uleb128 0x8
+ 489 006a 898201   		.uleb128 0x4109
+ 490 006d 01       		.byte	0x1
+ 491 006e 11       		.uleb128 0x11
+ 492 006f 01       		.uleb128 0x1
+ 493 0070 31       		.uleb128 0x31
+ 494 0071 13       		.uleb128 0x13
+ 495 0072 00       		.byte	0
+ 496 0073 00       		.byte	0
+ 497 0074 09       		.uleb128 0x9
+ 498 0075 01       		.uleb128 0x1
+ 499 0076 01       		.byte	0x1
+ 500 0077 49       		.uleb128 0x49
+ 501 0078 13       		.uleb128 0x13
+ 502 0079 01       		.uleb128 0x1
+ 503 007a 13       		.uleb128 0x13
+ 504 007b 00       		.byte	0
+ 505 007c 00       		.byte	0
+ 506 007d 0A       		.uleb128 0xa
+ 507 007e 21       		.uleb128 0x21
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cczTZohT.s 			page 11
+
+
+ 508 007f 00       		.byte	0
+ 509 0080 49       		.uleb128 0x49
+ 510 0081 13       		.uleb128 0x13
+ 511 0082 2F       		.uleb128 0x2f
+ 512 0083 0B       		.uleb128 0xb
+ 513 0084 00       		.byte	0
+ 514 0085 00       		.byte	0
+ 515 0086 0B       		.uleb128 0xb
+ 516 0087 26       		.uleb128 0x26
+ 517 0088 00       		.byte	0
+ 518 0089 49       		.uleb128 0x49
+ 519 008a 13       		.uleb128 0x13
+ 520 008b 00       		.byte	0
+ 521 008c 00       		.byte	0
+ 522 008d 0C       		.uleb128 0xc
+ 523 008e 34       		.uleb128 0x34
+ 524 008f 00       		.byte	0
+ 525 0090 03       		.uleb128 0x3
+ 526 0091 0E       		.uleb128 0xe
+ 527 0092 3A       		.uleb128 0x3a
+ 528 0093 0B       		.uleb128 0xb
+ 529 0094 3B       		.uleb128 0x3b
+ 530 0095 05       		.uleb128 0x5
+ 531 0096 49       		.uleb128 0x49
+ 532 0097 13       		.uleb128 0x13
+ 533 0098 3F       		.uleb128 0x3f
+ 534 0099 19       		.uleb128 0x19
+ 535 009a 3C       		.uleb128 0x3c
+ 536 009b 19       		.uleb128 0x19
+ 537 009c 00       		.byte	0
+ 538 009d 00       		.byte	0
+ 539 009e 0D       		.uleb128 0xd
+ 540 009f 2E       		.uleb128 0x2e
+ 541 00a0 00       		.byte	0
+ 542 00a1 3F       		.uleb128 0x3f
+ 543 00a2 19       		.uleb128 0x19
+ 544 00a3 3C       		.uleb128 0x3c
+ 545 00a4 19       		.uleb128 0x19
+ 546 00a5 6E       		.uleb128 0x6e
+ 547 00a6 0E       		.uleb128 0xe
+ 548 00a7 03       		.uleb128 0x3
+ 549 00a8 0E       		.uleb128 0xe
+ 550 00a9 3A       		.uleb128 0x3a
+ 551 00aa 0B       		.uleb128 0xb
+ 552 00ab 3B       		.uleb128 0x3b
+ 553 00ac 0B       		.uleb128 0xb
+ 554 00ad 00       		.byte	0
+ 555 00ae 00       		.byte	0
+ 556 00af 00       		.byte	0
+ 557              		.section	.debug_aranges,"",%progbits
+ 558 0000 24000000 		.4byte	0x24
+ 559 0004 0200     		.2byte	0x2
+ 560 0006 00000000 		.4byte	.Ldebug_info0
+ 561 000a 04       		.byte	0x4
+ 562 000b 00       		.byte	0
+ 563 000c 0000     		.2byte	0
+ 564 000e 0000     		.2byte	0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cczTZohT.s 			page 12
+
+
+ 565 0010 00000000 		.4byte	.LFB63
+ 566 0014 48000000 		.4byte	.LFE63-.LFB63
+ 567 0018 00000000 		.4byte	.LFB64
+ 568 001c 0A000000 		.4byte	.LFE64-.LFB64
+ 569 0020 00000000 		.4byte	0
+ 570 0024 00000000 		.4byte	0
+ 571              		.section	.debug_ranges,"",%progbits
+ 572              	.Ldebug_ranges0:
+ 573 0000 00000000 		.4byte	.LFB63
+ 574 0004 48000000 		.4byte	.LFE63
+ 575 0008 00000000 		.4byte	.LFB64
+ 576 000c 0A000000 		.4byte	.LFE64
+ 577 0010 00000000 		.4byte	0
+ 578 0014 00000000 		.4byte	0
+ 579              		.section	.debug_line,"",%progbits
+ 580              	.Ldebug_line0:
+ 581 0000 9B000000 		.section	.debug_str,"MS",%progbits,1
+ 581      02006A00 
+ 581      00000201 
+ 581      FB0E0D00 
+ 581      01010101 
+ 582              	.LASF6:
+ 583 0000 6C6F6E67 		.ascii	"long long int\000"
+ 583      206C6F6E 
+ 583      6720696E 
+ 583      7400
+ 584              	.LASF10:
+ 585 000e 75696E74 		.ascii	"uint32\000"
+ 585      333200
+ 586              	.LASF8:
+ 587 0015 756E7369 		.ascii	"unsigned int\000"
+ 587      676E6564 
+ 587      20696E74 
+ 587      00
+ 588              	.LASF26:
+ 589 0022 473A5C50 		.ascii	"G:\\Psoc4_prj\\7.rental_house\\18-05-03\\EntranceGu"
+ 589      736F6334 
+ 589      5F70726A 
+ 589      5C372E72 
+ 589      656E7461 
+ 590 0051 6172645F 		.ascii	"ard_180427-1654\\EntranceGuard.cydsn\000"
+ 590      31383034 
+ 590      32372D31 
+ 590      3635345C 
+ 590      456E7472 
+ 591              	.LASF24:
+ 592 0075 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 592      43313120 
+ 592      352E342E 
+ 592      31203230 
+ 592      31363036 
+ 593 00a8 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m0 -mthumb -g -O"
+ 593      20726576 
+ 593      6973696F 
+ 593      6E203233 
+ 593      37373135 
+ 594 00db 73202D66 		.ascii	"s -ffunction-sections -ffat-lto-objects\000"
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cczTZohT.s 			page 13
+
+
+ 594      66756E63 
+ 594      74696F6E 
+ 594      2D736563 
+ 594      74696F6E 
+ 595              	.LASF21:
+ 596 0103 43795379 		.ascii	"CySysWdtSetCascade\000"
+ 596      73576474 
+ 596      53657443 
+ 596      61736361 
+ 596      646500
+ 597              	.LASF27:
+ 598 0116 5254435F 		.ascii	"RTC_daysBeforeMonthTbl\000"
+ 598      64617973 
+ 598      4265666F 
+ 598      72654D6F 
+ 598      6E746854 
+ 599              	.LASF7:
+ 600 012d 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 600      206C6F6E 
+ 600      6720756E 
+ 600      7369676E 
+ 600      65642069 
+ 601              	.LASF3:
+ 602 0144 73686F72 		.ascii	"short unsigned int\000"
+ 602      7420756E 
+ 602      7369676E 
+ 602      65642069 
+ 602      6E7400
+ 603              	.LASF20:
+ 604 0157 43795379 		.ascii	"CySysWdtSetClearOnMatch\000"
+ 604      73576474 
+ 604      53657443 
+ 604      6C656172 
+ 604      4F6E4D61 
+ 605              	.LASF22:
+ 606 016f 43795379 		.ascii	"CySysWdtEnable\000"
+ 606      73576474 
+ 606      456E6162 
+ 606      6C6500
+ 607              	.LASF1:
+ 608 017e 756E7369 		.ascii	"unsigned char\000"
+ 608      676E6564 
+ 608      20636861 
+ 608      7200
+ 609              	.LASF13:
+ 610 018c 63686172 		.ascii	"char\000"
+ 610      00
+ 611              	.LASF4:
+ 612 0191 6C6F6E67 		.ascii	"long int\000"
+ 612      20696E74 
+ 612      00
+ 613              	.LASF23:
+ 614 019a 43795379 		.ascii	"CySysWatchdogFeed\000"
+ 614      73576174 
+ 614      6368646F 
+ 614      67466565 
+ 614      6400
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cczTZohT.s 			page 14
+
+
+ 615              	.LASF12:
+ 616 01ac 646F7562 		.ascii	"double\000"
+ 616      6C6500
+ 617              	.LASF5:
+ 618 01b3 6C6F6E67 		.ascii	"long unsigned int\000"
+ 618      20756E73 
+ 618      69676E65 
+ 618      6420696E 
+ 618      7400
+ 619              	.LASF14:
+ 620 01c5 6C6F6E67 		.ascii	"long double\000"
+ 620      20646F75 
+ 620      626C6500 
+ 621              	.LASF19:
+ 622 01d1 43795379 		.ascii	"CySysWdtSetMatch\000"
+ 622      73576474 
+ 622      5365744D 
+ 622      61746368 
+ 622      00
+ 623              	.LASF0:
+ 624 01e2 7369676E 		.ascii	"signed char\000"
+ 624      65642063 
+ 624      68617200 
+ 625              	.LASF16:
+ 626 01ee 5744545F 		.ascii	"WDT_Start\000"
+ 626      53746172 
+ 626      7400
+ 627              	.LASF11:
+ 628 01f8 666C6F61 		.ascii	"float\000"
+ 628      7400
+ 629              	.LASF2:
+ 630 01fe 73686F72 		.ascii	"short int\000"
+ 630      7420696E 
+ 630      7400
+ 631              	.LASF9:
+ 632 0208 75696E74 		.ascii	"uint16\000"
+ 632      313600
+ 633              	.LASF25:
+ 634 020f 436F6465 		.ascii	"Code\\Device\\WDT\\UserWDT.c\000"
+ 634      5C446576 
+ 634      6963655C 
+ 634      5744545C 
+ 634      55736572 
+ 635              	.LASF18:
+ 636 0229 43795379 		.ascii	"CySysWdtSetMode\000"
+ 636      73576474 
+ 636      5365744D 
+ 636      6F646500 
+ 637              	.LASF15:
+ 638 0239 73697A65 		.ascii	"sizetype\000"
+ 638      74797065 
+ 638      00
+ 639              	.LASF17:
+ 640 0242 5744545F 		.ascii	"WDT_FeedDog\000"
+ 640      46656564 
+ 640      446F6700 
+ 641              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cczTZohT.s 			page 15
+
+

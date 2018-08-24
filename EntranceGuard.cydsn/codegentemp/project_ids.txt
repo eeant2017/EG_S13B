@@ -1,0 +1,7 @@
+G:\Psoc4_prj\7.rental_house\18-05-03\EntranceGuard_180512-1624\BLE_OTA_External_Memory_Bootloader01.cydsn\BLE_OTA_External_Memory_Bootloader01.cyprj|fc0a9bcc-0e65-49c8-8204-2d7e79d5bc03
+C:\Program Files (x86)\Cypress\PSoC Creator\4.1\PSoC Creator\psoc\content\default\CyAnnotationLibrary\CyAnnotationLibrary.cylib\CyAnnotationLibrary.cyprj|b12dc7ed-5c52-4271-b2ff-372d100b16fd
+C:\Users\Administrator\Documents\PSoC Creator\4.1\Downloads ( 4.1).cylib\Downloads ( 4.1).cyprj|11efc0ce-3f4d-425b-95f1-98177eb0203c
+C:\Program Files (x86)\Cypress\PSoC Creator\4.1\PSoC Creator\psoc\content\cycomponentlibraryupdates\CyComponentLibraryUpdates.cylib\CyComponentLibraryUpdates.cyprj|fdbf864b-5839-488b-9c03-9718d0a02743
+C:\Program Files (x86)\Cypress\PSoC Creator\4.1\PSoC Creator\psoc\content\cycomponentlibrary\CyComponentLibrary.cylib\CyComponentLibrary.cyprj|739d9b7f-7518-4944-a04b-42c6780acfff
+C:\Program Files (x86)\Cypress\PSoC Creator\4.1\PSoC Creator\psoc\content\cyprimitives\CyPrimitives.cylib\CyPrimitives.cyprj|d962bd63-3d90-4be0-88d2-03ea660f683e
+G:\Psoc4_prj\7.rental_house\18-05-03\EntranceGuard_180512-1624\EntranceGuard.cydsn\EntranceGuard.cyprj|8ae1d75d-895d-4a73-978d-eadc9dc729e2

@@ -1,0 +1,3138 @@
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 1
+
+
+   1              		.cpu cortex-m0
+   2              		.fpu softvfp
+   3              		.eabi_attribute 20, 1
+   4              		.eabi_attribute 21, 1
+   5              		.eabi_attribute 23, 3
+   6              		.eabi_attribute 24, 1
+   7              		.eabi_attribute 25, 1
+   8              		.eabi_attribute 26, 1
+   9              		.eabi_attribute 30, 4
+  10              		.eabi_attribute 34, 0
+  11              		.eabi_attribute 18, 4
+  12              		.code	16
+  13              		.file	"voice.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.BeepPlay_WaitTime,"ax",%progbits
+  18              		.align	1
+  19              		.global	BeepPlay_WaitTime
+  20              		.code	16
+  21              		.thumb_func
+  22              		.type	BeepPlay_WaitTime, %function
+  23              	BeepPlay_WaitTime:
+  24              	.LFB63:
+  25              		.file 1 "Code\\UserApp\\Voice\\voice.c"
+   1:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+   2:Code\UserApp\Voice/voice.c **** // File name		: voice.c
+   3:Code\UserApp\Voice/voice.c **** // Description		: 语音的相关函数
+   4:Code\UserApp\Voice/voice.c **** // Author			: Keno
+   5:Code\UserApp\Voice/voice.c **** // Date				: 2016.8.8
+   6:Code\UserApp\Voice/voice.c **** // Version			: V02
+   7:Code\UserApp\Voice/voice.c **** //-------------------------------------------------------------------------------------------------
+   8:Code\UserApp\Voice/voice.c **** // Info				: 
+   9:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+  10:Code\UserApp\Voice/voice.c **** #include "voice.h"
+  11:Code\UserApp\Voice/voice.c **** #include "common.h"
+  12:Code\UserApp\Voice/voice.c **** 
+  13:Code\UserApp\Voice/voice.c **** 
+  14:Code\UserApp\Voice/voice.c **** //********************************************** 变量声明 *************************************
+  15:Code\UserApp\Voice/voice.c **** vINT32U  BeepDelay_TimeOut;
+  16:Code\UserApp\Voice/voice.c **** 
+  17:Code\UserApp\Voice/voice.c **** 
+  18:Code\UserApp\Voice/voice.c **** //*********************************************** 宏定义 ***************************************
+  19:Code\UserApp\Voice/voice.c **** #define Sound_DO		956				//频率2092
+  20:Code\UserApp\Voice/voice.c **** #define Sound_RE		850				//频率2350
+  21:Code\UserApp\Voice/voice.c **** #define Sound_MI		758				//频率2636
+  22:Code\UserApp\Voice/voice.c **** #define Sound_FA		716				//频率2794
+  23:Code\UserApp\Voice/voice.c **** #define Sound_SO		668				//频率3136
+  24:Code\UserApp\Voice/voice.c **** #define Sound_LA		284				//频率3520
+  25:Code\UserApp\Voice/voice.c **** #define Sound_SI		253				//频率3952
+  26:Code\UserApp\Voice/voice.c ****     
+  27:Code\UserApp\Voice/voice.c **** #define Sound_DI		333				//频率3000
+  28:Code\UserApp\Voice/voice.c **** #define Sound_DING		999			    //频率1500   
+  29:Code\UserApp\Voice/voice.c **** 
+  30:Code\UserApp\Voice/voice.c **** 
+  31:Code\UserApp\Voice/voice.c **** 
+  32:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 2
+
+
+  33:Code\UserApp\Voice/voice.c **** // Function name	: Beep_Delay_50ms
+  34:Code\UserApp\Voice/voice.c **** // Description		: 蜂鸣器播放的计时函数
+  35:Code\UserApp\Voice/voice.c **** // Parameter		: none
+  36:Code\UserApp\Voice/voice.c **** // Return			: none
+  37:Code\UserApp\Voice/voice.c **** //-------------------------------------------------------------------------------------------------
+  38:Code\UserApp\Voice/voice.c **** // Info				:
+  39:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+  40:Code\UserApp\Voice/voice.c **** void BeepPlay_WaitTime(void)
+  41:Code\UserApp\Voice/voice.c **** {
+  26              		.loc 1 41 0
+  27              		.cfi_startproc
+  42:Code\UserApp\Voice/voice.c ****     if (BeepDelay_TimeOut > 0)
+  28              		.loc 1 42 0
+  29 0000 034B     		ldr	r3, .L7
+  30 0002 1A68     		ldr	r2, [r3]
+  31 0004 002A     		cmp	r2, #0
+  32 0006 02D0     		beq	.L1
+  43:Code\UserApp\Voice/voice.c **** 	{
+  44:Code\UserApp\Voice/voice.c **** 		BeepDelay_TimeOut--;
+  33              		.loc 1 44 0
+  34 0008 1A68     		ldr	r2, [r3]
+  35 000a 013A     		sub	r2, r2, #1
+  36 000c 1A60     		str	r2, [r3]
+  37              	.L1:
+  45:Code\UserApp\Voice/voice.c **** 	}
+  46:Code\UserApp\Voice/voice.c **** }
+  38              		.loc 1 46 0
+  39              		@ sp needed
+  40 000e 7047     		bx	lr
+  41              	.L8:
+  42              		.align	2
+  43              	.L7:
+  44 0010 00000000 		.word	BeepDelay_TimeOut
+  45              		.cfi_endproc
+  46              	.LFE63:
+  47              		.size	BeepPlay_WaitTime, .-BeepPlay_WaitTime
+  48              		.section	.text.BeepPlay_Delay,"ax",%progbits
+  49              		.align	1
+  50              		.global	BeepPlay_Delay
+  51              		.code	16
+  52              		.thumb_func
+  53              		.type	BeepPlay_Delay, %function
+  54              	BeepPlay_Delay:
+  55              	.LFB64:
+  47:Code\UserApp\Voice/voice.c **** 
+  48:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+  49:Code\UserApp\Voice/voice.c **** // Function name	: BeepPlay_Delay
+  50:Code\UserApp\Voice/voice.c **** // Description		: Beep的播报延时函数
+  51:Code\UserApp\Voice/voice.c **** // Parameter		: cnt : 延时时间
+  52:Code\UserApp\Voice/voice.c **** // Return			: none
+  53:Code\UserApp\Voice/voice.c **** //-------------------------------------------------------------------------------------------------
+  54:Code\UserApp\Voice/voice.c **** // 说明				: 1ms
+  55:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+  56:Code\UserApp\Voice/voice.c **** void BeepPlay_Delay(uint16_t cnt)
+  57:Code\UserApp\Voice/voice.c **** {
+  56              		.loc 1 57 0
+  57              		.cfi_startproc
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 3
+
+
+  58              	.LVL0:
+  58:Code\UserApp\Voice/voice.c ****     BeepDelay_TimeOut = cnt;
+  59              		.loc 1 58 0
+  60 0000 054B     		ldr	r3, .L13
+  57:Code\UserApp\Voice/voice.c ****     BeepDelay_TimeOut = cnt;
+  61              		.loc 1 57 0
+  62 0002 10B5     		push	{r4, lr}
+  63              		.cfi_def_cfa_offset 8
+  64              		.cfi_offset 4, -8
+  65              		.cfi_offset 14, -4
+  66 0004 1C1C     		mov	r4, r3
+  67              		.loc 1 58 0
+  68 0006 1860     		str	r0, [r3]
+  69              	.LVL1:
+  70              	.L10:
+  59:Code\UserApp\Voice/voice.c ****     while (BeepDelay_TimeOut > 0)
+  71              		.loc 1 59 0
+  72 0008 2368     		ldr	r3, [r4]
+  73 000a 002B     		cmp	r3, #0
+  74 000c 02D0     		beq	.L12
+  75              	.LBB6:
+  60:Code\UserApp\Voice/voice.c ****     {
+  61:Code\UserApp\Voice/voice.c ****         CyBle_ProcessEvents();
+  76              		.loc 1 61 0
+  77 000e FFF7FEFF 		bl	CyBle_ProcessEvents
+  78              	.LVL2:
+  79 0012 F9E7     		b	.L10
+  80              	.L12:
+  81              	.LBE6:
+  62:Code\UserApp\Voice/voice.c ****     }
+  63:Code\UserApp\Voice/voice.c **** }
+  82              		.loc 1 63 0
+  83              		@ sp needed
+  84 0014 10BD     		pop	{r4, pc}
+  85              	.L14:
+  86 0016 C046     		.align	2
+  87              	.L13:
+  88 0018 00000000 		.word	BeepDelay_TimeOut
+  89              		.cfi_endproc
+  90              	.LFE64:
+  91              		.size	BeepPlay_Delay, .-BeepPlay_Delay
+  92              		.section	.text.play_single,"ax",%progbits
+  93              		.align	1
+  94              		.global	play_single
+  95              		.code	16
+  96              		.thumb_func
+  97              		.type	play_single, %function
+  98              	play_single:
+  99              	.LFB65:
+  64:Code\UserApp\Voice/voice.c **** 
+  65:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+  66:Code\UserApp\Voice/voice.c **** // Function name	: PowerOn_Play
+  67:Code\UserApp\Voice/voice.c **** // Description		: play_single
+  68:Code\UserApp\Voice/voice.c **** // Parameter		: Sound:播放单音频率; delay_50ms:延时时间50ms基数
+  69:Code\UserApp\Voice/voice.c **** // Return			: none
+  70:Code\UserApp\Voice/voice.c **** //-------------------------------------------------------------------------------------------------
+  71:Code\UserApp\Voice/voice.c **** // 说明				: 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 4
+
+
+  72:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+  73:Code\UserApp\Voice/voice.c **** void play_single(uint16_t Sound,uint16_t delay_1ms)
+  74:Code\UserApp\Voice/voice.c **** {
+ 100              		.loc 1 74 0
+ 101              		.cfi_startproc
+ 102              	.LVL3:
+ 103 0000 38B5     		push	{r3, r4, r5, lr}
+ 104              		.cfi_def_cfa_offset 16
+ 105              		.cfi_offset 3, -16
+ 106              		.cfi_offset 4, -12
+ 107              		.cfi_offset 5, -8
+ 108              		.cfi_offset 14, -4
+ 109              		.loc 1 74 0
+ 110 0002 041C     		mov	r4, r0
+ 111 0004 0D1C     		mov	r5, r1
+  75:Code\UserApp\Voice/voice.c **** 	TIMER_WriteCounter(0);
+ 112              		.loc 1 75 0
+ 113 0006 0020     		mov	r0, #0
+ 114              	.LVL4:
+ 115 0008 FFF7FEFF 		bl	TIMER_WriteCounter
+ 116              	.LVL5:
+  76:Code\UserApp\Voice/voice.c ****     TIMER_WritePeriod(0);
+ 117              		.loc 1 76 0
+ 118 000c 0020     		mov	r0, #0
+ 119 000e FFF7FEFF 		bl	TIMER_WritePeriod
+ 120              	.LVL6:
+  77:Code\UserApp\Voice/voice.c ****     TIMER_WriteCompare(0);
+ 121              		.loc 1 77 0
+ 122 0012 0020     		mov	r0, #0
+ 123 0014 FFF7FEFF 		bl	TIMER_WriteCompare
+ 124              	.LVL7:
+  78:Code\UserApp\Voice/voice.c **** 	TIMER_Start();
+ 125              		.loc 1 78 0
+ 126 0018 FFF7FEFF 		bl	TIMER_Start
+ 127              	.LVL8:
+  79:Code\UserApp\Voice/voice.c **** 	BeepPlay_Delay(3);
+ 128              		.loc 1 79 0
+ 129 001c 0320     		mov	r0, #3
+ 130 001e FFF7FEFF 		bl	BeepPlay_Delay
+ 131              	.LVL9:
+  80:Code\UserApp\Voice/voice.c **** 	TIMER_Stop();
+ 132              		.loc 1 80 0
+ 133 0022 FFF7FEFF 		bl	TIMER_Stop
+ 134              	.LVL10:
+  81:Code\UserApp\Voice/voice.c **** 	
+  82:Code\UserApp\Voice/voice.c ****     TIMER_WriteCounter(0);
+ 135              		.loc 1 82 0
+ 136 0026 0020     		mov	r0, #0
+ 137 0028 FFF7FEFF 		bl	TIMER_WriteCounter
+ 138              	.LVL11:
+  83:Code\UserApp\Voice/voice.c ****     TIMER_WritePeriod(Sound - 1);
+ 139              		.loc 1 83 0
+ 140 002c 601E     		sub	r0, r4, #1
+  84:Code\UserApp\Voice/voice.c ****     TIMER_WriteCompare(Sound/2 -1);
+ 141              		.loc 1 84 0
+ 142 002e 6408     		lsr	r4, r4, #1
+  83:Code\UserApp\Voice/voice.c ****     TIMER_WritePeriod(Sound - 1);
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 5
+
+
+ 143              		.loc 1 83 0
+ 144 0030 FFF7FEFF 		bl	TIMER_WritePeriod
+ 145              	.LVL12:
+ 146              		.loc 1 84 0
+ 147 0034 601E     		sub	r0, r4, #1
+ 148 0036 FFF7FEFF 		bl	TIMER_WriteCompare
+ 149              	.LVL13:
+  85:Code\UserApp\Voice/voice.c ****     TIMER_Start();
+ 150              		.loc 1 85 0
+ 151 003a FFF7FEFF 		bl	TIMER_Start
+ 152              	.LVL14:
+  86:Code\UserApp\Voice/voice.c ****     BeepPlay_Delay(delay_1ms);
+ 153              		.loc 1 86 0
+ 154 003e 281C     		mov	r0, r5
+ 155 0040 FFF7FEFF 		bl	BeepPlay_Delay
+ 156              	.LVL15:
+  87:Code\UserApp\Voice/voice.c ****     TIMER_Stop();
+  88:Code\UserApp\Voice/voice.c **** }
+ 157              		.loc 1 88 0
+ 158              		@ sp needed
+  87:Code\UserApp\Voice/voice.c ****     TIMER_Stop();
+ 159              		.loc 1 87 0
+ 160 0044 FFF7FEFF 		bl	TIMER_Stop
+ 161              	.LVL16:
+ 162              		.loc 1 88 0
+ 163 0048 38BD     		pop	{r3, r4, r5, pc}
+ 164              		.cfi_endproc
+ 165              	.LFE65:
+ 166              		.size	play_single, .-play_single
+ 167              		.section	.text.System_ShortDI_Play,"ax",%progbits
+ 168              		.align	1
+ 169              		.global	System_ShortDI_Play
+ 170              		.code	16
+ 171              		.thumb_func
+ 172              		.type	System_ShortDI_Play, %function
+ 173              	System_ShortDI_Play:
+ 174              	.LFB66:
+  89:Code\UserApp\Voice/voice.c **** 
+  90:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+  91:Code\UserApp\Voice/voice.c **** // Function name	: System_ShortDI_Play
+  92:Code\UserApp\Voice/voice.c **** // Description		: 短音
+  93:Code\UserApp\Voice/voice.c **** // Parameter		: none
+  94:Code\UserApp\Voice/voice.c **** // Return			: none
+  95:Code\UserApp\Voice/voice.c **** //-------------------------------------------------------------------------------------------------
+  96:Code\UserApp\Voice/voice.c **** // 说明				: 
+  97:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+  98:Code\UserApp\Voice/voice.c **** void System_ShortDI_Play(void)
+  99:Code\UserApp\Voice/voice.c **** {
+ 175              		.loc 1 99 0
+ 176              		.cfi_startproc
+ 100:Code\UserApp\Voice/voice.c **** 	play_single(Sound_DI,200);
+ 177              		.loc 1 100 0
+ 178 0000 4E20     		mov	r0, #78
+  99:Code\UserApp\Voice/voice.c **** 	play_single(Sound_DI,200);
+ 179              		.loc 1 99 0
+ 180 0002 08B5     		push	{r3, lr}
+ 181              		.cfi_def_cfa_offset 8
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 6
+
+
+ 182              		.cfi_offset 3, -8
+ 183              		.cfi_offset 14, -4
+ 184              		.loc 1 100 0
+ 185 0004 FF30     		add	r0, r0, #255
+ 186 0006 C821     		mov	r1, #200
+ 187 0008 FFF7FEFF 		bl	play_single
+ 188              	.LVL17:
+ 101:Code\UserApp\Voice/voice.c **** }
+ 189              		.loc 1 101 0
+ 190              		@ sp needed
+ 191 000c 08BD     		pop	{r3, pc}
+ 192              		.cfi_endproc
+ 193              	.LFE66:
+ 194              		.size	System_ShortDI_Play, .-System_ShortDI_Play
+ 195              		.section	.text.System_LongDI_Play,"ax",%progbits
+ 196              		.align	1
+ 197              		.global	System_LongDI_Play
+ 198              		.code	16
+ 199              		.thumb_func
+ 200              		.type	System_LongDI_Play, %function
+ 201              	System_LongDI_Play:
+ 202              	.LFB67:
+ 102:Code\UserApp\Voice/voice.c **** 
+ 103:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 104:Code\UserApp\Voice/voice.c **** // Function name	: System_LongDI_Play
+ 105:Code\UserApp\Voice/voice.c **** // Description		: 长音
+ 106:Code\UserApp\Voice/voice.c **** // Parameter		: none
+ 107:Code\UserApp\Voice/voice.c **** // Return			: none
+ 108:Code\UserApp\Voice/voice.c **** //-------------------------------------------------------------------------------------------------
+ 109:Code\UserApp\Voice/voice.c **** // 说明				: 
+ 110:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 111:Code\UserApp\Voice/voice.c **** void System_LongDI_Play(void)
+ 112:Code\UserApp\Voice/voice.c **** {
+ 203              		.loc 1 112 0
+ 204              		.cfi_startproc
+ 113:Code\UserApp\Voice/voice.c **** 	play_single(Sound_DI,500);
+ 205              		.loc 1 113 0
+ 206 0000 4E20     		mov	r0, #78
+ 207 0002 FA21     		mov	r1, #250
+ 112:Code\UserApp\Voice/voice.c **** 	play_single(Sound_DI,500);
+ 208              		.loc 1 112 0
+ 209 0004 08B5     		push	{r3, lr}
+ 210              		.cfi_def_cfa_offset 8
+ 211              		.cfi_offset 3, -8
+ 212              		.cfi_offset 14, -4
+ 213              		.loc 1 113 0
+ 214 0006 FF30     		add	r0, r0, #255
+ 215 0008 4900     		lsl	r1, r1, #1
+ 216 000a FFF7FEFF 		bl	play_single
+ 217              	.LVL18:
+ 114:Code\UserApp\Voice/voice.c **** }
+ 218              		.loc 1 114 0
+ 219              		@ sp needed
+ 220 000e 08BD     		pop	{r3, pc}
+ 221              		.cfi_endproc
+ 222              	.LFE67:
+ 223              		.size	System_LongDI_Play, .-System_LongDI_Play
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 7
+
+
+ 224              		.section	.text.System_PowerOn_Play,"ax",%progbits
+ 225              		.align	1
+ 226              		.global	System_PowerOn_Play
+ 227              		.code	16
+ 228              		.thumb_func
+ 229              		.type	System_PowerOn_Play, %function
+ 230              	System_PowerOn_Play:
+ 231              	.LFB68:
+ 115:Code\UserApp\Voice/voice.c **** 
+ 116:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 117:Code\UserApp\Voice/voice.c **** // Function name	: System_PowerOn_Play
+ 118:Code\UserApp\Voice/voice.c **** // Description		: 上电播报音3-1
+ 119:Code\UserApp\Voice/voice.c **** // Parameter		: none
+ 120:Code\UserApp\Voice/voice.c **** // Return			: none
+ 121:Code\UserApp\Voice/voice.c **** //-------------------------------------------------------------------------------------------------
+ 122:Code\UserApp\Voice/voice.c **** // 说明				: 
+ 123:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 124:Code\UserApp\Voice/voice.c **** void System_PowerOn_Play(void)
+ 125:Code\UserApp\Voice/voice.c **** {
+ 232              		.loc 1 125 0
+ 233              		.cfi_startproc
+ 234 0000 70B5     		push	{r4, r5, r6, lr}
+ 235              		.cfi_def_cfa_offset 16
+ 236              		.cfi_offset 4, -16
+ 237              		.cfi_offset 5, -12
+ 238              		.cfi_offset 6, -8
+ 239              		.cfi_offset 14, -4
+ 126:Code\UserApp\Voice/voice.c ****     play_single(Sound_DO,200);
+ 240              		.loc 1 126 0
+ 241 0002 EF24     		mov	r4, #239
+ 242 0004 A400     		lsl	r4, r4, #2
+ 127:Code\UserApp\Voice/voice.c **** 	BeepPlay_Delay(50);
+ 128:Code\UserApp\Voice/voice.c **** 	play_single(Sound_RE,200);
+ 243              		.loc 1 128 0
+ 244 0006 154D     		ldr	r5, .L19
+ 126:Code\UserApp\Voice/voice.c ****     play_single(Sound_DO,200);
+ 245              		.loc 1 126 0
+ 246 0008 201C     		mov	r0, r4
+ 247 000a C821     		mov	r1, #200
+ 248 000c FFF7FEFF 		bl	play_single
+ 249              	.LVL19:
+ 127:Code\UserApp\Voice/voice.c **** 	BeepPlay_Delay(50);
+ 250              		.loc 1 127 0
+ 251 0010 3220     		mov	r0, #50
+ 252 0012 FFF7FEFF 		bl	BeepPlay_Delay
+ 253              	.LVL20:
+ 129:Code\UserApp\Voice/voice.c **** 	BeepPlay_Delay(50);
+ 130:Code\UserApp\Voice/voice.c ****     play_single(Sound_MI,200);
+ 254              		.loc 1 130 0
+ 255 0016 124E     		ldr	r6, .L19+4
+ 128:Code\UserApp\Voice/voice.c **** 	BeepPlay_Delay(50);
+ 256              		.loc 1 128 0
+ 257 0018 281C     		mov	r0, r5
+ 258 001a C821     		mov	r1, #200
+ 259 001c FFF7FEFF 		bl	play_single
+ 260              	.LVL21:
+ 129:Code\UserApp\Voice/voice.c **** 	BeepPlay_Delay(50);
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 8
+
+
+ 261              		.loc 1 129 0
+ 262 0020 3220     		mov	r0, #50
+ 263 0022 FFF7FEFF 		bl	BeepPlay_Delay
+ 264              	.LVL22:
+ 265              		.loc 1 130 0
+ 266 0026 301C     		mov	r0, r6
+ 267 0028 C821     		mov	r1, #200
+ 268 002a FFF7FEFF 		bl	play_single
+ 269              	.LVL23:
+ 131:Code\UserApp\Voice/voice.c **** 	BeepPlay_Delay(50);
+ 270              		.loc 1 131 0
+ 271 002e 3220     		mov	r0, #50
+ 272 0030 FFF7FEFF 		bl	BeepPlay_Delay
+ 273              	.LVL24:
+ 132:Code\UserApp\Voice/voice.c **** 	play_single(Sound_MI,200);
+ 274              		.loc 1 132 0
+ 275 0034 301C     		mov	r0, r6
+ 276 0036 C821     		mov	r1, #200
+ 277 0038 FFF7FEFF 		bl	play_single
+ 278              	.LVL25:
+ 133:Code\UserApp\Voice/voice.c **** 	BeepPlay_Delay(50);
+ 279              		.loc 1 133 0
+ 280 003c 3220     		mov	r0, #50
+ 281 003e FFF7FEFF 		bl	BeepPlay_Delay
+ 282              	.LVL26:
+ 134:Code\UserApp\Voice/voice.c **** 	play_single(Sound_RE,200);
+ 283              		.loc 1 134 0
+ 284 0042 281C     		mov	r0, r5
+ 285 0044 C821     		mov	r1, #200
+ 286 0046 FFF7FEFF 		bl	play_single
+ 287              	.LVL27:
+ 135:Code\UserApp\Voice/voice.c **** 	BeepPlay_Delay(50);
+ 288              		.loc 1 135 0
+ 289 004a 3220     		mov	r0, #50
+ 290 004c FFF7FEFF 		bl	BeepPlay_Delay
+ 291              	.LVL28:
+ 136:Code\UserApp\Voice/voice.c ****     play_single(Sound_DO,200);
+ 292              		.loc 1 136 0
+ 293 0050 201C     		mov	r0, r4
+ 294 0052 C821     		mov	r1, #200
+ 295 0054 FFF7FEFF 		bl	play_single
+ 296              	.LVL29:
+ 137:Code\UserApp\Voice/voice.c **** }
+ 297              		.loc 1 137 0
+ 298              		@ sp needed
+ 299 0058 70BD     		pop	{r4, r5, r6, pc}
+ 300              	.L20:
+ 301 005a C046     		.align	2
+ 302              	.L19:
+ 303 005c 52030000 		.word	850
+ 304 0060 F6020000 		.word	758
+ 305              		.cfi_endproc
+ 306              	.LFE68:
+ 307              		.size	System_PowerOn_Play, .-System_PowerOn_Play
+ 308              		.section	.text.System_PowerOn_Play_TestSer,"ax",%progbits
+ 309              		.align	1
+ 310              		.global	System_PowerOn_Play_TestSer
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 9
+
+
+ 311              		.code	16
+ 312              		.thumb_func
+ 313              		.type	System_PowerOn_Play_TestSer, %function
+ 314              	System_PowerOn_Play_TestSer:
+ 315              	.LFB69:
+ 138:Code\UserApp\Voice/voice.c **** 
+ 139:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 140:Code\UserApp\Voice/voice.c **** // Function name	: System_PowerOn_Play
+ 141:Code\UserApp\Voice/voice.c **** // Description		: 上电播报音3-1
+ 142:Code\UserApp\Voice/voice.c **** // Parameter		: none
+ 143:Code\UserApp\Voice/voice.c **** // Return			: none
+ 144:Code\UserApp\Voice/voice.c **** //-------------------------------------------------------------------------------------------------
+ 145:Code\UserApp\Voice/voice.c **** // 说明				: 
+ 146:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 147:Code\UserApp\Voice/voice.c **** void System_PowerOn_Play_TestSer(void)
+ 148:Code\UserApp\Voice/voice.c **** {
+ 316              		.loc 1 148 0
+ 317              		.cfi_startproc
+ 318 0000 10B5     		push	{r4, lr}
+ 319              		.cfi_def_cfa_offset 8
+ 320              		.cfi_offset 4, -8
+ 321              		.cfi_offset 14, -4
+ 149:Code\UserApp\Voice/voice.c ****     play_single(Sound_MI,200);
+ 322              		.loc 1 149 0
+ 323 0002 0B4C     		ldr	r4, .L22
+ 324 0004 C821     		mov	r1, #200
+ 325 0006 201C     		mov	r0, r4
+ 326 0008 FFF7FEFF 		bl	play_single
+ 327              	.LVL30:
+ 150:Code\UserApp\Voice/voice.c **** 	BeepPlay_Delay(50);
+ 328              		.loc 1 150 0
+ 329 000c 3220     		mov	r0, #50
+ 330 000e FFF7FEFF 		bl	BeepPlay_Delay
+ 331              	.LVL31:
+ 151:Code\UserApp\Voice/voice.c **** 	#if 1
+ 152:Code\UserApp\Voice/voice.c **** 	play_single(Sound_MI,200);
+ 332              		.loc 1 152 0
+ 333 0012 201C     		mov	r0, r4
+ 334 0014 C821     		mov	r1, #200
+ 335 0016 FFF7FEFF 		bl	play_single
+ 336              	.LVL32:
+ 153:Code\UserApp\Voice/voice.c **** 	BeepPlay_Delay(50);
+ 337              		.loc 1 153 0
+ 338 001a 3220     		mov	r0, #50
+ 339 001c FFF7FEFF 		bl	BeepPlay_Delay
+ 340              	.LVL33:
+ 154:Code\UserApp\Voice/voice.c ****     play_single(Sound_MI,200);
+ 341              		.loc 1 154 0
+ 342 0020 201C     		mov	r0, r4
+ 343 0022 C821     		mov	r1, #200
+ 344 0024 FFF7FEFF 		bl	play_single
+ 345              	.LVL34:
+ 155:Code\UserApp\Voice/voice.c **** 	BeepPlay_Delay(50);
+ 346              		.loc 1 155 0
+ 347 0028 3220     		mov	r0, #50
+ 348 002a FFF7FEFF 		bl	BeepPlay_Delay
+ 349              	.LVL35:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 10
+
+
+ 156:Code\UserApp\Voice/voice.c **** 	#endif
+ 157:Code\UserApp\Voice/voice.c **** }
+ 350              		.loc 1 157 0
+ 351              		@ sp needed
+ 352 002e 10BD     		pop	{r4, pc}
+ 353              	.L23:
+ 354              		.align	2
+ 355              	.L22:
+ 356 0030 F6020000 		.word	758
+ 357              		.cfi_endproc
+ 358              	.LFE69:
+ 359              		.size	System_PowerOn_Play_TestSer, .-System_PowerOn_Play_TestSer
+ 360              		.section	.text.Comm_Succes_play,"ax",%progbits
+ 361              		.align	1
+ 362              		.global	Comm_Succes_play
+ 363              		.code	16
+ 364              		.thumb_func
+ 365              		.type	Comm_Succes_play, %function
+ 366              	Comm_Succes_play:
+ 367              	.LFB70:
+ 158:Code\UserApp\Voice/voice.c **** 
+ 159:Code\UserApp\Voice/voice.c **** 
+ 160:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 161:Code\UserApp\Voice/voice.c **** // Function name	: Comm_Succes_play
+ 162:Code\UserApp\Voice/voice.c **** // Description		: 常用成功音
+ 163:Code\UserApp\Voice/voice.c **** // Parameter		: none
+ 164:Code\UserApp\Voice/voice.c **** // Return			: none
+ 165:Code\UserApp\Voice/voice.c **** //-------------------------------------------------------------------------------------------------
+ 166:Code\UserApp\Voice/voice.c **** // 说明				: 用于录取指纹成功
+ 167:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 168:Code\UserApp\Voice/voice.c **** void Comm_Succes_play(void)
+ 169:Code\UserApp\Voice/voice.c **** {
+ 368              		.loc 1 169 0
+ 369              		.cfi_startproc
+ 170:Code\UserApp\Voice/voice.c **** 	play_single(Sound_DI,600);
+ 370              		.loc 1 170 0
+ 371 0000 4E20     		mov	r0, #78
+ 372 0002 9621     		mov	r1, #150
+ 169:Code\UserApp\Voice/voice.c **** 	play_single(Sound_DI,600);
+ 373              		.loc 1 169 0
+ 374 0004 08B5     		push	{r3, lr}
+ 375              		.cfi_def_cfa_offset 8
+ 376              		.cfi_offset 3, -8
+ 377              		.cfi_offset 14, -4
+ 378              		.loc 1 170 0
+ 379 0006 FF30     		add	r0, r0, #255
+ 380 0008 8900     		lsl	r1, r1, #2
+ 381 000a FFF7FEFF 		bl	play_single
+ 382              	.LVL36:
+ 171:Code\UserApp\Voice/voice.c **** }
+ 383              		.loc 1 171 0
+ 384              		@ sp needed
+ 385 000e 08BD     		pop	{r3, pc}
+ 386              		.cfi_endproc
+ 387              	.LFE70:
+ 388              		.size	Comm_Succes_play, .-Comm_Succes_play
+ 389              		.section	.text.Timeout_play,"ax",%progbits
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 11
+
+
+ 390              		.align	1
+ 391              		.global	Timeout_play
+ 392              		.code	16
+ 393              		.thumb_func
+ 394              		.type	Timeout_play, %function
+ 395              	Timeout_play:
+ 396              	.LFB71:
+ 172:Code\UserApp\Voice/voice.c **** 
+ 173:Code\UserApp\Voice/voice.c **** 
+ 174:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 175:Code\UserApp\Voice/voice.c **** // Function name	: Timeout_play
+ 176:Code\UserApp\Voice/voice.c **** // Description		: 常用超时音
+ 177:Code\UserApp\Voice/voice.c **** // Parameter		: none
+ 178:Code\UserApp\Voice/voice.c **** // Return			: none
+ 179:Code\UserApp\Voice/voice.c **** //-------------------------------------------------------------------------------------------------
+ 180:Code\UserApp\Voice/voice.c **** // 说明				: 用于录入卡超时
+ 181:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 182:Code\UserApp\Voice/voice.c **** void Timeout_play(void)
+ 183:Code\UserApp\Voice/voice.c **** {
+ 397              		.loc 1 183 0
+ 398              		.cfi_startproc
+ 399 0000 10B5     		push	{r4, lr}
+ 400              		.cfi_def_cfa_offset 8
+ 401              		.cfi_offset 4, -8
+ 402              		.cfi_offset 14, -4
+ 184:Code\UserApp\Voice/voice.c **** 	play_single(Sound_DI,50);
+ 403              		.loc 1 184 0
+ 404 0002 4E24     		mov	r4, #78
+ 405 0004 FF34     		add	r4, r4, #255
+ 406 0006 201C     		mov	r0, r4
+ 407 0008 3221     		mov	r1, #50
+ 408 000a FFF7FEFF 		bl	play_single
+ 409              	.LVL37:
+ 185:Code\UserApp\Voice/voice.c **** 	BeepPlay_Delay(50);
+ 410              		.loc 1 185 0
+ 411 000e 3220     		mov	r0, #50
+ 412 0010 FFF7FEFF 		bl	BeepPlay_Delay
+ 413              	.LVL38:
+ 186:Code\UserApp\Voice/voice.c ****     play_single(Sound_DI,50);						// 按要求 50-50-50ms
+ 414              		.loc 1 186 0
+ 415 0014 201C     		mov	r0, r4
+ 416 0016 3221     		mov	r1, #50
+ 417 0018 FFF7FEFF 		bl	play_single
+ 418              	.LVL39:
+ 187:Code\UserApp\Voice/voice.c **** 	BeepPlay_Delay(50);
+ 419              		.loc 1 187 0
+ 420 001c 3220     		mov	r0, #50
+ 421 001e FFF7FEFF 		bl	BeepPlay_Delay
+ 422              	.LVL40:
+ 188:Code\UserApp\Voice/voice.c ****     play_single(Sound_DI,50);
+ 423              		.loc 1 188 0
+ 424 0022 201C     		mov	r0, r4
+ 425 0024 3221     		mov	r1, #50
+ 426 0026 FFF7FEFF 		bl	play_single
+ 427              	.LVL41:
+ 189:Code\UserApp\Voice/voice.c **** 	BeepPlay_Delay(50);
+ 428              		.loc 1 189 0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 12
+
+
+ 429 002a 3220     		mov	r0, #50
+ 430 002c FFF7FEFF 		bl	BeepPlay_Delay
+ 431              	.LVL42:
+ 190:Code\UserApp\Voice/voice.c ****     play_single(Sound_DI,50);
+ 432              		.loc 1 190 0
+ 433 0030 201C     		mov	r0, r4
+ 434 0032 3221     		mov	r1, #50
+ 435 0034 FFF7FEFF 		bl	play_single
+ 436              	.LVL43:
+ 191:Code\UserApp\Voice/voice.c **** }
+ 437              		.loc 1 191 0
+ 438              		@ sp needed
+ 439 0038 10BD     		pop	{r4, pc}
+ 440              		.cfi_endproc
+ 441              	.LFE71:
+ 442              		.size	Timeout_play, .-Timeout_play
+ 443              		.section	.text.Comm_Failure_play,"ax",%progbits
+ 444              		.align	1
+ 445              		.global	Comm_Failure_play
+ 446              		.code	16
+ 447              		.thumb_func
+ 448              		.type	Comm_Failure_play, %function
+ 449              	Comm_Failure_play:
+ 450              	.LFB72:
+ 192:Code\UserApp\Voice/voice.c **** 
+ 193:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 194:Code\UserApp\Voice/voice.c **** // Function name	: Comm_Failure_play
+ 195:Code\UserApp\Voice/voice.c **** // Description		: 常用失败音
+ 196:Code\UserApp\Voice/voice.c **** // Parameter		: none
+ 197:Code\UserApp\Voice/voice.c **** // Return			: none
+ 198:Code\UserApp\Voice/voice.c **** //-------------------------------------------------------------------------------------------------
+ 199:Code\UserApp\Voice/voice.c **** // 说明				: 用于录取指纹成功
+ 200:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 201:Code\UserApp\Voice/voice.c **** void Comm_Failure_play(void)
+ 202:Code\UserApp\Voice/voice.c **** {
+ 451              		.loc 1 202 0
+ 452              		.cfi_startproc
+ 203:Code\UserApp\Voice/voice.c **** 	#if 0
+ 204:Code\UserApp\Voice/voice.c ****     play_single(Sound_DI,300);
+ 205:Code\UserApp\Voice/voice.c **** 	BeepPlay_Delay(200);
+ 206:Code\UserApp\Voice/voice.c ****     play_single(Sound_DI,300);
+ 207:Code\UserApp\Voice/voice.c **** 	BeepPlay_Delay(200);
+ 208:Code\UserApp\Voice/voice.c ****     play_single(Sound_DI,300);						// 非法ID 不出声
+ 209:Code\UserApp\Voice/voice.c **** 	#endif
+ 210:Code\UserApp\Voice/voice.c **** }
+ 453              		.loc 1 210 0
+ 454              		@ sp needed
+ 455 0000 7047     		bx	lr
+ 456              		.cfi_endproc
+ 457              	.LFE72:
+ 458              		.size	Comm_Failure_play, .-Comm_Failure_play
+ 459              		.section	.text.OpenDoor,"ax",%progbits
+ 460              		.align	1
+ 461              		.global	OpenDoor
+ 462              		.code	16
+ 463              		.thumb_func
+ 464              		.type	OpenDoor, %function
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 13
+
+
+ 465              	OpenDoor:
+ 466              	.LFB73:
+ 211:Code\UserApp\Voice/voice.c **** 
+ 212:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 213:Code\UserApp\Voice/voice.c **** // Function name	: OpenDoor
+ 214:Code\UserApp\Voice/voice.c **** // Description		: 开门音
+ 215:Code\UserApp\Voice/voice.c **** // Parameter		: none
+ 216:Code\UserApp\Voice/voice.c **** // Return			: none
+ 217:Code\UserApp\Voice/voice.c **** //-------------------------------------------------------------------------------------------------
+ 218:Code\UserApp\Voice/voice.c **** // 说明				: 
+ 219:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 220:Code\UserApp\Voice/voice.c **** void OpenDoor(void)
+ 221:Code\UserApp\Voice/voice.c **** {
+ 467              		.loc 1 221 0
+ 468              		.cfi_startproc
+ 469 0000 10B5     		push	{r4, lr}
+ 470              		.cfi_def_cfa_offset 8
+ 471              		.cfi_offset 4, -8
+ 472              		.cfi_offset 14, -4
+ 222:Code\UserApp\Voice/voice.c **** 	play_single(Sound_DI,50);
+ 473              		.loc 1 222 0
+ 474 0002 4E24     		mov	r4, #78
+ 475 0004 FF34     		add	r4, r4, #255
+ 476 0006 201C     		mov	r0, r4
+ 477 0008 3221     		mov	r1, #50
+ 478 000a FFF7FEFF 		bl	play_single
+ 479              	.LVL44:
+ 223:Code\UserApp\Voice/voice.c **** 	BeepPlay_Delay(50);
+ 480              		.loc 1 223 0
+ 481 000e 3220     		mov	r0, #50
+ 482 0010 FFF7FEFF 		bl	BeepPlay_Delay
+ 483              	.LVL45:
+ 224:Code\UserApp\Voice/voice.c ****     play_single(Sound_DI,50);						// 按要求 50-50-50ms
+ 484              		.loc 1 224 0
+ 485 0014 201C     		mov	r0, r4
+ 486 0016 3221     		mov	r1, #50
+ 487 0018 FFF7FEFF 		bl	play_single
+ 488              	.LVL46:
+ 225:Code\UserApp\Voice/voice.c **** 	
+ 226:Code\UserApp\Voice/voice.c **** 	#if 0
+ 227:Code\UserApp\Voice/voice.c **** 	play_single(Sound_DO,250);
+ 228:Code\UserApp\Voice/voice.c **** 	play_single(Sound_RE,250);
+ 229:Code\UserApp\Voice/voice.c ****     play_single(Sound_MI,250);
+ 230:Code\UserApp\Voice/voice.c **** 	#endif
+ 231:Code\UserApp\Voice/voice.c **** }
+ 489              		.loc 1 231 0
+ 490              		@ sp needed
+ 491 001c 10BD     		pop	{r4, pc}
+ 492              		.cfi_endproc
+ 493              	.LFE73:
+ 494              		.size	OpenDoor, .-OpenDoor
+ 495              		.section	.text.System_PutCard_play,"ax",%progbits
+ 496              		.align	1
+ 497              		.global	System_PutCard_play
+ 498              		.code	16
+ 499              		.thumb_func
+ 500              		.type	System_PutCard_play, %function
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 14
+
+
+ 501              	System_PutCard_play:
+ 502              	.LFB74:
+ 232:Code\UserApp\Voice/voice.c **** 
+ 233:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 234:Code\UserApp\Voice/voice.c **** // Function name	: System_PutCard_play
+ 235:Code\UserApp\Voice/voice.c **** // Description		: 请刷身份证
+ 236:Code\UserApp\Voice/voice.c **** // Parameter		: none
+ 237:Code\UserApp\Voice/voice.c **** // Return			: none
+ 238:Code\UserApp\Voice/voice.c **** //-------------------------------------------------------------------------------------------------
+ 239:Code\UserApp\Voice/voice.c **** // 说明				: 
+ 240:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 241:Code\UserApp\Voice/voice.c **** void System_PutCard_play(void)
+ 242:Code\UserApp\Voice/voice.c **** {
+ 503              		.loc 1 242 0
+ 504              		.cfi_startproc
+ 243:Code\UserApp\Voice/voice.c **** 	play_single(Sound_DI,150);					// 按要求单音 150ms
+ 505              		.loc 1 243 0
+ 506 0000 4E20     		mov	r0, #78
+ 242:Code\UserApp\Voice/voice.c **** 	play_single(Sound_DI,150);					// 按要求单音 150ms
+ 507              		.loc 1 242 0
+ 508 0002 08B5     		push	{r3, lr}
+ 509              		.cfi_def_cfa_offset 8
+ 510              		.cfi_offset 3, -8
+ 511              		.cfi_offset 14, -4
+ 512              		.loc 1 243 0
+ 513 0004 FF30     		add	r0, r0, #255
+ 514 0006 9621     		mov	r1, #150
+ 515 0008 FFF7FEFF 		bl	play_single
+ 516              	.LVL47:
+ 244:Code\UserApp\Voice/voice.c **** }
+ 517              		.loc 1 244 0
+ 518              		@ sp needed
+ 519 000c 08BD     		pop	{r3, pc}
+ 520              		.cfi_endproc
+ 521              	.LFE74:
+ 522              		.size	System_PutCard_play, .-System_PutCard_play
+ 523              		.section	.text.System_ReadCard_play,"ax",%progbits
+ 524              		.align	1
+ 525              		.global	System_ReadCard_play
+ 526              		.code	16
+ 527              		.thumb_func
+ 528              		.type	System_ReadCard_play, %function
+ 529              	System_ReadCard_play:
+ 530              	.LFB75:
+ 245:Code\UserApp\Voice/voice.c **** 
+ 246:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 247:Code\UserApp\Voice/voice.c **** // Function name	: System_ReadCard_play
+ 248:Code\UserApp\Voice/voice.c **** // Description		: 成功读取身份证
+ 249:Code\UserApp\Voice/voice.c **** // Parameter		: none
+ 250:Code\UserApp\Voice/voice.c **** // Return			: none
+ 251:Code\UserApp\Voice/voice.c **** //-------------------------------------------------------------------------------------------------
+ 252:Code\UserApp\Voice/voice.c **** // 说明				: 
+ 253:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 254:Code\UserApp\Voice/voice.c **** void System_ReadCard_play(void)
+ 255:Code\UserApp\Voice/voice.c **** {
+ 531              		.loc 1 255 0
+ 532              		.cfi_startproc
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 15
+
+
+ 533 0000 10B5     		push	{r4, lr}
+ 534              		.cfi_def_cfa_offset 8
+ 535              		.cfi_offset 4, -8
+ 536              		.cfi_offset 14, -4
+ 256:Code\UserApp\Voice/voice.c **** 	play_single(Sound_DI,50);
+ 537              		.loc 1 256 0
+ 538 0002 4E24     		mov	r4, #78
+ 539 0004 FF34     		add	r4, r4, #255
+ 540 0006 201C     		mov	r0, r4
+ 541 0008 3221     		mov	r1, #50
+ 542 000a FFF7FEFF 		bl	play_single
+ 543              	.LVL48:
+ 257:Code\UserApp\Voice/voice.c **** 	BeepPlay_Delay(50);
+ 544              		.loc 1 257 0
+ 545 000e 3220     		mov	r0, #50
+ 546 0010 FFF7FEFF 		bl	BeepPlay_Delay
+ 547              	.LVL49:
+ 258:Code\UserApp\Voice/voice.c ****     play_single(Sound_DI,50);						// 按要求 50-50-50ms
+ 548              		.loc 1 258 0
+ 549 0014 201C     		mov	r0, r4
+ 550 0016 3221     		mov	r1, #50
+ 551 0018 FFF7FEFF 		bl	play_single
+ 552              	.LVL50:
+ 259:Code\UserApp\Voice/voice.c **** }
+ 553              		.loc 1 259 0
+ 554              		@ sp needed
+ 555 001c 10BD     		pop	{r4, pc}
+ 556              		.cfi_endproc
+ 557              	.LFE75:
+ 558              		.size	System_ReadCard_play, .-System_ReadCard_play
+ 559              		.section	.text.Beep_Play,"ax",%progbits
+ 560              		.align	1
+ 561              		.global	Beep_Play
+ 562              		.code	16
+ 563              		.thumb_func
+ 564              		.type	Beep_Play, %function
+ 565              	Beep_Play:
+ 566              	.LFB76:
+ 260:Code\UserApp\Voice/voice.c **** 
+ 261:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 262:Code\UserApp\Voice/voice.c **** // Function name	: Beep_Play
+ 263:Code\UserApp\Voice/voice.c **** // Description		: 所有蜂鸣器播放函数
+ 264:Code\UserApp\Voice/voice.c **** // Parameter		: none
+ 265:Code\UserApp\Voice/voice.c **** // Return			: none
+ 266:Code\UserApp\Voice/voice.c **** //-------------------------------------------------------------------------------------------------
+ 267:Code\UserApp\Voice/voice.c **** // 说明				: --用于替换语音播报函数 VoicePlay_WithJudge和VoicePlay
+ 268:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 269:Code\UserApp\Voice/voice.c **** void Beep_Play(uint8_t sound_define)
+ 270:Code\UserApp\Voice/voice.c **** {
+ 567              		.loc 1 270 0
+ 568              		.cfi_startproc
+ 569              	.LVL51:
+ 570 0000 08B5     		push	{r3, lr}
+ 571              		.cfi_def_cfa_offset 8
+ 572              		.cfi_offset 3, -8
+ 573              		.cfi_offset 14, -4
+ 271:Code\UserApp\Voice/voice.c ****     if (sound_define == Sound_SYSTEM_POWER_ON)
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 16
+
+
+ 574              		.loc 1 271 0
+ 575 0002 0C28     		cmp	r0, #12
+ 576 0004 02D1     		bne	.L31
+ 272:Code\UserApp\Voice/voice.c ****     {
+ 273:Code\UserApp\Voice/voice.c ****         System_PowerOn_Play();
+ 577              		.loc 1 273 0
+ 578 0006 FFF7FEFF 		bl	System_PowerOn_Play
+ 579              	.LVL52:
+ 580 000a 31E0     		b	.L30
+ 581              	.LVL53:
+ 582              	.L31:
+ 274:Code\UserApp\Voice/voice.c ****     }
+ 275:Code\UserApp\Voice/voice.c **** 	else if(Sound_SYSTEM_POWER_ON_TEST == sound_define)
+ 583              		.loc 1 275 0
+ 584 000c 1128     		cmp	r0, #17
+ 585 000e 02D1     		bne	.L33
+ 276:Code\UserApp\Voice/voice.c **** 	{
+ 277:Code\UserApp\Voice/voice.c **** 		System_PowerOn_Play_TestSer();
+ 586              		.loc 1 277 0
+ 587 0010 FFF7FEFF 		bl	System_PowerOn_Play_TestSer
+ 588              	.LVL54:
+ 589 0014 2CE0     		b	.L30
+ 590              	.LVL55:
+ 591              	.L33:
+ 278:Code\UserApp\Voice/voice.c **** 	}
+ 279:Code\UserApp\Voice/voice.c **** 	else if (sound_define == Sound_VERIFY_SUCCESS)
+ 592              		.loc 1 279 0
+ 593 0016 0A28     		cmp	r0, #10
+ 594 0018 02D1     		bne	.L34
+ 280:Code\UserApp\Voice/voice.c ****     {
+ 281:Code\UserApp\Voice/voice.c ****         OpenDoor();
+ 595              		.loc 1 281 0
+ 596 001a FFF7FEFF 		bl	OpenDoor
+ 597              	.LVL56:
+ 598 001e 27E0     		b	.L30
+ 599              	.LVL57:
+ 600              	.L34:
+ 282:Code\UserApp\Voice/voice.c ****     }
+ 283:Code\UserApp\Voice/voice.c ****     else if (sound_define == Sound_VERIFY_FAILURE)
+ 601              		.loc 1 283 0
+ 602 0020 0B28     		cmp	r0, #11
+ 603 0022 25D0     		beq	.L30
+ 284:Code\UserApp\Voice/voice.c ****     {
+ 285:Code\UserApp\Voice/voice.c ****         Comm_Failure_play();
+ 286:Code\UserApp\Voice/voice.c ****     }
+ 287:Code\UserApp\Voice/voice.c **** 	else if (sound_define == Sound_TIMEOUT)
+ 604              		.loc 1 287 0
+ 605 0024 1228     		cmp	r0, #18
+ 606 0026 02D1     		bne	.L35
+ 288:Code\UserApp\Voice/voice.c ****     {
+ 289:Code\UserApp\Voice/voice.c ****         Timeout_play();
+ 607              		.loc 1 289 0
+ 608 0028 FFF7FEFF 		bl	Timeout_play
+ 609              	.LVL58:
+ 610 002c 20E0     		b	.L30
+ 611              	.LVL59:
+ 612              	.L35:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 17
+
+
+ 290:Code\UserApp\Voice/voice.c ****     }
+ 291:Code\UserApp\Voice/voice.c **** 	
+ 292:Code\UserApp\Voice/voice.c ****     else if ((sound_define == Sound_REG_FAILURE) 	||
+ 613              		.loc 1 292 0
+ 614 002e 0223     		mov	r3, #2
+ 615 0030 021C     		mov	r2, r0
+ 616 0032 9A43     		bic	r2, r3
+ 617 0034 052A     		cmp	r2, #5
+ 618 0036 1BD0     		beq	.L30
+ 293:Code\UserApp\Voice/voice.c **** 			 (sound_define == Sound_DELETE_FAILURE) ||
+ 619              		.loc 1 293 0
+ 620 0038 0928     		cmp	r0, #9
+ 621 003a 19D0     		beq	.L30
+ 294:Code\UserApp\Voice/voice.c **** 			 (sound_define == Sound_EMPTY_FAILURE))
+ 295:Code\UserApp\Voice/voice.c ****     {
+ 296:Code\UserApp\Voice/voice.c ****         Comm_Failure_play();
+ 297:Code\UserApp\Voice/voice.c ****     }
+ 298:Code\UserApp\Voice/voice.c ****     else if ((sound_define == Sound_REG_SUCCESS) 	||
+ 622              		.loc 1 298 0
+ 623 003c 042A     		cmp	r2, #4
+ 624 003e 01D0     		beq	.L36
+ 299:Code\UserApp\Voice/voice.c **** 			 (sound_define == Sound_DELETE_SUCCESS) || 
+ 625              		.loc 1 299 0
+ 626 0040 0828     		cmp	r0, #8
+ 627 0042 02D1     		bne	.L37
+ 628              	.L36:
+ 300:Code\UserApp\Voice/voice.c **** 			 (sound_define == Sound_EMPTY_SUCCESS))
+ 301:Code\UserApp\Voice/voice.c ****     {
+ 302:Code\UserApp\Voice/voice.c ****         Comm_Succes_play();
+ 629              		.loc 1 302 0
+ 630 0044 FFF7FEFF 		bl	Comm_Succes_play
+ 631              	.LVL60:
+ 632 0048 12E0     		b	.L30
+ 633              	.LVL61:
+ 634              	.L37:
+ 303:Code\UserApp\Voice/voice.c ****     }
+ 304:Code\UserApp\Voice/voice.c **** 	else if (sound_define == Sound_PleasePutCard)
+ 635              		.loc 1 304 0
+ 636 004a 0D28     		cmp	r0, #13
+ 637 004c 02D1     		bne	.L38
+ 305:Code\UserApp\Voice/voice.c ****     {
+ 306:Code\UserApp\Voice/voice.c ****     	System_PutCard_play();
+ 638              		.loc 1 306 0
+ 639 004e FFF7FEFF 		bl	System_PutCard_play
+ 640              	.LVL62:
+ 641 0052 0DE0     		b	.L30
+ 642              	.LVL63:
+ 643              	.L38:
+ 307:Code\UserApp\Voice/voice.c ****     }
+ 308:Code\UserApp\Voice/voice.c **** 	else if (sound_define == Sound_ReadCardSuccess)
+ 644              		.loc 1 308 0
+ 645 0054 0E28     		cmp	r0, #14
+ 646 0056 02D1     		bne	.L39
+ 309:Code\UserApp\Voice/voice.c ****     {
+ 310:Code\UserApp\Voice/voice.c ****     	System_ReadCard_play();
+ 647              		.loc 1 310 0
+ 648 0058 FFF7FEFF 		bl	System_ReadCard_play
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 18
+
+
+ 649              	.LVL64:
+ 650 005c 08E0     		b	.L30
+ 651              	.LVL65:
+ 652              	.L39:
+ 653              	.LBB9:
+ 654              	.LBB10:
+ 311:Code\UserApp\Voice/voice.c ****     }
+ 312:Code\UserApp\Voice/voice.c **** 	else if (sound_define == Sound_ShortDI)
+ 655              		.loc 1 312 0
+ 656 005e 0F28     		cmp	r0, #15
+ 657 0060 02D1     		bne	.L40
+ 313:Code\UserApp\Voice/voice.c ****     {
+ 314:Code\UserApp\Voice/voice.c ****     	System_ShortDI_Play();
+ 658              		.loc 1 314 0
+ 659 0062 FFF7FEFF 		bl	System_ShortDI_Play
+ 660              	.LVL66:
+ 661 0066 03E0     		b	.L30
+ 662              	.LVL67:
+ 663              	.L40:
+ 315:Code\UserApp\Voice/voice.c ****     }
+ 316:Code\UserApp\Voice/voice.c **** 	else if (sound_define == Sound_LongDI)
+ 664              		.loc 1 316 0
+ 665 0068 1028     		cmp	r0, #16
+ 666 006a 01D1     		bne	.L30
+ 317:Code\UserApp\Voice/voice.c ****     {
+ 318:Code\UserApp\Voice/voice.c ****     	System_LongDI_Play();
+ 667              		.loc 1 318 0
+ 668 006c FFF7FEFF 		bl	System_LongDI_Play
+ 669              	.LVL68:
+ 670              	.L30:
+ 671              	.LBE10:
+ 672              	.LBE9:
+ 319:Code\UserApp\Voice/voice.c ****     }
+ 320:Code\UserApp\Voice/voice.c **** }
+ 673              		.loc 1 320 0
+ 674              		@ sp needed
+ 675 0070 08BD     		pop	{r3, pc}
+ 676              		.cfi_endproc
+ 677              	.LFE76:
+ 678              		.size	Beep_Play, .-Beep_Play
+ 679              		.section	.text.VoicePlay,"ax",%progbits
+ 680              		.align	1
+ 681              		.global	VoicePlay
+ 682              		.code	16
+ 683              		.thumb_func
+ 684              		.type	VoicePlay, %function
+ 685              	VoicePlay:
+ 686              	.LFB77:
+ 321:Code\UserApp\Voice/voice.c **** 
+ 322:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ 323:Code\UserApp\Voice/voice.c **** // Function name	: VoicePlay
+ 324:Code\UserApp\Voice/voice.c **** // Description		: 语音播报
+ 325:Code\UserApp\Voice/voice.c **** // Parameter		: addr
+ 326:Code\UserApp\Voice/voice.c **** // Return			: none
+ 327:Code\UserApp\Voice/voice.c **** //-------------------------------------------------------------------------------------------------
+ 328:Code\UserApp\Voice/voice.c **** // Info				: 
+ 329:Code\UserApp\Voice/voice.c **** //*************************************************************************************************
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 19
+
+
+ 330:Code\UserApp\Voice/voice.c **** void VoicePlay(INT8U addr)
+ 331:Code\UserApp\Voice/voice.c **** {
+ 687              		.loc 1 331 0
+ 688              		.cfi_startproc
+ 689              	.LVL69:
+ 690 0000 08B5     		push	{r3, lr}
+ 691              		.cfi_def_cfa_offset 8
+ 692              		.cfi_offset 3, -8
+ 693              		.cfi_offset 14, -4
+ 332:Code\UserApp\Voice/voice.c ****     Beep_Play(addr);  
+ 694              		.loc 1 332 0
+ 695 0002 FFF7FEFF 		bl	Beep_Play
+ 696              	.LVL70:
+ 333:Code\UserApp\Voice/voice.c **** }
+ 697              		.loc 1 333 0
+ 698              		@ sp needed
+ 699 0006 08BD     		pop	{r3, pc}
+ 700              		.cfi_endproc
+ 701              	.LFE77:
+ 702              		.size	VoicePlay, .-VoicePlay
+ 703              		.comm	BeepDelay_TimeOut,4,4
+ 704              		.text
+ 705              	.Letext0:
+ 706              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+ 707              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+ 708              		.file 4 "Generated_Source\\PSoC4/cytypes.h"
+ 709              		.file 5 ".\\Code\\Common/config.h"
+ 710              		.file 6 "Generated_Source\\PSoC4/TIMER.h"
+ 711              		.section	.debug_info,"",%progbits
+ 712              	.Ldebug_info0:
+ 713 0000 40070000 		.4byte	0x740
+ 714 0004 0400     		.2byte	0x4
+ 715 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 716 000a 04       		.byte	0x4
+ 717 000b 01       		.uleb128 0x1
+ 718 000c 18000000 		.4byte	.LASF44
+ 719 0010 01       		.byte	0x1
+ 720 0011 EE010000 		.4byte	.LASF45
+ 721 0015 0E030000 		.4byte	.LASF46
+ 722 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 723 001d 00000000 		.4byte	0
+ 724 0021 00000000 		.4byte	.Ldebug_line0
+ 725 0025 02       		.uleb128 0x2
+ 726 0026 01       		.byte	0x1
+ 727 0027 06       		.byte	0x6
+ 728 0028 F5000000 		.4byte	.LASF0
+ 729 002c 03       		.uleb128 0x3
+ 730 002d 0E000000 		.4byte	.LASF3
+ 731 0031 02       		.byte	0x2
+ 732 0032 1D       		.byte	0x1d
+ 733 0033 37000000 		.4byte	0x37
+ 734 0037 02       		.uleb128 0x2
+ 735 0038 01       		.byte	0x1
+ 736 0039 08       		.byte	0x8
+ 737 003a 09010000 		.4byte	.LASF1
+ 738 003e 02       		.uleb128 0x2
+ 739 003f 02       		.byte	0x2
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 20
+
+
+ 740 0040 05       		.byte	0x5
+ 741 0041 74020000 		.4byte	.LASF2
+ 742 0045 03       		.uleb128 0x3
+ 743 0046 66010000 		.4byte	.LASF4
+ 744 004a 02       		.byte	0x2
+ 745 004b 2B       		.byte	0x2b
+ 746 004c 50000000 		.4byte	0x50
+ 747 0050 02       		.uleb128 0x2
+ 748 0051 02       		.byte	0x2
+ 749 0052 07       		.byte	0x7
+ 750 0053 E7020000 		.4byte	.LASF5
+ 751 0057 02       		.uleb128 0x2
+ 752 0058 04       		.byte	0x4
+ 753 0059 05       		.byte	0x5
+ 754 005a B5020000 		.4byte	.LASF6
+ 755 005e 02       		.uleb128 0x2
+ 756 005f 04       		.byte	0x4
+ 757 0060 07       		.byte	0x7
+ 758 0061 3D010000 		.4byte	.LASF7
+ 759 0065 02       		.uleb128 0x2
+ 760 0066 08       		.byte	0x8
+ 761 0067 05       		.byte	0x5
+ 762 0068 00000000 		.4byte	.LASF8
+ 763 006c 02       		.uleb128 0x2
+ 764 006d 08       		.byte	0x8
+ 765 006e 07       		.byte	0x7
+ 766 006f CF010000 		.4byte	.LASF9
+ 767 0073 04       		.uleb128 0x4
+ 768 0074 04       		.byte	0x4
+ 769 0075 05       		.byte	0x5
+ 770 0076 696E7400 		.ascii	"int\000"
+ 771 007a 02       		.uleb128 0x2
+ 772 007b 04       		.byte	0x4
+ 773 007c 07       		.byte	0x7
+ 774 007d AF010000 		.4byte	.LASF10
+ 775 0081 03       		.uleb128 0x3
+ 776 0082 E6010000 		.4byte	.LASF11
+ 777 0086 03       		.byte	0x3
+ 778 0087 15       		.byte	0x15
+ 779 0088 2C000000 		.4byte	0x2c
+ 780 008c 03       		.uleb128 0x3
+ 781 008d 9A020000 		.4byte	.LASF12
+ 782 0091 03       		.byte	0x3
+ 783 0092 21       		.byte	0x21
+ 784 0093 45000000 		.4byte	0x45
+ 785 0097 05       		.uleb128 0x5
+ 786 0098 A8010000 		.4byte	.LASF13
+ 787 009c 04       		.byte	0x4
+ 788 009d BB01     		.2byte	0x1bb
+ 789 009f 5E000000 		.4byte	0x5e
+ 790 00a3 02       		.uleb128 0x2
+ 791 00a4 04       		.byte	0x4
+ 792 00a5 04       		.byte	0x4
+ 793 00a6 EF000000 		.4byte	.LASF14
+ 794 00aa 02       		.uleb128 0x2
+ 795 00ab 08       		.byte	0x8
+ 796 00ac 04       		.byte	0x4
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 21
+
+
+ 797 00ad 71010000 		.4byte	.LASF15
+ 798 00b1 02       		.uleb128 0x2
+ 799 00b2 01       		.byte	0x1
+ 800 00b3 08       		.byte	0x8
+ 801 00b4 4C020000 		.4byte	.LASF16
+ 802 00b8 02       		.uleb128 0x2
+ 803 00b9 04       		.byte	0x4
+ 804 00ba 07       		.byte	0x7
+ 805 00bb 43020000 		.4byte	.LASF17
+ 806 00bf 03       		.uleb128 0x3
+ 807 00c0 C9010000 		.4byte	.LASF18
+ 808 00c4 05       		.byte	0x5
+ 809 00c5 13       		.byte	0x13
+ 810 00c6 37000000 		.4byte	0x37
+ 811 00ca 03       		.uleb128 0x3
+ 812 00cb 93020000 		.4byte	.LASF19
+ 813 00cf 05       		.byte	0x5
+ 814 00d0 17       		.byte	0x17
+ 815 00d1 5E000000 		.4byte	0x5e
+ 816 00d5 03       		.uleb128 0x3
+ 817 00d6 01010000 		.4byte	.LASF20
+ 818 00da 05       		.byte	0x5
+ 819 00db 23       		.byte	0x23
+ 820 00dc E0000000 		.4byte	0xe0
+ 821 00e0 06       		.uleb128 0x6
+ 822 00e1 CA000000 		.4byte	0xca
+ 823 00e5 07       		.uleb128 0x7
+ 824 00e6 09020000 		.4byte	.LASF41
+ 825 00ea 01       		.byte	0x1
+ 826 00eb C9       		.byte	0xc9
+ 827 00ec 01       		.byte	0x1
+ 828 00ed 08       		.uleb128 0x8
+ 829 00ee 17010000 		.4byte	.LASF21
+ 830 00f2 01       		.byte	0x1
+ 831 00f3 0D01     		.2byte	0x10d
+ 832 00f5 01       		.byte	0x1
+ 833 00f6 07010000 		.4byte	0x107
+ 834 00fa 09       		.uleb128 0x9
+ 835 00fb 75030000 		.4byte	.LASF47
+ 836 00ff 01       		.byte	0x1
+ 837 0100 0D01     		.2byte	0x10d
+ 838 0102 81000000 		.4byte	0x81
+ 839 0106 00       		.byte	0
+ 840 0107 0A       		.uleb128 0xa
+ 841 0108 54010000 		.4byte	.LASF48
+ 842 010c 01       		.byte	0x1
+ 843 010d 28       		.byte	0x28
+ 844 010e 00000000 		.4byte	.LFB63
+ 845 0112 14000000 		.4byte	.LFE63-.LFB63
+ 846 0116 01       		.uleb128 0x1
+ 847 0117 9C       		.byte	0x9c
+ 848 0118 0B       		.uleb128 0xb
+ 849 0119 51020000 		.4byte	.LASF23
+ 850 011d 01       		.byte	0x1
+ 851 011e 38       		.byte	0x38
+ 852 011f 00000000 		.4byte	.LFB64
+ 853 0123 1C000000 		.4byte	.LFE64-.LFB64
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 22
+
+
+ 854 0127 01       		.uleb128 0x1
+ 855 0128 9C       		.byte	0x9c
+ 856 0129 61010000 		.4byte	0x161
+ 857 012d 0C       		.uleb128 0xc
+ 858 012e 636E7400 		.ascii	"cnt\000"
+ 859 0132 01       		.byte	0x1
+ 860 0133 38       		.byte	0x38
+ 861 0134 8C000000 		.4byte	0x8c
+ 862 0138 00000000 		.4byte	.LLST0
+ 863 013c 0D       		.uleb128 0xd
+ 864 013d 0E000000 		.4byte	.LBB6
+ 865 0141 06000000 		.4byte	.LBE6-.LBB6
+ 866 0145 0E       		.uleb128 0xe
+ 867 0146 FA020000 		.4byte	.LASF22
+ 868 014a 01       		.byte	0x1
+ 869 014b 3D       		.byte	0x3d
+ 870 014c 73000000 		.4byte	0x73
+ 871 0150 56010000 		.4byte	0x156
+ 872 0154 0F       		.uleb128 0xf
+ 873 0155 00       		.byte	0
+ 874 0156 10       		.uleb128 0x10
+ 875 0157 12000000 		.4byte	.LVL2
+ 876 015b EC060000 		.4byte	0x6ec
+ 877 015f 00       		.byte	0
+ 878 0160 00       		.byte	0
+ 879 0161 0B       		.uleb128 0xb
+ 880 0162 25020000 		.4byte	.LASF24
+ 881 0166 01       		.byte	0x1
+ 882 0167 49       		.byte	0x49
+ 883 0168 00000000 		.4byte	.LFB65
+ 884 016c 4A000000 		.4byte	.LFE65-.LFB65
+ 885 0170 01       		.uleb128 0x1
+ 886 0171 9C       		.byte	0x9c
+ 887 0172 49020000 		.4byte	0x249
+ 888 0176 11       		.uleb128 0x11
+ 889 0177 A6000000 		.4byte	.LASF25
+ 890 017b 01       		.byte	0x1
+ 891 017c 49       		.byte	0x49
+ 892 017d 8C000000 		.4byte	0x8c
+ 893 0181 21000000 		.4byte	.LLST1
+ 894 0185 11       		.uleb128 0x11
+ 895 0186 1B020000 		.4byte	.LASF26
+ 896 018a 01       		.byte	0x1
+ 897 018b 49       		.byte	0x49
+ 898 018c 8C000000 		.4byte	0x8c
+ 899 0190 42000000 		.4byte	.LLST2
+ 900 0194 12       		.uleb128 0x12
+ 901 0195 0C000000 		.4byte	.LVL5
+ 902 0199 FD060000 		.4byte	0x6fd
+ 903 019d A7010000 		.4byte	0x1a7
+ 904 01a1 13       		.uleb128 0x13
+ 905 01a2 01       		.uleb128 0x1
+ 906 01a3 50       		.byte	0x50
+ 907 01a4 01       		.uleb128 0x1
+ 908 01a5 30       		.byte	0x30
+ 909 01a6 00       		.byte	0
+ 910 01a7 12       		.uleb128 0x12
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 23
+
+
+ 911 01a8 12000000 		.4byte	.LVL6
+ 912 01ac 0F070000 		.4byte	0x70f
+ 913 01b0 BA010000 		.4byte	0x1ba
+ 914 01b4 13       		.uleb128 0x13
+ 915 01b5 01       		.uleb128 0x1
+ 916 01b6 50       		.byte	0x50
+ 917 01b7 01       		.uleb128 0x1
+ 918 01b8 30       		.byte	0x30
+ 919 01b9 00       		.byte	0
+ 920 01ba 12       		.uleb128 0x12
+ 921 01bb 18000000 		.4byte	.LVL7
+ 922 01bf 21070000 		.4byte	0x721
+ 923 01c3 CD010000 		.4byte	0x1cd
+ 924 01c7 13       		.uleb128 0x13
+ 925 01c8 01       		.uleb128 0x1
+ 926 01c9 50       		.byte	0x50
+ 927 01ca 01       		.uleb128 0x1
+ 928 01cb 30       		.byte	0x30
+ 929 01cc 00       		.byte	0
+ 930 01cd 10       		.uleb128 0x10
+ 931 01ce 1C000000 		.4byte	.LVL8
+ 932 01d2 33070000 		.4byte	0x733
+ 933 01d6 12       		.uleb128 0x12
+ 934 01d7 22000000 		.4byte	.LVL9
+ 935 01db 18010000 		.4byte	0x118
+ 936 01df E9010000 		.4byte	0x1e9
+ 937 01e3 13       		.uleb128 0x13
+ 938 01e4 01       		.uleb128 0x1
+ 939 01e5 50       		.byte	0x50
+ 940 01e6 01       		.uleb128 0x1
+ 941 01e7 33       		.byte	0x33
+ 942 01e8 00       		.byte	0
+ 943 01e9 10       		.uleb128 0x10
+ 944 01ea 26000000 		.4byte	.LVL10
+ 945 01ee 3B070000 		.4byte	0x73b
+ 946 01f2 12       		.uleb128 0x12
+ 947 01f3 2C000000 		.4byte	.LVL11
+ 948 01f7 FD060000 		.4byte	0x6fd
+ 949 01fb 05020000 		.4byte	0x205
+ 950 01ff 13       		.uleb128 0x13
+ 951 0200 01       		.uleb128 0x1
+ 952 0201 50       		.byte	0x50
+ 953 0202 01       		.uleb128 0x1
+ 954 0203 30       		.byte	0x30
+ 955 0204 00       		.byte	0
+ 956 0205 10       		.uleb128 0x10
+ 957 0206 34000000 		.4byte	.LVL12
+ 958 020a 0F070000 		.4byte	0x70f
+ 959 020e 12       		.uleb128 0x12
+ 960 020f 3A000000 		.4byte	.LVL13
+ 961 0213 21070000 		.4byte	0x721
+ 962 0217 22020000 		.4byte	0x222
+ 963 021b 13       		.uleb128 0x13
+ 964 021c 01       		.uleb128 0x1
+ 965 021d 50       		.byte	0x50
+ 966 021e 02       		.uleb128 0x2
+ 967 021f 74       		.byte	0x74
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 24
+
+
+ 968 0220 7F       		.sleb128 -1
+ 969 0221 00       		.byte	0
+ 970 0222 10       		.uleb128 0x10
+ 971 0223 3E000000 		.4byte	.LVL14
+ 972 0227 33070000 		.4byte	0x733
+ 973 022b 12       		.uleb128 0x12
+ 974 022c 44000000 		.4byte	.LVL15
+ 975 0230 18010000 		.4byte	0x118
+ 976 0234 3F020000 		.4byte	0x23f
+ 977 0238 13       		.uleb128 0x13
+ 978 0239 01       		.uleb128 0x1
+ 979 023a 50       		.byte	0x50
+ 980 023b 02       		.uleb128 0x2
+ 981 023c 75       		.byte	0x75
+ 982 023d 00       		.sleb128 0
+ 983 023e 00       		.byte	0
+ 984 023f 10       		.uleb128 0x10
+ 985 0240 48000000 		.4byte	.LVL16
+ 986 0244 3B070000 		.4byte	0x73b
+ 987 0248 00       		.byte	0
+ 988 0249 0B       		.uleb128 0xb
+ 989 024a 81010000 		.4byte	.LASF27
+ 990 024e 01       		.byte	0x1
+ 991 024f 62       		.byte	0x62
+ 992 0250 00000000 		.4byte	.LFB66
+ 993 0254 0E000000 		.4byte	.LFE66-.LFB66
+ 994 0258 01       		.uleb128 0x1
+ 995 0259 9C       		.byte	0x9c
+ 996 025a 76020000 		.4byte	0x276
+ 997 025e 14       		.uleb128 0x14
+ 998 025f 0C000000 		.4byte	.LVL17
+ 999 0263 61010000 		.4byte	0x161
+ 1000 0267 13       		.uleb128 0x13
+ 1001 0268 01       		.uleb128 0x1
+ 1002 0269 51       		.byte	0x51
+ 1003 026a 02       		.uleb128 0x2
+ 1004 026b 08       		.byte	0x8
+ 1005 026c C8       		.byte	0xc8
+ 1006 026d 13       		.uleb128 0x13
+ 1007 026e 01       		.uleb128 0x1
+ 1008 026f 50       		.byte	0x50
+ 1009 0270 03       		.uleb128 0x3
+ 1010 0271 0A       		.byte	0xa
+ 1011 0272 4D01     		.2byte	0x14d
+ 1012 0274 00       		.byte	0
+ 1013 0275 00       		.byte	0
+ 1014 0276 0B       		.uleb128 0xb
+ 1015 0277 CB000000 		.4byte	.LASF28
+ 1016 027b 01       		.byte	0x1
+ 1017 027c 6F       		.byte	0x6f
+ 1018 027d 00000000 		.4byte	.LFB67
+ 1019 0281 10000000 		.4byte	.LFE67-.LFB67
+ 1020 0285 01       		.uleb128 0x1
+ 1021 0286 9C       		.byte	0x9c
+ 1022 0287 A4020000 		.4byte	0x2a4
+ 1023 028b 14       		.uleb128 0x14
+ 1024 028c 0E000000 		.4byte	.LVL18
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 25
+
+
+ 1025 0290 61010000 		.4byte	0x161
+ 1026 0294 13       		.uleb128 0x13
+ 1027 0295 01       		.uleb128 0x1
+ 1028 0296 51       		.byte	0x51
+ 1029 0297 03       		.uleb128 0x3
+ 1030 0298 0A       		.byte	0xa
+ 1031 0299 F401     		.2byte	0x1f4
+ 1032 029b 13       		.uleb128 0x13
+ 1033 029c 01       		.uleb128 0x1
+ 1034 029d 50       		.byte	0x50
+ 1035 029e 03       		.uleb128 0x3
+ 1036 029f 0A       		.byte	0xa
+ 1037 02a0 4D01     		.2byte	0x14d
+ 1038 02a2 00       		.byte	0
+ 1039 02a3 00       		.byte	0
+ 1040 02a4 0B       		.uleb128 0xb
+ 1041 02a5 60020000 		.4byte	.LASF29
+ 1042 02a9 01       		.byte	0x1
+ 1043 02aa 7C       		.byte	0x7c
+ 1044 02ab 00000000 		.4byte	.LFB68
+ 1045 02af 64000000 		.4byte	.LFE68-.LFB68
+ 1046 02b3 01       		.uleb128 0x1
+ 1047 02b4 9C       		.byte	0x9c
+ 1048 02b5 B6030000 		.4byte	0x3b6
+ 1049 02b9 12       		.uleb128 0x12
+ 1050 02ba 10000000 		.4byte	.LVL19
+ 1051 02be 61010000 		.4byte	0x161
+ 1052 02c2 D3020000 		.4byte	0x2d3
+ 1053 02c6 13       		.uleb128 0x13
+ 1054 02c7 01       		.uleb128 0x1
+ 1055 02c8 51       		.byte	0x51
+ 1056 02c9 02       		.uleb128 0x2
+ 1057 02ca 08       		.byte	0x8
+ 1058 02cb C8       		.byte	0xc8
+ 1059 02cc 13       		.uleb128 0x13
+ 1060 02cd 01       		.uleb128 0x1
+ 1061 02ce 50       		.byte	0x50
+ 1062 02cf 02       		.uleb128 0x2
+ 1063 02d0 74       		.byte	0x74
+ 1064 02d1 00       		.sleb128 0
+ 1065 02d2 00       		.byte	0
+ 1066 02d3 12       		.uleb128 0x12
+ 1067 02d4 16000000 		.4byte	.LVL20
+ 1068 02d8 18010000 		.4byte	0x118
+ 1069 02dc E7020000 		.4byte	0x2e7
+ 1070 02e0 13       		.uleb128 0x13
+ 1071 02e1 01       		.uleb128 0x1
+ 1072 02e2 50       		.byte	0x50
+ 1073 02e3 02       		.uleb128 0x2
+ 1074 02e4 08       		.byte	0x8
+ 1075 02e5 32       		.byte	0x32
+ 1076 02e6 00       		.byte	0
+ 1077 02e7 12       		.uleb128 0x12
+ 1078 02e8 20000000 		.4byte	.LVL21
+ 1079 02ec 61010000 		.4byte	0x161
+ 1080 02f0 01030000 		.4byte	0x301
+ 1081 02f4 13       		.uleb128 0x13
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 26
+
+
+ 1082 02f5 01       		.uleb128 0x1
+ 1083 02f6 51       		.byte	0x51
+ 1084 02f7 02       		.uleb128 0x2
+ 1085 02f8 08       		.byte	0x8
+ 1086 02f9 C8       		.byte	0xc8
+ 1087 02fa 13       		.uleb128 0x13
+ 1088 02fb 01       		.uleb128 0x1
+ 1089 02fc 50       		.byte	0x50
+ 1090 02fd 02       		.uleb128 0x2
+ 1091 02fe 75       		.byte	0x75
+ 1092 02ff 00       		.sleb128 0
+ 1093 0300 00       		.byte	0
+ 1094 0301 12       		.uleb128 0x12
+ 1095 0302 26000000 		.4byte	.LVL22
+ 1096 0306 18010000 		.4byte	0x118
+ 1097 030a 15030000 		.4byte	0x315
+ 1098 030e 13       		.uleb128 0x13
+ 1099 030f 01       		.uleb128 0x1
+ 1100 0310 50       		.byte	0x50
+ 1101 0311 02       		.uleb128 0x2
+ 1102 0312 08       		.byte	0x8
+ 1103 0313 32       		.byte	0x32
+ 1104 0314 00       		.byte	0
+ 1105 0315 12       		.uleb128 0x12
+ 1106 0316 2E000000 		.4byte	.LVL23
+ 1107 031a 61010000 		.4byte	0x161
+ 1108 031e 2F030000 		.4byte	0x32f
+ 1109 0322 13       		.uleb128 0x13
+ 1110 0323 01       		.uleb128 0x1
+ 1111 0324 51       		.byte	0x51
+ 1112 0325 02       		.uleb128 0x2
+ 1113 0326 08       		.byte	0x8
+ 1114 0327 C8       		.byte	0xc8
+ 1115 0328 13       		.uleb128 0x13
+ 1116 0329 01       		.uleb128 0x1
+ 1117 032a 50       		.byte	0x50
+ 1118 032b 02       		.uleb128 0x2
+ 1119 032c 76       		.byte	0x76
+ 1120 032d 00       		.sleb128 0
+ 1121 032e 00       		.byte	0
+ 1122 032f 12       		.uleb128 0x12
+ 1123 0330 34000000 		.4byte	.LVL24
+ 1124 0334 18010000 		.4byte	0x118
+ 1125 0338 43030000 		.4byte	0x343
+ 1126 033c 13       		.uleb128 0x13
+ 1127 033d 01       		.uleb128 0x1
+ 1128 033e 50       		.byte	0x50
+ 1129 033f 02       		.uleb128 0x2
+ 1130 0340 08       		.byte	0x8
+ 1131 0341 32       		.byte	0x32
+ 1132 0342 00       		.byte	0
+ 1133 0343 12       		.uleb128 0x12
+ 1134 0344 3C000000 		.4byte	.LVL25
+ 1135 0348 61010000 		.4byte	0x161
+ 1136 034c 5D030000 		.4byte	0x35d
+ 1137 0350 13       		.uleb128 0x13
+ 1138 0351 01       		.uleb128 0x1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 27
+
+
+ 1139 0352 51       		.byte	0x51
+ 1140 0353 02       		.uleb128 0x2
+ 1141 0354 08       		.byte	0x8
+ 1142 0355 C8       		.byte	0xc8
+ 1143 0356 13       		.uleb128 0x13
+ 1144 0357 01       		.uleb128 0x1
+ 1145 0358 50       		.byte	0x50
+ 1146 0359 02       		.uleb128 0x2
+ 1147 035a 76       		.byte	0x76
+ 1148 035b 00       		.sleb128 0
+ 1149 035c 00       		.byte	0
+ 1150 035d 12       		.uleb128 0x12
+ 1151 035e 42000000 		.4byte	.LVL26
+ 1152 0362 18010000 		.4byte	0x118
+ 1153 0366 71030000 		.4byte	0x371
+ 1154 036a 13       		.uleb128 0x13
+ 1155 036b 01       		.uleb128 0x1
+ 1156 036c 50       		.byte	0x50
+ 1157 036d 02       		.uleb128 0x2
+ 1158 036e 08       		.byte	0x8
+ 1159 036f 32       		.byte	0x32
+ 1160 0370 00       		.byte	0
+ 1161 0371 12       		.uleb128 0x12
+ 1162 0372 4A000000 		.4byte	.LVL27
+ 1163 0376 61010000 		.4byte	0x161
+ 1164 037a 8B030000 		.4byte	0x38b
+ 1165 037e 13       		.uleb128 0x13
+ 1166 037f 01       		.uleb128 0x1
+ 1167 0380 51       		.byte	0x51
+ 1168 0381 02       		.uleb128 0x2
+ 1169 0382 08       		.byte	0x8
+ 1170 0383 C8       		.byte	0xc8
+ 1171 0384 13       		.uleb128 0x13
+ 1172 0385 01       		.uleb128 0x1
+ 1173 0386 50       		.byte	0x50
+ 1174 0387 02       		.uleb128 0x2
+ 1175 0388 75       		.byte	0x75
+ 1176 0389 00       		.sleb128 0
+ 1177 038a 00       		.byte	0
+ 1178 038b 12       		.uleb128 0x12
+ 1179 038c 50000000 		.4byte	.LVL28
+ 1180 0390 18010000 		.4byte	0x118
+ 1181 0394 9F030000 		.4byte	0x39f
+ 1182 0398 13       		.uleb128 0x13
+ 1183 0399 01       		.uleb128 0x1
+ 1184 039a 50       		.byte	0x50
+ 1185 039b 02       		.uleb128 0x2
+ 1186 039c 08       		.byte	0x8
+ 1187 039d 32       		.byte	0x32
+ 1188 039e 00       		.byte	0
+ 1189 039f 14       		.uleb128 0x14
+ 1190 03a0 58000000 		.4byte	.LVL29
+ 1191 03a4 61010000 		.4byte	0x161
+ 1192 03a8 13       		.uleb128 0x13
+ 1193 03a9 01       		.uleb128 0x1
+ 1194 03aa 51       		.byte	0x51
+ 1195 03ab 02       		.uleb128 0x2
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 28
+
+
+ 1196 03ac 08       		.byte	0x8
+ 1197 03ad C8       		.byte	0xc8
+ 1198 03ae 13       		.uleb128 0x13
+ 1199 03af 01       		.uleb128 0x1
+ 1200 03b0 50       		.byte	0x50
+ 1201 03b1 02       		.uleb128 0x2
+ 1202 03b2 74       		.byte	0x74
+ 1203 03b3 00       		.sleb128 0
+ 1204 03b4 00       		.byte	0
+ 1205 03b5 00       		.byte	0
+ 1206 03b6 0B       		.uleb128 0xb
+ 1207 03b7 21010000 		.4byte	.LASF30
+ 1208 03bb 01       		.byte	0x1
+ 1209 03bc 93       		.byte	0x93
+ 1210 03bd 00000000 		.4byte	.LFB69
+ 1211 03c1 34000000 		.4byte	.LFE69-.LFB69
+ 1212 03c5 01       		.uleb128 0x1
+ 1213 03c6 9C       		.byte	0x9c
+ 1214 03c7 52040000 		.4byte	0x452
+ 1215 03cb 12       		.uleb128 0x12
+ 1216 03cc 0C000000 		.4byte	.LVL30
+ 1217 03d0 61010000 		.4byte	0x161
+ 1218 03d4 E5030000 		.4byte	0x3e5
+ 1219 03d8 13       		.uleb128 0x13
+ 1220 03d9 01       		.uleb128 0x1
+ 1221 03da 51       		.byte	0x51
+ 1222 03db 02       		.uleb128 0x2
+ 1223 03dc 08       		.byte	0x8
+ 1224 03dd C8       		.byte	0xc8
+ 1225 03de 13       		.uleb128 0x13
+ 1226 03df 01       		.uleb128 0x1
+ 1227 03e0 50       		.byte	0x50
+ 1228 03e1 02       		.uleb128 0x2
+ 1229 03e2 74       		.byte	0x74
+ 1230 03e3 00       		.sleb128 0
+ 1231 03e4 00       		.byte	0
+ 1232 03e5 12       		.uleb128 0x12
+ 1233 03e6 12000000 		.4byte	.LVL31
+ 1234 03ea 18010000 		.4byte	0x118
+ 1235 03ee F9030000 		.4byte	0x3f9
+ 1236 03f2 13       		.uleb128 0x13
+ 1237 03f3 01       		.uleb128 0x1
+ 1238 03f4 50       		.byte	0x50
+ 1239 03f5 02       		.uleb128 0x2
+ 1240 03f6 08       		.byte	0x8
+ 1241 03f7 32       		.byte	0x32
+ 1242 03f8 00       		.byte	0
+ 1243 03f9 12       		.uleb128 0x12
+ 1244 03fa 1A000000 		.4byte	.LVL32
+ 1245 03fe 61010000 		.4byte	0x161
+ 1246 0402 13040000 		.4byte	0x413
+ 1247 0406 13       		.uleb128 0x13
+ 1248 0407 01       		.uleb128 0x1
+ 1249 0408 51       		.byte	0x51
+ 1250 0409 02       		.uleb128 0x2
+ 1251 040a 08       		.byte	0x8
+ 1252 040b C8       		.byte	0xc8
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 29
+
+
+ 1253 040c 13       		.uleb128 0x13
+ 1254 040d 01       		.uleb128 0x1
+ 1255 040e 50       		.byte	0x50
+ 1256 040f 02       		.uleb128 0x2
+ 1257 0410 74       		.byte	0x74
+ 1258 0411 00       		.sleb128 0
+ 1259 0412 00       		.byte	0
+ 1260 0413 12       		.uleb128 0x12
+ 1261 0414 20000000 		.4byte	.LVL33
+ 1262 0418 18010000 		.4byte	0x118
+ 1263 041c 27040000 		.4byte	0x427
+ 1264 0420 13       		.uleb128 0x13
+ 1265 0421 01       		.uleb128 0x1
+ 1266 0422 50       		.byte	0x50
+ 1267 0423 02       		.uleb128 0x2
+ 1268 0424 08       		.byte	0x8
+ 1269 0425 32       		.byte	0x32
+ 1270 0426 00       		.byte	0
+ 1271 0427 12       		.uleb128 0x12
+ 1272 0428 28000000 		.4byte	.LVL34
+ 1273 042c 61010000 		.4byte	0x161
+ 1274 0430 41040000 		.4byte	0x441
+ 1275 0434 13       		.uleb128 0x13
+ 1276 0435 01       		.uleb128 0x1
+ 1277 0436 51       		.byte	0x51
+ 1278 0437 02       		.uleb128 0x2
+ 1279 0438 08       		.byte	0x8
+ 1280 0439 C8       		.byte	0xc8
+ 1281 043a 13       		.uleb128 0x13
+ 1282 043b 01       		.uleb128 0x1
+ 1283 043c 50       		.byte	0x50
+ 1284 043d 02       		.uleb128 0x2
+ 1285 043e 74       		.byte	0x74
+ 1286 043f 00       		.sleb128 0
+ 1287 0440 00       		.byte	0
+ 1288 0441 14       		.uleb128 0x14
+ 1289 0442 2E000000 		.4byte	.LVL35
+ 1290 0446 18010000 		.4byte	0x118
+ 1291 044a 13       		.uleb128 0x13
+ 1292 044b 01       		.uleb128 0x1
+ 1293 044c 50       		.byte	0x50
+ 1294 044d 02       		.uleb128 0x2
+ 1295 044e 08       		.byte	0x8
+ 1296 044f 32       		.byte	0x32
+ 1297 0450 00       		.byte	0
+ 1298 0451 00       		.byte	0
+ 1299 0452 0B       		.uleb128 0xb
+ 1300 0453 DE000000 		.4byte	.LASF31
+ 1301 0457 01       		.byte	0x1
+ 1302 0458 A8       		.byte	0xa8
+ 1303 0459 00000000 		.4byte	.LFB70
+ 1304 045d 10000000 		.4byte	.LFE70-.LFB70
+ 1305 0461 01       		.uleb128 0x1
+ 1306 0462 9C       		.byte	0x9c
+ 1307 0463 80040000 		.4byte	0x480
+ 1308 0467 14       		.uleb128 0x14
+ 1309 0468 0E000000 		.4byte	.LVL36
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 30
+
+
+ 1310 046c 61010000 		.4byte	0x161
+ 1311 0470 13       		.uleb128 0x13
+ 1312 0471 01       		.uleb128 0x1
+ 1313 0472 51       		.byte	0x51
+ 1314 0473 03       		.uleb128 0x3
+ 1315 0474 0A       		.byte	0xa
+ 1316 0475 5802     		.2byte	0x258
+ 1317 0477 13       		.uleb128 0x13
+ 1318 0478 01       		.uleb128 0x1
+ 1319 0479 50       		.byte	0x50
+ 1320 047a 03       		.uleb128 0x3
+ 1321 047b 0A       		.byte	0xa
+ 1322 047c 4D01     		.2byte	0x14d
+ 1323 047e 00       		.byte	0
+ 1324 047f 00       		.byte	0
+ 1325 0480 0B       		.uleb128 0xb
+ 1326 0481 BC010000 		.4byte	.LASF32
+ 1327 0485 01       		.byte	0x1
+ 1328 0486 B6       		.byte	0xb6
+ 1329 0487 00000000 		.4byte	.LFB71
+ 1330 048b 3A000000 		.4byte	.LFE71-.LFB71
+ 1331 048f 01       		.uleb128 0x1
+ 1332 0490 9C       		.byte	0x9c
+ 1333 0491 36050000 		.4byte	0x536
+ 1334 0495 12       		.uleb128 0x12
+ 1335 0496 0E000000 		.4byte	.LVL37
+ 1336 049a 61010000 		.4byte	0x161
+ 1337 049e AF040000 		.4byte	0x4af
+ 1338 04a2 13       		.uleb128 0x13
+ 1339 04a3 01       		.uleb128 0x1
+ 1340 04a4 51       		.byte	0x51
+ 1341 04a5 02       		.uleb128 0x2
+ 1342 04a6 08       		.byte	0x8
+ 1343 04a7 32       		.byte	0x32
+ 1344 04a8 13       		.uleb128 0x13
+ 1345 04a9 01       		.uleb128 0x1
+ 1346 04aa 50       		.byte	0x50
+ 1347 04ab 02       		.uleb128 0x2
+ 1348 04ac 74       		.byte	0x74
+ 1349 04ad 00       		.sleb128 0
+ 1350 04ae 00       		.byte	0
+ 1351 04af 12       		.uleb128 0x12
+ 1352 04b0 14000000 		.4byte	.LVL38
+ 1353 04b4 18010000 		.4byte	0x118
+ 1354 04b8 C3040000 		.4byte	0x4c3
+ 1355 04bc 13       		.uleb128 0x13
+ 1356 04bd 01       		.uleb128 0x1
+ 1357 04be 50       		.byte	0x50
+ 1358 04bf 02       		.uleb128 0x2
+ 1359 04c0 08       		.byte	0x8
+ 1360 04c1 32       		.byte	0x32
+ 1361 04c2 00       		.byte	0
+ 1362 04c3 12       		.uleb128 0x12
+ 1363 04c4 1C000000 		.4byte	.LVL39
+ 1364 04c8 61010000 		.4byte	0x161
+ 1365 04cc DD040000 		.4byte	0x4dd
+ 1366 04d0 13       		.uleb128 0x13
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 31
+
+
+ 1367 04d1 01       		.uleb128 0x1
+ 1368 04d2 51       		.byte	0x51
+ 1369 04d3 02       		.uleb128 0x2
+ 1370 04d4 08       		.byte	0x8
+ 1371 04d5 32       		.byte	0x32
+ 1372 04d6 13       		.uleb128 0x13
+ 1373 04d7 01       		.uleb128 0x1
+ 1374 04d8 50       		.byte	0x50
+ 1375 04d9 02       		.uleb128 0x2
+ 1376 04da 74       		.byte	0x74
+ 1377 04db 00       		.sleb128 0
+ 1378 04dc 00       		.byte	0
+ 1379 04dd 12       		.uleb128 0x12
+ 1380 04de 22000000 		.4byte	.LVL40
+ 1381 04e2 18010000 		.4byte	0x118
+ 1382 04e6 F1040000 		.4byte	0x4f1
+ 1383 04ea 13       		.uleb128 0x13
+ 1384 04eb 01       		.uleb128 0x1
+ 1385 04ec 50       		.byte	0x50
+ 1386 04ed 02       		.uleb128 0x2
+ 1387 04ee 08       		.byte	0x8
+ 1388 04ef 32       		.byte	0x32
+ 1389 04f0 00       		.byte	0
+ 1390 04f1 12       		.uleb128 0x12
+ 1391 04f2 2A000000 		.4byte	.LVL41
+ 1392 04f6 61010000 		.4byte	0x161
+ 1393 04fa 0B050000 		.4byte	0x50b
+ 1394 04fe 13       		.uleb128 0x13
+ 1395 04ff 01       		.uleb128 0x1
+ 1396 0500 51       		.byte	0x51
+ 1397 0501 02       		.uleb128 0x2
+ 1398 0502 08       		.byte	0x8
+ 1399 0503 32       		.byte	0x32
+ 1400 0504 13       		.uleb128 0x13
+ 1401 0505 01       		.uleb128 0x1
+ 1402 0506 50       		.byte	0x50
+ 1403 0507 02       		.uleb128 0x2
+ 1404 0508 74       		.byte	0x74
+ 1405 0509 00       		.sleb128 0
+ 1406 050a 00       		.byte	0
+ 1407 050b 12       		.uleb128 0x12
+ 1408 050c 30000000 		.4byte	.LVL42
+ 1409 0510 18010000 		.4byte	0x118
+ 1410 0514 1F050000 		.4byte	0x51f
+ 1411 0518 13       		.uleb128 0x13
+ 1412 0519 01       		.uleb128 0x1
+ 1413 051a 50       		.byte	0x50
+ 1414 051b 02       		.uleb128 0x2
+ 1415 051c 08       		.byte	0x8
+ 1416 051d 32       		.byte	0x32
+ 1417 051e 00       		.byte	0
+ 1418 051f 14       		.uleb128 0x14
+ 1419 0520 38000000 		.4byte	.LVL43
+ 1420 0524 61010000 		.4byte	0x161
+ 1421 0528 13       		.uleb128 0x13
+ 1422 0529 01       		.uleb128 0x1
+ 1423 052a 51       		.byte	0x51
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 32
+
+
+ 1424 052b 02       		.uleb128 0x2
+ 1425 052c 08       		.byte	0x8
+ 1426 052d 32       		.byte	0x32
+ 1427 052e 13       		.uleb128 0x13
+ 1428 052f 01       		.uleb128 0x1
+ 1429 0530 50       		.byte	0x50
+ 1430 0531 02       		.uleb128 0x2
+ 1431 0532 74       		.byte	0x74
+ 1432 0533 00       		.sleb128 0
+ 1433 0534 00       		.byte	0
+ 1434 0535 00       		.byte	0
+ 1435 0536 15       		.uleb128 0x15
+ 1436 0537 E5000000 		.4byte	0xe5
+ 1437 053b 00000000 		.4byte	.LFB72
+ 1438 053f 02000000 		.4byte	.LFE72-.LFB72
+ 1439 0543 01       		.uleb128 0x1
+ 1440 0544 9C       		.byte	0x9c
+ 1441 0545 0B       		.uleb128 0xb
+ 1442 0546 78010000 		.4byte	.LASF33
+ 1443 054a 01       		.byte	0x1
+ 1444 054b DC       		.byte	0xdc
+ 1445 054c 00000000 		.4byte	.LFB73
+ 1446 0550 1E000000 		.4byte	.LFE73-.LFB73
+ 1447 0554 01       		.uleb128 0x1
+ 1448 0555 9C       		.byte	0x9c
+ 1449 0556 9F050000 		.4byte	0x59f
+ 1450 055a 12       		.uleb128 0x12
+ 1451 055b 0E000000 		.4byte	.LVL44
+ 1452 055f 61010000 		.4byte	0x161
+ 1453 0563 74050000 		.4byte	0x574
+ 1454 0567 13       		.uleb128 0x13
+ 1455 0568 01       		.uleb128 0x1
+ 1456 0569 51       		.byte	0x51
+ 1457 056a 02       		.uleb128 0x2
+ 1458 056b 08       		.byte	0x8
+ 1459 056c 32       		.byte	0x32
+ 1460 056d 13       		.uleb128 0x13
+ 1461 056e 01       		.uleb128 0x1
+ 1462 056f 50       		.byte	0x50
+ 1463 0570 02       		.uleb128 0x2
+ 1464 0571 74       		.byte	0x74
+ 1465 0572 00       		.sleb128 0
+ 1466 0573 00       		.byte	0
+ 1467 0574 12       		.uleb128 0x12
+ 1468 0575 14000000 		.4byte	.LVL45
+ 1469 0579 18010000 		.4byte	0x118
+ 1470 057d 88050000 		.4byte	0x588
+ 1471 0581 13       		.uleb128 0x13
+ 1472 0582 01       		.uleb128 0x1
+ 1473 0583 50       		.byte	0x50
+ 1474 0584 02       		.uleb128 0x2
+ 1475 0585 08       		.byte	0x8
+ 1476 0586 32       		.byte	0x32
+ 1477 0587 00       		.byte	0
+ 1478 0588 14       		.uleb128 0x14
+ 1479 0589 1C000000 		.4byte	.LVL46
+ 1480 058d 61010000 		.4byte	0x161
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 33
+
+
+ 1481 0591 13       		.uleb128 0x13
+ 1482 0592 01       		.uleb128 0x1
+ 1483 0593 51       		.byte	0x51
+ 1484 0594 02       		.uleb128 0x2
+ 1485 0595 08       		.byte	0x8
+ 1486 0596 32       		.byte	0x32
+ 1487 0597 13       		.uleb128 0x13
+ 1488 0598 01       		.uleb128 0x1
+ 1489 0599 50       		.byte	0x50
+ 1490 059a 02       		.uleb128 0x2
+ 1491 059b 74       		.byte	0x74
+ 1492 059c 00       		.sleb128 0
+ 1493 059d 00       		.byte	0
+ 1494 059e 00       		.byte	0
+ 1495 059f 0B       		.uleb128 0xb
+ 1496 05a0 B7000000 		.4byte	.LASF34
+ 1497 05a4 01       		.byte	0x1
+ 1498 05a5 F1       		.byte	0xf1
+ 1499 05a6 00000000 		.4byte	.LFB74
+ 1500 05aa 0E000000 		.4byte	.LFE74-.LFB74
+ 1501 05ae 01       		.uleb128 0x1
+ 1502 05af 9C       		.byte	0x9c
+ 1503 05b0 CC050000 		.4byte	0x5cc
+ 1504 05b4 14       		.uleb128 0x14
+ 1505 05b5 0C000000 		.4byte	.LVL47
+ 1506 05b9 61010000 		.4byte	0x161
+ 1507 05bd 13       		.uleb128 0x13
+ 1508 05be 01       		.uleb128 0x1
+ 1509 05bf 51       		.byte	0x51
+ 1510 05c0 02       		.uleb128 0x2
+ 1511 05c1 08       		.byte	0x8
+ 1512 05c2 96       		.byte	0x96
+ 1513 05c3 13       		.uleb128 0x13
+ 1514 05c4 01       		.uleb128 0x1
+ 1515 05c5 50       		.byte	0x50
+ 1516 05c6 03       		.uleb128 0x3
+ 1517 05c7 0A       		.byte	0xa
+ 1518 05c8 4D01     		.2byte	0x14d
+ 1519 05ca 00       		.byte	0
+ 1520 05cb 00       		.byte	0
+ 1521 05cc 0B       		.uleb128 0xb
+ 1522 05cd 7E020000 		.4byte	.LASF35
+ 1523 05d1 01       		.byte	0x1
+ 1524 05d2 FE       		.byte	0xfe
+ 1525 05d3 00000000 		.4byte	.LFB75
+ 1526 05d7 1E000000 		.4byte	.LFE75-.LFB75
+ 1527 05db 01       		.uleb128 0x1
+ 1528 05dc 9C       		.byte	0x9c
+ 1529 05dd 26060000 		.4byte	0x626
+ 1530 05e1 12       		.uleb128 0x12
+ 1531 05e2 0E000000 		.4byte	.LVL48
+ 1532 05e6 61010000 		.4byte	0x161
+ 1533 05ea FB050000 		.4byte	0x5fb
+ 1534 05ee 13       		.uleb128 0x13
+ 1535 05ef 01       		.uleb128 0x1
+ 1536 05f0 51       		.byte	0x51
+ 1537 05f1 02       		.uleb128 0x2
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 34
+
+
+ 1538 05f2 08       		.byte	0x8
+ 1539 05f3 32       		.byte	0x32
+ 1540 05f4 13       		.uleb128 0x13
+ 1541 05f5 01       		.uleb128 0x1
+ 1542 05f6 50       		.byte	0x50
+ 1543 05f7 02       		.uleb128 0x2
+ 1544 05f8 74       		.byte	0x74
+ 1545 05f9 00       		.sleb128 0
+ 1546 05fa 00       		.byte	0
+ 1547 05fb 12       		.uleb128 0x12
+ 1548 05fc 14000000 		.4byte	.LVL49
+ 1549 0600 18010000 		.4byte	0x118
+ 1550 0604 0F060000 		.4byte	0x60f
+ 1551 0608 13       		.uleb128 0x13
+ 1552 0609 01       		.uleb128 0x1
+ 1553 060a 50       		.byte	0x50
+ 1554 060b 02       		.uleb128 0x2
+ 1555 060c 08       		.byte	0x8
+ 1556 060d 32       		.byte	0x32
+ 1557 060e 00       		.byte	0
+ 1558 060f 14       		.uleb128 0x14
+ 1559 0610 1C000000 		.4byte	.LVL50
+ 1560 0614 61010000 		.4byte	0x161
+ 1561 0618 13       		.uleb128 0x13
+ 1562 0619 01       		.uleb128 0x1
+ 1563 061a 51       		.byte	0x51
+ 1564 061b 02       		.uleb128 0x2
+ 1565 061c 08       		.byte	0x8
+ 1566 061d 32       		.byte	0x32
+ 1567 061e 13       		.uleb128 0x13
+ 1568 061f 01       		.uleb128 0x1
+ 1569 0620 50       		.byte	0x50
+ 1570 0621 02       		.uleb128 0x2
+ 1571 0622 74       		.byte	0x74
+ 1572 0623 00       		.sleb128 0
+ 1573 0624 00       		.byte	0
+ 1574 0625 00       		.byte	0
+ 1575 0626 16       		.uleb128 0x16
+ 1576 0627 ED000000 		.4byte	0xed
+ 1577 062b 00000000 		.4byte	.LFB76
+ 1578 062f 72000000 		.4byte	.LFE76-.LFB76
+ 1579 0633 01       		.uleb128 0x1
+ 1580 0634 9C       		.byte	0x9c
+ 1581 0635 AB060000 		.4byte	0x6ab
+ 1582 0639 17       		.uleb128 0x17
+ 1583 063a FA000000 		.4byte	0xfa
+ 1584 063e 63000000 		.4byte	.LLST3
+ 1585 0642 18       		.uleb128 0x18
+ 1586 0643 5E000000 		.4byte	.LBB9
+ 1587 0647 12000000 		.4byte	.LBE9-.LBB9
+ 1588 064b 6B060000 		.4byte	0x66b
+ 1589 064f 17       		.uleb128 0x17
+ 1590 0650 FA000000 		.4byte	0xfa
+ 1591 0654 4C010000 		.4byte	.LLST4
+ 1592 0658 10       		.uleb128 0x10
+ 1593 0659 66000000 		.4byte	.LVL66
+ 1594 065d 49020000 		.4byte	0x249
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 35
+
+
+ 1595 0661 10       		.uleb128 0x10
+ 1596 0662 70000000 		.4byte	.LVL68
+ 1597 0666 76020000 		.4byte	0x276
+ 1598 066a 00       		.byte	0
+ 1599 066b 10       		.uleb128 0x10
+ 1600 066c 0A000000 		.4byte	.LVL52
+ 1601 0670 A4020000 		.4byte	0x2a4
+ 1602 0674 10       		.uleb128 0x10
+ 1603 0675 14000000 		.4byte	.LVL54
+ 1604 0679 B6030000 		.4byte	0x3b6
+ 1605 067d 10       		.uleb128 0x10
+ 1606 067e 1E000000 		.4byte	.LVL56
+ 1607 0682 45050000 		.4byte	0x545
+ 1608 0686 10       		.uleb128 0x10
+ 1609 0687 2C000000 		.4byte	.LVL58
+ 1610 068b 80040000 		.4byte	0x480
+ 1611 068f 10       		.uleb128 0x10
+ 1612 0690 48000000 		.4byte	.LVL60
+ 1613 0694 52040000 		.4byte	0x452
+ 1614 0698 10       		.uleb128 0x10
+ 1615 0699 52000000 		.4byte	.LVL62
+ 1616 069d 9F050000 		.4byte	0x59f
+ 1617 06a1 10       		.uleb128 0x10
+ 1618 06a2 5C000000 		.4byte	.LVL64
+ 1619 06a6 CC050000 		.4byte	0x5cc
+ 1620 06aa 00       		.byte	0
+ 1621 06ab 19       		.uleb128 0x19
+ 1622 06ac DD020000 		.4byte	.LASF36
+ 1623 06b0 01       		.byte	0x1
+ 1624 06b1 4A01     		.2byte	0x14a
+ 1625 06b3 00000000 		.4byte	.LFB77
+ 1626 06b7 08000000 		.4byte	.LFE77-.LFB77
+ 1627 06bb 01       		.uleb128 0x1
+ 1628 06bc 9C       		.byte	0x9c
+ 1629 06bd DB060000 		.4byte	0x6db
+ 1630 06c1 1A       		.uleb128 0x1a
+ 1631 06c2 4F010000 		.4byte	.LASF37
+ 1632 06c6 01       		.byte	0x1
+ 1633 06c7 4A01     		.2byte	0x14a
+ 1634 06c9 BF000000 		.4byte	0xbf
+ 1635 06cd 86010000 		.4byte	.LLST5
+ 1636 06d1 10       		.uleb128 0x10
+ 1637 06d2 06000000 		.4byte	.LVL70
+ 1638 06d6 ED000000 		.4byte	0xed
+ 1639 06da 00       		.byte	0
+ 1640 06db 1B       		.uleb128 0x1b
+ 1641 06dc 31020000 		.4byte	.LASF49
+ 1642 06e0 01       		.byte	0x1
+ 1643 06e1 0F       		.byte	0xf
+ 1644 06e2 D5000000 		.4byte	0xd5
+ 1645 06e6 05       		.uleb128 0x5
+ 1646 06e7 03       		.byte	0x3
+ 1647 06e8 00000000 		.4byte	BeepDelay_TimeOut
+ 1648 06ec 0E       		.uleb128 0xe
+ 1649 06ed FA020000 		.4byte	.LASF22
+ 1650 06f1 01       		.byte	0x1
+ 1651 06f2 3D       		.byte	0x3d
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 36
+
+
+ 1652 06f3 73000000 		.4byte	0x73
+ 1653 06f7 FD060000 		.4byte	0x6fd
+ 1654 06fb 0F       		.uleb128 0xf
+ 1655 06fc 00       		.byte	0
+ 1656 06fd 1C       		.uleb128 0x1c
+ 1657 06fe BE020000 		.4byte	.LASF38
+ 1658 0702 06       		.byte	0x6
+ 1659 0703 4A01     		.2byte	0x14a
+ 1660 0705 0F070000 		.4byte	0x70f
+ 1661 0709 1D       		.uleb128 0x1d
+ 1662 070a 97000000 		.4byte	0x97
+ 1663 070e 00       		.byte	0
+ 1664 070f 1C       		.uleb128 0x1c
+ 1665 0710 A3020000 		.4byte	.LASF39
+ 1666 0714 06       		.byte	0x6
+ 1667 0715 5001     		.2byte	0x150
+ 1668 0717 21070000 		.4byte	0x721
+ 1669 071b 1D       		.uleb128 0x1d
+ 1670 071c 97000000 		.4byte	0x97
+ 1671 0720 00       		.byte	0
+ 1672 0721 1C       		.uleb128 0x1c
+ 1673 0722 95010000 		.4byte	.LASF40
+ 1674 0726 06       		.byte	0x6
+ 1675 0727 5501     		.2byte	0x155
+ 1676 0729 33070000 		.4byte	0x733
+ 1677 072d 1D       		.uleb128 0x1d
+ 1678 072e 97000000 		.4byte	0x97
+ 1679 0732 00       		.byte	0
+ 1680 0733 1E       		.uleb128 0x1e
+ 1681 0734 D1020000 		.4byte	.LASF42
+ 1682 0738 06       		.byte	0x6
+ 1683 0739 3201     		.2byte	0x132
+ 1684 073b 1E       		.uleb128 0x1e
+ 1685 073c AC000000 		.4byte	.LASF43
+ 1686 0740 06       		.byte	0x6
+ 1687 0741 3301     		.2byte	0x133
+ 1688 0743 00       		.byte	0
+ 1689              		.section	.debug_abbrev,"",%progbits
+ 1690              	.Ldebug_abbrev0:
+ 1691 0000 01       		.uleb128 0x1
+ 1692 0001 11       		.uleb128 0x11
+ 1693 0002 01       		.byte	0x1
+ 1694 0003 25       		.uleb128 0x25
+ 1695 0004 0E       		.uleb128 0xe
+ 1696 0005 13       		.uleb128 0x13
+ 1697 0006 0B       		.uleb128 0xb
+ 1698 0007 03       		.uleb128 0x3
+ 1699 0008 0E       		.uleb128 0xe
+ 1700 0009 1B       		.uleb128 0x1b
+ 1701 000a 0E       		.uleb128 0xe
+ 1702 000b 55       		.uleb128 0x55
+ 1703 000c 17       		.uleb128 0x17
+ 1704 000d 11       		.uleb128 0x11
+ 1705 000e 01       		.uleb128 0x1
+ 1706 000f 10       		.uleb128 0x10
+ 1707 0010 17       		.uleb128 0x17
+ 1708 0011 00       		.byte	0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 37
+
+
+ 1709 0012 00       		.byte	0
+ 1710 0013 02       		.uleb128 0x2
+ 1711 0014 24       		.uleb128 0x24
+ 1712 0015 00       		.byte	0
+ 1713 0016 0B       		.uleb128 0xb
+ 1714 0017 0B       		.uleb128 0xb
+ 1715 0018 3E       		.uleb128 0x3e
+ 1716 0019 0B       		.uleb128 0xb
+ 1717 001a 03       		.uleb128 0x3
+ 1718 001b 0E       		.uleb128 0xe
+ 1719 001c 00       		.byte	0
+ 1720 001d 00       		.byte	0
+ 1721 001e 03       		.uleb128 0x3
+ 1722 001f 16       		.uleb128 0x16
+ 1723 0020 00       		.byte	0
+ 1724 0021 03       		.uleb128 0x3
+ 1725 0022 0E       		.uleb128 0xe
+ 1726 0023 3A       		.uleb128 0x3a
+ 1727 0024 0B       		.uleb128 0xb
+ 1728 0025 3B       		.uleb128 0x3b
+ 1729 0026 0B       		.uleb128 0xb
+ 1730 0027 49       		.uleb128 0x49
+ 1731 0028 13       		.uleb128 0x13
+ 1732 0029 00       		.byte	0
+ 1733 002a 00       		.byte	0
+ 1734 002b 04       		.uleb128 0x4
+ 1735 002c 24       		.uleb128 0x24
+ 1736 002d 00       		.byte	0
+ 1737 002e 0B       		.uleb128 0xb
+ 1738 002f 0B       		.uleb128 0xb
+ 1739 0030 3E       		.uleb128 0x3e
+ 1740 0031 0B       		.uleb128 0xb
+ 1741 0032 03       		.uleb128 0x3
+ 1742 0033 08       		.uleb128 0x8
+ 1743 0034 00       		.byte	0
+ 1744 0035 00       		.byte	0
+ 1745 0036 05       		.uleb128 0x5
+ 1746 0037 16       		.uleb128 0x16
+ 1747 0038 00       		.byte	0
+ 1748 0039 03       		.uleb128 0x3
+ 1749 003a 0E       		.uleb128 0xe
+ 1750 003b 3A       		.uleb128 0x3a
+ 1751 003c 0B       		.uleb128 0xb
+ 1752 003d 3B       		.uleb128 0x3b
+ 1753 003e 05       		.uleb128 0x5
+ 1754 003f 49       		.uleb128 0x49
+ 1755 0040 13       		.uleb128 0x13
+ 1756 0041 00       		.byte	0
+ 1757 0042 00       		.byte	0
+ 1758 0043 06       		.uleb128 0x6
+ 1759 0044 35       		.uleb128 0x35
+ 1760 0045 00       		.byte	0
+ 1761 0046 49       		.uleb128 0x49
+ 1762 0047 13       		.uleb128 0x13
+ 1763 0048 00       		.byte	0
+ 1764 0049 00       		.byte	0
+ 1765 004a 07       		.uleb128 0x7
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 38
+
+
+ 1766 004b 2E       		.uleb128 0x2e
+ 1767 004c 00       		.byte	0
+ 1768 004d 3F       		.uleb128 0x3f
+ 1769 004e 19       		.uleb128 0x19
+ 1770 004f 03       		.uleb128 0x3
+ 1771 0050 0E       		.uleb128 0xe
+ 1772 0051 3A       		.uleb128 0x3a
+ 1773 0052 0B       		.uleb128 0xb
+ 1774 0053 3B       		.uleb128 0x3b
+ 1775 0054 0B       		.uleb128 0xb
+ 1776 0055 27       		.uleb128 0x27
+ 1777 0056 19       		.uleb128 0x19
+ 1778 0057 20       		.uleb128 0x20
+ 1779 0058 0B       		.uleb128 0xb
+ 1780 0059 00       		.byte	0
+ 1781 005a 00       		.byte	0
+ 1782 005b 08       		.uleb128 0x8
+ 1783 005c 2E       		.uleb128 0x2e
+ 1784 005d 01       		.byte	0x1
+ 1785 005e 3F       		.uleb128 0x3f
+ 1786 005f 19       		.uleb128 0x19
+ 1787 0060 03       		.uleb128 0x3
+ 1788 0061 0E       		.uleb128 0xe
+ 1789 0062 3A       		.uleb128 0x3a
+ 1790 0063 0B       		.uleb128 0xb
+ 1791 0064 3B       		.uleb128 0x3b
+ 1792 0065 05       		.uleb128 0x5
+ 1793 0066 27       		.uleb128 0x27
+ 1794 0067 19       		.uleb128 0x19
+ 1795 0068 20       		.uleb128 0x20
+ 1796 0069 0B       		.uleb128 0xb
+ 1797 006a 01       		.uleb128 0x1
+ 1798 006b 13       		.uleb128 0x13
+ 1799 006c 00       		.byte	0
+ 1800 006d 00       		.byte	0
+ 1801 006e 09       		.uleb128 0x9
+ 1802 006f 05       		.uleb128 0x5
+ 1803 0070 00       		.byte	0
+ 1804 0071 03       		.uleb128 0x3
+ 1805 0072 0E       		.uleb128 0xe
+ 1806 0073 3A       		.uleb128 0x3a
+ 1807 0074 0B       		.uleb128 0xb
+ 1808 0075 3B       		.uleb128 0x3b
+ 1809 0076 05       		.uleb128 0x5
+ 1810 0077 49       		.uleb128 0x49
+ 1811 0078 13       		.uleb128 0x13
+ 1812 0079 00       		.byte	0
+ 1813 007a 00       		.byte	0
+ 1814 007b 0A       		.uleb128 0xa
+ 1815 007c 2E       		.uleb128 0x2e
+ 1816 007d 00       		.byte	0
+ 1817 007e 3F       		.uleb128 0x3f
+ 1818 007f 19       		.uleb128 0x19
+ 1819 0080 03       		.uleb128 0x3
+ 1820 0081 0E       		.uleb128 0xe
+ 1821 0082 3A       		.uleb128 0x3a
+ 1822 0083 0B       		.uleb128 0xb
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 39
+
+
+ 1823 0084 3B       		.uleb128 0x3b
+ 1824 0085 0B       		.uleb128 0xb
+ 1825 0086 27       		.uleb128 0x27
+ 1826 0087 19       		.uleb128 0x19
+ 1827 0088 11       		.uleb128 0x11
+ 1828 0089 01       		.uleb128 0x1
+ 1829 008a 12       		.uleb128 0x12
+ 1830 008b 06       		.uleb128 0x6
+ 1831 008c 40       		.uleb128 0x40
+ 1832 008d 18       		.uleb128 0x18
+ 1833 008e 9742     		.uleb128 0x2117
+ 1834 0090 19       		.uleb128 0x19
+ 1835 0091 00       		.byte	0
+ 1836 0092 00       		.byte	0
+ 1837 0093 0B       		.uleb128 0xb
+ 1838 0094 2E       		.uleb128 0x2e
+ 1839 0095 01       		.byte	0x1
+ 1840 0096 3F       		.uleb128 0x3f
+ 1841 0097 19       		.uleb128 0x19
+ 1842 0098 03       		.uleb128 0x3
+ 1843 0099 0E       		.uleb128 0xe
+ 1844 009a 3A       		.uleb128 0x3a
+ 1845 009b 0B       		.uleb128 0xb
+ 1846 009c 3B       		.uleb128 0x3b
+ 1847 009d 0B       		.uleb128 0xb
+ 1848 009e 27       		.uleb128 0x27
+ 1849 009f 19       		.uleb128 0x19
+ 1850 00a0 11       		.uleb128 0x11
+ 1851 00a1 01       		.uleb128 0x1
+ 1852 00a2 12       		.uleb128 0x12
+ 1853 00a3 06       		.uleb128 0x6
+ 1854 00a4 40       		.uleb128 0x40
+ 1855 00a5 18       		.uleb128 0x18
+ 1856 00a6 9742     		.uleb128 0x2117
+ 1857 00a8 19       		.uleb128 0x19
+ 1858 00a9 01       		.uleb128 0x1
+ 1859 00aa 13       		.uleb128 0x13
+ 1860 00ab 00       		.byte	0
+ 1861 00ac 00       		.byte	0
+ 1862 00ad 0C       		.uleb128 0xc
+ 1863 00ae 05       		.uleb128 0x5
+ 1864 00af 00       		.byte	0
+ 1865 00b0 03       		.uleb128 0x3
+ 1866 00b1 08       		.uleb128 0x8
+ 1867 00b2 3A       		.uleb128 0x3a
+ 1868 00b3 0B       		.uleb128 0xb
+ 1869 00b4 3B       		.uleb128 0x3b
+ 1870 00b5 0B       		.uleb128 0xb
+ 1871 00b6 49       		.uleb128 0x49
+ 1872 00b7 13       		.uleb128 0x13
+ 1873 00b8 02       		.uleb128 0x2
+ 1874 00b9 17       		.uleb128 0x17
+ 1875 00ba 00       		.byte	0
+ 1876 00bb 00       		.byte	0
+ 1877 00bc 0D       		.uleb128 0xd
+ 1878 00bd 0B       		.uleb128 0xb
+ 1879 00be 01       		.byte	0x1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 40
+
+
+ 1880 00bf 11       		.uleb128 0x11
+ 1881 00c0 01       		.uleb128 0x1
+ 1882 00c1 12       		.uleb128 0x12
+ 1883 00c2 06       		.uleb128 0x6
+ 1884 00c3 00       		.byte	0
+ 1885 00c4 00       		.byte	0
+ 1886 00c5 0E       		.uleb128 0xe
+ 1887 00c6 2E       		.uleb128 0x2e
+ 1888 00c7 01       		.byte	0x1
+ 1889 00c8 3F       		.uleb128 0x3f
+ 1890 00c9 19       		.uleb128 0x19
+ 1891 00ca 03       		.uleb128 0x3
+ 1892 00cb 0E       		.uleb128 0xe
+ 1893 00cc 3A       		.uleb128 0x3a
+ 1894 00cd 0B       		.uleb128 0xb
+ 1895 00ce 3B       		.uleb128 0x3b
+ 1896 00cf 0B       		.uleb128 0xb
+ 1897 00d0 49       		.uleb128 0x49
+ 1898 00d1 13       		.uleb128 0x13
+ 1899 00d2 3C       		.uleb128 0x3c
+ 1900 00d3 19       		.uleb128 0x19
+ 1901 00d4 01       		.uleb128 0x1
+ 1902 00d5 13       		.uleb128 0x13
+ 1903 00d6 00       		.byte	0
+ 1904 00d7 00       		.byte	0
+ 1905 00d8 0F       		.uleb128 0xf
+ 1906 00d9 18       		.uleb128 0x18
+ 1907 00da 00       		.byte	0
+ 1908 00db 00       		.byte	0
+ 1909 00dc 00       		.byte	0
+ 1910 00dd 10       		.uleb128 0x10
+ 1911 00de 898201   		.uleb128 0x4109
+ 1912 00e1 00       		.byte	0
+ 1913 00e2 11       		.uleb128 0x11
+ 1914 00e3 01       		.uleb128 0x1
+ 1915 00e4 31       		.uleb128 0x31
+ 1916 00e5 13       		.uleb128 0x13
+ 1917 00e6 00       		.byte	0
+ 1918 00e7 00       		.byte	0
+ 1919 00e8 11       		.uleb128 0x11
+ 1920 00e9 05       		.uleb128 0x5
+ 1921 00ea 00       		.byte	0
+ 1922 00eb 03       		.uleb128 0x3
+ 1923 00ec 0E       		.uleb128 0xe
+ 1924 00ed 3A       		.uleb128 0x3a
+ 1925 00ee 0B       		.uleb128 0xb
+ 1926 00ef 3B       		.uleb128 0x3b
+ 1927 00f0 0B       		.uleb128 0xb
+ 1928 00f1 49       		.uleb128 0x49
+ 1929 00f2 13       		.uleb128 0x13
+ 1930 00f3 02       		.uleb128 0x2
+ 1931 00f4 17       		.uleb128 0x17
+ 1932 00f5 00       		.byte	0
+ 1933 00f6 00       		.byte	0
+ 1934 00f7 12       		.uleb128 0x12
+ 1935 00f8 898201   		.uleb128 0x4109
+ 1936 00fb 01       		.byte	0x1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 41
+
+
+ 1937 00fc 11       		.uleb128 0x11
+ 1938 00fd 01       		.uleb128 0x1
+ 1939 00fe 31       		.uleb128 0x31
+ 1940 00ff 13       		.uleb128 0x13
+ 1941 0100 01       		.uleb128 0x1
+ 1942 0101 13       		.uleb128 0x13
+ 1943 0102 00       		.byte	0
+ 1944 0103 00       		.byte	0
+ 1945 0104 13       		.uleb128 0x13
+ 1946 0105 8A8201   		.uleb128 0x410a
+ 1947 0108 00       		.byte	0
+ 1948 0109 02       		.uleb128 0x2
+ 1949 010a 18       		.uleb128 0x18
+ 1950 010b 9142     		.uleb128 0x2111
+ 1951 010d 18       		.uleb128 0x18
+ 1952 010e 00       		.byte	0
+ 1953 010f 00       		.byte	0
+ 1954 0110 14       		.uleb128 0x14
+ 1955 0111 898201   		.uleb128 0x4109
+ 1956 0114 01       		.byte	0x1
+ 1957 0115 11       		.uleb128 0x11
+ 1958 0116 01       		.uleb128 0x1
+ 1959 0117 31       		.uleb128 0x31
+ 1960 0118 13       		.uleb128 0x13
+ 1961 0119 00       		.byte	0
+ 1962 011a 00       		.byte	0
+ 1963 011b 15       		.uleb128 0x15
+ 1964 011c 2E       		.uleb128 0x2e
+ 1965 011d 00       		.byte	0
+ 1966 011e 31       		.uleb128 0x31
+ 1967 011f 13       		.uleb128 0x13
+ 1968 0120 11       		.uleb128 0x11
+ 1969 0121 01       		.uleb128 0x1
+ 1970 0122 12       		.uleb128 0x12
+ 1971 0123 06       		.uleb128 0x6
+ 1972 0124 40       		.uleb128 0x40
+ 1973 0125 18       		.uleb128 0x18
+ 1974 0126 9742     		.uleb128 0x2117
+ 1975 0128 19       		.uleb128 0x19
+ 1976 0129 00       		.byte	0
+ 1977 012a 00       		.byte	0
+ 1978 012b 16       		.uleb128 0x16
+ 1979 012c 2E       		.uleb128 0x2e
+ 1980 012d 01       		.byte	0x1
+ 1981 012e 31       		.uleb128 0x31
+ 1982 012f 13       		.uleb128 0x13
+ 1983 0130 11       		.uleb128 0x11
+ 1984 0131 01       		.uleb128 0x1
+ 1985 0132 12       		.uleb128 0x12
+ 1986 0133 06       		.uleb128 0x6
+ 1987 0134 40       		.uleb128 0x40
+ 1988 0135 18       		.uleb128 0x18
+ 1989 0136 9742     		.uleb128 0x2117
+ 1990 0138 19       		.uleb128 0x19
+ 1991 0139 01       		.uleb128 0x1
+ 1992 013a 13       		.uleb128 0x13
+ 1993 013b 00       		.byte	0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 42
+
+
+ 1994 013c 00       		.byte	0
+ 1995 013d 17       		.uleb128 0x17
+ 1996 013e 05       		.uleb128 0x5
+ 1997 013f 00       		.byte	0
+ 1998 0140 31       		.uleb128 0x31
+ 1999 0141 13       		.uleb128 0x13
+ 2000 0142 02       		.uleb128 0x2
+ 2001 0143 17       		.uleb128 0x17
+ 2002 0144 00       		.byte	0
+ 2003 0145 00       		.byte	0
+ 2004 0146 18       		.uleb128 0x18
+ 2005 0147 0B       		.uleb128 0xb
+ 2006 0148 01       		.byte	0x1
+ 2007 0149 11       		.uleb128 0x11
+ 2008 014a 01       		.uleb128 0x1
+ 2009 014b 12       		.uleb128 0x12
+ 2010 014c 06       		.uleb128 0x6
+ 2011 014d 01       		.uleb128 0x1
+ 2012 014e 13       		.uleb128 0x13
+ 2013 014f 00       		.byte	0
+ 2014 0150 00       		.byte	0
+ 2015 0151 19       		.uleb128 0x19
+ 2016 0152 2E       		.uleb128 0x2e
+ 2017 0153 01       		.byte	0x1
+ 2018 0154 3F       		.uleb128 0x3f
+ 2019 0155 19       		.uleb128 0x19
+ 2020 0156 03       		.uleb128 0x3
+ 2021 0157 0E       		.uleb128 0xe
+ 2022 0158 3A       		.uleb128 0x3a
+ 2023 0159 0B       		.uleb128 0xb
+ 2024 015a 3B       		.uleb128 0x3b
+ 2025 015b 05       		.uleb128 0x5
+ 2026 015c 27       		.uleb128 0x27
+ 2027 015d 19       		.uleb128 0x19
+ 2028 015e 11       		.uleb128 0x11
+ 2029 015f 01       		.uleb128 0x1
+ 2030 0160 12       		.uleb128 0x12
+ 2031 0161 06       		.uleb128 0x6
+ 2032 0162 40       		.uleb128 0x40
+ 2033 0163 18       		.uleb128 0x18
+ 2034 0164 9742     		.uleb128 0x2117
+ 2035 0166 19       		.uleb128 0x19
+ 2036 0167 01       		.uleb128 0x1
+ 2037 0168 13       		.uleb128 0x13
+ 2038 0169 00       		.byte	0
+ 2039 016a 00       		.byte	0
+ 2040 016b 1A       		.uleb128 0x1a
+ 2041 016c 05       		.uleb128 0x5
+ 2042 016d 00       		.byte	0
+ 2043 016e 03       		.uleb128 0x3
+ 2044 016f 0E       		.uleb128 0xe
+ 2045 0170 3A       		.uleb128 0x3a
+ 2046 0171 0B       		.uleb128 0xb
+ 2047 0172 3B       		.uleb128 0x3b
+ 2048 0173 05       		.uleb128 0x5
+ 2049 0174 49       		.uleb128 0x49
+ 2050 0175 13       		.uleb128 0x13
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 43
+
+
+ 2051 0176 02       		.uleb128 0x2
+ 2052 0177 17       		.uleb128 0x17
+ 2053 0178 00       		.byte	0
+ 2054 0179 00       		.byte	0
+ 2055 017a 1B       		.uleb128 0x1b
+ 2056 017b 34       		.uleb128 0x34
+ 2057 017c 00       		.byte	0
+ 2058 017d 03       		.uleb128 0x3
+ 2059 017e 0E       		.uleb128 0xe
+ 2060 017f 3A       		.uleb128 0x3a
+ 2061 0180 0B       		.uleb128 0xb
+ 2062 0181 3B       		.uleb128 0x3b
+ 2063 0182 0B       		.uleb128 0xb
+ 2064 0183 49       		.uleb128 0x49
+ 2065 0184 13       		.uleb128 0x13
+ 2066 0185 3F       		.uleb128 0x3f
+ 2067 0186 19       		.uleb128 0x19
+ 2068 0187 02       		.uleb128 0x2
+ 2069 0188 18       		.uleb128 0x18
+ 2070 0189 00       		.byte	0
+ 2071 018a 00       		.byte	0
+ 2072 018b 1C       		.uleb128 0x1c
+ 2073 018c 2E       		.uleb128 0x2e
+ 2074 018d 01       		.byte	0x1
+ 2075 018e 3F       		.uleb128 0x3f
+ 2076 018f 19       		.uleb128 0x19
+ 2077 0190 03       		.uleb128 0x3
+ 2078 0191 0E       		.uleb128 0xe
+ 2079 0192 3A       		.uleb128 0x3a
+ 2080 0193 0B       		.uleb128 0xb
+ 2081 0194 3B       		.uleb128 0x3b
+ 2082 0195 05       		.uleb128 0x5
+ 2083 0196 27       		.uleb128 0x27
+ 2084 0197 19       		.uleb128 0x19
+ 2085 0198 3C       		.uleb128 0x3c
+ 2086 0199 19       		.uleb128 0x19
+ 2087 019a 01       		.uleb128 0x1
+ 2088 019b 13       		.uleb128 0x13
+ 2089 019c 00       		.byte	0
+ 2090 019d 00       		.byte	0
+ 2091 019e 1D       		.uleb128 0x1d
+ 2092 019f 05       		.uleb128 0x5
+ 2093 01a0 00       		.byte	0
+ 2094 01a1 49       		.uleb128 0x49
+ 2095 01a2 13       		.uleb128 0x13
+ 2096 01a3 00       		.byte	0
+ 2097 01a4 00       		.byte	0
+ 2098 01a5 1E       		.uleb128 0x1e
+ 2099 01a6 2E       		.uleb128 0x2e
+ 2100 01a7 00       		.byte	0
+ 2101 01a8 3F       		.uleb128 0x3f
+ 2102 01a9 19       		.uleb128 0x19
+ 2103 01aa 03       		.uleb128 0x3
+ 2104 01ab 0E       		.uleb128 0xe
+ 2105 01ac 3A       		.uleb128 0x3a
+ 2106 01ad 0B       		.uleb128 0xb
+ 2107 01ae 3B       		.uleb128 0x3b
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 44
+
+
+ 2108 01af 05       		.uleb128 0x5
+ 2109 01b0 27       		.uleb128 0x27
+ 2110 01b1 19       		.uleb128 0x19
+ 2111 01b2 3C       		.uleb128 0x3c
+ 2112 01b3 19       		.uleb128 0x19
+ 2113 01b4 00       		.byte	0
+ 2114 01b5 00       		.byte	0
+ 2115 01b6 00       		.byte	0
+ 2116              		.section	.debug_loc,"",%progbits
+ 2117              	.Ldebug_loc0:
+ 2118              	.LLST0:
+ 2119 0000 00000000 		.4byte	.LVL0
+ 2120 0004 08000000 		.4byte	.LVL1
+ 2121 0008 0100     		.2byte	0x1
+ 2122 000a 50       		.byte	0x50
+ 2123 000b 08000000 		.4byte	.LVL1
+ 2124 000f 1C000000 		.4byte	.LFE64
+ 2125 0013 0400     		.2byte	0x4
+ 2126 0015 F3       		.byte	0xf3
+ 2127 0016 01       		.uleb128 0x1
+ 2128 0017 50       		.byte	0x50
+ 2129 0018 9F       		.byte	0x9f
+ 2130 0019 00000000 		.4byte	0
+ 2131 001d 00000000 		.4byte	0
+ 2132              	.LLST1:
+ 2133 0021 00000000 		.4byte	.LVL3
+ 2134 0025 08000000 		.4byte	.LVL4
+ 2135 0029 0100     		.2byte	0x1
+ 2136 002b 50       		.byte	0x50
+ 2137 002c 08000000 		.4byte	.LVL4
+ 2138 0030 4A000000 		.4byte	.LFE65
+ 2139 0034 0400     		.2byte	0x4
+ 2140 0036 F3       		.byte	0xf3
+ 2141 0037 01       		.uleb128 0x1
+ 2142 0038 50       		.byte	0x50
+ 2143 0039 9F       		.byte	0x9f
+ 2144 003a 00000000 		.4byte	0
+ 2145 003e 00000000 		.4byte	0
+ 2146              	.LLST2:
+ 2147 0042 00000000 		.4byte	.LVL3
+ 2148 0046 0B000000 		.4byte	.LVL5-1
+ 2149 004a 0100     		.2byte	0x1
+ 2150 004c 51       		.byte	0x51
+ 2151 004d 0B000000 		.4byte	.LVL5-1
+ 2152 0051 4A000000 		.4byte	.LFE65
+ 2153 0055 0400     		.2byte	0x4
+ 2154 0057 F3       		.byte	0xf3
+ 2155 0058 01       		.uleb128 0x1
+ 2156 0059 51       		.byte	0x51
+ 2157 005a 9F       		.byte	0x9f
+ 2158 005b 00000000 		.4byte	0
+ 2159 005f 00000000 		.4byte	0
+ 2160              	.LLST3:
+ 2161 0063 00000000 		.4byte	.LVL51
+ 2162 0067 09000000 		.4byte	.LVL52-1
+ 2163 006b 0100     		.2byte	0x1
+ 2164 006d 50       		.byte	0x50
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 45
+
+
+ 2165 006e 09000000 		.4byte	.LVL52-1
+ 2166 0072 0C000000 		.4byte	.LVL53
+ 2167 0076 0400     		.2byte	0x4
+ 2168 0078 F3       		.byte	0xf3
+ 2169 0079 01       		.uleb128 0x1
+ 2170 007a 50       		.byte	0x50
+ 2171 007b 9F       		.byte	0x9f
+ 2172 007c 0C000000 		.4byte	.LVL53
+ 2173 0080 13000000 		.4byte	.LVL54-1
+ 2174 0084 0100     		.2byte	0x1
+ 2175 0086 50       		.byte	0x50
+ 2176 0087 13000000 		.4byte	.LVL54-1
+ 2177 008b 16000000 		.4byte	.LVL55
+ 2178 008f 0400     		.2byte	0x4
+ 2179 0091 F3       		.byte	0xf3
+ 2180 0092 01       		.uleb128 0x1
+ 2181 0093 50       		.byte	0x50
+ 2182 0094 9F       		.byte	0x9f
+ 2183 0095 16000000 		.4byte	.LVL55
+ 2184 0099 1D000000 		.4byte	.LVL56-1
+ 2185 009d 0100     		.2byte	0x1
+ 2186 009f 50       		.byte	0x50
+ 2187 00a0 1D000000 		.4byte	.LVL56-1
+ 2188 00a4 20000000 		.4byte	.LVL57
+ 2189 00a8 0400     		.2byte	0x4
+ 2190 00aa F3       		.byte	0xf3
+ 2191 00ab 01       		.uleb128 0x1
+ 2192 00ac 50       		.byte	0x50
+ 2193 00ad 9F       		.byte	0x9f
+ 2194 00ae 20000000 		.4byte	.LVL57
+ 2195 00b2 2B000000 		.4byte	.LVL58-1
+ 2196 00b6 0100     		.2byte	0x1
+ 2197 00b8 50       		.byte	0x50
+ 2198 00b9 2B000000 		.4byte	.LVL58-1
+ 2199 00bd 2E000000 		.4byte	.LVL59
+ 2200 00c1 0400     		.2byte	0x4
+ 2201 00c3 F3       		.byte	0xf3
+ 2202 00c4 01       		.uleb128 0x1
+ 2203 00c5 50       		.byte	0x50
+ 2204 00c6 9F       		.byte	0x9f
+ 2205 00c7 2E000000 		.4byte	.LVL59
+ 2206 00cb 47000000 		.4byte	.LVL60-1
+ 2207 00cf 0100     		.2byte	0x1
+ 2208 00d1 50       		.byte	0x50
+ 2209 00d2 47000000 		.4byte	.LVL60-1
+ 2210 00d6 4A000000 		.4byte	.LVL61
+ 2211 00da 0400     		.2byte	0x4
+ 2212 00dc F3       		.byte	0xf3
+ 2213 00dd 01       		.uleb128 0x1
+ 2214 00de 50       		.byte	0x50
+ 2215 00df 9F       		.byte	0x9f
+ 2216 00e0 4A000000 		.4byte	.LVL61
+ 2217 00e4 51000000 		.4byte	.LVL62-1
+ 2218 00e8 0100     		.2byte	0x1
+ 2219 00ea 50       		.byte	0x50
+ 2220 00eb 51000000 		.4byte	.LVL62-1
+ 2221 00ef 54000000 		.4byte	.LVL63
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 46
+
+
+ 2222 00f3 0400     		.2byte	0x4
+ 2223 00f5 F3       		.byte	0xf3
+ 2224 00f6 01       		.uleb128 0x1
+ 2225 00f7 50       		.byte	0x50
+ 2226 00f8 9F       		.byte	0x9f
+ 2227 00f9 54000000 		.4byte	.LVL63
+ 2228 00fd 5B000000 		.4byte	.LVL64-1
+ 2229 0101 0100     		.2byte	0x1
+ 2230 0103 50       		.byte	0x50
+ 2231 0104 5B000000 		.4byte	.LVL64-1
+ 2232 0108 5E000000 		.4byte	.LVL65
+ 2233 010c 0400     		.2byte	0x4
+ 2234 010e F3       		.byte	0xf3
+ 2235 010f 01       		.uleb128 0x1
+ 2236 0110 50       		.byte	0x50
+ 2237 0111 9F       		.byte	0x9f
+ 2238 0112 5E000000 		.4byte	.LVL65
+ 2239 0116 65000000 		.4byte	.LVL66-1
+ 2240 011a 0100     		.2byte	0x1
+ 2241 011c 50       		.byte	0x50
+ 2242 011d 65000000 		.4byte	.LVL66-1
+ 2243 0121 68000000 		.4byte	.LVL67
+ 2244 0125 0400     		.2byte	0x4
+ 2245 0127 F3       		.byte	0xf3
+ 2246 0128 01       		.uleb128 0x1
+ 2247 0129 50       		.byte	0x50
+ 2248 012a 9F       		.byte	0x9f
+ 2249 012b 68000000 		.4byte	.LVL67
+ 2250 012f 6F000000 		.4byte	.LVL68-1
+ 2251 0133 0100     		.2byte	0x1
+ 2252 0135 50       		.byte	0x50
+ 2253 0136 6F000000 		.4byte	.LVL68-1
+ 2254 013a 72000000 		.4byte	.LFE76
+ 2255 013e 0400     		.2byte	0x4
+ 2256 0140 F3       		.byte	0xf3
+ 2257 0141 01       		.uleb128 0x1
+ 2258 0142 50       		.byte	0x50
+ 2259 0143 9F       		.byte	0x9f
+ 2260 0144 00000000 		.4byte	0
+ 2261 0148 00000000 		.4byte	0
+ 2262              	.LLST4:
+ 2263 014c 5E000000 		.4byte	.LVL65
+ 2264 0150 65000000 		.4byte	.LVL66-1
+ 2265 0154 0100     		.2byte	0x1
+ 2266 0156 50       		.byte	0x50
+ 2267 0157 65000000 		.4byte	.LVL66-1
+ 2268 015b 68000000 		.4byte	.LVL67
+ 2269 015f 0400     		.2byte	0x4
+ 2270 0161 F3       		.byte	0xf3
+ 2271 0162 01       		.uleb128 0x1
+ 2272 0163 50       		.byte	0x50
+ 2273 0164 9F       		.byte	0x9f
+ 2274 0165 68000000 		.4byte	.LVL67
+ 2275 0169 6F000000 		.4byte	.LVL68-1
+ 2276 016d 0100     		.2byte	0x1
+ 2277 016f 50       		.byte	0x50
+ 2278 0170 6F000000 		.4byte	.LVL68-1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 47
+
+
+ 2279 0174 70000000 		.4byte	.LVL68
+ 2280 0178 0400     		.2byte	0x4
+ 2281 017a F3       		.byte	0xf3
+ 2282 017b 01       		.uleb128 0x1
+ 2283 017c 50       		.byte	0x50
+ 2284 017d 9F       		.byte	0x9f
+ 2285 017e 00000000 		.4byte	0
+ 2286 0182 00000000 		.4byte	0
+ 2287              	.LLST5:
+ 2288 0186 00000000 		.4byte	.LVL69
+ 2289 018a 05000000 		.4byte	.LVL70-1
+ 2290 018e 0100     		.2byte	0x1
+ 2291 0190 50       		.byte	0x50
+ 2292 0191 05000000 		.4byte	.LVL70-1
+ 2293 0195 08000000 		.4byte	.LFE77
+ 2294 0199 0400     		.2byte	0x4
+ 2295 019b F3       		.byte	0xf3
+ 2296 019c 01       		.uleb128 0x1
+ 2297 019d 50       		.byte	0x50
+ 2298 019e 9F       		.byte	0x9f
+ 2299 019f 00000000 		.4byte	0
+ 2300 01a3 00000000 		.4byte	0
+ 2301              		.section	.debug_aranges,"",%progbits
+ 2302 0000 8C000000 		.4byte	0x8c
+ 2303 0004 0200     		.2byte	0x2
+ 2304 0006 00000000 		.4byte	.Ldebug_info0
+ 2305 000a 04       		.byte	0x4
+ 2306 000b 00       		.byte	0
+ 2307 000c 0000     		.2byte	0
+ 2308 000e 0000     		.2byte	0
+ 2309 0010 00000000 		.4byte	.LFB63
+ 2310 0014 14000000 		.4byte	.LFE63-.LFB63
+ 2311 0018 00000000 		.4byte	.LFB64
+ 2312 001c 1C000000 		.4byte	.LFE64-.LFB64
+ 2313 0020 00000000 		.4byte	.LFB65
+ 2314 0024 4A000000 		.4byte	.LFE65-.LFB65
+ 2315 0028 00000000 		.4byte	.LFB66
+ 2316 002c 0E000000 		.4byte	.LFE66-.LFB66
+ 2317 0030 00000000 		.4byte	.LFB67
+ 2318 0034 10000000 		.4byte	.LFE67-.LFB67
+ 2319 0038 00000000 		.4byte	.LFB68
+ 2320 003c 64000000 		.4byte	.LFE68-.LFB68
+ 2321 0040 00000000 		.4byte	.LFB69
+ 2322 0044 34000000 		.4byte	.LFE69-.LFB69
+ 2323 0048 00000000 		.4byte	.LFB70
+ 2324 004c 10000000 		.4byte	.LFE70-.LFB70
+ 2325 0050 00000000 		.4byte	.LFB71
+ 2326 0054 3A000000 		.4byte	.LFE71-.LFB71
+ 2327 0058 00000000 		.4byte	.LFB72
+ 2328 005c 02000000 		.4byte	.LFE72-.LFB72
+ 2329 0060 00000000 		.4byte	.LFB73
+ 2330 0064 1E000000 		.4byte	.LFE73-.LFB73
+ 2331 0068 00000000 		.4byte	.LFB74
+ 2332 006c 0E000000 		.4byte	.LFE74-.LFB74
+ 2333 0070 00000000 		.4byte	.LFB75
+ 2334 0074 1E000000 		.4byte	.LFE75-.LFB75
+ 2335 0078 00000000 		.4byte	.LFB76
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 48
+
+
+ 2336 007c 72000000 		.4byte	.LFE76-.LFB76
+ 2337 0080 00000000 		.4byte	.LFB77
+ 2338 0084 08000000 		.4byte	.LFE77-.LFB77
+ 2339 0088 00000000 		.4byte	0
+ 2340 008c 00000000 		.4byte	0
+ 2341              		.section	.debug_ranges,"",%progbits
+ 2342              	.Ldebug_ranges0:
+ 2343 0000 00000000 		.4byte	.LFB63
+ 2344 0004 14000000 		.4byte	.LFE63
+ 2345 0008 00000000 		.4byte	.LFB64
+ 2346 000c 1C000000 		.4byte	.LFE64
+ 2347 0010 00000000 		.4byte	.LFB65
+ 2348 0014 4A000000 		.4byte	.LFE65
+ 2349 0018 00000000 		.4byte	.LFB66
+ 2350 001c 0E000000 		.4byte	.LFE66
+ 2351 0020 00000000 		.4byte	.LFB67
+ 2352 0024 10000000 		.4byte	.LFE67
+ 2353 0028 00000000 		.4byte	.LFB68
+ 2354 002c 64000000 		.4byte	.LFE68
+ 2355 0030 00000000 		.4byte	.LFB69
+ 2356 0034 34000000 		.4byte	.LFE69
+ 2357 0038 00000000 		.4byte	.LFB70
+ 2358 003c 10000000 		.4byte	.LFE70
+ 2359 0040 00000000 		.4byte	.LFB71
+ 2360 0044 3A000000 		.4byte	.LFE71
+ 2361 0048 00000000 		.4byte	.LFB72
+ 2362 004c 02000000 		.4byte	.LFE72
+ 2363 0050 00000000 		.4byte	.LFB73
+ 2364 0054 1E000000 		.4byte	.LFE73
+ 2365 0058 00000000 		.4byte	.LFB74
+ 2366 005c 0E000000 		.4byte	.LFE74
+ 2367 0060 00000000 		.4byte	.LFB75
+ 2368 0064 1E000000 		.4byte	.LFE75
+ 2369 0068 00000000 		.4byte	.LFB76
+ 2370 006c 72000000 		.4byte	.LFE76
+ 2371 0070 00000000 		.4byte	.LFB77
+ 2372 0074 08000000 		.4byte	.LFE77
+ 2373 0078 00000000 		.4byte	0
+ 2374 007c 00000000 		.4byte	0
+ 2375              		.section	.debug_line,"",%progbits
+ 2376              	.Ldebug_line0:
+ 2377 0000 D0020000 		.section	.debug_str,"MS",%progbits,1
+ 2377      02007201 
+ 2377      00000201 
+ 2377      FB0E0D00 
+ 2377      01010101 
+ 2378              	.LASF8:
+ 2379 0000 6C6F6E67 		.ascii	"long long int\000"
+ 2379      206C6F6E 
+ 2379      6720696E 
+ 2379      7400
+ 2380              	.LASF3:
+ 2381 000e 5F5F7569 		.ascii	"__uint8_t\000"
+ 2381      6E74385F 
+ 2381      7400
+ 2382              	.LASF44:
+ 2383 0018 474E5520 		.ascii	"GNU C 4.9.3 20150303 (release) [ARM/embedded-4_9-br"
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 49
+
+
+ 2383      4320342E 
+ 2383      392E3320 
+ 2383      32303135 
+ 2383      30333033 
+ 2384 004b 616E6368 		.ascii	"anch revision 221220] -mcpu=cortex-m0 -mthumb -g -O"
+ 2384      20726576 
+ 2384      6973696F 
+ 2384      6E203232 
+ 2384      31323230 
+ 2385 007e 73202D66 		.ascii	"s -ffunction-sections -ffat-lto-objects\000"
+ 2385      66756E63 
+ 2385      74696F6E 
+ 2385      2D736563 
+ 2385      74696F6E 
+ 2386              	.LASF25:
+ 2387 00a6 536F756E 		.ascii	"Sound\000"
+ 2387      6400
+ 2388              	.LASF43:
+ 2389 00ac 54494D45 		.ascii	"TIMER_Stop\000"
+ 2389      525F5374 
+ 2389      6F7000
+ 2390              	.LASF34:
+ 2391 00b7 53797374 		.ascii	"System_PutCard_play\000"
+ 2391      656D5F50 
+ 2391      75744361 
+ 2391      72645F70 
+ 2391      6C617900 
+ 2392              	.LASF28:
+ 2393 00cb 53797374 		.ascii	"System_LongDI_Play\000"
+ 2393      656D5F4C 
+ 2393      6F6E6744 
+ 2393      495F506C 
+ 2393      617900
+ 2394              	.LASF31:
+ 2395 00de 436F6D6D 		.ascii	"Comm_Succes_play\000"
+ 2395      5F537563 
+ 2395      6365735F 
+ 2395      706C6179 
+ 2395      00
+ 2396              	.LASF14:
+ 2397 00ef 666C6F61 		.ascii	"float\000"
+ 2397      7400
+ 2398              	.LASF0:
+ 2399 00f5 7369676E 		.ascii	"signed char\000"
+ 2399      65642063 
+ 2399      68617200 
+ 2400              	.LASF20:
+ 2401 0101 76494E54 		.ascii	"vINT32U\000"
+ 2401      33325500 
+ 2402              	.LASF1:
+ 2403 0109 756E7369 		.ascii	"unsigned char\000"
+ 2403      676E6564 
+ 2403      20636861 
+ 2403      7200
+ 2404              	.LASF21:
+ 2405 0117 42656570 		.ascii	"Beep_Play\000"
+ 2405      5F506C61 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 50
+
+
+ 2405      7900
+ 2406              	.LASF30:
+ 2407 0121 53797374 		.ascii	"System_PowerOn_Play_TestSer\000"
+ 2407      656D5F50 
+ 2407      6F776572 
+ 2407      4F6E5F50 
+ 2407      6C61795F 
+ 2408              	.LASF7:
+ 2409 013d 6C6F6E67 		.ascii	"long unsigned int\000"
+ 2409      20756E73 
+ 2409      69676E65 
+ 2409      6420696E 
+ 2409      7400
+ 2410              	.LASF37:
+ 2411 014f 61646472 		.ascii	"addr\000"
+ 2411      00
+ 2412              	.LASF48:
+ 2413 0154 42656570 		.ascii	"BeepPlay_WaitTime\000"
+ 2413      506C6179 
+ 2413      5F576169 
+ 2413      7454696D 
+ 2413      6500
+ 2414              	.LASF4:
+ 2415 0166 5F5F7569 		.ascii	"__uint16_t\000"
+ 2415      6E743136 
+ 2415      5F7400
+ 2416              	.LASF15:
+ 2417 0171 646F7562 		.ascii	"double\000"
+ 2417      6C6500
+ 2418              	.LASF33:
+ 2419 0178 4F70656E 		.ascii	"OpenDoor\000"
+ 2419      446F6F72 
+ 2419      00
+ 2420              	.LASF27:
+ 2421 0181 53797374 		.ascii	"System_ShortDI_Play\000"
+ 2421      656D5F53 
+ 2421      686F7274 
+ 2421      44495F50 
+ 2421      6C617900 
+ 2422              	.LASF40:
+ 2423 0195 54494D45 		.ascii	"TIMER_WriteCompare\000"
+ 2423      525F5772 
+ 2423      69746543 
+ 2423      6F6D7061 
+ 2423      726500
+ 2424              	.LASF13:
+ 2425 01a8 75696E74 		.ascii	"uint32\000"
+ 2425      333200
+ 2426              	.LASF10:
+ 2427 01af 756E7369 		.ascii	"unsigned int\000"
+ 2427      676E6564 
+ 2427      20696E74 
+ 2427      00
+ 2428              	.LASF32:
+ 2429 01bc 54696D65 		.ascii	"Timeout_play\000"
+ 2429      6F75745F 
+ 2429      706C6179 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 51
+
+
+ 2429      00
+ 2430              	.LASF18:
+ 2431 01c9 494E5438 		.ascii	"INT8U\000"
+ 2431      5500
+ 2432              	.LASF9:
+ 2433 01cf 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 2433      206C6F6E 
+ 2433      6720756E 
+ 2433      7369676E 
+ 2433      65642069 
+ 2434              	.LASF11:
+ 2435 01e6 75696E74 		.ascii	"uint8_t\000"
+ 2435      385F7400 
+ 2436              	.LASF45:
+ 2437 01ee 436F6465 		.ascii	"Code\\UserApp\\Voice\\voice.c\000"
+ 2437      5C557365 
+ 2437      72417070 
+ 2437      5C566F69 
+ 2437      63655C76 
+ 2438              	.LASF41:
+ 2439 0209 436F6D6D 		.ascii	"Comm_Failure_play\000"
+ 2439      5F466169 
+ 2439      6C757265 
+ 2439      5F706C61 
+ 2439      7900
+ 2440              	.LASF26:
+ 2441 021b 64656C61 		.ascii	"delay_1ms\000"
+ 2441      795F316D 
+ 2441      7300
+ 2442              	.LASF24:
+ 2443 0225 706C6179 		.ascii	"play_single\000"
+ 2443      5F73696E 
+ 2443      676C6500 
+ 2444              	.LASF49:
+ 2445 0231 42656570 		.ascii	"BeepDelay_TimeOut\000"
+ 2445      44656C61 
+ 2445      795F5469 
+ 2445      6D654F75 
+ 2445      7400
+ 2446              	.LASF17:
+ 2447 0243 73697A65 		.ascii	"sizetype\000"
+ 2447      74797065 
+ 2447      00
+ 2448              	.LASF16:
+ 2449 024c 63686172 		.ascii	"char\000"
+ 2449      00
+ 2450              	.LASF23:
+ 2451 0251 42656570 		.ascii	"BeepPlay_Delay\000"
+ 2451      506C6179 
+ 2451      5F44656C 
+ 2451      617900
+ 2452              	.LASF29:
+ 2453 0260 53797374 		.ascii	"System_PowerOn_Play\000"
+ 2453      656D5F50 
+ 2453      6F776572 
+ 2453      4F6E5F50 
+ 2453      6C617900 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 52
+
+
+ 2454              	.LASF2:
+ 2455 0274 73686F72 		.ascii	"short int\000"
+ 2455      7420696E 
+ 2455      7400
+ 2456              	.LASF35:
+ 2457 027e 53797374 		.ascii	"System_ReadCard_play\000"
+ 2457      656D5F52 
+ 2457      65616443 
+ 2457      6172645F 
+ 2457      706C6179 
+ 2458              	.LASF19:
+ 2459 0293 494E5433 		.ascii	"INT32U\000"
+ 2459      325500
+ 2460              	.LASF12:
+ 2461 029a 75696E74 		.ascii	"uint16_t\000"
+ 2461      31365F74 
+ 2461      00
+ 2462              	.LASF39:
+ 2463 02a3 54494D45 		.ascii	"TIMER_WritePeriod\000"
+ 2463      525F5772 
+ 2463      69746550 
+ 2463      6572696F 
+ 2463      6400
+ 2464              	.LASF6:
+ 2465 02b5 6C6F6E67 		.ascii	"long int\000"
+ 2465      20696E74 
+ 2465      00
+ 2466              	.LASF38:
+ 2467 02be 54494D45 		.ascii	"TIMER_WriteCounter\000"
+ 2467      525F5772 
+ 2467      69746543 
+ 2467      6F756E74 
+ 2467      657200
+ 2468              	.LASF42:
+ 2469 02d1 54494D45 		.ascii	"TIMER_Start\000"
+ 2469      525F5374 
+ 2469      61727400 
+ 2470              	.LASF36:
+ 2471 02dd 566F6963 		.ascii	"VoicePlay\000"
+ 2471      65506C61 
+ 2471      7900
+ 2472              	.LASF5:
+ 2473 02e7 73686F72 		.ascii	"short unsigned int\000"
+ 2473      7420756E 
+ 2473      7369676E 
+ 2473      65642069 
+ 2473      6E7400
+ 2474              	.LASF22:
+ 2475 02fa 4379426C 		.ascii	"CyBle_ProcessEvents\000"
+ 2475      655F5072 
+ 2475      6F636573 
+ 2475      73457665 
+ 2475      6E747300 
+ 2476              	.LASF46:
+ 2477 030e 473A5C50 		.ascii	"G:\\Psoc4_prj\\7.rental_house\\18-04-11\\second_ima"
+ 2477      736F6334 
+ 2477      5F70726A 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc04BT5m.s 			page 53
+
+
+ 2477      5C372E72 
+ 2477      656E7461 
+ 2478 033d 6765735B 		.ascii	"ges[4-9]\\EntranceGuard_171019-12.50\\EntranceGuard"
+ 2478      342D395D 
+ 2478      5C456E74 
+ 2478      72616E63 
+ 2478      65477561 
+ 2479 036e 2E637964 		.ascii	".cydsn\000"
+ 2479      736E00
+ 2480              	.LASF47:
+ 2481 0375 736F756E 		.ascii	"sound_define\000"
+ 2481      645F6465 
+ 2481      66696E65 
+ 2481      00
+ 2482              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.9.3 20150303 (release) [ARM/embedded-4_9-br

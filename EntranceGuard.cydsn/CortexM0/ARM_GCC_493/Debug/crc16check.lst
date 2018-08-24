@@ -1,0 +1,768 @@
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccDHo6T2.s 			page 1
+
+
+   1              		.cpu cortex-m0
+   2              		.fpu softvfp
+   3              		.eabi_attribute 20, 1
+   4              		.eabi_attribute 21, 1
+   5              		.eabi_attribute 23, 3
+   6              		.eabi_attribute 24, 1
+   7              		.eabi_attribute 25, 1
+   8              		.eabi_attribute 26, 1
+   9              		.eabi_attribute 30, 4
+  10              		.eabi_attribute 34, 0
+  11              		.eabi_attribute 18, 4
+  12              		.code	16
+  13              		.file	"crc16check.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.MyCrc16Check,"ax",%progbits
+  18              		.align	1
+  19              		.global	MyCrc16Check
+  20              		.code	16
+  21              		.thumb_func
+  22              		.type	MyCrc16Check, %function
+  23              	MyCrc16Check:
+  24              	.LFB63:
+  25              		.file 1 "Code\\Common\\crc16check.c"
+   1:Code\Common/crc16check.c **** //-----------------------------------------------------------------------------
+   2:Code\Common/crc16check.c **** //	file name:		crc16check.h
+   3:Code\Common/crc16check.c **** //	function:		Header file of crc16check.c
+   4:Code\Common/crc16check.c **** //	author:			
+   5:Code\Common/crc16check.c **** //	date:			
+   6:Code\Common/crc16check.c **** //					Copyright(c) ZhiAnTech Coporation,2017
+   7:Code\Common/crc16check.c **** //-----------------------------------------------------------------------------
+   8:Code\Common/crc16check.c **** #include "crc16check.h"
+   9:Code\Common/crc16check.c **** 
+  10:Code\Common/crc16check.c **** 
+  11:Code\Common/crc16check.c **** 
+  12:Code\Common/crc16check.c **** //=================================================================================
+  13:Code\Common/crc16check.c **** //function:		生产CRC校验
+  14:Code\Common/crc16check.c **** //parameters:    	uint8  MyChar 校验数据
+  15:Code\Common/crc16check.c **** //                    int Mylen 数据长度
+  16:Code\Common/crc16check.c **** //return value:  	CRC校验
+  17:Code\Common/crc16check.c **** //=================================================================================
+  18:Code\Common/crc16check.c **** const unsigned int A_VALUE = 0xFFFF;
+  19:Code\Common/crc16check.c **** const unsigned int DIV_VALUE = 0x4821;
+  20:Code\Common/crc16check.c **** uint32 MyCrc16Check(uint8 *MyChar, uint32 Mylen) 
+  21:Code\Common/crc16check.c **** {
+  26              		.loc 1 21 0
+  27              		.cfi_startproc
+  28              	.LVL0:
+  29 0000 10B5     		push	{r4, lr}
+  30              		.cfi_def_cfa_offset 8
+  31              		.cfi_offset 4, -8
+  32              		.cfi_offset 14, -4
+  33 0002 031C     		mov	r3, r0
+  34 0004 4118     		add	r1, r0, r1
+  35              	.LVL1:
+  22:Code\Common/crc16check.c ****     uint32 I, J;
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccDHo6T2.s 			page 2
+
+
+  23:Code\Common/crc16check.c ****     uint32 Crc_Value = A_VALUE;
+  36              		.loc 1 23 0
+  37 0006 0948     		ldr	r0, .L8
+  38              	.LVL2:
+  39              	.L2:
+  24:Code\Common/crc16check.c ****     uint32 My_Check;
+  25:Code\Common/crc16check.c ****     for (I = 0; I < Mylen; I++)
+  40              		.loc 1 25 0 discriminator 1
+  41 0008 8B42     		cmp	r3, r1
+  42 000a 0ED0     		beq	.L7
+  26:Code\Common/crc16check.c ****     {
+  27:Code\Common/crc16check.c **** 	    Crc_Value = Crc_Value ^ MyChar[I];
+  43              		.loc 1 27 0
+  44 000c 1A78     		ldrb	r2, [r3]
+  45 000e 5040     		eor	r0, r2
+  46              	.LVL3:
+  47 0010 0822     		mov	r2, #8
+  48              	.LVL4:
+  49              	.L4:
+  28:Code\Common/crc16check.c **** 	    for (J = 0; J < 8; J++)
+  29:Code\Common/crc16check.c **** 	    {
+  30:Code\Common/crc16check.c **** 		    My_Check = Crc_Value & 1;
+  50              		.loc 1 30 0
+  51 0012 0124     		mov	r4, #1
+  52 0014 0440     		and	r4, r0
+  53              	.LVL5:
+  31:Code\Common/crc16check.c **** 		    Crc_Value = Crc_Value >> 1;
+  54              		.loc 1 31 0
+  55 0016 4008     		lsr	r0, r0, #1
+  56              	.LVL6:
+  32:Code\Common/crc16check.c **** 		    if (My_Check == 1)
+  57              		.loc 1 32 0
+  58 0018 012C     		cmp	r4, #1
+  59 001a 01D1     		bne	.L3
+  33:Code\Common/crc16check.c **** 		    {
+  34:Code\Common/crc16check.c **** 		    	Crc_Value = Crc_Value ^ DIV_VALUE;
+  60              		.loc 1 34 0
+  61 001c 044C     		ldr	r4, .L8+4
+  62              	.LVL7:
+  63 001e 6040     		eor	r0, r4
+  64              	.LVL8:
+  65              	.L3:
+  66 0020 013A     		sub	r2, r2, #1
+  67              	.LVL9:
+  28:Code\Common/crc16check.c **** 	    {
+  68              		.loc 1 28 0 discriminator 2
+  69 0022 002A     		cmp	r2, #0
+  70 0024 F5D1     		bne	.L4
+  71              	.LVL10:
+  72 0026 0133     		add	r3, r3, #1
+  73              	.LVL11:
+  74 0028 EEE7     		b	.L2
+  75              	.LVL12:
+  76              	.L7:
+  35:Code\Common/crc16check.c **** 		    }
+  36:Code\Common/crc16check.c **** 	    }
+  37:Code\Common/crc16check.c ****     }
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccDHo6T2.s 			page 3
+
+
+  38:Code\Common/crc16check.c ****     return Crc_Value;
+  39:Code\Common/crc16check.c **** }...
+  77              		.loc 1 39 0
+  78              		@ sp needed
+  79 002a 10BD     		pop	{r4, pc}
+  80              	.L9:
+  81              		.align	2
+  82              	.L8:
+  83 002c FFFF0000 		.word	65535
+  84 0030 21480000 		.word	18465
+  85              		.cfi_endproc
+  86              	.LFE63:
+  87              		.size	MyCrc16Check, .-MyCrc16Check
+  88              		.global	DIV_VALUE
+  89              		.global	A_VALUE
+  90              		.section	.rodata
+  91              		.align	2
+  92              		.type	DIV_VALUE, %object
+  93              		.size	DIV_VALUE, 4
+  94              	DIV_VALUE:
+  95 0000 21480000 		.word	18465
+  96              		.type	A_VALUE, %object
+  97              		.size	A_VALUE, 4
+  98              	A_VALUE:
+  99 0004 FFFF0000 		.word	65535
+ 100              		.text
+ 101              	.Letext0:
+ 102              		.file 2 "Generated_Source\\PSoC4/cytypes.h"
+ 103              		.section	.debug_info,"",%progbits
+ 104              	.Ldebug_info0:
+ 105 0000 39010000 		.4byte	0x139
+ 106 0004 0400     		.2byte	0x4
+ 107 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 108 000a 04       		.byte	0x4
+ 109 000b 01       		.uleb128 0x1
+ 110 000c BF000000 		.4byte	.LASF21
+ 111 0010 01       		.byte	0x1
+ 112 0011 15000000 		.4byte	.LASF22
+ 113 0015 2E000000 		.4byte	.LASF23
+ 114 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 115 001d 00000000 		.4byte	0
+ 116 0021 00000000 		.4byte	.Ldebug_line0
+ 117 0025 02       		.uleb128 0x2
+ 118 0026 01       		.byte	0x1
+ 119 0027 06       		.byte	0x6
+ 120 0028 DA010000 		.4byte	.LASF0
+ 121 002c 02       		.uleb128 0x2
+ 122 002d 01       		.byte	0x1
+ 123 002e 08       		.byte	0x8
+ 124 002f 9D010000 		.4byte	.LASF1
+ 125 0033 02       		.uleb128 0x2
+ 126 0034 02       		.byte	0x2
+ 127 0035 05       		.byte	0x5
+ 128 0036 B9010000 		.4byte	.LASF2
+ 129 003a 02       		.uleb128 0x2
+ 130 003b 02       		.byte	0x2
+ 131 003c 07       		.byte	0x7
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccDHo6T2.s 			page 4
+
+
+ 132 003d 7D010000 		.4byte	.LASF3
+ 133 0041 02       		.uleb128 0x2
+ 134 0042 04       		.byte	0x4
+ 135 0043 05       		.byte	0x5
+ 136 0044 B0010000 		.4byte	.LASF4
+ 137 0048 02       		.uleb128 0x2
+ 138 0049 04       		.byte	0x4
+ 139 004a 07       		.byte	0x7
+ 140 004b 4D010000 		.4byte	.LASF5
+ 141 004f 02       		.uleb128 0x2
+ 142 0050 08       		.byte	0x8
+ 143 0051 05       		.byte	0x5
+ 144 0052 00000000 		.4byte	.LASF6
+ 145 0056 02       		.uleb128 0x2
+ 146 0057 08       		.byte	0x8
+ 147 0058 07       		.byte	0x7
+ 148 0059 5F010000 		.4byte	.LASF7
+ 149 005d 03       		.uleb128 0x3
+ 150 005e 04       		.byte	0x4
+ 151 005f 05       		.byte	0x5
+ 152 0060 696E7400 		.ascii	"int\000"
+ 153 0064 02       		.uleb128 0x2
+ 154 0065 04       		.byte	0x4
+ 155 0066 07       		.byte	0x7
+ 156 0067 FF010000 		.4byte	.LASF8
+ 157 006b 04       		.uleb128 0x4
+ 158 006c D4010000 		.4byte	.LASF9
+ 159 0070 02       		.byte	0x2
+ 160 0071 B901     		.2byte	0x1b9
+ 161 0073 2C000000 		.4byte	0x2c
+ 162 0077 04       		.uleb128 0x4
+ 163 0078 0E000000 		.4byte	.LASF10
+ 164 007c 02       		.byte	0x2
+ 165 007d BB01     		.2byte	0x1bb
+ 166 007f 48000000 		.4byte	0x48
+ 167 0083 02       		.uleb128 0x2
+ 168 0084 04       		.byte	0x4
+ 169 0085 04       		.byte	0x4
+ 170 0086 F0010000 		.4byte	.LASF11
+ 171 008a 02       		.uleb128 0x2
+ 172 008b 08       		.byte	0x8
+ 173 008c 04       		.byte	0x4
+ 174 008d C3010000 		.4byte	.LASF12
+ 175 0091 02       		.uleb128 0x2
+ 176 0092 01       		.byte	0x1
+ 177 0093 08       		.byte	0x8
+ 178 0094 AB010000 		.4byte	.LASF13
+ 179 0098 02       		.uleb128 0x2
+ 180 0099 04       		.byte	0x4
+ 181 009a 07       		.byte	0x7
+ 182 009b 14020000 		.4byte	.LASF14
+ 183 009f 05       		.uleb128 0x5
+ 184 00a0 04       		.byte	0x4
+ 185 00a1 6B000000 		.4byte	0x6b
+ 186 00a5 06       		.uleb128 0x6
+ 187 00a6 90010000 		.4byte	.LASF24
+ 188 00aa 01       		.byte	0x1
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccDHo6T2.s 			page 5
+
+
+ 189 00ab 14       		.byte	0x14
+ 190 00ac 77000000 		.4byte	0x77
+ 191 00b0 00000000 		.4byte	.LFB63
+ 192 00b4 34000000 		.4byte	.LFE63-.LFB63
+ 193 00b8 01       		.uleb128 0x1
+ 194 00b9 9C       		.byte	0x9c
+ 195 00ba 15010000 		.4byte	0x115
+ 196 00be 07       		.uleb128 0x7
+ 197 00bf 76010000 		.4byte	.LASF15
+ 198 00c3 01       		.byte	0x1
+ 199 00c4 14       		.byte	0x14
+ 200 00c5 9F000000 		.4byte	0x9f
+ 201 00c9 00000000 		.4byte	.LLST0
+ 202 00cd 07       		.uleb128 0x7
+ 203 00ce B9000000 		.4byte	.LASF16
+ 204 00d2 01       		.byte	0x1
+ 205 00d3 14       		.byte	0x14
+ 206 00d4 77000000 		.4byte	0x77
+ 207 00d8 21000000 		.4byte	.LLST1
+ 208 00dc 08       		.uleb128 0x8
+ 209 00dd 4900     		.ascii	"I\000"
+ 210 00df 01       		.byte	0x1
+ 211 00e0 16       		.byte	0x16
+ 212 00e1 77000000 		.4byte	0x77
+ 213 00e5 42000000 		.4byte	.LLST2
+ 214 00e9 08       		.uleb128 0x8
+ 215 00ea 4A00     		.ascii	"J\000"
+ 216 00ec 01       		.byte	0x1
+ 217 00ed 16       		.byte	0x16
+ 218 00ee 77000000 		.4byte	0x77
+ 219 00f2 8B000000 		.4byte	.LLST3
+ 220 00f6 09       		.uleb128 0x9
+ 221 00f7 E6010000 		.4byte	.LASF17
+ 222 00fb 01       		.byte	0x1
+ 223 00fc 17       		.byte	0x17
+ 224 00fd 77000000 		.4byte	0x77
+ 225 0101 CC000000 		.4byte	.LLST4
+ 226 0105 09       		.uleb128 0x9
+ 227 0106 F6010000 		.4byte	.LASF18
+ 228 010a 01       		.byte	0x1
+ 229 010b 18       		.byte	0x18
+ 230 010c 77000000 		.4byte	0x77
+ 231 0110 ED000000 		.4byte	.LLST5
+ 232 0114 00       		.byte	0
+ 233 0115 0A       		.uleb128 0xa
+ 234 0116 0C020000 		.4byte	.LASF19
+ 235 011a 01       		.byte	0x1
+ 236 011b 12       		.byte	0x12
+ 237 011c 26010000 		.4byte	0x126
+ 238 0120 05       		.uleb128 0x5
+ 239 0121 03       		.byte	0x3
+ 240 0122 00000000 		.4byte	A_VALUE
+ 241 0126 0B       		.uleb128 0xb
+ 242 0127 64000000 		.4byte	0x64
+ 243 012b 0A       		.uleb128 0xa
+ 244 012c CA010000 		.4byte	.LASF20
+ 245 0130 01       		.byte	0x1
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccDHo6T2.s 			page 6
+
+
+ 246 0131 13       		.byte	0x13
+ 247 0132 26010000 		.4byte	0x126
+ 248 0136 05       		.uleb128 0x5
+ 249 0137 03       		.byte	0x3
+ 250 0138 00000000 		.4byte	DIV_VALUE
+ 251 013c 00       		.byte	0
+ 252              		.section	.debug_abbrev,"",%progbits
+ 253              	.Ldebug_abbrev0:
+ 254 0000 01       		.uleb128 0x1
+ 255 0001 11       		.uleb128 0x11
+ 256 0002 01       		.byte	0x1
+ 257 0003 25       		.uleb128 0x25
+ 258 0004 0E       		.uleb128 0xe
+ 259 0005 13       		.uleb128 0x13
+ 260 0006 0B       		.uleb128 0xb
+ 261 0007 03       		.uleb128 0x3
+ 262 0008 0E       		.uleb128 0xe
+ 263 0009 1B       		.uleb128 0x1b
+ 264 000a 0E       		.uleb128 0xe
+ 265 000b 55       		.uleb128 0x55
+ 266 000c 17       		.uleb128 0x17
+ 267 000d 11       		.uleb128 0x11
+ 268 000e 01       		.uleb128 0x1
+ 269 000f 10       		.uleb128 0x10
+ 270 0010 17       		.uleb128 0x17
+ 271 0011 00       		.byte	0
+ 272 0012 00       		.byte	0
+ 273 0013 02       		.uleb128 0x2
+ 274 0014 24       		.uleb128 0x24
+ 275 0015 00       		.byte	0
+ 276 0016 0B       		.uleb128 0xb
+ 277 0017 0B       		.uleb128 0xb
+ 278 0018 3E       		.uleb128 0x3e
+ 279 0019 0B       		.uleb128 0xb
+ 280 001a 03       		.uleb128 0x3
+ 281 001b 0E       		.uleb128 0xe
+ 282 001c 00       		.byte	0
+ 283 001d 00       		.byte	0
+ 284 001e 03       		.uleb128 0x3
+ 285 001f 24       		.uleb128 0x24
+ 286 0020 00       		.byte	0
+ 287 0021 0B       		.uleb128 0xb
+ 288 0022 0B       		.uleb128 0xb
+ 289 0023 3E       		.uleb128 0x3e
+ 290 0024 0B       		.uleb128 0xb
+ 291 0025 03       		.uleb128 0x3
+ 292 0026 08       		.uleb128 0x8
+ 293 0027 00       		.byte	0
+ 294 0028 00       		.byte	0
+ 295 0029 04       		.uleb128 0x4
+ 296 002a 16       		.uleb128 0x16
+ 297 002b 00       		.byte	0
+ 298 002c 03       		.uleb128 0x3
+ 299 002d 0E       		.uleb128 0xe
+ 300 002e 3A       		.uleb128 0x3a
+ 301 002f 0B       		.uleb128 0xb
+ 302 0030 3B       		.uleb128 0x3b
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccDHo6T2.s 			page 7
+
+
+ 303 0031 05       		.uleb128 0x5
+ 304 0032 49       		.uleb128 0x49
+ 305 0033 13       		.uleb128 0x13
+ 306 0034 00       		.byte	0
+ 307 0035 00       		.byte	0
+ 308 0036 05       		.uleb128 0x5
+ 309 0037 0F       		.uleb128 0xf
+ 310 0038 00       		.byte	0
+ 311 0039 0B       		.uleb128 0xb
+ 312 003a 0B       		.uleb128 0xb
+ 313 003b 49       		.uleb128 0x49
+ 314 003c 13       		.uleb128 0x13
+ 315 003d 00       		.byte	0
+ 316 003e 00       		.byte	0
+ 317 003f 06       		.uleb128 0x6
+ 318 0040 2E       		.uleb128 0x2e
+ 319 0041 01       		.byte	0x1
+ 320 0042 3F       		.uleb128 0x3f
+ 321 0043 19       		.uleb128 0x19
+ 322 0044 03       		.uleb128 0x3
+ 323 0045 0E       		.uleb128 0xe
+ 324 0046 3A       		.uleb128 0x3a
+ 325 0047 0B       		.uleb128 0xb
+ 326 0048 3B       		.uleb128 0x3b
+ 327 0049 0B       		.uleb128 0xb
+ 328 004a 27       		.uleb128 0x27
+ 329 004b 19       		.uleb128 0x19
+ 330 004c 49       		.uleb128 0x49
+ 331 004d 13       		.uleb128 0x13
+ 332 004e 11       		.uleb128 0x11
+ 333 004f 01       		.uleb128 0x1
+ 334 0050 12       		.uleb128 0x12
+ 335 0051 06       		.uleb128 0x6
+ 336 0052 40       		.uleb128 0x40
+ 337 0053 18       		.uleb128 0x18
+ 338 0054 9742     		.uleb128 0x2117
+ 339 0056 19       		.uleb128 0x19
+ 340 0057 01       		.uleb128 0x1
+ 341 0058 13       		.uleb128 0x13
+ 342 0059 00       		.byte	0
+ 343 005a 00       		.byte	0
+ 344 005b 07       		.uleb128 0x7
+ 345 005c 05       		.uleb128 0x5
+ 346 005d 00       		.byte	0
+ 347 005e 03       		.uleb128 0x3
+ 348 005f 0E       		.uleb128 0xe
+ 349 0060 3A       		.uleb128 0x3a
+ 350 0061 0B       		.uleb128 0xb
+ 351 0062 3B       		.uleb128 0x3b
+ 352 0063 0B       		.uleb128 0xb
+ 353 0064 49       		.uleb128 0x49
+ 354 0065 13       		.uleb128 0x13
+ 355 0066 02       		.uleb128 0x2
+ 356 0067 17       		.uleb128 0x17
+ 357 0068 00       		.byte	0
+ 358 0069 00       		.byte	0
+ 359 006a 08       		.uleb128 0x8
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccDHo6T2.s 			page 8
+
+
+ 360 006b 34       		.uleb128 0x34
+ 361 006c 00       		.byte	0
+ 362 006d 03       		.uleb128 0x3
+ 363 006e 08       		.uleb128 0x8
+ 364 006f 3A       		.uleb128 0x3a
+ 365 0070 0B       		.uleb128 0xb
+ 366 0071 3B       		.uleb128 0x3b
+ 367 0072 0B       		.uleb128 0xb
+ 368 0073 49       		.uleb128 0x49
+ 369 0074 13       		.uleb128 0x13
+ 370 0075 02       		.uleb128 0x2
+ 371 0076 17       		.uleb128 0x17
+ 372 0077 00       		.byte	0
+ 373 0078 00       		.byte	0
+ 374 0079 09       		.uleb128 0x9
+ 375 007a 34       		.uleb128 0x34
+ 376 007b 00       		.byte	0
+ 377 007c 03       		.uleb128 0x3
+ 378 007d 0E       		.uleb128 0xe
+ 379 007e 3A       		.uleb128 0x3a
+ 380 007f 0B       		.uleb128 0xb
+ 381 0080 3B       		.uleb128 0x3b
+ 382 0081 0B       		.uleb128 0xb
+ 383 0082 49       		.uleb128 0x49
+ 384 0083 13       		.uleb128 0x13
+ 385 0084 02       		.uleb128 0x2
+ 386 0085 17       		.uleb128 0x17
+ 387 0086 00       		.byte	0
+ 388 0087 00       		.byte	0
+ 389 0088 0A       		.uleb128 0xa
+ 390 0089 34       		.uleb128 0x34
+ 391 008a 00       		.byte	0
+ 392 008b 03       		.uleb128 0x3
+ 393 008c 0E       		.uleb128 0xe
+ 394 008d 3A       		.uleb128 0x3a
+ 395 008e 0B       		.uleb128 0xb
+ 396 008f 3B       		.uleb128 0x3b
+ 397 0090 0B       		.uleb128 0xb
+ 398 0091 49       		.uleb128 0x49
+ 399 0092 13       		.uleb128 0x13
+ 400 0093 3F       		.uleb128 0x3f
+ 401 0094 19       		.uleb128 0x19
+ 402 0095 02       		.uleb128 0x2
+ 403 0096 18       		.uleb128 0x18
+ 404 0097 00       		.byte	0
+ 405 0098 00       		.byte	0
+ 406 0099 0B       		.uleb128 0xb
+ 407 009a 26       		.uleb128 0x26
+ 408 009b 00       		.byte	0
+ 409 009c 49       		.uleb128 0x49
+ 410 009d 13       		.uleb128 0x13
+ 411 009e 00       		.byte	0
+ 412 009f 00       		.byte	0
+ 413 00a0 00       		.byte	0
+ 414              		.section	.debug_loc,"",%progbits
+ 415              	.Ldebug_loc0:
+ 416              	.LLST0:
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccDHo6T2.s 			page 9
+
+
+ 417 0000 00000000 		.4byte	.LVL0
+ 418 0004 08000000 		.4byte	.LVL2
+ 419 0008 0100     		.2byte	0x1
+ 420 000a 50       		.byte	0x50
+ 421 000b 08000000 		.4byte	.LVL2
+ 422 000f 34000000 		.4byte	.LFE63
+ 423 0013 0400     		.2byte	0x4
+ 424 0015 F3       		.byte	0xf3
+ 425 0016 01       		.uleb128 0x1
+ 426 0017 50       		.byte	0x50
+ 427 0018 9F       		.byte	0x9f
+ 428 0019 00000000 		.4byte	0
+ 429 001d 00000000 		.4byte	0
+ 430              	.LLST1:
+ 431 0021 00000000 		.4byte	.LVL0
+ 432 0025 06000000 		.4byte	.LVL1
+ 433 0029 0100     		.2byte	0x1
+ 434 002b 51       		.byte	0x51
+ 435 002c 06000000 		.4byte	.LVL1
+ 436 0030 34000000 		.4byte	.LFE63
+ 437 0034 0400     		.2byte	0x4
+ 438 0036 F3       		.byte	0xf3
+ 439 0037 01       		.uleb128 0x1
+ 440 0038 51       		.byte	0x51
+ 441 0039 9F       		.byte	0x9f
+ 442 003a 00000000 		.4byte	0
+ 443 003e 00000000 		.4byte	0
+ 444              	.LLST2:
+ 445 0042 00000000 		.4byte	.LVL0
+ 446 0046 08000000 		.4byte	.LVL2
+ 447 004a 0200     		.2byte	0x2
+ 448 004c 30       		.byte	0x30
+ 449 004d 9F       		.byte	0x9f
+ 450 004e 08000000 		.4byte	.LVL2
+ 451 0052 26000000 		.4byte	.LVL10
+ 452 0056 0700     		.2byte	0x7
+ 453 0058 73       		.byte	0x73
+ 454 0059 00       		.sleb128 0
+ 455 005a F3       		.byte	0xf3
+ 456 005b 01       		.uleb128 0x1
+ 457 005c 50       		.byte	0x50
+ 458 005d 1C       		.byte	0x1c
+ 459 005e 9F       		.byte	0x9f
+ 460 005f 26000000 		.4byte	.LVL10
+ 461 0063 28000000 		.4byte	.LVL11
+ 462 0067 0900     		.2byte	0x9
+ 463 0069 73       		.byte	0x73
+ 464 006a 00       		.sleb128 0
+ 465 006b F3       		.byte	0xf3
+ 466 006c 01       		.uleb128 0x1
+ 467 006d 50       		.byte	0x50
+ 468 006e 1C       		.byte	0x1c
+ 469 006f 23       		.byte	0x23
+ 470 0070 01       		.uleb128 0x1
+ 471 0071 9F       		.byte	0x9f
+ 472 0072 28000000 		.4byte	.LVL11
+ 473 0076 34000000 		.4byte	.LFE63
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccDHo6T2.s 			page 10
+
+
+ 474 007a 0700     		.2byte	0x7
+ 475 007c 73       		.byte	0x73
+ 476 007d 00       		.sleb128 0
+ 477 007e F3       		.byte	0xf3
+ 478 007f 01       		.uleb128 0x1
+ 479 0080 50       		.byte	0x50
+ 480 0081 1C       		.byte	0x1c
+ 481 0082 9F       		.byte	0x9f
+ 482 0083 00000000 		.4byte	0
+ 483 0087 00000000 		.4byte	0
+ 484              	.LLST3:
+ 485 008b 10000000 		.4byte	.LVL3
+ 486 008f 12000000 		.4byte	.LVL4
+ 487 0093 0200     		.2byte	0x2
+ 488 0095 30       		.byte	0x30
+ 489 0096 9F       		.byte	0x9f
+ 490 0097 12000000 		.4byte	.LVL4
+ 491 009b 20000000 		.4byte	.LVL8
+ 492 009f 0500     		.2byte	0x5
+ 493 00a1 38       		.byte	0x38
+ 494 00a2 72       		.byte	0x72
+ 495 00a3 00       		.sleb128 0
+ 496 00a4 1C       		.byte	0x1c
+ 497 00a5 9F       		.byte	0x9f
+ 498 00a6 20000000 		.4byte	.LVL8
+ 499 00aa 22000000 		.4byte	.LVL9
+ 500 00ae 0500     		.2byte	0x5
+ 501 00b0 39       		.byte	0x39
+ 502 00b1 72       		.byte	0x72
+ 503 00b2 00       		.sleb128 0
+ 504 00b3 1C       		.byte	0x1c
+ 505 00b4 9F       		.byte	0x9f
+ 506 00b5 22000000 		.4byte	.LVL9
+ 507 00b9 2A000000 		.4byte	.LVL12
+ 508 00bd 0500     		.2byte	0x5
+ 509 00bf 38       		.byte	0x38
+ 510 00c0 72       		.byte	0x72
+ 511 00c1 00       		.sleb128 0
+ 512 00c2 1C       		.byte	0x1c
+ 513 00c3 9F       		.byte	0x9f
+ 514 00c4 00000000 		.4byte	0
+ 515 00c8 00000000 		.4byte	0
+ 516              	.LLST4:
+ 517 00cc 00000000 		.4byte	.LVL0
+ 518 00d0 08000000 		.4byte	.LVL2
+ 519 00d4 0400     		.2byte	0x4
+ 520 00d6 0A       		.byte	0xa
+ 521 00d7 FFFF     		.2byte	0xffff
+ 522 00d9 9F       		.byte	0x9f
+ 523 00da 08000000 		.4byte	.LVL2
+ 524 00de 34000000 		.4byte	.LFE63
+ 525 00e2 0100     		.2byte	0x1
+ 526 00e4 50       		.byte	0x50
+ 527 00e5 00000000 		.4byte	0
+ 528 00e9 00000000 		.4byte	0
+ 529              	.LLST5:
+ 530 00ed 16000000 		.4byte	.LVL5
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccDHo6T2.s 			page 11
+
+
+ 531 00f1 1E000000 		.4byte	.LVL7
+ 532 00f5 0100     		.2byte	0x1
+ 533 00f7 54       		.byte	0x54
+ 534 00f8 00000000 		.4byte	0
+ 535 00fc 00000000 		.4byte	0
+ 536              		.section	.debug_aranges,"",%progbits
+ 537 0000 1C000000 		.4byte	0x1c
+ 538 0004 0200     		.2byte	0x2
+ 539 0006 00000000 		.4byte	.Ldebug_info0
+ 540 000a 04       		.byte	0x4
+ 541 000b 00       		.byte	0
+ 542 000c 0000     		.2byte	0
+ 543 000e 0000     		.2byte	0
+ 544 0010 00000000 		.4byte	.LFB63
+ 545 0014 34000000 		.4byte	.LFE63-.LFB63
+ 546 0018 00000000 		.4byte	0
+ 547 001c 00000000 		.4byte	0
+ 548              		.section	.debug_ranges,"",%progbits
+ 549              	.Ldebug_ranges0:
+ 550 0000 00000000 		.4byte	.LFB63
+ 551 0004 34000000 		.4byte	.LFE63
+ 552 0008 00000000 		.4byte	0
+ 553 000c 00000000 		.4byte	0
+ 554              		.section	.debug_line,"",%progbits
+ 555              	.Ldebug_line0:
+ 556 0000 7D000000 		.section	.debug_str,"MS",%progbits,1
+ 556      02005300 
+ 556      00000201 
+ 556      FB0E0D00 
+ 556      01010101 
+ 557              	.LASF6:
+ 558 0000 6C6F6E67 		.ascii	"long long int\000"
+ 558      206C6F6E 
+ 558      6720696E 
+ 558      7400
+ 559              	.LASF10:
+ 560 000e 75696E74 		.ascii	"uint32\000"
+ 560      333200
+ 561              	.LASF22:
+ 562 0015 436F6465 		.ascii	"Code\\Common\\crc16check.c\000"
+ 562      5C436F6D 
+ 562      6D6F6E5C 
+ 562      63726331 
+ 562      36636865 
+ 563              	.LASF23:
+ 564 002e 433A5C55 		.ascii	"C:\\Users\\zhiantec\\Documents\\Tencent Files\\1241"
+ 564      73657273 
+ 564      5C7A6869 
+ 564      616E7465 
+ 564      635C446F 
+ 565 005c 39333938 		.ascii	"939835\\FileRecv\\MobileFile\\second_images[4-8]\\E"
+ 565      33355C46 
+ 565      696C6552 
+ 565      6563765C 
+ 565      4D6F6269 
+ 566 008b 6E747261 		.ascii	"ntranceGuard_171019-12.50\\EntranceGuard.cydsn\000"
+ 566      6E636547 
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccDHo6T2.s 			page 12
+
+
+ 566      75617264 
+ 566      5F313731 
+ 566      3031392D 
+ 567              	.LASF16:
+ 568 00b9 4D796C65 		.ascii	"Mylen\000"
+ 568      6E00
+ 569              	.LASF21:
+ 570 00bf 474E5520 		.ascii	"GNU C 4.9.3 20150303 (release) [ARM/embedded-4_9-br"
+ 570      4320342E 
+ 570      392E3320 
+ 570      32303135 
+ 570      30333033 
+ 571 00f2 616E6368 		.ascii	"anch revision 221220] -mcpu=cortex-m0 -mthumb -g -O"
+ 571      20726576 
+ 571      6973696F 
+ 571      6E203232 
+ 571      31323230 
+ 572 0125 73202D66 		.ascii	"s -ffunction-sections -ffat-lto-objects\000"
+ 572      66756E63 
+ 572      74696F6E 
+ 572      2D736563 
+ 572      74696F6E 
+ 573              	.LASF5:
+ 574 014d 6C6F6E67 		.ascii	"long unsigned int\000"
+ 574      20756E73 
+ 574      69676E65 
+ 574      6420696E 
+ 574      7400
+ 575              	.LASF7:
+ 576 015f 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 576      206C6F6E 
+ 576      6720756E 
+ 576      7369676E 
+ 576      65642069 
+ 577              	.LASF15:
+ 578 0176 4D794368 		.ascii	"MyChar\000"
+ 578      617200
+ 579              	.LASF3:
+ 580 017d 73686F72 		.ascii	"short unsigned int\000"
+ 580      7420756E 
+ 580      7369676E 
+ 580      65642069 
+ 580      6E7400
+ 581              	.LASF24:
+ 582 0190 4D794372 		.ascii	"MyCrc16Check\000"
+ 582      63313643 
+ 582      6865636B 
+ 582      00
+ 583              	.LASF1:
+ 584 019d 756E7369 		.ascii	"unsigned char\000"
+ 584      676E6564 
+ 584      20636861 
+ 584      7200
+ 585              	.LASF13:
+ 586 01ab 63686172 		.ascii	"char\000"
+ 586      00
+ 587              	.LASF4:
+ARM GAS  C:\Users\zhiantec\AppData\Local\Temp\ccDHo6T2.s 			page 13
+
+
+ 588 01b0 6C6F6E67 		.ascii	"long int\000"
+ 588      20696E74 
+ 588      00
+ 589              	.LASF2:
+ 590 01b9 73686F72 		.ascii	"short int\000"
+ 590      7420696E 
+ 590      7400
+ 591              	.LASF12:
+ 592 01c3 646F7562 		.ascii	"double\000"
+ 592      6C6500
+ 593              	.LASF20:
+ 594 01ca 4449565F 		.ascii	"DIV_VALUE\000"
+ 594      56414C55 
+ 594      4500
+ 595              	.LASF9:
+ 596 01d4 75696E74 		.ascii	"uint8\000"
+ 596      3800
+ 597              	.LASF0:
+ 598 01da 7369676E 		.ascii	"signed char\000"
+ 598      65642063 
+ 598      68617200 
+ 599              	.LASF17:
+ 600 01e6 4372635F 		.ascii	"Crc_Value\000"
+ 600      56616C75 
+ 600      6500
+ 601              	.LASF11:
+ 602 01f0 666C6F61 		.ascii	"float\000"
+ 602      7400
+ 603              	.LASF18:
+ 604 01f6 4D795F43 		.ascii	"My_Check\000"
+ 604      6865636B 
+ 604      00
+ 605              	.LASF8:
+ 606 01ff 756E7369 		.ascii	"unsigned int\000"
+ 606      676E6564 
+ 606      20696E74 
+ 606      00
+ 607              	.LASF19:
+ 608 020c 415F5641 		.ascii	"A_VALUE\000"
+ 608      4C554500 
+ 609              	.LASF14:
+ 610 0214 73697A65 		.ascii	"sizetype\000"
+ 610      74797065 
+ 610      00
+ 611              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.9.3 20150303 (release) [ARM/embedded-4_9-br

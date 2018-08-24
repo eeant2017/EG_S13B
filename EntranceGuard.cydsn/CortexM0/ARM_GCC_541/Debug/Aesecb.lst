@@ -1,0 +1,1729 @@
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaHd6qa.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m0
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"Aesecb.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.bt_lock_open_crypto,"ax",%progbits
+  20              		.align	1
+  21              		.global	bt_lock_open_crypto
+  22              		.code	16
+  23              		.thumb_func
+  24              		.type	bt_lock_open_crypto, %function
+  25              	bt_lock_open_crypto:
+  26              	.LFB63:
+  27              		.file 1 "Code\\Common\\crypt\\Aesecb.c"
+   1:Code\Common\crypt/Aesecb.c **** #include <string.h>
+   2:Code\Common\crypt/Aesecb.c **** #include <project.h>
+   3:Code\Common\crypt/Aesecb.c **** #include "crypt.h"
+   4:Code\Common\crypt/Aesecb.c **** #include "common.h"
+   5:Code\Common\crypt/Aesecb.c **** #include "align.h"
+   6:Code\Common\crypt/Aesecb.c **** 
+   7:Code\Common\crypt/Aesecb.c **** #ifdef CONFIG_AES_ECB
+   8:Code\Common\crypt/Aesecb.c **** 
+   9:Code\Common\crypt/Aesecb.c **** #ifdef ARCH_CC2640
+  10:Code\Common\crypt/Aesecb.c **** CryptoCC26XX_Handle crypto_hdl;
+  11:Code\Common\crypt/Aesecb.c **** CryptoCC26XX_Params crypto_param;
+  12:Code\Common\crypt/Aesecb.c **** #endif
+  13:Code\Common\crypt/Aesecb.c **** 
+  14:Code\Common\crypt/Aesecb.c **** const uint8 nonce[13] = {0xef, 0xef, 0xca, 0xb3, 0x92, 0x9e, 0xc3, 0xc7, 0x12, 0x38, 0x1d, 0xcd, 0x
+  15:Code\Common\crypt/Aesecb.c **** 
+  16:Code\Common\crypt/Aesecb.c **** int bt_lock_open_crypto(void) 
+  17:Code\Common\crypt/Aesecb.c **** {
+  28              		.loc 1 17 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		@ link register save eliminated.
+  18:Code\Common\crypt/Aesecb.c **** #ifdef ARCH_CC2640
+  19:Code\Common\crypt/Aesecb.c **** 	CryptoCC26XX_init();
+  20:Code\Common\crypt/Aesecb.c **** 	CryptoCC26XX_Params_init(&crypto_param);
+  21:Code\Common\crypt/Aesecb.c **** 	crypto_hdl = CryptoCC26XX_open(0, 1, &crypto_param);
+  22:Code\Common\crypt/Aesecb.c **** 	if (crypto_hdl == NULL)
+  23:Code\Common\crypt/Aesecb.c **** 		return -1;
+  24:Code\Common\crypt/Aesecb.c **** #endif
+  25:Code\Common\crypt/Aesecb.c **** 	return 0;
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaHd6qa.s 			page 2
+
+
+  26:Code\Common\crypt/Aesecb.c **** }
+  33              		.loc 1 26 0
+  34 0000 0020     		movs	r0, #0
+  35              		@ sp needed
+  36 0002 7047     		bx	lr
+  37              		.cfi_endproc
+  38              	.LFE63:
+  39              		.size	bt_lock_open_crypto, .-bt_lock_open_crypto
+  40              		.section	.text.bt_lock_crypto,"ax",%progbits
+  41              		.align	1
+  42              		.global	bt_lock_crypto
+  43              		.code	16
+  44              		.thumb_func
+  45              		.type	bt_lock_crypto, %function
+  46              	bt_lock_crypto:
+  47              	.LFB64:
+  27:Code\Common\crypt/Aesecb.c **** 
+  28:Code\Common\crypt/Aesecb.c **** int bt_lock_crypto(uint8_t *key, uint8_t *in, uint8_t *out, uint32_t len, uint8_t enc_dec) 
+  29:Code\Common\crypt/Aesecb.c **** {
+  48              		.loc 1 29 0
+  49              		.cfi_startproc
+  50              		@ args = 4, pretend = 0, frame = 8
+  51              		@ frame_needed = 0, uses_anonymous_args = 0
+  52              	.LVL0:
+  53 0000 F7B5     		push	{r0, r1, r2, r4, r5, r6, r7, lr}
+  54              		.cfi_def_cfa_offset 32
+  55              		.cfi_offset 0, -32
+  56              		.cfi_offset 1, -28
+  57              		.cfi_offset 2, -24
+  58              		.cfi_offset 4, -20
+  59              		.cfi_offset 5, -16
+  60              		.cfi_offset 6, -12
+  61              		.cfi_offset 7, -8
+  62              		.cfi_offset 14, -4
+  63              		.loc 1 29 0
+  64 0002 0700     		movs	r7, r0
+  65              	.LVL1:
+  66 0004 0E00     		movs	r6, r1
+  67 0006 1500     		movs	r5, r2
+  30:Code\Common\crypt/Aesecb.c **** 	uint32_t i;
+  31:Code\Common\crypt/Aesecb.c **** 	int ret = 0;
+  32:Code\Common\crypt/Aesecb.c **** #ifdef ARCH_CC2640
+  33:Code\Common\crypt/Aesecb.c **** 	int key_index;
+  34:Code\Common\crypt/Aesecb.c **** 	CryptoCC26XX_AESECB_Transaction ecb_trans;
+  35:Code\Common\crypt/Aesecb.c **** 
+  36:Code\Common\crypt/Aesecb.c **** 	if (NULL == crypto_hdl)
+  37:Code\Common\crypt/Aesecb.c **** 		return -1;
+  38:Code\Common\crypt/Aesecb.c **** 	
+  39:Code\Common\crypt/Aesecb.c **** 	CryptoCC26XX_Transac_init((CryptoCC26XX_Transaction*)&ecb_trans, 
+  40:Code\Common\crypt/Aesecb.c **** 		enc_dec? CRYPTOCC26XX_OP_AES_ECB: CRYPTOCC26XX_OP_AES_ECB_NOCRYPT);
+  41:Code\Common\crypt/Aesecb.c **** 	key_index = CryptoCC26XX_allocateKey(crypto_hdl, CRYPTOCC26XX_KEY_ANY, (uint32_t*)key);
+  42:Code\Common\crypt/Aesecb.c **** 	if (key_index < 0)
+  43:Code\Common\crypt/Aesecb.c **** 		return -1;
+  44:Code\Common\crypt/Aesecb.c **** 
+  45:Code\Common\crypt/Aesecb.c **** 	for(i = 0; i < len; i+=16) {
+  46:Code\Common\crypt/Aesecb.c **** 		ecb_trans.keyIndex	= key_index;
+  47:Code\Common\crypt/Aesecb.c **** 		ecb_trans.msgIn		= &in[i];
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaHd6qa.s 			page 3
+
+
+  48:Code\Common\crypt/Aesecb.c **** 		ecb_trans.msgOut	= &out[i];
+  49:Code\Common\crypt/Aesecb.c **** 		ret = CryptoCC26XX_transact(crypto_hdl, (CryptoCC26XX_Transaction*)&ecb_trans);
+  50:Code\Common\crypt/Aesecb.c **** 		if (ret != 0) {
+  51:Code\Common\crypt/Aesecb.c **** 			ret = -1;
+  52:Code\Common\crypt/Aesecb.c **** 			break;
+  53:Code\Common\crypt/Aesecb.c **** 		}
+  54:Code\Common\crypt/Aesecb.c **** 	}
+  55:Code\Common\crypt/Aesecb.c **** 	
+  56:Code\Common\crypt/Aesecb.c **** 	CryptoCC26XX_releaseKey(crypto_hdl, &key_index);
+  57:Code\Common\crypt/Aesecb.c **** #else
+  58:Code\Common\crypt/Aesecb.c **** #if 0
+  59:Code\Common\crypt/Aesecb.c **** 	uint16 left_len = len, crypt_len = 0;
+  60:Code\Common\crypt/Aesecb.c **** 	uint8 cp_len = 0;
+  61:Code\Common\crypt/Aesecb.c **** 	uint8 *in_tmp = in, *out_tmp = out;
+  62:Code\Common\crypt/Aesecb.c **** 		
+  63:Code\Common\crypt/Aesecb.c **** 	while(left_len > 0) {
+  64:Code\Common\crypt/Aesecb.c **** 		
+  65:Code\Common\crypt/Aesecb.c **** 		CyBle_AesCcmInit(); 
+  66:Code\Common\crypt/Aesecb.c **** 		if (enc_dec) {			
+  67:Code\Common\crypt/Aesecb.c **** 			cp_len = left_len > 27? 27: left_len;
+  68:Code\Common\crypt/Aesecb.c **** 			if ((ret = CyBle_AesCcmEncrypt(key, nonce, in, cp_len, out+4, out)) != CYBLE_ERROR_OK) {
+  69:Code\Common\crypt/Aesecb.c **** 				DBG_PRINTF("<%s-%d>: fail\n", __FUNCTION__, __LINE__);
+  70:Code\Common\crypt/Aesecb.c **** 				return -1;
+  71:Code\Common\crypt/Aesecb.c **** 			}
+  72:Code\Common\crypt/Aesecb.c **** 			left_len -= cp_len;
+  73:Code\Common\crypt/Aesecb.c **** 			in += cp_len;
+  74:Code\Common\crypt/Aesecb.c **** 			out += (4+cp_len);
+  75:Code\Common\crypt/Aesecb.c **** 		} else {
+  76:Code\Common\crypt/Aesecb.c **** 		
+  77:Code\Common\crypt/Aesecb.c **** 			cp_len = left_len > (27+4)? (27): left_len;
+  78:Code\Common\crypt/Aesecb.c **** 			if ((ret = CyBle_AesCcmDecrypt(key, nonce, in+4, cp_len, out, in)) != CYBLE_ERROR_OK) {
+  79:Code\Common\crypt/Aesecb.c **** 				DBG_PRINTF("<%s-%d>: fail\n", __FUNCTION__, __LINE__);
+  80:Code\Common\crypt/Aesecb.c **** 				return -1;
+  81:Code\Common\crypt/Aesecb.c **** 			}
+  82:Code\Common\crypt/Aesecb.c **** 			left_len -= (cp_len+4);
+  83:Code\Common\crypt/Aesecb.c **** 			in += (cp_len+4);
+  84:Code\Common\crypt/Aesecb.c **** 			out += cp_len;
+  85:Code\Common\crypt/Aesecb.c **** 		}
+  86:Code\Common\crypt/Aesecb.c **** 		
+  87:Code\Common\crypt/Aesecb.c **** 	}
+  88:Code\Common\crypt/Aesecb.c **** #else
+  89:Code\Common\crypt/Aesecb.c **** 	for(i = 0; i < len; i+=16) {
+  68              		.loc 1 89 0
+  69 0008 0C00     		movs	r4, r1
+  29:Code\Common\crypt/Aesecb.c **** 	uint32_t i;
+  70              		.loc 1 29 0
+  71 000a 0093     		str	r3, [sp]
+  72 000c 08AB     		add	r3, sp, #32
+  73              	.LVL2:
+  74 000e 1B78     		ldrb	r3, [r3]
+  75              	.LVL3:
+  76 0010 0193     		str	r3, [sp, #4]
+  77              	.LVL4:
+  78              	.L3:
+  79              		.loc 1 89 0 discriminator 1
+  80 0012 009A     		ldr	r2, [sp]
+  81 0014 A31B     		subs	r3, r4, r6
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaHd6qa.s 			page 4
+
+
+  82 0016 9A42     		cmp	r2, r3
+  83 0018 0FD9     		bls	.L8
+  90:Code\Common\crypt/Aesecb.c **** 		if (enc_dec)
+  84              		.loc 1 90 0
+  85 001a 019B     		ldr	r3, [sp, #4]
+  86 001c 002B     		cmp	r3, #0
+  87 001e 04D0     		beq	.L4
+  88              	.LBB2:
+  91:Code\Common\crypt/Aesecb.c **** 			AES128_ECB_encrypt(&in[i], key);
+  89              		.loc 1 91 0
+  90 0020 3900     		movs	r1, r7
+  91 0022 2000     		movs	r0, r4
+  92 0024 FFF7FEFF 		bl	AES128_ECB_encrypt
+  93              	.LVL5:
+  94              	.LBE2:
+  95 0028 04E0     		b	.L5
+  96              	.L4:
+  97              	.LBB3:
+  92:Code\Common\crypt/Aesecb.c **** 		else
+  93:Code\Common\crypt/Aesecb.c **** 			AES128_ECB_decrypt(&in[i], key, &out[i]);
+  98              		.loc 1 93 0
+  99 002a 2A00     		movs	r2, r5
+ 100 002c 3900     		movs	r1, r7
+ 101 002e 2000     		movs	r0, r4
+ 102 0030 FFF7FEFF 		bl	AES128_ECB_decrypt
+ 103              	.LVL6:
+ 104              	.L5:
+ 105 0034 1034     		adds	r4, r4, #16
+ 106              	.LVL7:
+ 107 0036 1035     		adds	r5, r5, #16
+ 108 0038 EBE7     		b	.L3
+ 109              	.L8:
+ 110              	.LBE3:
+  94:Code\Common\crypt/Aesecb.c **** 	}
+  95:Code\Common\crypt/Aesecb.c **** #endif
+  96:Code\Common\crypt/Aesecb.c **** #endif
+  97:Code\Common\crypt/Aesecb.c **** 	return ret;
+  98:Code\Common\crypt/Aesecb.c **** }
+ 111              		.loc 1 98 0
+ 112 003a 0020     		movs	r0, #0
+ 113              		@ sp needed
+ 114              	.LVL8:
+ 115              	.LVL9:
+ 116              	.LVL10:
+ 117 003c FEBD     		pop	{r1, r2, r3, r4, r5, r6, r7, pc}
+ 118              		.cfi_endproc
+ 119              	.LFE64:
+ 120              		.size	bt_lock_crypto, .-bt_lock_crypto
+ 121              		.section	.text.bt_lock_close_crypto,"ax",%progbits
+ 122              		.align	1
+ 123              		.global	bt_lock_close_crypto
+ 124              		.code	16
+ 125              		.thumb_func
+ 126              		.type	bt_lock_close_crypto, %function
+ 127              	bt_lock_close_crypto:
+ 128              	.LFB65:
+  99:Code\Common\crypt/Aesecb.c **** 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaHd6qa.s 			page 5
+
+
+ 100:Code\Common\crypt/Aesecb.c **** int bt_lock_close_crypto(void)
+ 101:Code\Common\crypt/Aesecb.c **** {
+ 129              		.loc 1 101 0
+ 130              		.cfi_startproc
+ 131              		@ args = 0, pretend = 0, frame = 0
+ 132              		@ frame_needed = 0, uses_anonymous_args = 0
+ 133              		@ link register save eliminated.
+ 102:Code\Common\crypt/Aesecb.c **** #ifdef ARCH_CC2640
+ 103:Code\Common\crypt/Aesecb.c **** 
+ 104:Code\Common\crypt/Aesecb.c **** 	if (crypto_hdl != NULL) {
+ 105:Code\Common\crypt/Aesecb.c **** 		CryptoCC26XX_close(crypto_hdl);
+ 106:Code\Common\crypt/Aesecb.c **** 		crypto_hdl = NULL;
+ 107:Code\Common\crypt/Aesecb.c **** 	}
+ 108:Code\Common\crypt/Aesecb.c **** #endif
+ 109:Code\Common\crypt/Aesecb.c **** }
+ 134              		.loc 1 109 0
+ 135              		@ sp needed
+ 136 0000 7047     		bx	lr
+ 137              		.cfi_endproc
+ 138              	.LFE65:
+ 139              		.size	bt_lock_close_crypto, .-bt_lock_close_crypto
+ 140              		.section	.text.crypto_test,"ax",%progbits
+ 141              		.align	1
+ 142              		.global	crypto_test
+ 143              		.code	16
+ 144              		.thumb_func
+ 145              		.type	crypto_test, %function
+ 146              	crypto_test:
+ 147              	.LFB66:
+ 110:Code\Common\crypt/Aesecb.c **** 
+ 111:Code\Common\crypt/Aesecb.c **** void crypto_test(void)
+ 112:Code\Common\crypt/Aesecb.c **** {
+ 148              		.loc 1 112 0
+ 149              		.cfi_startproc
+ 150              		@ args = 0, pretend = 0, frame = 72
+ 151              		@ frame_needed = 0, uses_anonymous_args = 0
+ 152 0000 30B5     		push	{r4, r5, lr}
+ 153              		.cfi_def_cfa_offset 12
+ 154              		.cfi_offset 4, -12
+ 155              		.cfi_offset 5, -8
+ 156              		.cfi_offset 14, -4
+ 113:Code\Common\crypt/Aesecb.c **** 	uint8 key[16] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0
+ 157              		.loc 1 113 0
+ 158 0002 114C     		ldr	r4, .L11
+ 112:Code\Common\crypt/Aesecb.c **** 	uint8 key[16] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0
+ 159              		.loc 1 112 0
+ 160 0004 95B0     		sub	sp, sp, #84
+ 161              		.cfi_def_cfa_offset 96
+ 162              		.loc 1 113 0
+ 163 0006 2100     		movs	r1, r4
+ 164 0008 1022     		movs	r2, #16
+ 165 000a 05A8     		add	r0, sp, #20
+ 166 000c FFF7FEFF 		bl	memcpy
+ 167              	.LVL11:
+ 114:Code\Common\crypt/Aesecb.c **** 	uint8 plain_text[] = {0x11, 0x22, 0x11, 0x22, 0x11, 0x22, 0x11, 0x22, 
+ 168              		.loc 1 114 0
+ 169 0010 2A25     		movs	r5, #42
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaHd6qa.s 			page 6
+
+
+ 170 0012 2100     		movs	r1, r4
+ 171 0014 2A00     		movs	r2, r5
+ 172 0016 1031     		adds	r1, r1, #16
+ 173 0018 09A8     		add	r0, sp, #36
+ 174 001a FFF7FEFF 		bl	memcpy
+ 175              	.LVL12:
+ 115:Code\Common\crypt/Aesecb.c **** 							0x11, 0x22, 0x11, 0x22, 0x11, 0x22, 0x11, 0x22,
+ 116:Code\Common\crypt/Aesecb.c **** 							0x11, 0x22, 0x11, 0x22, 0x11, 0x22, 0x11, 0x22,
+ 117:Code\Common\crypt/Aesecb.c **** 							0x11, 0x22, 0x11
+ 118:Code\Common\crypt/Aesecb.c **** #if 1
+ 119:Code\Common\crypt/Aesecb.c **** 							, 0x01, 0x02, 0x03, 0x04, 0x05,
+ 120:Code\Common\crypt/Aesecb.c **** 							0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f
+ 121:Code\Common\crypt/Aesecb.c **** #endif
+ 122:Code\Common\crypt/Aesecb.c **** 							};
+ 123:Code\Common\crypt/Aesecb.c **** 	uint8 cipher_text[ALIGN_X(sizeof(plain_text), 27)/27*4 + sizeof(plain_text)];
+ 124:Code\Common\crypt/Aesecb.c **** 	uint8 decrypt_text[sizeof(cipher_text)];
+ 125:Code\Common\crypt/Aesecb.c **** 
+ 126:Code\Common\crypt/Aesecb.c **** 	memset(cipher_text, 0, sizeof(cipher_text));
+ 127:Code\Common\crypt/Aesecb.c **** 	memset(decrypt_text, 0, sizeof(decrypt_text));
+ 128:Code\Common\crypt/Aesecb.c **** 	bt_lock_crypto(key, plain_text, cipher_text, sizeof(plain_text), 1);
+ 176              		.loc 1 128 0
+ 177 001e 0123     		movs	r3, #1
+ 126:Code\Common\crypt/Aesecb.c **** 	memset(decrypt_text, 0, sizeof(decrypt_text));
+ 178              		.loc 1 126 0
+ 179 0020 0024     		movs	r4, #0
+ 180              		.loc 1 128 0
+ 181 0022 0093     		str	r3, [sp]
+ 182 0024 03AA     		add	r2, sp, #12
+ 183 0026 2B00     		movs	r3, r5
+ 184 0028 09A9     		add	r1, sp, #36
+ 185 002a 05A8     		add	r0, sp, #20
+ 126:Code\Common\crypt/Aesecb.c **** 	memset(decrypt_text, 0, sizeof(decrypt_text));
+ 186              		.loc 1 126 0
+ 187 002c 0394     		str	r4, [sp, #12]
+ 127:Code\Common\crypt/Aesecb.c **** 	bt_lock_crypto(key, plain_text, cipher_text, sizeof(plain_text), 1);
+ 188              		.loc 1 127 0
+ 189 002e 0494     		str	r4, [sp, #16]
+ 190              		.loc 1 128 0
+ 191 0030 FFF7FEFF 		bl	bt_lock_crypto
+ 192              	.LVL13:
+ 129:Code\Common\crypt/Aesecb.c **** 	//DBG_SOFT_PrintfHex(cipher_text, sizeof(cipher_text));
+ 130:Code\Common\crypt/Aesecb.c **** 	bt_lock_crypto(key, cipher_text, decrypt_text, sizeof(cipher_text), 0);
+ 193              		.loc 1 130 0
+ 194 0034 0094     		str	r4, [sp]
+ 195 0036 0423     		movs	r3, #4
+ 196 0038 04AA     		add	r2, sp, #16
+ 197 003a 03A9     		add	r1, sp, #12
+ 198 003c 05A8     		add	r0, sp, #20
+ 199 003e FFF7FEFF 		bl	bt_lock_crypto
+ 200              	.LVL14:
+ 131:Code\Common\crypt/Aesecb.c **** 	//DBG_SOFT_PrintfHex(decrypt_text, sizeof(decrypt_text));
+ 132:Code\Common\crypt/Aesecb.c **** }
+ 201              		.loc 1 132 0
+ 202 0042 15B0     		add	sp, sp, #84
+ 203              		@ sp needed
+ 204 0044 30BD     		pop	{r4, r5, pc}
+ 205              	.L12:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaHd6qa.s 			page 7
+
+
+ 206 0046 C046     		.align	2
+ 207              	.L11:
+ 208 0048 00000000 		.word	.LANCHOR0
+ 209              		.cfi_endproc
+ 210              	.LFE66:
+ 211              		.size	crypto_test, .-crypto_test
+ 212              		.global	nonce
+ 213              		.section	.rodata
+ 214              		.set	.LANCHOR0,. + 0
+ 215              	.LC0:
+ 216 0000 00       		.byte	0
+ 217 0001 01       		.byte	1
+ 218 0002 02       		.byte	2
+ 219 0003 03       		.byte	3
+ 220 0004 04       		.byte	4
+ 221 0005 05       		.byte	5
+ 222 0006 06       		.byte	6
+ 223 0007 07       		.byte	7
+ 224 0008 08       		.byte	8
+ 225 0009 09       		.byte	9
+ 226 000a 0A       		.byte	10
+ 227 000b 0B       		.byte	11
+ 228 000c 0C       		.byte	12
+ 229 000d 0D       		.byte	13
+ 230 000e 0E       		.byte	14
+ 231 000f 0F       		.byte	15
+ 232              	.LC1:
+ 233 0010 11       		.byte	17
+ 234 0011 22       		.byte	34
+ 235 0012 11       		.byte	17
+ 236 0013 22       		.byte	34
+ 237 0014 11       		.byte	17
+ 238 0015 22       		.byte	34
+ 239 0016 11       		.byte	17
+ 240 0017 22       		.byte	34
+ 241 0018 11       		.byte	17
+ 242 0019 22       		.byte	34
+ 243 001a 11       		.byte	17
+ 244 001b 22       		.byte	34
+ 245 001c 11       		.byte	17
+ 246 001d 22       		.byte	34
+ 247 001e 11       		.byte	17
+ 248 001f 22       		.byte	34
+ 249 0020 11       		.byte	17
+ 250 0021 22       		.byte	34
+ 251 0022 11       		.byte	17
+ 252 0023 22       		.byte	34
+ 253 0024 11       		.byte	17
+ 254 0025 22       		.byte	34
+ 255 0026 11       		.byte	17
+ 256 0027 22       		.byte	34
+ 257 0028 11       		.byte	17
+ 258 0029 22       		.byte	34
+ 259 002a 11       		.byte	17
+ 260 002b 01       		.byte	1
+ 261 002c 02       		.byte	2
+ 262 002d 03       		.byte	3
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaHd6qa.s 			page 8
+
+
+ 263 002e 04       		.byte	4
+ 264 002f 05       		.byte	5
+ 265 0030 06       		.byte	6
+ 266 0031 07       		.byte	7
+ 267 0032 08       		.byte	8
+ 268 0033 09       		.byte	9
+ 269 0034 0A       		.byte	10
+ 270 0035 0B       		.byte	11
+ 271 0036 0C       		.byte	12
+ 272 0037 0D       		.byte	13
+ 273 0038 0E       		.byte	14
+ 274 0039 0F       		.byte	15
+ 275              		.type	nonce, %object
+ 276              		.size	nonce, 13
+ 277              	nonce:
+ 278 003a EF       		.byte	-17
+ 279 003b EF       		.byte	-17
+ 280 003c CA       		.byte	-54
+ 281 003d B3       		.byte	-77
+ 282 003e 92       		.byte	-110
+ 283 003f 9E       		.byte	-98
+ 284 0040 C3       		.byte	-61
+ 285 0041 C7       		.byte	-57
+ 286 0042 12       		.byte	18
+ 287 0043 38       		.byte	56
+ 288 0044 1D       		.byte	29
+ 289 0045 CD       		.byte	-51
+ 290 0046 22       		.byte	34
+ 291              		.text
+ 292              	.Letext0:
+ 293              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.1\\psoc creator\\import\\gnu\\arm\\5.4.
+ 294              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.1\\psoc creator\\import\\gnu\\arm\\5.4.
+ 295              		.file 4 "Generated_Source\\PSoC4/cytypes.h"
+ 296              		.file 5 "Generated_Source\\PSoC4/RTC.h"
+ 297              		.section	.debug_info,"",%progbits
+ 298              	.Ldebug_info0:
+ 299 0000 72030000 		.4byte	0x372
+ 300 0004 0400     		.2byte	0x4
+ 301 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 302 000a 04       		.byte	0x4
+ 303 000b 01       		.uleb128 0x1
+ 304 000c 06020000 		.4byte	.LASF30
+ 305 0010 0C       		.byte	0xc
+ 306 0011 31010000 		.4byte	.LASF31
+ 307 0015 5F000000 		.4byte	.LASF32
+ 308 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 309 001d 00000000 		.4byte	0
+ 310 0021 00000000 		.4byte	.Ldebug_line0
+ 311 0025 02       		.uleb128 0x2
+ 312 0026 04       		.byte	0x4
+ 313 0027 05       		.byte	0x5
+ 314 0028 696E7400 		.ascii	"int\000"
+ 315 002c 03       		.uleb128 0x3
+ 316 002d 04       		.byte	0x4
+ 317 002e 07       		.byte	0x7
+ 318 002f 4C010000 		.4byte	.LASF0
+ 319 0033 03       		.uleb128 0x3
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaHd6qa.s 			page 9
+
+
+ 320 0034 08       		.byte	0x8
+ 321 0035 05       		.byte	0x5
+ 322 0036 8D010000 		.4byte	.LASF1
+ 323 003a 03       		.uleb128 0x3
+ 324 003b 08       		.byte	0x8
+ 325 003c 04       		.byte	0x4
+ 326 003d EE010000 		.4byte	.LASF2
+ 327 0041 03       		.uleb128 0x3
+ 328 0042 01       		.byte	0x1
+ 329 0043 06       		.byte	0x6
+ 330 0044 FA010000 		.4byte	.LASF3
+ 331 0048 04       		.uleb128 0x4
+ 332 0049 14000000 		.4byte	.LASF8
+ 333 004d 02       		.byte	0x2
+ 334 004e 1D       		.byte	0x1d
+ 335 004f 53000000 		.4byte	0x53
+ 336 0053 03       		.uleb128 0x3
+ 337 0054 01       		.byte	0x1
+ 338 0055 08       		.byte	0x8
+ 339 0056 51000000 		.4byte	.LASF4
+ 340 005a 03       		.uleb128 0x3
+ 341 005b 02       		.byte	0x2
+ 342 005c 05       		.byte	0x5
+ 343 005d B6010000 		.4byte	.LASF5
+ 344 0061 03       		.uleb128 0x3
+ 345 0062 02       		.byte	0x2
+ 346 0063 07       		.byte	0x7
+ 347 0064 BE000000 		.4byte	.LASF6
+ 348 0068 03       		.uleb128 0x3
+ 349 0069 04       		.byte	0x4
+ 350 006a 05       		.byte	0x5
+ 351 006b CE010000 		.4byte	.LASF7
+ 352 006f 04       		.uleb128 0x4
+ 353 0070 12010000 		.4byte	.LASF9
+ 354 0074 02       		.byte	0x2
+ 355 0075 41       		.byte	0x41
+ 356 0076 7A000000 		.4byte	0x7a
+ 357 007a 03       		.uleb128 0x3
+ 358 007b 04       		.byte	0x4
+ 359 007c 07       		.byte	0x7
+ 360 007d E0000000 		.4byte	.LASF10
+ 361 0081 03       		.uleb128 0x3
+ 362 0082 08       		.byte	0x8
+ 363 0083 07       		.byte	0x7
+ 364 0084 59010000 		.4byte	.LASF11
+ 365 0088 03       		.uleb128 0x3
+ 366 0089 04       		.byte	0x4
+ 367 008a 07       		.byte	0x7
+ 368 008b 78010000 		.4byte	.LASF12
+ 369 008f 03       		.uleb128 0x3
+ 370 0090 01       		.byte	0x1
+ 371 0091 08       		.byte	0x8
+ 372 0092 9B010000 		.4byte	.LASF13
+ 373 0096 04       		.uleb128 0x4
+ 374 0097 70010000 		.4byte	.LASF14
+ 375 009b 03       		.byte	0x3
+ 376 009c 18       		.byte	0x18
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaHd6qa.s 			page 10
+
+
+ 377 009d 48000000 		.4byte	0x48
+ 378 00a1 04       		.uleb128 0x4
+ 379 00a2 D1000000 		.4byte	.LASF15
+ 380 00a6 03       		.byte	0x3
+ 381 00a7 30       		.byte	0x30
+ 382 00a8 6F000000 		.4byte	0x6f
+ 383 00ac 05       		.uleb128 0x5
+ 384 00ad C0010000 		.4byte	.LASF16
+ 385 00b1 04       		.byte	0x4
+ 386 00b2 D201     		.2byte	0x1d2
+ 387 00b4 53000000 		.4byte	0x53
+ 388 00b8 05       		.uleb128 0x5
+ 389 00b9 1D010000 		.4byte	.LASF17
+ 390 00bd 04       		.byte	0x4
+ 391 00be D301     		.2byte	0x1d3
+ 392 00c0 61000000 		.4byte	0x61
+ 393 00c4 03       		.uleb128 0x3
+ 394 00c5 04       		.byte	0x4
+ 395 00c6 04       		.byte	0x4
+ 396 00c7 4B000000 		.4byte	.LASF18
+ 397 00cb 03       		.uleb128 0x3
+ 398 00cc 08       		.byte	0x8
+ 399 00cd 04       		.byte	0x4
+ 400 00ce 44000000 		.4byte	.LASF19
+ 401 00d2 06       		.uleb128 0x6
+ 402 00d3 00000000 		.4byte	.LASF23
+ 403 00d7 01       		.byte	0x1
+ 404 00d8 10       		.byte	0x10
+ 405 00d9 25000000 		.4byte	0x25
+ 406 00dd 00000000 		.4byte	.LFB63
+ 407 00e1 04000000 		.4byte	.LFE63-.LFB63
+ 408 00e5 01       		.uleb128 0x1
+ 409 00e6 9C       		.byte	0x9c
+ 410 00e7 07       		.uleb128 0x7
+ 411 00e8 A0010000 		.4byte	.LASF33
+ 412 00ec 01       		.byte	0x1
+ 413 00ed 1C       		.byte	0x1c
+ 414 00ee 25000000 		.4byte	0x25
+ 415 00f2 00000000 		.4byte	.LFB64
+ 416 00f6 3E000000 		.4byte	.LFE64-.LFB64
+ 417 00fa 01       		.uleb128 0x1
+ 418 00fb 9C       		.byte	0x9c
+ 419 00fc D0010000 		.4byte	0x1d0
+ 420 0100 08       		.uleb128 0x8
+ 421 0101 6B657900 		.ascii	"key\000"
+ 422 0105 01       		.byte	0x1
+ 423 0106 1C       		.byte	0x1c
+ 424 0107 D0010000 		.4byte	0x1d0
+ 425 010b 00000000 		.4byte	.LLST0
+ 426 010f 08       		.uleb128 0x8
+ 427 0110 696E00   		.ascii	"in\000"
+ 428 0113 01       		.byte	0x1
+ 429 0114 1C       		.byte	0x1c
+ 430 0115 D0010000 		.4byte	0x1d0
+ 431 0119 2C000000 		.4byte	.LLST1
+ 432 011d 08       		.uleb128 0x8
+ 433 011e 6F757400 		.ascii	"out\000"
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaHd6qa.s 			page 11
+
+
+ 434 0122 01       		.byte	0x1
+ 435 0123 1C       		.byte	0x1c
+ 436 0124 D0010000 		.4byte	0x1d0
+ 437 0128 58000000 		.4byte	.LLST2
+ 438 012c 08       		.uleb128 0x8
+ 439 012d 6C656E00 		.ascii	"len\000"
+ 440 0131 01       		.byte	0x1
+ 441 0132 1C       		.byte	0x1c
+ 442 0133 A1000000 		.4byte	0xa1
+ 443 0137 79000000 		.4byte	.LLST3
+ 444 013b 09       		.uleb128 0x9
+ 445 013c C6010000 		.4byte	.LASF20
+ 446 0140 01       		.byte	0x1
+ 447 0141 1C       		.byte	0x1c
+ 448 0142 96000000 		.4byte	0x96
+ 449 0146 98000000 		.4byte	.LLST4
+ 450 014a 0A       		.uleb128 0xa
+ 451 014b 6900     		.ascii	"i\000"
+ 452 014d 01       		.byte	0x1
+ 453 014e 1E       		.byte	0x1e
+ 454 014f A1000000 		.4byte	0xa1
+ 455 0153 C4000000 		.4byte	.LLST5
+ 456 0157 0B       		.uleb128 0xb
+ 457 0158 72657400 		.ascii	"ret\000"
+ 458 015c 01       		.byte	0x1
+ 459 015d 1F       		.byte	0x1f
+ 460 015e 25000000 		.4byte	0x25
+ 461 0162 00       		.byte	0
+ 462 0163 0C       		.uleb128 0xc
+ 463 0164 20000000 		.4byte	.LBB2
+ 464 0168 08000000 		.4byte	.LBE2-.LBB2
+ 465 016c 98010000 		.4byte	0x198
+ 466 0170 0D       		.uleb128 0xd
+ 467 0171 1E000000 		.4byte	.LASF21
+ 468 0175 01       		.byte	0x1
+ 469 0176 5B       		.byte	0x5b
+ 470 0177 25000000 		.4byte	0x25
+ 471 017b 81010000 		.4byte	0x181
+ 472 017f 0E       		.uleb128 0xe
+ 473 0180 00       		.byte	0
+ 474 0181 0F       		.uleb128 0xf
+ 475 0182 28000000 		.4byte	.LVL5
+ 476 0186 56030000 		.4byte	0x356
+ 477 018a 10       		.uleb128 0x10
+ 478 018b 01       		.uleb128 0x1
+ 479 018c 50       		.byte	0x50
+ 480 018d 02       		.uleb128 0x2
+ 481 018e 74       		.byte	0x74
+ 482 018f 00       		.sleb128 0
+ 483 0190 10       		.uleb128 0x10
+ 484 0191 01       		.uleb128 0x1
+ 485 0192 51       		.byte	0x51
+ 486 0193 02       		.uleb128 0x2
+ 487 0194 77       		.byte	0x77
+ 488 0195 00       		.sleb128 0
+ 489 0196 00       		.byte	0
+ 490 0197 00       		.byte	0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaHd6qa.s 			page 12
+
+
+ 491 0198 11       		.uleb128 0x11
+ 492 0199 2A000000 		.4byte	.LBB3
+ 493 019d 10000000 		.4byte	.LBE3-.LBB3
+ 494 01a1 0D       		.uleb128 0xd
+ 495 01a2 31000000 		.4byte	.LASF22
+ 496 01a6 01       		.byte	0x1
+ 497 01a7 5D       		.byte	0x5d
+ 498 01a8 25000000 		.4byte	0x25
+ 499 01ac B2010000 		.4byte	0x1b2
+ 500 01b0 0E       		.uleb128 0xe
+ 501 01b1 00       		.byte	0
+ 502 01b2 0F       		.uleb128 0xf
+ 503 01b3 34000000 		.4byte	.LVL6
+ 504 01b7 61030000 		.4byte	0x361
+ 505 01bb 10       		.uleb128 0x10
+ 506 01bc 01       		.uleb128 0x1
+ 507 01bd 50       		.byte	0x50
+ 508 01be 02       		.uleb128 0x2
+ 509 01bf 74       		.byte	0x74
+ 510 01c0 00       		.sleb128 0
+ 511 01c1 10       		.uleb128 0x10
+ 512 01c2 01       		.uleb128 0x1
+ 513 01c3 51       		.byte	0x51
+ 514 01c4 02       		.uleb128 0x2
+ 515 01c5 77       		.byte	0x77
+ 516 01c6 00       		.sleb128 0
+ 517 01c7 10       		.uleb128 0x10
+ 518 01c8 01       		.uleb128 0x1
+ 519 01c9 52       		.byte	0x52
+ 520 01ca 02       		.uleb128 0x2
+ 521 01cb 75       		.byte	0x75
+ 522 01cc 00       		.sleb128 0
+ 523 01cd 00       		.byte	0
+ 524 01ce 00       		.byte	0
+ 525 01cf 00       		.byte	0
+ 526 01d0 12       		.uleb128 0x12
+ 527 01d1 04       		.byte	0x4
+ 528 01d2 96000000 		.4byte	0x96
+ 529 01d6 06       		.uleb128 0x6
+ 530 01d7 F2000000 		.4byte	.LASF24
+ 531 01db 01       		.byte	0x1
+ 532 01dc 64       		.byte	0x64
+ 533 01dd 25000000 		.4byte	0x25
+ 534 01e1 00000000 		.4byte	.LFB65
+ 535 01e5 02000000 		.4byte	.LFE65-.LFB65
+ 536 01e9 01       		.uleb128 0x1
+ 537 01ea 9C       		.byte	0x9c
+ 538 01eb 13       		.uleb128 0x13
+ 539 01ec B2000000 		.4byte	.LASF34
+ 540 01f0 01       		.byte	0x1
+ 541 01f1 6F       		.byte	0x6f
+ 542 01f2 00000000 		.4byte	.LFB66
+ 543 01f6 4C000000 		.4byte	.LFE66-.LFB66
+ 544 01fa 01       		.uleb128 0x1
+ 545 01fb 9C       		.byte	0x9c
+ 546 01fc D5020000 		.4byte	0x2d5
+ 547 0200 14       		.uleb128 0x14
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaHd6qa.s 			page 13
+
+
+ 548 0201 6B657900 		.ascii	"key\000"
+ 549 0205 01       		.byte	0x1
+ 550 0206 71       		.byte	0x71
+ 551 0207 D5020000 		.4byte	0x2d5
+ 552 020b 03       		.uleb128 0x3
+ 553 020c 91       		.byte	0x91
+ 554 020d B47F     		.sleb128 -76
+ 555 020f 15       		.uleb128 0x15
+ 556 0210 07010000 		.4byte	.LASF25
+ 557 0214 01       		.byte	0x1
+ 558 0215 72       		.byte	0x72
+ 559 0216 E5020000 		.4byte	0x2e5
+ 560 021a 02       		.uleb128 0x2
+ 561 021b 91       		.byte	0x91
+ 562 021c 44       		.sleb128 -60
+ 563 021d 15       		.uleb128 0x15
+ 564 021e 81010000 		.4byte	.LASF26
+ 565 0222 01       		.byte	0x1
+ 566 0223 7B       		.byte	0x7b
+ 567 0224 F5020000 		.4byte	0x2f5
+ 568 0228 03       		.uleb128 0x3
+ 569 0229 91       		.byte	0x91
+ 570 022a AC7F     		.sleb128 -84
+ 571 022c 15       		.uleb128 0x15
+ 572 022d 24010000 		.4byte	.LASF27
+ 573 0231 01       		.byte	0x1
+ 574 0232 7C       		.byte	0x7c
+ 575 0233 F5020000 		.4byte	0x2f5
+ 576 0237 03       		.uleb128 0x3
+ 577 0238 91       		.byte	0x91
+ 578 0239 B07F     		.sleb128 -80
+ 579 023b 16       		.uleb128 0x16
+ 580 023c 10000000 		.4byte	.LVL11
+ 581 0240 6C030000 		.4byte	0x36c
+ 582 0244 5B020000 		.4byte	0x25b
+ 583 0248 10       		.uleb128 0x10
+ 584 0249 01       		.uleb128 0x1
+ 585 024a 50       		.byte	0x50
+ 586 024b 03       		.uleb128 0x3
+ 587 024c 91       		.byte	0x91
+ 588 024d B47F     		.sleb128 -76
+ 589 024f 10       		.uleb128 0x10
+ 590 0250 01       		.uleb128 0x1
+ 591 0251 51       		.byte	0x51
+ 592 0252 02       		.uleb128 0x2
+ 593 0253 74       		.byte	0x74
+ 594 0254 00       		.sleb128 0
+ 595 0255 10       		.uleb128 0x10
+ 596 0256 01       		.uleb128 0x1
+ 597 0257 52       		.byte	0x52
+ 598 0258 01       		.uleb128 0x1
+ 599 0259 40       		.byte	0x40
+ 600 025a 00       		.byte	0
+ 601 025b 16       		.uleb128 0x16
+ 602 025c 1E000000 		.4byte	.LVL12
+ 603 0260 6C030000 		.4byte	0x36c
+ 604 0264 7B020000 		.4byte	0x27b
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaHd6qa.s 			page 14
+
+
+ 605 0268 10       		.uleb128 0x10
+ 606 0269 01       		.uleb128 0x1
+ 607 026a 50       		.byte	0x50
+ 608 026b 02       		.uleb128 0x2
+ 609 026c 91       		.byte	0x91
+ 610 026d 44       		.sleb128 -60
+ 611 026e 10       		.uleb128 0x10
+ 612 026f 01       		.uleb128 0x1
+ 613 0270 51       		.byte	0x51
+ 614 0271 02       		.uleb128 0x2
+ 615 0272 74       		.byte	0x74
+ 616 0273 10       		.sleb128 16
+ 617 0274 10       		.uleb128 0x10
+ 618 0275 01       		.uleb128 0x1
+ 619 0276 52       		.byte	0x52
+ 620 0277 02       		.uleb128 0x2
+ 621 0278 75       		.byte	0x75
+ 622 0279 00       		.sleb128 0
+ 623 027a 00       		.byte	0
+ 624 027b 16       		.uleb128 0x16
+ 625 027c 34000000 		.4byte	.LVL13
+ 626 0280 E7000000 		.4byte	0xe7
+ 627 0284 A9020000 		.4byte	0x2a9
+ 628 0288 10       		.uleb128 0x10
+ 629 0289 01       		.uleb128 0x1
+ 630 028a 50       		.byte	0x50
+ 631 028b 03       		.uleb128 0x3
+ 632 028c 91       		.byte	0x91
+ 633 028d B47F     		.sleb128 -76
+ 634 028f 10       		.uleb128 0x10
+ 635 0290 01       		.uleb128 0x1
+ 636 0291 51       		.byte	0x51
+ 637 0292 02       		.uleb128 0x2
+ 638 0293 91       		.byte	0x91
+ 639 0294 44       		.sleb128 -60
+ 640 0295 10       		.uleb128 0x10
+ 641 0296 01       		.uleb128 0x1
+ 642 0297 52       		.byte	0x52
+ 643 0298 03       		.uleb128 0x3
+ 644 0299 91       		.byte	0x91
+ 645 029a AC7F     		.sleb128 -84
+ 646 029c 10       		.uleb128 0x10
+ 647 029d 01       		.uleb128 0x1
+ 648 029e 53       		.byte	0x53
+ 649 029f 02       		.uleb128 0x2
+ 650 02a0 75       		.byte	0x75
+ 651 02a1 00       		.sleb128 0
+ 652 02a2 10       		.uleb128 0x10
+ 653 02a3 02       		.uleb128 0x2
+ 654 02a4 7D       		.byte	0x7d
+ 655 02a5 00       		.sleb128 0
+ 656 02a6 01       		.uleb128 0x1
+ 657 02a7 31       		.byte	0x31
+ 658 02a8 00       		.byte	0
+ 659 02a9 0F       		.uleb128 0xf
+ 660 02aa 42000000 		.4byte	.LVL14
+ 661 02ae E7000000 		.4byte	0xe7
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaHd6qa.s 			page 15
+
+
+ 662 02b2 10       		.uleb128 0x10
+ 663 02b3 01       		.uleb128 0x1
+ 664 02b4 50       		.byte	0x50
+ 665 02b5 03       		.uleb128 0x3
+ 666 02b6 91       		.byte	0x91
+ 667 02b7 B47F     		.sleb128 -76
+ 668 02b9 10       		.uleb128 0x10
+ 669 02ba 01       		.uleb128 0x1
+ 670 02bb 51       		.byte	0x51
+ 671 02bc 03       		.uleb128 0x3
+ 672 02bd 91       		.byte	0x91
+ 673 02be AC7F     		.sleb128 -84
+ 674 02c0 10       		.uleb128 0x10
+ 675 02c1 01       		.uleb128 0x1
+ 676 02c2 52       		.byte	0x52
+ 677 02c3 03       		.uleb128 0x3
+ 678 02c4 91       		.byte	0x91
+ 679 02c5 B07F     		.sleb128 -80
+ 680 02c7 10       		.uleb128 0x10
+ 681 02c8 01       		.uleb128 0x1
+ 682 02c9 53       		.byte	0x53
+ 683 02ca 01       		.uleb128 0x1
+ 684 02cb 34       		.byte	0x34
+ 685 02cc 10       		.uleb128 0x10
+ 686 02cd 02       		.uleb128 0x2
+ 687 02ce 7D       		.byte	0x7d
+ 688 02cf 00       		.sleb128 0
+ 689 02d0 02       		.uleb128 0x2
+ 690 02d1 74       		.byte	0x74
+ 691 02d2 00       		.sleb128 0
+ 692 02d3 00       		.byte	0
+ 693 02d4 00       		.byte	0
+ 694 02d5 17       		.uleb128 0x17
+ 695 02d6 AC000000 		.4byte	0xac
+ 696 02da E5020000 		.4byte	0x2e5
+ 697 02de 18       		.uleb128 0x18
+ 698 02df 88000000 		.4byte	0x88
+ 699 02e3 0F       		.byte	0xf
+ 700 02e4 00       		.byte	0
+ 701 02e5 17       		.uleb128 0x17
+ 702 02e6 AC000000 		.4byte	0xac
+ 703 02ea F5020000 		.4byte	0x2f5
+ 704 02ee 18       		.uleb128 0x18
+ 705 02ef 88000000 		.4byte	0x88
+ 706 02f3 29       		.byte	0x29
+ 707 02f4 00       		.byte	0
+ 708 02f5 17       		.uleb128 0x17
+ 709 02f6 AC000000 		.4byte	0xac
+ 710 02fa 05030000 		.4byte	0x305
+ 711 02fe 18       		.uleb128 0x18
+ 712 02ff 88000000 		.4byte	0x88
+ 713 0303 03       		.byte	0x3
+ 714 0304 00       		.byte	0
+ 715 0305 17       		.uleb128 0x17
+ 716 0306 15030000 		.4byte	0x315
+ 717 030a 15030000 		.4byte	0x315
+ 718 030e 18       		.uleb128 0x18
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaHd6qa.s 			page 16
+
+
+ 719 030f 88000000 		.4byte	0x88
+ 720 0313 0B       		.byte	0xb
+ 721 0314 00       		.byte	0
+ 722 0315 19       		.uleb128 0x19
+ 723 0316 B8000000 		.4byte	0xb8
+ 724 031a 1A       		.uleb128 0x1a
+ 725 031b D7010000 		.4byte	.LASF28
+ 726 031f 05       		.byte	0x5
+ 727 0320 E001     		.2byte	0x1e0
+ 728 0322 26030000 		.4byte	0x326
+ 729 0326 19       		.uleb128 0x19
+ 730 0327 05030000 		.4byte	0x305
+ 731 032b 17       		.uleb128 0x17
+ 732 032c 3B030000 		.4byte	0x33b
+ 733 0330 3B030000 		.4byte	0x33b
+ 734 0334 18       		.uleb128 0x18
+ 735 0335 88000000 		.4byte	0x88
+ 736 0339 0C       		.byte	0xc
+ 737 033a 00       		.byte	0
+ 738 033b 19       		.uleb128 0x19
+ 739 033c AC000000 		.4byte	0xac
+ 740 0340 1B       		.uleb128 0x1b
+ 741 0341 DA000000 		.4byte	.LASF29
+ 742 0345 01       		.byte	0x1
+ 743 0346 0E       		.byte	0xe
+ 744 0347 51030000 		.4byte	0x351
+ 745 034b 05       		.uleb128 0x5
+ 746 034c 03       		.byte	0x3
+ 747 034d 00000000 		.4byte	nonce
+ 748 0351 19       		.uleb128 0x19
+ 749 0352 2B030000 		.4byte	0x32b
+ 750 0356 1C       		.uleb128 0x1c
+ 751 0357 1E000000 		.4byte	.LASF21
+ 752 035b 1E000000 		.4byte	.LASF21
+ 753 035f 01       		.byte	0x1
+ 754 0360 5B       		.byte	0x5b
+ 755 0361 1C       		.uleb128 0x1c
+ 756 0362 31000000 		.4byte	.LASF22
+ 757 0366 31000000 		.4byte	.LASF22
+ 758 036a 01       		.byte	0x1
+ 759 036b 5D       		.byte	0x5d
+ 760 036c 1D       		.uleb128 0x1d
+ 761 036d AF010000 		.4byte	.LASF35
+ 762 0371 AF010000 		.4byte	.LASF35
+ 763 0375 00       		.byte	0
+ 764              		.section	.debug_abbrev,"",%progbits
+ 765              	.Ldebug_abbrev0:
+ 766 0000 01       		.uleb128 0x1
+ 767 0001 11       		.uleb128 0x11
+ 768 0002 01       		.byte	0x1
+ 769 0003 25       		.uleb128 0x25
+ 770 0004 0E       		.uleb128 0xe
+ 771 0005 13       		.uleb128 0x13
+ 772 0006 0B       		.uleb128 0xb
+ 773 0007 03       		.uleb128 0x3
+ 774 0008 0E       		.uleb128 0xe
+ 775 0009 1B       		.uleb128 0x1b
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaHd6qa.s 			page 17
+
+
+ 776 000a 0E       		.uleb128 0xe
+ 777 000b 55       		.uleb128 0x55
+ 778 000c 17       		.uleb128 0x17
+ 779 000d 11       		.uleb128 0x11
+ 780 000e 01       		.uleb128 0x1
+ 781 000f 10       		.uleb128 0x10
+ 782 0010 17       		.uleb128 0x17
+ 783 0011 00       		.byte	0
+ 784 0012 00       		.byte	0
+ 785 0013 02       		.uleb128 0x2
+ 786 0014 24       		.uleb128 0x24
+ 787 0015 00       		.byte	0
+ 788 0016 0B       		.uleb128 0xb
+ 789 0017 0B       		.uleb128 0xb
+ 790 0018 3E       		.uleb128 0x3e
+ 791 0019 0B       		.uleb128 0xb
+ 792 001a 03       		.uleb128 0x3
+ 793 001b 08       		.uleb128 0x8
+ 794 001c 00       		.byte	0
+ 795 001d 00       		.byte	0
+ 796 001e 03       		.uleb128 0x3
+ 797 001f 24       		.uleb128 0x24
+ 798 0020 00       		.byte	0
+ 799 0021 0B       		.uleb128 0xb
+ 800 0022 0B       		.uleb128 0xb
+ 801 0023 3E       		.uleb128 0x3e
+ 802 0024 0B       		.uleb128 0xb
+ 803 0025 03       		.uleb128 0x3
+ 804 0026 0E       		.uleb128 0xe
+ 805 0027 00       		.byte	0
+ 806 0028 00       		.byte	0
+ 807 0029 04       		.uleb128 0x4
+ 808 002a 16       		.uleb128 0x16
+ 809 002b 00       		.byte	0
+ 810 002c 03       		.uleb128 0x3
+ 811 002d 0E       		.uleb128 0xe
+ 812 002e 3A       		.uleb128 0x3a
+ 813 002f 0B       		.uleb128 0xb
+ 814 0030 3B       		.uleb128 0x3b
+ 815 0031 0B       		.uleb128 0xb
+ 816 0032 49       		.uleb128 0x49
+ 817 0033 13       		.uleb128 0x13
+ 818 0034 00       		.byte	0
+ 819 0035 00       		.byte	0
+ 820 0036 05       		.uleb128 0x5
+ 821 0037 16       		.uleb128 0x16
+ 822 0038 00       		.byte	0
+ 823 0039 03       		.uleb128 0x3
+ 824 003a 0E       		.uleb128 0xe
+ 825 003b 3A       		.uleb128 0x3a
+ 826 003c 0B       		.uleb128 0xb
+ 827 003d 3B       		.uleb128 0x3b
+ 828 003e 05       		.uleb128 0x5
+ 829 003f 49       		.uleb128 0x49
+ 830 0040 13       		.uleb128 0x13
+ 831 0041 00       		.byte	0
+ 832 0042 00       		.byte	0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaHd6qa.s 			page 18
+
+
+ 833 0043 06       		.uleb128 0x6
+ 834 0044 2E       		.uleb128 0x2e
+ 835 0045 00       		.byte	0
+ 836 0046 3F       		.uleb128 0x3f
+ 837 0047 19       		.uleb128 0x19
+ 838 0048 03       		.uleb128 0x3
+ 839 0049 0E       		.uleb128 0xe
+ 840 004a 3A       		.uleb128 0x3a
+ 841 004b 0B       		.uleb128 0xb
+ 842 004c 3B       		.uleb128 0x3b
+ 843 004d 0B       		.uleb128 0xb
+ 844 004e 27       		.uleb128 0x27
+ 845 004f 19       		.uleb128 0x19
+ 846 0050 49       		.uleb128 0x49
+ 847 0051 13       		.uleb128 0x13
+ 848 0052 11       		.uleb128 0x11
+ 849 0053 01       		.uleb128 0x1
+ 850 0054 12       		.uleb128 0x12
+ 851 0055 06       		.uleb128 0x6
+ 852 0056 40       		.uleb128 0x40
+ 853 0057 18       		.uleb128 0x18
+ 854 0058 9742     		.uleb128 0x2117
+ 855 005a 19       		.uleb128 0x19
+ 856 005b 00       		.byte	0
+ 857 005c 00       		.byte	0
+ 858 005d 07       		.uleb128 0x7
+ 859 005e 2E       		.uleb128 0x2e
+ 860 005f 01       		.byte	0x1
+ 861 0060 3F       		.uleb128 0x3f
+ 862 0061 19       		.uleb128 0x19
+ 863 0062 03       		.uleb128 0x3
+ 864 0063 0E       		.uleb128 0xe
+ 865 0064 3A       		.uleb128 0x3a
+ 866 0065 0B       		.uleb128 0xb
+ 867 0066 3B       		.uleb128 0x3b
+ 868 0067 0B       		.uleb128 0xb
+ 869 0068 27       		.uleb128 0x27
+ 870 0069 19       		.uleb128 0x19
+ 871 006a 49       		.uleb128 0x49
+ 872 006b 13       		.uleb128 0x13
+ 873 006c 11       		.uleb128 0x11
+ 874 006d 01       		.uleb128 0x1
+ 875 006e 12       		.uleb128 0x12
+ 876 006f 06       		.uleb128 0x6
+ 877 0070 40       		.uleb128 0x40
+ 878 0071 18       		.uleb128 0x18
+ 879 0072 9742     		.uleb128 0x2117
+ 880 0074 19       		.uleb128 0x19
+ 881 0075 01       		.uleb128 0x1
+ 882 0076 13       		.uleb128 0x13
+ 883 0077 00       		.byte	0
+ 884 0078 00       		.byte	0
+ 885 0079 08       		.uleb128 0x8
+ 886 007a 05       		.uleb128 0x5
+ 887 007b 00       		.byte	0
+ 888 007c 03       		.uleb128 0x3
+ 889 007d 08       		.uleb128 0x8
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaHd6qa.s 			page 19
+
+
+ 890 007e 3A       		.uleb128 0x3a
+ 891 007f 0B       		.uleb128 0xb
+ 892 0080 3B       		.uleb128 0x3b
+ 893 0081 0B       		.uleb128 0xb
+ 894 0082 49       		.uleb128 0x49
+ 895 0083 13       		.uleb128 0x13
+ 896 0084 02       		.uleb128 0x2
+ 897 0085 17       		.uleb128 0x17
+ 898 0086 00       		.byte	0
+ 899 0087 00       		.byte	0
+ 900 0088 09       		.uleb128 0x9
+ 901 0089 05       		.uleb128 0x5
+ 902 008a 00       		.byte	0
+ 903 008b 03       		.uleb128 0x3
+ 904 008c 0E       		.uleb128 0xe
+ 905 008d 3A       		.uleb128 0x3a
+ 906 008e 0B       		.uleb128 0xb
+ 907 008f 3B       		.uleb128 0x3b
+ 908 0090 0B       		.uleb128 0xb
+ 909 0091 49       		.uleb128 0x49
+ 910 0092 13       		.uleb128 0x13
+ 911 0093 02       		.uleb128 0x2
+ 912 0094 17       		.uleb128 0x17
+ 913 0095 00       		.byte	0
+ 914 0096 00       		.byte	0
+ 915 0097 0A       		.uleb128 0xa
+ 916 0098 34       		.uleb128 0x34
+ 917 0099 00       		.byte	0
+ 918 009a 03       		.uleb128 0x3
+ 919 009b 08       		.uleb128 0x8
+ 920 009c 3A       		.uleb128 0x3a
+ 921 009d 0B       		.uleb128 0xb
+ 922 009e 3B       		.uleb128 0x3b
+ 923 009f 0B       		.uleb128 0xb
+ 924 00a0 49       		.uleb128 0x49
+ 925 00a1 13       		.uleb128 0x13
+ 926 00a2 02       		.uleb128 0x2
+ 927 00a3 17       		.uleb128 0x17
+ 928 00a4 00       		.byte	0
+ 929 00a5 00       		.byte	0
+ 930 00a6 0B       		.uleb128 0xb
+ 931 00a7 34       		.uleb128 0x34
+ 932 00a8 00       		.byte	0
+ 933 00a9 03       		.uleb128 0x3
+ 934 00aa 08       		.uleb128 0x8
+ 935 00ab 3A       		.uleb128 0x3a
+ 936 00ac 0B       		.uleb128 0xb
+ 937 00ad 3B       		.uleb128 0x3b
+ 938 00ae 0B       		.uleb128 0xb
+ 939 00af 49       		.uleb128 0x49
+ 940 00b0 13       		.uleb128 0x13
+ 941 00b1 1C       		.uleb128 0x1c
+ 942 00b2 0B       		.uleb128 0xb
+ 943 00b3 00       		.byte	0
+ 944 00b4 00       		.byte	0
+ 945 00b5 0C       		.uleb128 0xc
+ 946 00b6 0B       		.uleb128 0xb
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaHd6qa.s 			page 20
+
+
+ 947 00b7 01       		.byte	0x1
+ 948 00b8 11       		.uleb128 0x11
+ 949 00b9 01       		.uleb128 0x1
+ 950 00ba 12       		.uleb128 0x12
+ 951 00bb 06       		.uleb128 0x6
+ 952 00bc 01       		.uleb128 0x1
+ 953 00bd 13       		.uleb128 0x13
+ 954 00be 00       		.byte	0
+ 955 00bf 00       		.byte	0
+ 956 00c0 0D       		.uleb128 0xd
+ 957 00c1 2E       		.uleb128 0x2e
+ 958 00c2 01       		.byte	0x1
+ 959 00c3 3F       		.uleb128 0x3f
+ 960 00c4 19       		.uleb128 0x19
+ 961 00c5 03       		.uleb128 0x3
+ 962 00c6 0E       		.uleb128 0xe
+ 963 00c7 3A       		.uleb128 0x3a
+ 964 00c8 0B       		.uleb128 0xb
+ 965 00c9 3B       		.uleb128 0x3b
+ 966 00ca 0B       		.uleb128 0xb
+ 967 00cb 49       		.uleb128 0x49
+ 968 00cc 13       		.uleb128 0x13
+ 969 00cd 3C       		.uleb128 0x3c
+ 970 00ce 19       		.uleb128 0x19
+ 971 00cf 01       		.uleb128 0x1
+ 972 00d0 13       		.uleb128 0x13
+ 973 00d1 00       		.byte	0
+ 974 00d2 00       		.byte	0
+ 975 00d3 0E       		.uleb128 0xe
+ 976 00d4 18       		.uleb128 0x18
+ 977 00d5 00       		.byte	0
+ 978 00d6 00       		.byte	0
+ 979 00d7 00       		.byte	0
+ 980 00d8 0F       		.uleb128 0xf
+ 981 00d9 898201   		.uleb128 0x4109
+ 982 00dc 01       		.byte	0x1
+ 983 00dd 11       		.uleb128 0x11
+ 984 00de 01       		.uleb128 0x1
+ 985 00df 31       		.uleb128 0x31
+ 986 00e0 13       		.uleb128 0x13
+ 987 00e1 00       		.byte	0
+ 988 00e2 00       		.byte	0
+ 989 00e3 10       		.uleb128 0x10
+ 990 00e4 8A8201   		.uleb128 0x410a
+ 991 00e7 00       		.byte	0
+ 992 00e8 02       		.uleb128 0x2
+ 993 00e9 18       		.uleb128 0x18
+ 994 00ea 9142     		.uleb128 0x2111
+ 995 00ec 18       		.uleb128 0x18
+ 996 00ed 00       		.byte	0
+ 997 00ee 00       		.byte	0
+ 998 00ef 11       		.uleb128 0x11
+ 999 00f0 0B       		.uleb128 0xb
+ 1000 00f1 01       		.byte	0x1
+ 1001 00f2 11       		.uleb128 0x11
+ 1002 00f3 01       		.uleb128 0x1
+ 1003 00f4 12       		.uleb128 0x12
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaHd6qa.s 			page 21
+
+
+ 1004 00f5 06       		.uleb128 0x6
+ 1005 00f6 00       		.byte	0
+ 1006 00f7 00       		.byte	0
+ 1007 00f8 12       		.uleb128 0x12
+ 1008 00f9 0F       		.uleb128 0xf
+ 1009 00fa 00       		.byte	0
+ 1010 00fb 0B       		.uleb128 0xb
+ 1011 00fc 0B       		.uleb128 0xb
+ 1012 00fd 49       		.uleb128 0x49
+ 1013 00fe 13       		.uleb128 0x13
+ 1014 00ff 00       		.byte	0
+ 1015 0100 00       		.byte	0
+ 1016 0101 13       		.uleb128 0x13
+ 1017 0102 2E       		.uleb128 0x2e
+ 1018 0103 01       		.byte	0x1
+ 1019 0104 3F       		.uleb128 0x3f
+ 1020 0105 19       		.uleb128 0x19
+ 1021 0106 03       		.uleb128 0x3
+ 1022 0107 0E       		.uleb128 0xe
+ 1023 0108 3A       		.uleb128 0x3a
+ 1024 0109 0B       		.uleb128 0xb
+ 1025 010a 3B       		.uleb128 0x3b
+ 1026 010b 0B       		.uleb128 0xb
+ 1027 010c 27       		.uleb128 0x27
+ 1028 010d 19       		.uleb128 0x19
+ 1029 010e 11       		.uleb128 0x11
+ 1030 010f 01       		.uleb128 0x1
+ 1031 0110 12       		.uleb128 0x12
+ 1032 0111 06       		.uleb128 0x6
+ 1033 0112 40       		.uleb128 0x40
+ 1034 0113 18       		.uleb128 0x18
+ 1035 0114 9742     		.uleb128 0x2117
+ 1036 0116 19       		.uleb128 0x19
+ 1037 0117 01       		.uleb128 0x1
+ 1038 0118 13       		.uleb128 0x13
+ 1039 0119 00       		.byte	0
+ 1040 011a 00       		.byte	0
+ 1041 011b 14       		.uleb128 0x14
+ 1042 011c 34       		.uleb128 0x34
+ 1043 011d 00       		.byte	0
+ 1044 011e 03       		.uleb128 0x3
+ 1045 011f 08       		.uleb128 0x8
+ 1046 0120 3A       		.uleb128 0x3a
+ 1047 0121 0B       		.uleb128 0xb
+ 1048 0122 3B       		.uleb128 0x3b
+ 1049 0123 0B       		.uleb128 0xb
+ 1050 0124 49       		.uleb128 0x49
+ 1051 0125 13       		.uleb128 0x13
+ 1052 0126 02       		.uleb128 0x2
+ 1053 0127 18       		.uleb128 0x18
+ 1054 0128 00       		.byte	0
+ 1055 0129 00       		.byte	0
+ 1056 012a 15       		.uleb128 0x15
+ 1057 012b 34       		.uleb128 0x34
+ 1058 012c 00       		.byte	0
+ 1059 012d 03       		.uleb128 0x3
+ 1060 012e 0E       		.uleb128 0xe
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaHd6qa.s 			page 22
+
+
+ 1061 012f 3A       		.uleb128 0x3a
+ 1062 0130 0B       		.uleb128 0xb
+ 1063 0131 3B       		.uleb128 0x3b
+ 1064 0132 0B       		.uleb128 0xb
+ 1065 0133 49       		.uleb128 0x49
+ 1066 0134 13       		.uleb128 0x13
+ 1067 0135 02       		.uleb128 0x2
+ 1068 0136 18       		.uleb128 0x18
+ 1069 0137 00       		.byte	0
+ 1070 0138 00       		.byte	0
+ 1071 0139 16       		.uleb128 0x16
+ 1072 013a 898201   		.uleb128 0x4109
+ 1073 013d 01       		.byte	0x1
+ 1074 013e 11       		.uleb128 0x11
+ 1075 013f 01       		.uleb128 0x1
+ 1076 0140 31       		.uleb128 0x31
+ 1077 0141 13       		.uleb128 0x13
+ 1078 0142 01       		.uleb128 0x1
+ 1079 0143 13       		.uleb128 0x13
+ 1080 0144 00       		.byte	0
+ 1081 0145 00       		.byte	0
+ 1082 0146 17       		.uleb128 0x17
+ 1083 0147 01       		.uleb128 0x1
+ 1084 0148 01       		.byte	0x1
+ 1085 0149 49       		.uleb128 0x49
+ 1086 014a 13       		.uleb128 0x13
+ 1087 014b 01       		.uleb128 0x1
+ 1088 014c 13       		.uleb128 0x13
+ 1089 014d 00       		.byte	0
+ 1090 014e 00       		.byte	0
+ 1091 014f 18       		.uleb128 0x18
+ 1092 0150 21       		.uleb128 0x21
+ 1093 0151 00       		.byte	0
+ 1094 0152 49       		.uleb128 0x49
+ 1095 0153 13       		.uleb128 0x13
+ 1096 0154 2F       		.uleb128 0x2f
+ 1097 0155 0B       		.uleb128 0xb
+ 1098 0156 00       		.byte	0
+ 1099 0157 00       		.byte	0
+ 1100 0158 19       		.uleb128 0x19
+ 1101 0159 26       		.uleb128 0x26
+ 1102 015a 00       		.byte	0
+ 1103 015b 49       		.uleb128 0x49
+ 1104 015c 13       		.uleb128 0x13
+ 1105 015d 00       		.byte	0
+ 1106 015e 00       		.byte	0
+ 1107 015f 1A       		.uleb128 0x1a
+ 1108 0160 34       		.uleb128 0x34
+ 1109 0161 00       		.byte	0
+ 1110 0162 03       		.uleb128 0x3
+ 1111 0163 0E       		.uleb128 0xe
+ 1112 0164 3A       		.uleb128 0x3a
+ 1113 0165 0B       		.uleb128 0xb
+ 1114 0166 3B       		.uleb128 0x3b
+ 1115 0167 05       		.uleb128 0x5
+ 1116 0168 49       		.uleb128 0x49
+ 1117 0169 13       		.uleb128 0x13
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaHd6qa.s 			page 23
+
+
+ 1118 016a 3F       		.uleb128 0x3f
+ 1119 016b 19       		.uleb128 0x19
+ 1120 016c 3C       		.uleb128 0x3c
+ 1121 016d 19       		.uleb128 0x19
+ 1122 016e 00       		.byte	0
+ 1123 016f 00       		.byte	0
+ 1124 0170 1B       		.uleb128 0x1b
+ 1125 0171 34       		.uleb128 0x34
+ 1126 0172 00       		.byte	0
+ 1127 0173 03       		.uleb128 0x3
+ 1128 0174 0E       		.uleb128 0xe
+ 1129 0175 3A       		.uleb128 0x3a
+ 1130 0176 0B       		.uleb128 0xb
+ 1131 0177 3B       		.uleb128 0x3b
+ 1132 0178 0B       		.uleb128 0xb
+ 1133 0179 49       		.uleb128 0x49
+ 1134 017a 13       		.uleb128 0x13
+ 1135 017b 3F       		.uleb128 0x3f
+ 1136 017c 19       		.uleb128 0x19
+ 1137 017d 02       		.uleb128 0x2
+ 1138 017e 18       		.uleb128 0x18
+ 1139 017f 00       		.byte	0
+ 1140 0180 00       		.byte	0
+ 1141 0181 1C       		.uleb128 0x1c
+ 1142 0182 2E       		.uleb128 0x2e
+ 1143 0183 00       		.byte	0
+ 1144 0184 3F       		.uleb128 0x3f
+ 1145 0185 19       		.uleb128 0x19
+ 1146 0186 3C       		.uleb128 0x3c
+ 1147 0187 19       		.uleb128 0x19
+ 1148 0188 6E       		.uleb128 0x6e
+ 1149 0189 0E       		.uleb128 0xe
+ 1150 018a 03       		.uleb128 0x3
+ 1151 018b 0E       		.uleb128 0xe
+ 1152 018c 3A       		.uleb128 0x3a
+ 1153 018d 0B       		.uleb128 0xb
+ 1154 018e 3B       		.uleb128 0x3b
+ 1155 018f 0B       		.uleb128 0xb
+ 1156 0190 00       		.byte	0
+ 1157 0191 00       		.byte	0
+ 1158 0192 1D       		.uleb128 0x1d
+ 1159 0193 2E       		.uleb128 0x2e
+ 1160 0194 00       		.byte	0
+ 1161 0195 3F       		.uleb128 0x3f
+ 1162 0196 19       		.uleb128 0x19
+ 1163 0197 3C       		.uleb128 0x3c
+ 1164 0198 19       		.uleb128 0x19
+ 1165 0199 6E       		.uleb128 0x6e
+ 1166 019a 0E       		.uleb128 0xe
+ 1167 019b 03       		.uleb128 0x3
+ 1168 019c 0E       		.uleb128 0xe
+ 1169 019d 00       		.byte	0
+ 1170 019e 00       		.byte	0
+ 1171 019f 00       		.byte	0
+ 1172              		.section	.debug_loc,"",%progbits
+ 1173              	.Ldebug_loc0:
+ 1174              	.LLST0:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaHd6qa.s 			page 24
+
+
+ 1175 0000 00000000 		.4byte	.LVL0
+ 1176 0004 12000000 		.4byte	.LVL4
+ 1177 0008 0100     		.2byte	0x1
+ 1178 000a 50       		.byte	0x50
+ 1179 000b 12000000 		.4byte	.LVL4
+ 1180 000f 3C000000 		.4byte	.LVL10
+ 1181 0013 0100     		.2byte	0x1
+ 1182 0015 57       		.byte	0x57
+ 1183 0016 3C000000 		.4byte	.LVL10
+ 1184 001a 3E000000 		.4byte	.LFE64
+ 1185 001e 0400     		.2byte	0x4
+ 1186 0020 F3       		.byte	0xf3
+ 1187 0021 01       		.uleb128 0x1
+ 1188 0022 50       		.byte	0x50
+ 1189 0023 9F       		.byte	0x9f
+ 1190 0024 00000000 		.4byte	0
+ 1191 0028 00000000 		.4byte	0
+ 1192              	.LLST1:
+ 1193 002c 00000000 		.4byte	.LVL0
+ 1194 0030 12000000 		.4byte	.LVL4
+ 1195 0034 0100     		.2byte	0x1
+ 1196 0036 51       		.byte	0x51
+ 1197 0037 12000000 		.4byte	.LVL4
+ 1198 003b 3C000000 		.4byte	.LVL9
+ 1199 003f 0100     		.2byte	0x1
+ 1200 0041 56       		.byte	0x56
+ 1201 0042 3C000000 		.4byte	.LVL9
+ 1202 0046 3E000000 		.4byte	.LFE64
+ 1203 004a 0400     		.2byte	0x4
+ 1204 004c F3       		.byte	0xf3
+ 1205 004d 01       		.uleb128 0x1
+ 1206 004e 51       		.byte	0x51
+ 1207 004f 9F       		.byte	0x9f
+ 1208 0050 00000000 		.4byte	0
+ 1209 0054 00000000 		.4byte	0
+ 1210              	.LLST2:
+ 1211 0058 00000000 		.4byte	.LVL0
+ 1212 005c 12000000 		.4byte	.LVL4
+ 1213 0060 0100     		.2byte	0x1
+ 1214 0062 52       		.byte	0x52
+ 1215 0063 12000000 		.4byte	.LVL4
+ 1216 0067 3E000000 		.4byte	.LFE64
+ 1217 006b 0400     		.2byte	0x4
+ 1218 006d F3       		.byte	0xf3
+ 1219 006e 01       		.uleb128 0x1
+ 1220 006f 52       		.byte	0x52
+ 1221 0070 9F       		.byte	0x9f
+ 1222 0071 00000000 		.4byte	0
+ 1223 0075 00000000 		.4byte	0
+ 1224              	.LLST3:
+ 1225 0079 00000000 		.4byte	.LVL0
+ 1226 007d 0E000000 		.4byte	.LVL2
+ 1227 0081 0100     		.2byte	0x1
+ 1228 0083 53       		.byte	0x53
+ 1229 0084 0E000000 		.4byte	.LVL2
+ 1230 0088 3E000000 		.4byte	.LFE64
+ 1231 008c 0200     		.2byte	0x2
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaHd6qa.s 			page 25
+
+
+ 1232 008e 7D       		.byte	0x7d
+ 1233 008f 00       		.sleb128 0
+ 1234 0090 00000000 		.4byte	0
+ 1235 0094 00000000 		.4byte	0
+ 1236              	.LLST4:
+ 1237 0098 00000000 		.4byte	.LVL0
+ 1238 009c 0E000000 		.4byte	.LVL2
+ 1239 00a0 0200     		.2byte	0x2
+ 1240 00a2 91       		.byte	0x91
+ 1241 00a3 00       		.sleb128 0
+ 1242 00a4 0E000000 		.4byte	.LVL2
+ 1243 00a8 10000000 		.4byte	.LVL3
+ 1244 00ac 0200     		.2byte	0x2
+ 1245 00ae 73       		.byte	0x73
+ 1246 00af 00       		.sleb128 0
+ 1247 00b0 10000000 		.4byte	.LVL3
+ 1248 00b4 3E000000 		.4byte	.LFE64
+ 1249 00b8 0200     		.2byte	0x2
+ 1250 00ba 91       		.byte	0x91
+ 1251 00bb 00       		.sleb128 0
+ 1252 00bc 00000000 		.4byte	0
+ 1253 00c0 00000000 		.4byte	0
+ 1254              	.LLST5:
+ 1255 00c4 04000000 		.4byte	.LVL1
+ 1256 00c8 12000000 		.4byte	.LVL4
+ 1257 00cc 0200     		.2byte	0x2
+ 1258 00ce 30       		.byte	0x30
+ 1259 00cf 9F       		.byte	0x9f
+ 1260 00d0 12000000 		.4byte	.LVL4
+ 1261 00d4 34000000 		.4byte	.LVL6
+ 1262 00d8 0600     		.2byte	0x6
+ 1263 00da 74       		.byte	0x74
+ 1264 00db 00       		.sleb128 0
+ 1265 00dc 76       		.byte	0x76
+ 1266 00dd 00       		.sleb128 0
+ 1267 00de 1C       		.byte	0x1c
+ 1268 00df 9F       		.byte	0x9f
+ 1269 00e0 34000000 		.4byte	.LVL6
+ 1270 00e4 36000000 		.4byte	.LVL7
+ 1271 00e8 0800     		.2byte	0x8
+ 1272 00ea 74       		.byte	0x74
+ 1273 00eb 00       		.sleb128 0
+ 1274 00ec 76       		.byte	0x76
+ 1275 00ed 00       		.sleb128 0
+ 1276 00ee 1C       		.byte	0x1c
+ 1277 00ef 23       		.byte	0x23
+ 1278 00f0 10       		.uleb128 0x10
+ 1279 00f1 9F       		.byte	0x9f
+ 1280 00f2 36000000 		.4byte	.LVL7
+ 1281 00f6 3C000000 		.4byte	.LVL8
+ 1282 00fa 0600     		.2byte	0x6
+ 1283 00fc 74       		.byte	0x74
+ 1284 00fd 00       		.sleb128 0
+ 1285 00fe 76       		.byte	0x76
+ 1286 00ff 00       		.sleb128 0
+ 1287 0100 1C       		.byte	0x1c
+ 1288 0101 9F       		.byte	0x9f
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaHd6qa.s 			page 26
+
+
+ 1289 0102 00000000 		.4byte	0
+ 1290 0106 00000000 		.4byte	0
+ 1291              		.section	.debug_aranges,"",%progbits
+ 1292 0000 34000000 		.4byte	0x34
+ 1293 0004 0200     		.2byte	0x2
+ 1294 0006 00000000 		.4byte	.Ldebug_info0
+ 1295 000a 04       		.byte	0x4
+ 1296 000b 00       		.byte	0
+ 1297 000c 0000     		.2byte	0
+ 1298 000e 0000     		.2byte	0
+ 1299 0010 00000000 		.4byte	.LFB63
+ 1300 0014 04000000 		.4byte	.LFE63-.LFB63
+ 1301 0018 00000000 		.4byte	.LFB64
+ 1302 001c 3E000000 		.4byte	.LFE64-.LFB64
+ 1303 0020 00000000 		.4byte	.LFB65
+ 1304 0024 02000000 		.4byte	.LFE65-.LFB65
+ 1305 0028 00000000 		.4byte	.LFB66
+ 1306 002c 4C000000 		.4byte	.LFE66-.LFB66
+ 1307 0030 00000000 		.4byte	0
+ 1308 0034 00000000 		.4byte	0
+ 1309              		.section	.debug_ranges,"",%progbits
+ 1310              	.Ldebug_ranges0:
+ 1311 0000 00000000 		.4byte	.LFB63
+ 1312 0004 04000000 		.4byte	.LFE63
+ 1313 0008 00000000 		.4byte	.LFB64
+ 1314 000c 3E000000 		.4byte	.LFE64
+ 1315 0010 00000000 		.4byte	.LFB65
+ 1316 0014 02000000 		.4byte	.LFE65
+ 1317 0018 00000000 		.4byte	.LFB66
+ 1318 001c 4C000000 		.4byte	.LFE66
+ 1319 0020 00000000 		.4byte	0
+ 1320 0024 00000000 		.4byte	0
+ 1321              		.section	.debug_line,"",%progbits
+ 1322              	.Ldebug_line0:
+ 1323 0000 C3010000 		.section	.debug_str,"MS",%progbits,1
+ 1323      02005B01 
+ 1323      00000201 
+ 1323      FB0E0D00 
+ 1323      01010101 
+ 1324              	.LASF23:
+ 1325 0000 62745F6C 		.ascii	"bt_lock_open_crypto\000"
+ 1325      6F636B5F 
+ 1325      6F70656E 
+ 1325      5F637279 
+ 1325      70746F00 
+ 1326              	.LASF8:
+ 1327 0014 5F5F7569 		.ascii	"__uint8_t\000"
+ 1327      6E74385F 
+ 1327      7400
+ 1328              	.LASF21:
+ 1329 001e 41455331 		.ascii	"AES128_ECB_encrypt\000"
+ 1329      32385F45 
+ 1329      43425F65 
+ 1329      6E637279 
+ 1329      707400
+ 1330              	.LASF22:
+ 1331 0031 41455331 		.ascii	"AES128_ECB_decrypt\000"
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaHd6qa.s 			page 27
+
+
+ 1331      32385F45 
+ 1331      43425F64 
+ 1331      65637279 
+ 1331      707400
+ 1332              	.LASF19:
+ 1333 0044 646F7562 		.ascii	"double\000"
+ 1333      6C6500
+ 1334              	.LASF18:
+ 1335 004b 666C6F61 		.ascii	"float\000"
+ 1335      7400
+ 1336              	.LASF4:
+ 1337 0051 756E7369 		.ascii	"unsigned char\000"
+ 1337      676E6564 
+ 1337      20636861 
+ 1337      7200
+ 1338              	.LASF32:
+ 1339 005f 473A5C50 		.ascii	"G:\\Psoc4_prj\\7.rental_house\\18-05-03\\EntranceGu"
+ 1339      736F6334 
+ 1339      5F70726A 
+ 1339      5C372E72 
+ 1339      656E7461 
+ 1340 008e 6172645F 		.ascii	"ard_180427-1654\\EntranceGuard.cydsn\000"
+ 1340      31383034 
+ 1340      32372D31 
+ 1340      3635345C 
+ 1340      456E7472 
+ 1341              	.LASF34:
+ 1342 00b2 63727970 		.ascii	"crypto_test\000"
+ 1342      746F5F74 
+ 1342      65737400 
+ 1343              	.LASF6:
+ 1344 00be 73686F72 		.ascii	"short unsigned int\000"
+ 1344      7420756E 
+ 1344      7369676E 
+ 1344      65642069 
+ 1344      6E7400
+ 1345              	.LASF15:
+ 1346 00d1 75696E74 		.ascii	"uint32_t\000"
+ 1346      33325F74 
+ 1346      00
+ 1347              	.LASF29:
+ 1348 00da 6E6F6E63 		.ascii	"nonce\000"
+ 1348      6500
+ 1349              	.LASF10:
+ 1350 00e0 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1350      20756E73 
+ 1350      69676E65 
+ 1350      6420696E 
+ 1350      7400
+ 1351              	.LASF24:
+ 1352 00f2 62745F6C 		.ascii	"bt_lock_close_crypto\000"
+ 1352      6F636B5F 
+ 1352      636C6F73 
+ 1352      655F6372 
+ 1352      7970746F 
+ 1353              	.LASF25:
+ 1354 0107 706C6169 		.ascii	"plain_text\000"
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaHd6qa.s 			page 28
+
+
+ 1354      6E5F7465 
+ 1354      787400
+ 1355              	.LASF9:
+ 1356 0112 5F5F7569 		.ascii	"__uint32_t\000"
+ 1356      6E743332 
+ 1356      5F7400
+ 1357              	.LASF17:
+ 1358 011d 75696E74 		.ascii	"uint16\000"
+ 1358      313600
+ 1359              	.LASF27:
+ 1360 0124 64656372 		.ascii	"decrypt_text\000"
+ 1360      7970745F 
+ 1360      74657874 
+ 1360      00
+ 1361              	.LASF31:
+ 1362 0131 436F6465 		.ascii	"Code\\Common\\crypt\\Aesecb.c\000"
+ 1362      5C436F6D 
+ 1362      6D6F6E5C 
+ 1362      63727970 
+ 1362      745C4165 
+ 1363              	.LASF0:
+ 1364 014c 756E7369 		.ascii	"unsigned int\000"
+ 1364      676E6564 
+ 1364      20696E74 
+ 1364      00
+ 1365              	.LASF11:
+ 1366 0159 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1366      206C6F6E 
+ 1366      6720756E 
+ 1366      7369676E 
+ 1366      65642069 
+ 1367              	.LASF14:
+ 1368 0170 75696E74 		.ascii	"uint8_t\000"
+ 1368      385F7400 
+ 1369              	.LASF12:
+ 1370 0178 73697A65 		.ascii	"sizetype\000"
+ 1370      74797065 
+ 1370      00
+ 1371              	.LASF26:
+ 1372 0181 63697068 		.ascii	"cipher_text\000"
+ 1372      65725F74 
+ 1372      65787400 
+ 1373              	.LASF1:
+ 1374 018d 6C6F6E67 		.ascii	"long long int\000"
+ 1374      206C6F6E 
+ 1374      6720696E 
+ 1374      7400
+ 1375              	.LASF13:
+ 1376 019b 63686172 		.ascii	"char\000"
+ 1376      00
+ 1377              	.LASF33:
+ 1378 01a0 62745F6C 		.ascii	"bt_lock_crypto\000"
+ 1378      6F636B5F 
+ 1378      63727970 
+ 1378      746F00
+ 1379              	.LASF35:
+ 1380 01af 6D656D63 		.ascii	"memcpy\000"
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaHd6qa.s 			page 29
+
+
+ 1380      707900
+ 1381              	.LASF5:
+ 1382 01b6 73686F72 		.ascii	"short int\000"
+ 1382      7420696E 
+ 1382      7400
+ 1383              	.LASF16:
+ 1384 01c0 75696E74 		.ascii	"uint8\000"
+ 1384      3800
+ 1385              	.LASF20:
+ 1386 01c6 656E635F 		.ascii	"enc_dec\000"
+ 1386      64656300 
+ 1387              	.LASF7:
+ 1388 01ce 6C6F6E67 		.ascii	"long int\000"
+ 1388      20696E74 
+ 1388      00
+ 1389              	.LASF28:
+ 1390 01d7 5254435F 		.ascii	"RTC_daysBeforeMonthTbl\000"
+ 1390      64617973 
+ 1390      4265666F 
+ 1390      72654D6F 
+ 1390      6E746854 
+ 1391              	.LASF2:
+ 1392 01ee 6C6F6E67 		.ascii	"long double\000"
+ 1392      20646F75 
+ 1392      626C6500 
+ 1393              	.LASF3:
+ 1394 01fa 7369676E 		.ascii	"signed char\000"
+ 1394      65642063 
+ 1394      68617200 
+ 1395              	.LASF30:
+ 1396 0206 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 1396      43313120 
+ 1396      352E342E 
+ 1396      31203230 
+ 1396      31363036 
+ 1397 0239 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m0 -mthumb -g -O"
+ 1397      20726576 
+ 1397      6973696F 
+ 1397      6E203233 
+ 1397      37373135 
+ 1398 026c 73202D66 		.ascii	"s -ffunction-sections -ffat-lto-objects\000"
+ 1398      66756E63 
+ 1398      74696F6E 
+ 1398      2D736563 
+ 1398      74696F6E 
+ 1399              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran
